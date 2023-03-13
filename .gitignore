@@ -36,12 +36,12 @@ out/
 ### VS Code ###
 .vscode/
 
-### application.properties ###
-.appication.yml
-*.appication.yml
-._.appication.yml
-**/.appication.yml
-**/._.appication.yml
+### application.yml ###
+.application.yml
+*.application.yml
+._.application.yml
+**/.application.yml
+**/._.application.yml
 src/main/resources/application.yml
 
 ### API Docs ###
