@@ -22,7 +22,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests()
-                .requestMatchers("/docs/**", "/thumbnail/**", "/health-check").permitAll()
+                .requestMatchers("/docs/**", "/thumbnail/**", "/api/v1/health-check").permitAll()
                 .anyRequest().hasRole("회원")
                 .and()
                 .httpBasic().disable()

@@ -9,9 +9,9 @@ public class HealthCheckDto {
     private String message;
     private LocalDateTime created;
 
-    public HealthCheckDto(String message) {
+    public HealthCheckDto(String message, LocalDateTime created) {
         this.message = message;
-        this.created = LocalDateTime.now();
+        this.created = created;
     }
 }
 
