@@ -77,7 +77,7 @@ asciidoctor.doFirst {
 
 bootJar {
     dependsOn asciidoctor
-    from("${asciidoctor.outputDir}/html5") {
+    from("${asciidoctor.outputDir}") {
         into 'static/docs'
     }
 }
