@@ -18,6 +18,6 @@ class HealthCheckServiceTest extends IntegrationTest {
     void createHealthCheckResponse() {
         HealthCheckDto result = healthCheckService.check();
 
-        assertThat(result.getMessage()).isEqualTo("success");
+        assertThat(result.message()).isEqualTo("success");
     }
 }
