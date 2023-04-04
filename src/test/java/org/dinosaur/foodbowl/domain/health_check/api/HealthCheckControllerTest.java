@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import org.dinosaur.foodbowl.MockApiTest;
 import org.dinosaur.foodbowl.domain.health_check.application.HealthCheckService;
 import org.dinosaur.foodbowl.domain.health_check.dto.HealthCheckDto;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -22,11 +23,13 @@ class HealthCheckControllerTest extends MockApiTest {
     @MockBean
     private HealthCheckService healthCheckService;
 
+    @DisplayName("헬스 체크 요청 시")
     @Nested
-    class 헬스_체크_요청시 {
+    class Check {
 
+        @DisplayName("정상적인 경우 성공 응답을 반환한다.")
         @Test
-        void 정상적인_경우_성공_응답을_반환한다() throws Exception {
+        void returnSuccessResponseWhenValid() throws Exception {
             String message = "success";
             LocalDateTime now = LocalDateTime.now();
             HealthCheckDto response = new HealthCheckDto(message, now);

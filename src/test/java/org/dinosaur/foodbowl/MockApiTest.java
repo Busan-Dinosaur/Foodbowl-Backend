@@ -7,8 +7,6 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 
 import org.dinosaur.foodbowl.global.config.security.SecurityConfig;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.RestDocumentationContextProvider;
@@ -21,7 +19,6 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 @Import(SecurityConfig.class)
 @ExtendWith({SpringExtension.class, RestDocumentationExtension.class})
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class MockApiTest {
 
     protected MockMvc mockMvc;
