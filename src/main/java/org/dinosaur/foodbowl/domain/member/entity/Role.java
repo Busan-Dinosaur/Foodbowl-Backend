@@ -38,7 +38,7 @@ public class Role {
         return new Role(roleType.id, roleType);
     }
 
-    private enum RoleType {
+    public enum RoleType {
 
         ROLE_회원(1L),
         ROLE_관리자(2L),
@@ -48,6 +48,10 @@ public class Role {
 
         RoleType(final Long id) {
             this.id = id;
+        }
+
+        public Long getId() {
+            return id;
         }
     }
 }
