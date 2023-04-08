@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "role")
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = {"id", "roleType"})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Role {
 

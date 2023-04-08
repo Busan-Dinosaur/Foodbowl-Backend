@@ -2,6 +2,7 @@ package org.dinosaur.foodbowl.domain.member.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import org.dinosaur.foodbowl.RepositoryTest;
@@ -19,17 +20,15 @@ class RoleRepositoryTest extends RepositoryTest {
     @DisplayName("DB에 존재하는 역할과 일치하는지 확인한다.")
     @Test
     void hasSameRoleWithDB() {
-        List<Role> roles = roleRepository.findAll()
+        List<Role> enumRoles = Arrays.stream(RoleType.values())
+                .map(Role::from)
+                .toList();
+
+        List<Role> dbRoles = roleRepository.findAll()
                 .stream()
                 .sorted(Comparator.comparingLong(Role::getId))
                 .toList();
-        RoleType[] roleTypes = RoleType.values();
 
-        assertThat(roles.size()).isEqualTo(roleTypes.length);
-
-        for (int i = 0; i < roles.size(); i++) {
-            assertThat(roles.get(i).getId()).isEqualTo(roleTypes[i].getId());
-            assertThat(roles.get(i).getRoleType()).isEqualTo(roleTypes[i]);
-        }
+        assertThat(enumRoles).isEqualTo(dbRoles);
     }
 }
