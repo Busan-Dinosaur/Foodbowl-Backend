@@ -45,18 +45,18 @@ public class Member extends BaseEntity {
     @Column(name = "nickname", nullable = false, length = 45)
     private String nickname;
 
-    @Column(name = "introduce", length = 255)
-    private String introduce;
+    @Column(name = "introduction", length = 255)
+    private String introduction;
 
     @Builder
     private Member(
-            Thumbnail thumbnail, String socialType, String socialId, String email, String nickname, String introduce
+            Thumbnail thumbnail, String socialType, String socialId, String email, String nickname, String introduction
     ) {
         this.thumbnail = thumbnail;
         this.socialType = socialType;
         this.socialId = socialId;
         this.email = email;
         this.nickname = nickname;
-        this.introduce = introduce;
+        this.introduction = introduction;
     }
 }
