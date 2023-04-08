@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.member.dao;
+package org.dinosaur.foodbowl.domain.member.repository;
 
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.springframework.data.repository.Repository;

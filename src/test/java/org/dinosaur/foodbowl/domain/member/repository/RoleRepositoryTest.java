@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.member.dao;
+package org.dinosaur.foodbowl.domain.member.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

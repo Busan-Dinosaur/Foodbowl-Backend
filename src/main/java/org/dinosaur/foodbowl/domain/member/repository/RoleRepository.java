@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.member.dao;
+package org.dinosaur.foodbowl.domain.member.repository;
 
 import java.util.List;
 import org.dinosaur.foodbowl.domain.member.entity.Role;
