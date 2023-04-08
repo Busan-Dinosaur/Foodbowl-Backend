@@ -2,6 +2,8 @@ package org.dinosaur.foodbowl.domain.member.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -33,8 +35,9 @@ public class Member extends BaseEntity {
     @JoinColumn(name = "thumbnail_id")
     private Thumbnail thumbnail;
 
+    @Enumerated(value = EnumType.STRING)
     @Column(name = "social_type", nullable = false, updatable = false, length = 45)
-    private String socialType;
+    private SocialType socialType;
 
     @Column(name = "social_id", nullable = false, updatable = false, length = 512)
     private String socialId;
@@ -50,7 +53,12 @@ public class Member extends BaseEntity {
 
     @Builder
     private Member(
-            Thumbnail thumbnail, String socialType, String socialId, String email, String nickname, String introduction
+            Thumbnail thumbnail,
+            SocialType socialType,
+            String socialId,
+            String email,
+            String nickname,
+            String introduction
     ) {
         this.thumbnail = thumbnail;
         this.socialType = socialType;
@@ -58,5 +66,10 @@ public class Member extends BaseEntity {
         this.email = email;
         this.nickname = nickname;
         this.introduction = introduction;
+    }
+
+    public enum SocialType {
+
+        APPLE;
     }
 }
