@@ -33,7 +33,7 @@ public class Photo extends BaseEntity {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    @Column(name = "path", nullable = false)
+    @Column(name = "path", nullable = false, length = 512)
     private String path;
 
     @Builder
