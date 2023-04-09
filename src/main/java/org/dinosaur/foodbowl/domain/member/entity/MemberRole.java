@@ -19,7 +19,7 @@ import org.dinosaur.foodbowl.global.entity.BaseEntity;
 @Getter
 @Entity
 @Table(name = "member_role")
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberRole extends BaseEntity {
 
