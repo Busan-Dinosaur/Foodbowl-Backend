@@ -1,13 +1,10 @@
-package org.dinosaur.foodbowl.domain.member.entity;
+package org.dinosaur.foodbowl.domain.photo.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -18,27 +15,29 @@ import org.dinosaur.foodbowl.global.entity.BaseEntity;
 
 @Getter
 @Entity
-@Table(name = "member_role")
+@Table(name = "thumbnail")
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberRole extends BaseEntity {
+public class Thumbnail extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+    @Column(name = "path", nullable = false, length = 512)
+    private String path;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id", nullable = false)
-    private Role role;
+    @Column(name = "width", nullable = false)
+    private Integer width;
+
+    @Column(name = "height", nullable = false)
+    private Integer height;
 
     @Builder
-    private MemberRole(Member member, Role role) {
-        this.member = member;
-        this.role = role;
+    private Thumbnail(String path, Integer width, Integer height) {
+        this.path = path;
+        this.width = width;
+        this.height = height;
     }
 }

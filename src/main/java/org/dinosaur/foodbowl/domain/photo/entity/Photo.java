@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.member.entity;
+package org.dinosaur.foodbowl.domain.photo.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,14 +14,15 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.dinosaur.foodbowl.domain.post.entity.Post;
 import org.dinosaur.foodbowl.global.entity.BaseEntity;
 
 @Getter
 @Entity
-@Table(name = "member_role")
+@Table(name = "photo")
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberRole extends BaseEntity {
+public class Photo extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,16 +30,15 @@ public class MemberRole extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id", nullable = false)
-    private Role role;
+    @Column(name = "path", nullable = false, length = 512)
+    private String path;
 
     @Builder
-    private MemberRole(Member member, Role role) {
-        this.member = member;
-        this.role = role;
+    private Photo(Post post, String path) {
+        this.post = post;
+        this.path = path;
     }
 }
