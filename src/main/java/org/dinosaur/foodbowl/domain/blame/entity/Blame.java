@@ -45,7 +45,6 @@ public class Blame extends BaseEntity {
 
         MEMBER,
         POST,
-        COMMENT,
-        ;
+        COMMENT
     }
 }
