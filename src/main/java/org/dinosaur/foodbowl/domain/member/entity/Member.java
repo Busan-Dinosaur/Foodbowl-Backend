@@ -1,21 +1,7 @@
 package org.dinosaur.foodbowl.domain.member.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 import org.dinosaur.foodbowl.domain.photo.entity.Thumbnail;
 import org.dinosaur.foodbowl.global.entity.BaseEntity;
 
@@ -51,6 +37,12 @@ public class Member extends BaseEntity {
     @Column(name = "introduction", length = 255)
     private String introduction;
 
+    @Column(name = "region_1depth_name", length = 45)
+    private String region1depthName;
+
+    @Column(name = "region_2depth_name", length = 45)
+    private String region2depthName;
+
     @Builder
     private Member(
             Thumbnail thumbnail,
@@ -58,7 +50,9 @@ public class Member extends BaseEntity {
             String socialId,
             String email,
             String nickname,
-            String introduction
+            String introduction,
+            String region1depthName,
+            String region2depthName
     ) {
         this.thumbnail = thumbnail;
         this.socialType = socialType;
@@ -66,6 +60,8 @@ public class Member extends BaseEntity {
         this.email = email;
         this.nickname = nickname;
         this.introduction = introduction;
+        this.region1depthName = region1depthName;
+        this.region2depthName = region2depthName;
     }
 
     public enum SocialType {
