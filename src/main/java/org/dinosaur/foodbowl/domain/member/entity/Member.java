@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.domain.member.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.dinosaur.foodbowl.domain.photo.entity.Thumbnail;
 import org.dinosaur.foodbowl.global.entity.BaseEntity;
@@ -14,7 +15,7 @@ public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, updatable = false)
+    @Column(name = "id", updatable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -22,16 +23,19 @@ public class Member extends BaseEntity {
     private Thumbnail thumbnail;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "social_type", nullable = false, updatable = false, length = 45)
+    @NotNull
+    @Column(name = "social_type", updatable = false, length = 45)
     private SocialType socialType;
 
-    @Column(name = "social_id", nullable = false, updatable = false, length = 512)
+    @NotNull
+    @Column(name = "social_id", updatable = false, length = 512)
     private String socialId;
 
     @Column(name = "email", length = 255)
     private String email;
 
-    @Column(name = "nickname", nullable = false, length = 45)
+    @NotNull
+    @Column(name = "nickname", length = 45)
     private String nickname;
 
     @Column(name = "introduction", length = 255)
