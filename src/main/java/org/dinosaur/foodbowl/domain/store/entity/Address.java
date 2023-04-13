@@ -44,6 +44,10 @@ public class Address {
     private String buildingName;
 
     @NotNull
+    @Column(name = "zone_no", length = 45)
+    private String zoneNo;
+
+    @NotNull
     @Column(name = "x")
     private Double longitude;
 
@@ -61,6 +65,7 @@ public class Address {
                     String mainBuildingNo,
                     String subBuildingNo,
                     String buildingName,
+                    String zoneNo,
                     Double longitude,
                     Double latitude) {
         this.addressName = addressName;
@@ -72,6 +77,7 @@ public class Address {
         this.undergroundYN = undergroundYN;
         this.subBuildingNo = subBuildingNo;
         this.buildingName = buildingName;
+        this.zoneNo = zoneNo;
         this.longitude = longitude;
         this.latitude = latitude;
     }

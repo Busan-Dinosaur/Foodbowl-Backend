@@ -21,6 +21,7 @@ class AddressTest {
                 .subBuildingNo("14층 1400호")
                 .undergroundYN("N")
                 .buildingName("루터회관")
+                .zoneNo("12345")
                 .latitude(37.12567)
                 .longitude(127.3437575)
                 .build();
