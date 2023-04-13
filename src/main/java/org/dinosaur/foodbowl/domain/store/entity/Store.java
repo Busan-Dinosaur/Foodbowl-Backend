@@ -23,12 +23,12 @@ public class Store extends BaseEntity {
     @Embedded
     private Address address;
 
-    @Column(name = "store_name", length = 100)
-    private String name;
+    @Column(name = "store_name", length = 100, nullable = false)
+    private String storeName;
 
     @Builder
-    private Store(Address address, String name) {
+    private Store(Address address, String storeName) {
         this.address = address;
-        this.name = name;
+        this.storeName = storeName;
     }
 }
