@@ -1,16 +1,8 @@
 package org.dinosaur.foodbowl.domain.photo.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 import org.dinosaur.foodbowl.global.entity.BaseEntity;
 
 @Getter
@@ -22,16 +14,19 @@ public class Thumbnail extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, updatable = false)
+    @Column(name = "id", updatable = false)
     private Long id;
 
-    @Column(name = "path", nullable = false, length = 512)
+    @NotNull
+    @Column(name = "path", length = 512)
     private String path;
 
-    @Column(name = "width", nullable = false)
+    @NotNull
+    @Column(name = "width")
     private Integer width;
 
-    @Column(name = "height", nullable = false)
+    @NotNull
+    @Column(name = "height")
     private Integer height;
 
     @Builder
