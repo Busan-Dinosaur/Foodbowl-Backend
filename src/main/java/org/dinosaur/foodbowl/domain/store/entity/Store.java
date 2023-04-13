@@ -1,6 +1,8 @@
 package org.dinosaur.foodbowl.domain.store.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -17,13 +19,15 @@ public class Store extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, updatable = false)
+    @Column(name = "id", updatable = false)
     private Long id;
 
+    @Valid
     @Embedded
     private Address address;
 
-    @Column(name = "store_name", length = 100, nullable = false)
+    @NotNull
+    @Column(name = "store_name", length = 100)
     private String storeName;
 
     @Builder

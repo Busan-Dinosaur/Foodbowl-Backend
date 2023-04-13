@@ -3,6 +3,7 @@ package org.dinosaur.foodbowl.domain.store.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,15 +19,15 @@ public class Address {
 
     @NotNull
     @Column(name = "region_1depth_name", length = 45)
-    private String region1DepthName;
+    private String region1depthName;
 
     @NotNull
     @Column(name = "region_2depth_name", length = 45)
-    private String region2DepthName;
+    private String region2depthName;
 
     @NotNull
     @Column(name = "region_3depth_name", length = 45)
-    private String region3DepthName;
+    private String region3depthName;
 
     @Column(name = "road_name", length = 45)
     private String roadName;
@@ -43,43 +44,41 @@ public class Address {
     @Column(name = "building_name", length = 45)
     private String buildingName;
 
-    @NotNull
     @Column(name = "zone_no", length = 45)
     private String zoneNo;
 
     @NotNull
     @Column(name = "x")
-    private Double longitude;
+    private BigDecimal x;
 
     @NotNull
     @Column(name = "y")
-    private Double latitude;
+    private BigDecimal y;
 
     @Builder
     private Address(String addressName,
-                    String region1DepthName,
-                    String region2DepthName,
-                    String region3DepthName,
+                    String region1depthName,
+                    String region2depthName,
+                    String region3depthName,
                     String roadName,
                     String undergroundYN,
                     String mainBuildingNo,
                     String subBuildingNo,
                     String buildingName,
                     String zoneNo,
-                    Double longitude,
-                    Double latitude) {
+                    BigDecimal x,
+                    BigDecimal y) {
         this.addressName = addressName;
-        this.region1DepthName = region1DepthName;
-        this.region2DepthName = region2DepthName;
-        this.region3DepthName = region3DepthName;
+        this.region1depthName = region1depthName;
+        this.region2depthName = region2depthName;
+        this.region3depthName = region3depthName;
         this.mainBuildingNo = mainBuildingNo;
         this.roadName = roadName;
         this.undergroundYN = undergroundYN;
         this.subBuildingNo = subBuildingNo;
         this.buildingName = buildingName;
         this.zoneNo = zoneNo;
-        this.longitude = longitude;
-        this.latitude = latitude;
+        this.x = x;
+        this.y = y;
     }
-
 }
