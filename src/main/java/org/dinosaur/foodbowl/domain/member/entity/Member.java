@@ -70,6 +70,6 @@ public class Member extends BaseEntity {
 
     public enum SocialType {
 
-        APPLE;
+        APPLE
     }
 }

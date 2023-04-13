@@ -36,8 +36,7 @@ public class Role {
     public enum RoleType {
 
         ROLE_회원(1L),
-        ROLE_관리자(2L),
-        ;
+        ROLE_관리자(2L);
 
         private final Long id;
 
