@@ -8,7 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -23,6 +22,7 @@ import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.photo.entity.Thumbnail;
 import org.dinosaur.foodbowl.domain.store.entity.Store;
 import org.dinosaur.foodbowl.global.entity.BaseEntity;
+import org.springframework.data.annotation.LastModifiedDate;
 
 @Getter
 @Entity
@@ -52,11 +52,11 @@ public class Post extends BaseEntity {
     private Store store;
 
     @NotNull
-    @Lob
-    @Column(name = "content")
+    @Column(name = "content", length = 2000)
     private String content;
 
     @NotNull
+    @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
@@ -66,6 +66,5 @@ public class Post extends BaseEntity {
         this.thumbnail = thumbnail;
         this.store = store;
         this.content = content;
-        this.updatedAt = LocalDateTime.now();
     }
 }
