@@ -42,7 +42,7 @@ public class Bookmark extends BaseEntity {
     private Post post;
 
     @Builder
-    public Bookmark(Member member, Post post) {
+    private Bookmark(Member member, Post post) {
         this.member = member;
         this.post = post;
     }
