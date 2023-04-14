@@ -25,7 +25,7 @@ class CategoryTest extends RepositoryTest {
                 .map(Category::from)
                 .collect(Collectors.toList());
 
-        List<Category> dbCategories = categoryRepository.findAll();
+        List<Category> dbCategories = categoryRepository.findAllByOrderById();
 
         assertThat(dbCategories).isEqualTo(categories);
     }
