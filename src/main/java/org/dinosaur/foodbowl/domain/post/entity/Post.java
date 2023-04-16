@@ -52,7 +52,7 @@ public class Post extends BaseEntity {
     private Store store;
 
     @NotNull
-    @Column(name = "content", length = 2000)
+    @Column(name = "content", length = 4000)
     private String content;
 
     @NotNull
