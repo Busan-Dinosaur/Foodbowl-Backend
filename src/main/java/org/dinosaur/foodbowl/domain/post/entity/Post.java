@@ -52,11 +52,11 @@ public class Post extends BaseEntity {
     private Store store;
 
     @NotNull
-    @Column(name = "content", length = 4000)
+    @Column(name = "content", length = 2000)
     private String content;
 
-    @NotNull
     @LastModifiedDate
+    @NotNull
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
