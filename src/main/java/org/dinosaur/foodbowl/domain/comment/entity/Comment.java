@@ -53,8 +53,8 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Column(name = "message", length = 255)
     @NotNull
+    @Column(name = "message", length = 255)
     private String message;
 
     @LastModifiedDate
