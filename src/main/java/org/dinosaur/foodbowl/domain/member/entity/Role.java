@@ -1,13 +1,7 @@
 package org.dinosaur.foodbowl.domain.member.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -22,11 +16,12 @@ public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, updatable = false)
+    @Column(name = "id", updatable = false)
     private Long id;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "name", nullable = false, updatable = false, unique = true, length = 45)
+    @NotNull
+    @Column(name = "name", updatable = false, unique = true, length = 45)
     private RoleType roleType;
 
     private Role(Long id, RoleType roleType) {
@@ -41,8 +36,7 @@ public class Role {
     public enum RoleType {
 
         ROLE_회원(1L),
-        ROLE_관리자(2L),
-        ;
+        ROLE_관리자(2L);
 
         private final Long id;
 

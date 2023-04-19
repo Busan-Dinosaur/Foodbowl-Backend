@@ -1,6 +1,5 @@
-package org.dinosaur.foodbowl.domain.post.entity;
+package org.dinosaur.foodbowl.domain.bookmark.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,28 +8,23 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDateTime;
-
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
-import org.dinosaur.foodbowl.domain.photo.entity.Thumbnail;
-import org.dinosaur.foodbowl.domain.store.entity.Store;
+import org.dinosaur.foodbowl.domain.post.entity.Post;
 import org.dinosaur.foodbowl.global.entity.BaseEntity;
-import org.springframework.data.annotation.LastModifiedDate;
 
 @Getter
 @Entity
-@Table(name = "post")
+@Table(name = "bookmark")
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Post extends BaseEntity {
+public class Bookmark extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,30 +36,14 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @NotNull
-    @JoinColumn(name = "thumbnail_id")
-    private Thumbnail thumbnail;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
-    @JoinColumn(name = "store_id")
-    private Store store;
-
-    @NotNull
-    @Column(name = "content", length = 2000)
-    private String content;
-
-    @LastModifiedDate
-    @NotNull
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @JoinColumn(name = "post_id")
+    private Post post;
 
     @Builder
-    private Post(Member member, Thumbnail thumbnail, Store store, String content) {
+    private Bookmark(Member member, Post post) {
         this.member = member;
-        this.thumbnail = thumbnail;
-        this.store = store;
-        this.content = content;
+        this.post = post;
     }
 }
