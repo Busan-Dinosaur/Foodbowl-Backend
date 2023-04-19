@@ -12,6 +12,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -40,8 +41,7 @@ public class Comment extends BaseEntity {
     private Comment parent;
 
     @OneToMany(mappedBy = "parent")
-    @NotNull
-    private List<Comment> children;
+    private List<Comment> children = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
@@ -63,8 +63,8 @@ public class Comment extends BaseEntity {
     private LocalDateTime updatedAt;
 
     @Builder
-    private Comment(Comment comment, Post post, Member member, String message) {
-        this.parent = comment;
+    private Comment(Comment parent, Post post, Member member, String message) {
+        this.parent = parent;
         this.post = post;
         this.member = member;
         this.message = message;
