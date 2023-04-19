@@ -3,19 +3,15 @@ package org.dinosaur.foodbowl.domain.store.entity;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.dinosaur.foodbowl.global.entity.BaseEntity;
+import lombok.*;
+import org.dinosaur.foodbowl.global.entity.CreatedBaseEntity;
 
 @Getter
 @Entity
 @Table(name = "store")
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Store extends BaseEntity {
+public class Store extends CreatedBaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
