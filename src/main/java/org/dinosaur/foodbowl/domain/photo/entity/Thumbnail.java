@@ -3,14 +3,14 @@ package org.dinosaur.foodbowl.domain.photo.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.dinosaur.foodbowl.global.entity.BaseEntity;
+import org.dinosaur.foodbowl.global.entity.CreatedBaseEntity;
 
 @Getter
 @Entity
 @Table(name = "thumbnail")
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Thumbnail extends BaseEntity {
+public class Thumbnail extends CreatedBaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

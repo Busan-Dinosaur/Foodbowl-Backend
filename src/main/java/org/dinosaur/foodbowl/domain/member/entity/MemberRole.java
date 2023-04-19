@@ -3,14 +3,14 @@ package org.dinosaur.foodbowl.domain.member.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.dinosaur.foodbowl.global.entity.BaseEntity;
+import org.dinosaur.foodbowl.global.entity.CreatedBaseEntity;
 
 @Getter
 @Entity
 @Table(name = "member_role")
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberRole extends BaseEntity {
+public class MemberRole extends CreatedBaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
