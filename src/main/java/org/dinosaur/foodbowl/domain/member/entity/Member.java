@@ -4,14 +4,14 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.dinosaur.foodbowl.domain.photo.entity.Thumbnail;
-import org.dinosaur.foodbowl.global.entity.UpdatedBaseEntity;
+import org.dinosaur.foodbowl.global.entity.AuditingEntity;
 
 @Getter
 @Entity
 @Table(name = "member")
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member extends UpdatedBaseEntity {
+public class Member extends AuditingEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

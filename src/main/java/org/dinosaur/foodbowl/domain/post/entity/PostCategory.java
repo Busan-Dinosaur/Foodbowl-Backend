@@ -3,14 +3,14 @@ package org.dinosaur.foodbowl.domain.post.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.dinosaur.foodbowl.global.entity.CreatedBaseEntity;
+import org.dinosaur.foodbowl.global.entity.AuditingEntity;
 
 @Getter
 @Entity
 @Table(name = "post_category")
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostCategory extends CreatedBaseEntity {
+public class PostCategory extends AuditingEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
