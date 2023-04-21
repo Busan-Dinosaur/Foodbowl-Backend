@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CreatedBaseEntityTest extends RepositoryTest {
+class AuditingEntityTest extends RepositoryTest {
 
     @Autowired
     private MemberRepository memberRepository;
