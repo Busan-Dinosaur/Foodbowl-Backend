@@ -29,7 +29,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests()
                 .requestMatchers("/docs/**", "/api/v1/health-check").permitAll()
-                .anyRequest().hasRole("ROLE_회원")
+                .anyRequest().hasRole("회원")
                 .and()
                 .httpBasic().disable()
                 .csrf().disable()
