@@ -1,23 +1,38 @@
 package org.dinosaur.foodbowl;
 
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-
+import org.dinosaur.foodbowl.global.config.security.CustomAccessDeniedHandler;
+import org.dinosaur.foodbowl.global.config.security.CustomAuthenticationEntryPoint;
 import org.dinosaur.foodbowl.global.config.security.SecurityConfig;
+import org.dinosaur.foodbowl.global.config.security.jwt.JwtAuthenticationFilter;
+import org.dinosaur.foodbowl.global.config.security.jwt.JwtAuthorizationExtractor;
+import org.dinosaur.foodbowl.global.config.security.jwt.JwtExceptionFilter;
+import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-@Import(SecurityConfig.class)
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+
+@Import(value = {
+        JwtTokenProvider.class,
+        JwtAuthorizationExtractor.class,
+        JwtAuthenticationFilter.class,
+        JwtExceptionFilter.class,
+        CustomAccessDeniedHandler.class,
+        CustomAuthenticationEntryPoint.class
+})
+@ContextConfiguration(classes = SecurityConfig.class)
 @ExtendWith({SpringExtension.class, RestDocumentationExtension.class})
 public class MockApiTest {
 
