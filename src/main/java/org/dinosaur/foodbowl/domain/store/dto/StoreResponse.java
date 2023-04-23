@@ -1,14 +1,13 @@
 package org.dinosaur.foodbowl.domain.store.dto;
 
 import java.math.BigDecimal;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.dinosaur.foodbowl.domain.store.entity.Address;
 import org.dinosaur.foodbowl.domain.store.entity.Store;
 
 @Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class StoreResponse {
 
     private Long id;
