@@ -1,12 +1,12 @@
 package org.dinosaur.foodbowl.domain.health_check.application;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.dinosaur.foodbowl.IntegrationTest;
 import org.dinosaur.foodbowl.domain.health_check.dto.HealthCheckDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class HealthCheckServiceTest extends IntegrationTest {
 
