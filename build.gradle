@@ -32,6 +32,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation platform("org.springframework.cloud:spring-cloud-dependencies:2022.0.2")
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 
