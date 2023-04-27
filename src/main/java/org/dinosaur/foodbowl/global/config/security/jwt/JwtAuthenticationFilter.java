@@ -25,7 +25,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         Optional<String> accessToken = jwtAuthorizationExtractor.extractAccessToken(request);
 
         if (accessToken.isPresent()) {
-            Optional<Authentication> authentication = jwtTokenProvider.getAuthentication(accessToken.get());
+            Optional<Authentication> authentication = jwtTokenProvider.generateAuth(accessToken.get());
             authentication.ifPresent(auth -> SecurityContextHolder.getContext().setAuthentication(auth));
         }
 
