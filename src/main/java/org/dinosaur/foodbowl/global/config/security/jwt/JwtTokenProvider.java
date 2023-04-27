@@ -72,7 +72,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public Optional<String> getSubject(String token) {
+    public Optional<String> extractSubject(String token) {
         JwtTokenValid jwtTokenValid = validateToken(token);
 
         if (jwtTokenValid.isValid()) {
@@ -82,7 +82,7 @@ public class JwtTokenProvider {
         return Optional.empty();
     }
 
-    public Optional<Authentication> getAuthentication(String token) {
+    public Optional<Authentication> generateAuth(String token) {
         JwtTokenValid jwtTokenValid = validateToken(token);
 
         if (jwtTokenValid.isValid()) {

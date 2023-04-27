@@ -23,7 +23,7 @@ class JwtTokenProviderTest extends IntegrationTest {
     void createAccessToken() {
         String accessToken = jwtTokenProvider.createAccessToken(1L, ROLE_회원);
 
-        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken).get();
+        Authentication authentication = jwtTokenProvider.generateAuth(accessToken).get();
         List<String> roleNames = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList();
@@ -36,7 +36,7 @@ class JwtTokenProviderTest extends IntegrationTest {
     void createRefreshToken() {
         String refreshToken = jwtTokenProvider.createRefreshToken(1L);
 
-        String id = jwtTokenProvider.getSubject(refreshToken).get();
+        String id = jwtTokenProvider.extractSubject(refreshToken).get();
 
         assertThat(id).isEqualTo("1");
     }
@@ -46,7 +46,7 @@ class JwtTokenProviderTest extends IntegrationTest {
     void getAuthenticationByInvalidToken() {
         String accessToken = "invalid-token";
 
-        Optional<Authentication> authentication = jwtTokenProvider.getAuthentication(accessToken);
+        Optional<Authentication> authentication = jwtTokenProvider.generateAuth(accessToken);
 
         assertThat(authentication).isEmpty();
     }
@@ -56,7 +56,7 @@ class JwtTokenProviderTest extends IntegrationTest {
     void getSubjectByInvalidToken() {
         String accessToken = "invalid-token";
 
-        Optional<String> subject = jwtTokenProvider.getSubject(accessToken);
+        Optional<String> subject = jwtTokenProvider.extractSubject(accessToken);
 
         assertThat(subject).isEmpty();
     }
@@ -71,7 +71,7 @@ class JwtTokenProviderTest extends IntegrationTest {
         );
         String accessToken = expiredJwtTokenProvider.createAccessToken(1L, ROLE_회원);
 
-        Optional<Authentication> authentication = jwtTokenProvider.getAuthentication(accessToken);
+        Optional<Authentication> authentication = jwtTokenProvider.generateAuth(accessToken);
 
         assertThat(authentication).isEmpty();
     }
@@ -86,7 +86,7 @@ class JwtTokenProviderTest extends IntegrationTest {
         );
         String accessToken = expiredJwtTokenProvider.createAccessToken(1L, ROLE_회원);
 
-        Optional<String> subject = jwtTokenProvider.getSubject(accessToken);
+        Optional<String> subject = jwtTokenProvider.extractSubject(accessToken);
 
         assertThat(subject).isEmpty();
     }
@@ -101,7 +101,7 @@ class JwtTokenProviderTest extends IntegrationTest {
         );
         String accessToken = invalidJwtTokenProvider.createAccessToken(1L, ROLE_회원);
 
-        Optional<Authentication> authentication = jwtTokenProvider.getAuthentication(accessToken);
+        Optional<Authentication> authentication = jwtTokenProvider.generateAuth(accessToken);
 
         assertThat(authentication).isEmpty();
     }
@@ -116,7 +116,7 @@ class JwtTokenProviderTest extends IntegrationTest {
         );
         String accessToken = invalidJwtTokenProvider.createAccessToken(1L, ROLE_회원);
 
-        Optional<String> subject = jwtTokenProvider.getSubject(accessToken);
+        Optional<String> subject = jwtTokenProvider.extractSubject(accessToken);
 
         assertThat(subject).isEmpty();
     }
