@@ -27,7 +27,6 @@ class HealthCheckControllerTest extends MockApiTest {
 
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
