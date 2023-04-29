@@ -1,5 +1,6 @@
 package org.dinosaur.foodbowl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.dinosaur.foodbowl.global.config.security.CustomAccessDeniedHandler;
 import org.dinosaur.foodbowl.global.config.security.CustomAuthenticationEntryPoint;
 import org.dinosaur.foodbowl.global.config.security.SecurityConfig;
@@ -28,11 +29,12 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
         JwtAuthorizationExtractor.class,
         JwtAuthenticationFilter.class,
         CustomAccessDeniedHandler.class,
-        CustomAuthenticationEntryPoint.class
+        CustomAuthenticationEntryPoint.class,
 })
 @ExtendWith({SpringExtension.class, RestDocumentationExtension.class})
 public class MockApiTest {
 
+    protected ObjectMapper objectMapper = new ObjectMapper();
     protected MockMvc mockMvc;
 
     @BeforeEach
