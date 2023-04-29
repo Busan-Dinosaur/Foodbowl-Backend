@@ -2,9 +2,9 @@ package org.dinosaur.foodbowl.domain.auth.application;
 
 import org.dinosaur.foodbowl.IntegrationTest;
 import org.dinosaur.foodbowl.domain.auth.apple.AppleOAuthUserProvider;
+import org.dinosaur.foodbowl.domain.auth.dto.FoodbowlTokenDto;
 import org.dinosaur.foodbowl.domain.auth.dto.request.AppleLoginRequestDto;
 import org.dinosaur.foodbowl.domain.auth.dto.response.ApplePlatformUserResponseDto;
-import org.dinosaur.foodbowl.domain.auth.dto.response.AppleTokenResponseDto;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRepository;
 import org.dinosaur.foodbowl.global.exception.FoodbowlException;
@@ -13,9 +13,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
@@ -25,6 +27,8 @@ class AuthServiceTest extends IntegrationTest {
     private AuthService authService;
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     @MockBean
     private AppleOAuthUserProvider appleOAuthUserProvider;
@@ -50,9 +54,14 @@ class AuthServiceTest extends IntegrationTest {
 
             given(appleOAuthUserProvider.extractApplePlatformUser(anyString())).willReturn(applePlatformUserResponseDto);
 
-            AppleTokenResponseDto result = authService.appleLogin(appleLoginRequestDto);
+            FoodbowlTokenDto result = authService.appleLogin(appleLoginRequestDto);
 
-            assertThat(result).isNotNull();
+            assertAll(
+                    () -> assertThat(result.getAccessToken()).isNotNull(),
+                    () -> assertThat(result.getRefreshToken()).isNotNull()
+            );
+
+            redisTemplate.delete(String.valueOf(member.getId()));
         }
 
         @Test

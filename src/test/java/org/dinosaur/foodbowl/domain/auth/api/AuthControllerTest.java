@@ -2,8 +2,8 @@ package org.dinosaur.foodbowl.domain.auth.api;
 
 import org.dinosaur.foodbowl.MockApiTest;
 import org.dinosaur.foodbowl.domain.auth.application.AuthService;
+import org.dinosaur.foodbowl.domain.auth.dto.FoodbowlTokenDto;
 import org.dinosaur.foodbowl.domain.auth.dto.request.AppleLoginRequestDto;
-import org.dinosaur.foodbowl.domain.auth.dto.response.AppleTokenResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -34,13 +34,13 @@ class AuthControllerTest extends MockApiTest {
         @DisplayName("유효한 애플 토큰 값을 요청 받으면 Foodbowl 토큰을 응답한다.")
         void appleLogin() throws Exception {
             AppleLoginRequestDto appleLoginRequestDto = new AppleLoginRequestDto("AppleToken");
-            AppleTokenResponseDto appleTokenResponseDto = new AppleTokenResponseDto("FoodbowlToken");
+            FoodbowlTokenDto foodbowlTokenDto = new FoodbowlTokenDto("AccessToken", "RefreshToken");
 
-            given(authService.appleLogin(any())).willReturn(appleTokenResponseDto);
+            given(authService.appleLogin(any())).willReturn(foodbowlTokenDto);
 
             appleLoginApi(appleLoginRequestDto)
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.accessToken").value("FoodbowlToken"));
+                    .andExpect(jsonPath("$.accessToken").value("AccessToken"));
         }
 
         @Test

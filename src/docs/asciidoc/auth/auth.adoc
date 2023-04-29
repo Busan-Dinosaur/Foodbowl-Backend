@@ -34,3 +34,7 @@ include::{snippets}/api-v1-apple-login/http-response.adoc[]
 === Response Fields
 
 include::{snippets}/api-v1-apple-login/response-fields.adoc[]
+
+=== Response Cookies
+
+include::{snippets}/api-v1-apple-login/response-cookies.adoc[]

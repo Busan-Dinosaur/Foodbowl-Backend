@@ -114,4 +114,8 @@ public class JwtTokenProvider {
         }
         return new JwtTokenValid(false, errorStatus.getMessage(), errorStatus.getCode());
     }
+
+    public long getValidRefreshMilliSecond() {
+        return validRefreshMilliSecond;
+    }
 }
