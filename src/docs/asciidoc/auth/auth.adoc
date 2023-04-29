@@ -1,0 +1,36 @@
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+= USER API 문서
+:icons: font
+:source-highlighter: highlight.js
+:toc: left
+:toclevels: 1
+:sectlinks:
+
+== API 목록
+
+link:../foodbowl.html[API 목록으로 돌아가기]
+
+== *애플 로그인* ==
+
+=== 요청
+
+=== Request
+
+include::{snippets}/api-v1-apple-login/http-request.adoc[]
+
+=== Request Fields
+
+include::{snippets}/api-v1-apple-login/request-fields.adoc[]
+
+== 응답
+
+=== Response
+
+include::{snippets}/api-v1-apple-login/http-response.adoc[]
+
+=== Response Fields
+
+include::{snippets}/api-v1-apple-login/response-fields.adoc[]
