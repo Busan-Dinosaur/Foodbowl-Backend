@@ -28,13 +28,10 @@ class AppleOAuthUserProviderTest extends IntegrationTest {
 
     @MockBean
     private AppleJwtParser appleJwtParser;
-
     @MockBean
     private AppleClient appleClient;
-
     @MockBean
     private PublicKeyGenerator publicKeyGenerator;
-
     @MockBean
     private AppleClaimsValidator appleClaimsValidator;
 
