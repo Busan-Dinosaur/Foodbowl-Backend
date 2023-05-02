@@ -49,7 +49,7 @@ public class AuthControllerDocsTest extends MockApiTest {
                 fieldWithPath("accessToken").description("서버에서 발급한 엑세스 토큰")
         };
 
-        mockMvc.perform(post("/api/v1/apple/login")
+        mockMvc.perform(post("/api/v1/auth/apple/login")
                         .content(objectMapper.writeValueAsString(appleLoginRequestDto))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(print())
