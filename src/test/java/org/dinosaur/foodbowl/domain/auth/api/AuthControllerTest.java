@@ -55,7 +55,7 @@ class AuthControllerTest extends MockApiTest {
         }
 
         private ResultActions appleLoginApi(AppleLoginRequestDto request) throws Exception {
-            return mockMvc.perform(post("/api/v1/apple/login")
+            return mockMvc.perform(post("/api/v1/auth/apple/login")
                             .content(objectMapper.writeValueAsString(request))
                             .contentType(MediaType.APPLICATION_JSON_VALUE))
                     .andDo(print());
