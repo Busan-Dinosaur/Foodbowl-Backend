@@ -5,6 +5,7 @@ import org.dinosaur.foodbowl.domain.auth.apple.AppleOAuthUserProvider;
 import org.dinosaur.foodbowl.domain.auth.dto.FoodbowlTokenDto;
 import org.dinosaur.foodbowl.domain.auth.dto.request.AppleLoginRequestDto;
 import org.dinosaur.foodbowl.domain.auth.dto.response.ApplePlatformUserResponseDto;
+import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRepository;
 import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.global.exception.FoodbowlException;
@@ -31,14 +32,17 @@ public class AuthService {
                 appleOAuthUserProvider.extractApplePlatformUser(appleLoginRequestDto.getAppleToken());
         String socialId = applePlatformUserResponseDto.getSocialId();
 
-        return memberRepository.findBySocialTypeAndSocialId(SocialType.APPLE, socialId)
-                .map(member -> {
-                    String accessToken = jwtTokenProvider.createAccessToken(member.getId(), RoleType.ROLE_회원);
-                    String refreshToken = jwtTokenProvider.createRefreshToken(member.getId());
-                    registerRefreshToken(member.getId(), refreshToken);
-                    return new FoodbowlTokenDto(accessToken, refreshToken);
-                })
+        final Member member = memberRepository.findBySocialTypeAndSocialId(SocialType.APPLE, socialId)
                 .orElseThrow(() -> new FoodbowlException(APPLE_NOT_REGISTER));
+
+        return generateFoodbowlToken(member);
+    }
+
+    private FoodbowlTokenDto generateFoodbowlToken(Member member) {
+        String accessToken = jwtTokenProvider.createAccessToken(member.getId(), RoleType.ROLE_회원);
+        String refreshToken = jwtTokenProvider.createRefreshToken(member.getId());
+        registerRefreshToken(member.getId(), refreshToken);
+        return new FoodbowlTokenDto(accessToken, refreshToken);
     }
 
     private void registerRefreshToken(Long memberId, String refreshToken) {
