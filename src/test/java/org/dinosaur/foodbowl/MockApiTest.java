@@ -1,6 +1,12 @@
 package org.dinosaur.foodbowl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.dinosaur.foodbowl.global.config.security.CustomAccessDeniedHandler;
+import org.dinosaur.foodbowl.global.config.security.CustomAuthenticationEntryPoint;
 import org.dinosaur.foodbowl.global.config.security.SecurityConfig;
+import org.dinosaur.foodbowl.global.config.security.jwt.JwtAuthenticationFilter;
+import org.dinosaur.foodbowl.global.config.security.jwt.JwtAuthorizationExtractor;
+import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.context.annotation.Import;
@@ -17,10 +23,18 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.mo
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
-@Import(SecurityConfig.class)
+@Import(value = {
+        SecurityConfig.class,
+        JwtTokenProvider.class,
+        JwtAuthorizationExtractor.class,
+        JwtAuthenticationFilter.class,
+        CustomAccessDeniedHandler.class,
+        CustomAuthenticationEntryPoint.class,
+})
 @ExtendWith({SpringExtension.class, RestDocumentationExtension.class})
 public class MockApiTest {
 
+    protected ObjectMapper objectMapper = new ObjectMapper();
     protected MockMvc mockMvc;
 
     @BeforeEach
