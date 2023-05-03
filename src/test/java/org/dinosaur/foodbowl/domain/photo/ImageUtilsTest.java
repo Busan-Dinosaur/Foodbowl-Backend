@@ -1,0 +1,82 @@
+package org.dinosaur.foodbowl.domain.photo;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
+
+@SpringBootTest
+class ImageUtilsTest {
+
+    private final List<String> trash = new LinkedList<>();
+
+    @Autowired
+    private ImageUtils imageUtils;
+    private MockMultipartFile testImage;
+
+    @BeforeEach
+    void init() throws IOException {
+        final String fileName = "testImage";
+        final String contentType = "jpg";
+        final String savedPath = "src/test/resources/test_image/testImage.jpg";
+
+        FileInputStream fileInputStream = new FileInputStream(savedPath);
+
+        testImage = new MockMultipartFile(
+            "images",
+            fileName + "." + contentType,
+            contentType,
+            fileInputStream
+        );
+    }
+
+    @AfterEach
+    void deleteFiles() {
+        imageUtils.deleteImageFiles(trash);
+    }
+
+    @Test
+    @DisplayName("이미지 파일을 저장하면 \"지정 경로 + UUID + 확장자\"를 반환한다")
+    void storeImageFile() throws IOException {
+        String path = imageUtils.storeImageFile(ImageType.PHOTO, testImage);
+        trash.add(path);
+
+        assertThat(path).isNotNull();
+    }
+
+    @Test
+    @DisplayName("이미지 파일 여러개를 저장하면 \"지정 경로 + UUID + 확장자\"를 가진 List를 반환한다")
+    void storeImageFiles() throws IOException {
+        int imageFileCount = 2;
+        List<MultipartFile> testImageFiles = new ArrayList<>(imageFileCount);
+        for (int i = 0; i < imageFileCount; i++) {
+            testImageFiles.add(testImage);
+        }
+
+        List<String> paths = imageUtils.storeImageFiles(ImageType.THUMBNAIL, testImageFiles);
+
+        trash.addAll(paths);
+        assertThat(paths.size()).isEqualTo(imageFileCount);
+    }
+
+    @Test
+    @DisplayName("Thumbnail으로 저장할 경우 사진의 사이즈가 줄어든다.")
+    void storeThumbnail() {
+        assertDoesNotThrow(() -> {
+            String path = imageUtils.storeImageFile(ImageType.THUMBNAIL, testImage);
+            trash.add(path);
+        });
+    }
+}
