@@ -2,7 +2,7 @@ package org.dinosaur.foodbowl.domain.auth.apple;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import org.dinosaur.foodbowl.domain.auth.dto.response.ApplePlatformUserResponseDto;
+import org.dinosaur.foodbowl.domain.auth.dto.response.ApplePlatformUserResponse;
 import org.dinosaur.foodbowl.global.exception.FoodbowlException;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +20,7 @@ public class AppleOAuthUserProvider {
     private final PublicKeyGenerator publicKeyGenerator;
     private final AppleClaimsValidator appleClaimsValidator;
 
-    public ApplePlatformUserResponseDto extractApplePlatformUser(String appleToken) {
+    public ApplePlatformUserResponse extractApplePlatformUser(String appleToken) {
         Map<String, String> headers = appleJwtParser.extractHeaders(appleToken);
         ApplePublicKeys applePublicKeys = appleClient.getApplePublicKeys();
         PublicKey publicKey = publicKeyGenerator.generatePublicKey(headers, applePublicKeys);
@@ -30,6 +30,6 @@ public class AppleOAuthUserProvider {
             throw new FoodbowlException(APPLE_INVALID_CLAIMS);
         }
 
-        return new ApplePlatformUserResponseDto(claims.getSubject(), claims.get("email", String.class));
+        return new ApplePlatformUserResponse(claims.getSubject(), claims.get("email", String.class));
     }
 }

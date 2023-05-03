@@ -4,7 +4,7 @@ import org.dinosaur.foodbowl.MockApiTest;
 import org.dinosaur.foodbowl.domain.auth.api.AuthController;
 import org.dinosaur.foodbowl.domain.auth.application.AuthService;
 import org.dinosaur.foodbowl.domain.auth.dto.FoodbowlTokenDto;
-import org.dinosaur.foodbowl.domain.auth.dto.request.AppleLoginRequestDto;
+import org.dinosaur.foodbowl.domain.auth.dto.request.AppleLoginRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -32,7 +32,7 @@ public class AuthControllerDocsTest extends MockApiTest {
     @Test
     @DisplayName("애플 로그인을 문서화한다.")
     void appleLogin() throws Exception {
-        AppleLoginRequestDto appleLoginRequestDto = new AppleLoginRequestDto("AppleToken");
+        AppleLoginRequest appleLoginRequest = new AppleLoginRequest("AppleToken");
         FoodbowlTokenDto foodbowlTokenDto = new FoodbowlTokenDto("AccessToken", "RefreshToken");
 
         given(authService.appleLogin(any())).willReturn(foodbowlTokenDto);
@@ -50,7 +50,7 @@ public class AuthControllerDocsTest extends MockApiTest {
         };
 
         mockMvc.perform(post("/api/v1/auth/apple/login")
-                        .content(objectMapper.writeValueAsString(appleLoginRequestDto))
+                        .content(objectMapper.writeValueAsString(appleLoginRequest))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(print())
                 .andExpect(status().isOk())

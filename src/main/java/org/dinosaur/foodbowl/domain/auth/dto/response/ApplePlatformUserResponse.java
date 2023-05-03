@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AppleTokenResponseDto {
+public class ApplePlatformUserResponse {
 
-    private String accessToken;
+    private String socialId;
+    private String email;
 }

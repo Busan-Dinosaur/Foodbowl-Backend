@@ -3,7 +3,7 @@ package org.dinosaur.foodbowl.domain.auth.api;
 import org.dinosaur.foodbowl.MockApiTest;
 import org.dinosaur.foodbowl.domain.auth.application.AuthService;
 import org.dinosaur.foodbowl.domain.auth.dto.FoodbowlTokenDto;
-import org.dinosaur.foodbowl.domain.auth.dto.request.AppleLoginRequestDto;
+import org.dinosaur.foodbowl.domain.auth.dto.request.AppleLoginRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,12 +33,12 @@ class AuthControllerTest extends MockApiTest {
         @Test
         @DisplayName("유효한 애플 토큰 값을 요청 받으면 Foodbowl 토큰을 응답한다.")
         void appleLogin() throws Exception {
-            AppleLoginRequestDto appleLoginRequestDto = new AppleLoginRequestDto("AppleToken");
+            AppleLoginRequest appleLoginRequest = new AppleLoginRequest("AppleToken");
             FoodbowlTokenDto foodbowlTokenDto = new FoodbowlTokenDto("AccessToken", "RefreshToken");
 
             given(authService.appleLogin(any())).willReturn(foodbowlTokenDto);
 
-            appleLoginApi(appleLoginRequestDto)
+            appleLoginApi(appleLoginRequest)
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.accessToken").value("AccessToken"));
         }
@@ -46,15 +46,15 @@ class AuthControllerTest extends MockApiTest {
         @Test
         @DisplayName("토큰이 존재하지 않으면 400 예외를 발생시킨다.")
         void appleLoginWithEmptyToken() throws Exception {
-            AppleLoginRequestDto appleLoginRequestDto = new AppleLoginRequestDto(null);
+            AppleLoginRequest appleLoginRequest = new AppleLoginRequest(null);
 
-            appleLoginApi(appleLoginRequestDto)
+            appleLoginApi(appleLoginRequest)
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.message", containsString("애플 토큰이 필요합니다.")))
                     .andExpect(jsonPath("$.code").value(-1000));
         }
 
-        private ResultActions appleLoginApi(AppleLoginRequestDto request) throws Exception {
+        private ResultActions appleLoginApi(AppleLoginRequest request) throws Exception {
             return mockMvc.perform(post("/api/v1/auth/apple/login")
                             .content(objectMapper.writeValueAsString(request))
                             .contentType(MediaType.APPLICATION_JSON_VALUE))
