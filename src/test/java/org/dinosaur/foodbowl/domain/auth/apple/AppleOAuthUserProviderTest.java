@@ -3,7 +3,7 @@ package org.dinosaur.foodbowl.domain.auth.apple;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.dinosaur.foodbowl.IntegrationTest;
-import org.dinosaur.foodbowl.domain.auth.dto.response.ApplePlatformUserResponseDto;
+import org.dinosaur.foodbowl.domain.auth.dto.response.ApplePlatformUserResponse;
 import org.dinosaur.foodbowl.global.exception.FoodbowlException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,7 +48,7 @@ class AppleOAuthUserProviderTest extends IntegrationTest {
         given(appleJwtParser.extractClaims(anyString(), any())).willReturn(claims);
         given(appleClaimsValidator.isValid(any())).willReturn(true);
 
-        ApplePlatformUserResponseDto result = appleOAuthUserProvider.extractApplePlatformUser("validToken");
+        ApplePlatformUserResponse result = appleOAuthUserProvider.extractApplePlatformUser("validToken");
 
         assertAll(
                 () -> assertThat(result.getSocialId()).isEqualTo("subject"),

@@ -3,8 +3,8 @@ package org.dinosaur.foodbowl.domain.auth.application;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.auth.apple.AppleOAuthUserProvider;
 import org.dinosaur.foodbowl.domain.auth.dto.FoodbowlTokenDto;
-import org.dinosaur.foodbowl.domain.auth.dto.request.AppleLoginRequestDto;
-import org.dinosaur.foodbowl.domain.auth.dto.response.ApplePlatformUserResponseDto;
+import org.dinosaur.foodbowl.domain.auth.dto.request.AppleLoginRequest;
+import org.dinosaur.foodbowl.domain.auth.dto.response.ApplePlatformUserResponse;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRepository;
 import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
@@ -27,10 +27,10 @@ public class AuthService {
     private final AppleOAuthUserProvider appleOAuthUserProvider;
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public FoodbowlTokenDto appleLogin(AppleLoginRequestDto appleLoginRequestDto) {
-        ApplePlatformUserResponseDto applePlatformUserResponseDto =
-                appleOAuthUserProvider.extractApplePlatformUser(appleLoginRequestDto.getAppleToken());
-        String socialId = applePlatformUserResponseDto.getSocialId();
+    public FoodbowlTokenDto appleLogin(AppleLoginRequest appleLoginRequest) {
+        ApplePlatformUserResponse applePlatformUserResponse =
+                appleOAuthUserProvider.extractApplePlatformUser(appleLoginRequest.getAppleToken());
+        String socialId = applePlatformUserResponse.getSocialId();
 
         final Member member = memberRepository.findBySocialTypeAndSocialId(SocialType.APPLE, socialId)
                 .orElseThrow(() -> new FoodbowlException(APPLE_NOT_REGISTER));

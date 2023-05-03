@@ -3,8 +3,8 @@ package org.dinosaur.foodbowl.domain.auth.application;
 import org.dinosaur.foodbowl.IntegrationTest;
 import org.dinosaur.foodbowl.domain.auth.apple.AppleOAuthUserProvider;
 import org.dinosaur.foodbowl.domain.auth.dto.FoodbowlTokenDto;
-import org.dinosaur.foodbowl.domain.auth.dto.request.AppleLoginRequestDto;
-import org.dinosaur.foodbowl.domain.auth.dto.response.ApplePlatformUserResponseDto;
+import org.dinosaur.foodbowl.domain.auth.dto.request.AppleLoginRequest;
+import org.dinosaur.foodbowl.domain.auth.dto.response.ApplePlatformUserResponse;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRepository;
 import org.dinosaur.foodbowl.global.exception.FoodbowlException;
@@ -46,15 +46,15 @@ class AuthServiceTest extends IntegrationTest {
                     .nickname("member1234")
                     .build();
             memberRepository.save(member);
-            AppleLoginRequestDto appleLoginRequestDto = new AppleLoginRequestDto("AppleToken");
-            ApplePlatformUserResponseDto applePlatformUserResponseDto = new ApplePlatformUserResponseDto(
+            AppleLoginRequest appleLoginRequest = new AppleLoginRequest("AppleToken");
+            ApplePlatformUserResponse applePlatformUserResponse = new ApplePlatformUserResponse(
                     "1234",
                     "member@foodbowl.com"
             );
 
-            given(appleOAuthUserProvider.extractApplePlatformUser(anyString())).willReturn(applePlatformUserResponseDto);
+            given(appleOAuthUserProvider.extractApplePlatformUser(anyString())).willReturn(applePlatformUserResponse);
 
-            FoodbowlTokenDto result = authService.appleLogin(appleLoginRequestDto);
+            FoodbowlTokenDto result = authService.appleLogin(appleLoginRequest);
 
             assertAll(
                     () -> assertThat(result.getAccessToken()).isNotNull(),
@@ -67,15 +67,15 @@ class AuthServiceTest extends IntegrationTest {
         @Test
         @DisplayName("이전에 회원가입을 하지 않은 회원이라면 예외를 던진다.")
         void appleLoginWithNotRegistered() {
-            AppleLoginRequestDto appleLoginRequestDto = new AppleLoginRequestDto("AppleToken");
-            ApplePlatformUserResponseDto applePlatformUserResponseDto = new ApplePlatformUserResponseDto(
+            AppleLoginRequest appleLoginRequest = new AppleLoginRequest("AppleToken");
+            ApplePlatformUserResponse applePlatformUserResponse = new ApplePlatformUserResponse(
                     "1234",
                     "member@foodbowl.com"
             );
 
-            given(appleOAuthUserProvider.extractApplePlatformUser(anyString())).willReturn(applePlatformUserResponseDto);
+            given(appleOAuthUserProvider.extractApplePlatformUser(anyString())).willReturn(applePlatformUserResponse);
 
-            assertThatThrownBy(() -> authService.appleLogin(appleLoginRequestDto))
+            assertThatThrownBy(() -> authService.appleLogin(appleLoginRequest))
                     .isInstanceOf(FoodbowlException.class)
                     .hasMessage("애플 회원가입이 되지 않은 회원입니다.");
         }
