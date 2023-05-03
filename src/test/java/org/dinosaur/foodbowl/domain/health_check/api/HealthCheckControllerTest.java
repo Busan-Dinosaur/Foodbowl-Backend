@@ -1,6 +1,5 @@
 package org.dinosaur.foodbowl.domain.health_check.api;
 
-import com.jayway.jsonpath.JsonPath;
 import org.dinosaur.foodbowl.MockApiTest;
 import org.dinosaur.foodbowl.domain.health_check.application.HealthCheckService;
 import org.dinosaur.foodbowl.domain.health_check.dto.HealthCheckDto;
@@ -13,13 +12,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
+import static org.dinosaur.foodbowl.TestUtils.jsonPathLocalDateTimeEquals;
 import static org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -36,15 +33,6 @@ class HealthCheckControllerTest extends MockApiTest {
 
     @MockBean
     private HealthCheckService healthCheckService;
-
-    private ResultMatcher jsonPathLocalDateTimeEquals(String expression, LocalDateTime expectedLocalDateTime) {
-        return result -> {
-            String content = result.getResponse().getContentAsString();
-            String localDateTimeString = JsonPath.read(content, expression);
-            LocalDateTime localDateTime = LocalDateTime.parse(localDateTimeString, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-            assertEquals(localDateTime, expectedLocalDateTime);
-        };
-    }
 
     @Nested
     @DisplayName("인증 없는 헬스 체크 요청 시")
