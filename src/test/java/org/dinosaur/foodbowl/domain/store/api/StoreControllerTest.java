@@ -14,14 +14,17 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.dinosaur.foodbowl.MockApiTest;
+import org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
 import org.dinosaur.foodbowl.domain.store.dto.StoreRequest;
 import org.dinosaur.foodbowl.domain.store.dto.StoreResponse;
 import org.dinosaur.foodbowl.domain.store.service.StoreService;
+import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -33,6 +36,9 @@ class StoreControllerTest extends MockApiTest {
     @MockBean
     StoreService storeService;
 
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
@@ -43,6 +49,7 @@ class StoreControllerTest extends MockApiTest {
         when(storeService.findOne(id)).thenReturn(storeResponse);
 
         ResultActions resultActions = mockMvc.perform(get("/api/v1/stores/{id}", id)
+                .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원))
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding(StandardCharsets.UTF_8));
@@ -73,6 +80,7 @@ class StoreControllerTest extends MockApiTest {
         when(storeService.findAll()).thenReturn(storeResponses);
 
         ResultActions resultActions = mockMvc.perform(get("/api/v1/stores")
+                .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원))
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding(StandardCharsets.UTF_8));
@@ -90,6 +98,7 @@ class StoreControllerTest extends MockApiTest {
         when(storeService.save(any())).thenReturn(storeResponse);
 
         ResultActions resultActions = mockMvc.perform(post("/api/v1/stores")
+                .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원))
                 .with(csrf())
                 .content(objectMapper.writeValueAsString(storeRequest))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -248,6 +257,7 @@ class StoreControllerTest extends MockApiTest {
 
     private void execute(StoreRequest storeRequest) throws Exception {
         mockMvc.perform(post("/api/v1/stores")
+                        .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원))
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(storeRequest))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -255,4 +265,5 @@ class StoreControllerTest extends MockApiTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
+
 }
