@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.store.service;
+package org.dinosaur.foodbowl.domain.store.application;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -17,7 +17,7 @@ import org.dinosaur.foodbowl.MockApiTest;
 import org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
 import org.dinosaur.foodbowl.domain.store.dto.StoreRequest;
 import org.dinosaur.foodbowl.domain.store.dto.StoreResponse;
-import org.dinosaur.foodbowl.domain.store.service.StoreService;
+import org.dinosaur.foodbowl.domain.store.application.StoreService;
 import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
