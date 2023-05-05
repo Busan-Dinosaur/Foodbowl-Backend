@@ -7,7 +7,7 @@ import org.springframework.data.repository.Repository;
 
 public interface StoreRepository extends Repository<Store, Long> {
 
-    void save(Store store);
+    Store save(Store store);
 
     Optional<Store> findById(Long id);
 

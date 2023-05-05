@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class StoreService {
 
     private final StoreRepository storeRepository;
@@ -40,7 +40,14 @@ public class StoreService {
             throw new FoodbowlException(ErrorStatus.STORE_DUPLICATED);
         }
 
-        Address address = Address.builder()
+        Address address = convertToAddress(storeRequest);
+
+        Store savedStore = storeRepository.save(createStore(storeRequest, address));
+        return StoreResponse.from(savedStore);
+    }
+
+    private Address convertToAddress(StoreRequest storeRequest) {
+        return Address.builder()
                 .addressName(storeRequest.getAddressName())
                 .region1depthName(storeRequest.getRegion1depthName())
                 .region2depthName(storeRequest.getRegion2depthName())
@@ -54,12 +61,12 @@ public class StoreService {
                 .x(storeRequest.getX())
                 .y(storeRequest.getY())
                 .build();
+    }
 
-        Store store = Store.builder()
+    private Store createStore(StoreRequest storeRequest, Address address) {
+        return Store.builder()
                 .storeName(storeRequest.getStoreName())
                 .address(address)
                 .build();
-        storeRepository.save(store);
-        return StoreResponse.from(store);
     }
 }
