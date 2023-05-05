@@ -35,7 +35,7 @@ public class StoreController {
     }
 
     @PostMapping
-    public ResponseEntity<StoreResponse> create(@RequestBody @Valid StoreRequest storeRequest) {
+    public ResponseEntity<StoreResponse> registerStore(@RequestBody @Valid StoreRequest storeRequest) {
         StoreResponse storeResponse = storeService.save(storeRequest);
         return ResponseEntity.created(URI.create(DEFAULT_PATH + storeResponse.getId())).body(storeResponse);
     }
