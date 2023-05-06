@@ -1,14 +1,13 @@
 package org.dinosaur.foodbowl.domain.auth.apple;
 
+import static org.dinosaur.foodbowl.global.exception.ErrorStatus.APPLE_INVALID_HEADER;
+
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.dinosaur.foodbowl.global.exception.FoodbowlException;
-
-import java.util.List;
-
-import static org.dinosaur.foodbowl.global.exception.ErrorStatus.APPLE_INVALID_HEADER;
 
 @Getter
 @AllArgsConstructor

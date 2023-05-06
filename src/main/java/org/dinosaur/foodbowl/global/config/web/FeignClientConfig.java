@@ -7,4 +7,5 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableFeignClients(basePackageClasses = FoodbowlApplication.class)
 public class FeignClientConfig {
+
 }

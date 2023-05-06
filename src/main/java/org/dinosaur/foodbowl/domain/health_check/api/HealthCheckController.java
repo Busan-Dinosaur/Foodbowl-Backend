@@ -18,14 +18,12 @@ public class HealthCheckController {
     @GetMapping("/health-check")
     public ResponseEntity<HealthCheckDto> check() {
         HealthCheckDto response = healthCheckService.check();
-
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/health-check/auth")
     public ResponseEntity<HealthCheckDto> authCheck() {
         HealthCheckDto response = healthCheckService.check();
-
         return ResponseEntity.ok(response);
     }
 }

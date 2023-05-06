@@ -1,11 +1,10 @@
 package org.dinosaur.foodbowl.domain.health_check.application;
 
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.health_check.dto.HealthCheckDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @Transactional(readOnly = true)

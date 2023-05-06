@@ -1,5 +1,10 @@
 package org.dinosaur.foodbowl.domain.category.entity;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.dinosaur.foodbowl.RepositoryTest;
 import org.dinosaur.foodbowl.domain.post.entity.Category;
 import org.dinosaur.foodbowl.domain.post.entity.Category.CategoryType;
@@ -7,12 +12,6 @@ import org.dinosaur.foodbowl.domain.post.repository.CategoryRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class CategoryTest extends RepositoryTest {
 

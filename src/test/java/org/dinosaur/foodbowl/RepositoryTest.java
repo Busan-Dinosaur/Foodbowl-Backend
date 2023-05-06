@@ -10,4 +10,5 @@ import org.springframework.context.annotation.Import;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @DataJpaTest
 public class RepositoryTest {
+
 }

@@ -1,5 +1,11 @@
 package org.dinosaur.foodbowl.domain.member.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.dinosaur.foodbowl.domain.member.entity.Member.SocialType;
+import static org.dinosaur.foodbowl.domain.member.entity.Member.builder;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
+import java.util.Optional;
 import org.dinosaur.foodbowl.RepositoryTest;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,13 +13,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.dinosaur.foodbowl.domain.member.entity.Member.SocialType;
-import static org.dinosaur.foodbowl.domain.member.entity.Member.builder;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 class MemberRepositoryTest extends RepositoryTest {
 
