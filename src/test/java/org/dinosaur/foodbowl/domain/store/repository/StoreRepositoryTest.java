@@ -8,6 +8,7 @@ import org.dinosaur.foodbowl.RepositoryTest;
 import org.dinosaur.foodbowl.domain.store.entity.Address;
 import org.dinosaur.foodbowl.domain.store.entity.Store;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,44 +17,52 @@ class StoreRepositoryTest extends RepositoryTest {
     @Autowired
     StoreRepository storeRepository;
 
-    @Test
-    @DisplayName("가게 ID에 해당하는 정보를 가져온다.")
-    void findByIdSuccess() {
-        Store savedStore = storeRepository.save(createStore());
+    @Nested
+    @DisplayName("findById 메서드는")
+    class FindById {
+        @Test
+        @DisplayName("가게 ID에 해당하는 정보를 가져온다.")
+        void findByIdSuccess() {
+            Store savedStore = storeRepository.save(createStore());
 
-        Store findStore = storeRepository.findById(savedStore.getId()).get();
+            Store findStore = storeRepository.findById(savedStore.getId()).get();
 
-        assertThat(findStore).isEqualTo(savedStore);
+            assertThat(findStore).isEqualTo(savedStore);
+        }
+
+        @Test
+        @DisplayName("가게 ID에 해당하는 가게가 없으면 빈 값을 반환한다.")
+        void findOneWithEmptySuccess() {
+            storeRepository.save(createStore());
+
+            Optional<Store> store = storeRepository.findById(Long.MAX_VALUE);
+
+            assertThat(store.isEmpty()).isTrue();
+        }
     }
 
-    @Test
-    @DisplayName("가게 ID에 해당하는 가게가 없으면 빈 값을 반환한다.")
-    void findOneWithEmptySuccess() {
-        storeRepository.save(createStore());
+    @Nested
+    @DisplayName("findByStoreName 메서드는")
+    class FindByStoreName {
+        @Test
+        @DisplayName("가게 이름에 해당하는 가게 정보를 가져온다.")
+        void findByStoreNameSuccess() {
+            Store savedStore = storeRepository.save(createStore());
 
-        Optional<Store> store = storeRepository.findById(Long.MAX_VALUE);
+            Optional<Store> findStore = storeRepository.findByStoreName(savedStore.getStoreName());
 
-        assertThat(store.isEmpty()).isTrue();
-    }
+            assertThat(findStore.get()).isEqualTo(savedStore);
+        }
 
-    @Test
-    @DisplayName("가게 이름에 해당하는 가게 정보를 가져온다.")
-    void findByStoreNameSuccess() {
-        Store savedStore = storeRepository.save(createStore());
+        @Test
+        @DisplayName("가게 이름에 해당하는 가게가 없으면 빈 값을 반환한다.")
+        void findByStoreNameWithEmptySuccess() {
+            storeRepository.save(createStore());
 
-        Optional<Store> findStore = storeRepository.findByStoreName(savedStore.getStoreName());
+            Optional<Store> findStore = storeRepository.findByStoreName("푸드볼");
 
-        assertThat(findStore.get()).isEqualTo(savedStore);
-    }
-
-    @Test
-    @DisplayName("가게 이름에 해당하는 가게가 없으면 빈 값을 반환한다.")
-    void findByStoreNameWithEmptySuccess() {
-        storeRepository.save(createStore());
-
-        Optional<Store> findStore = storeRepository.findByStoreName("푸드볼");
-
-        assertThat(findStore.isEmpty()).isTrue();
+            assertThat(findStore.isEmpty()).isTrue();
+        }
     }
 
     @Test
