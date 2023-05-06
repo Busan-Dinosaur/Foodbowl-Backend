@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/stores")
+@RestController
 public class StoreController {
 
     private static final String DEFAULT_PATH = "/api/v1/stores/";

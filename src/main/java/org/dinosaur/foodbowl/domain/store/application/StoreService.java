@@ -13,9 +13,9 @@ import org.dinosaur.foodbowl.global.exception.FoodbowlException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Service
 public class StoreService {
 
     private final StoreRepository storeRepository;

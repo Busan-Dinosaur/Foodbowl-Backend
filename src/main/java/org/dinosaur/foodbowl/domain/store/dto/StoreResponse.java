@@ -9,8 +9,8 @@ import org.dinosaur.foodbowl.domain.store.entity.Address;
 import org.dinosaur.foodbowl.domain.store.entity.Store;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StoreResponse {
 
     private Long id;
