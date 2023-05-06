@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.dinosaur.foodbowl.domain.store.entity.Address;
 import org.hibernate.validator.constraints.Length;
 
 @Getter
@@ -61,4 +62,21 @@ public class StoreRequest {
     @DecimalMin(value = "-90", message = "위도의 최소값은 {value}입니다.")
     @DecimalMax(value = "90", message = "위도의 최대값은 {value}입니다.")
     private BigDecimal y;
+
+    public Address toAddress() {
+        return Address.builder()
+                .addressName(this.addressName)
+                .region1depthName(this.region1depthName)
+                .region2depthName(this.region2depthName)
+                .region3depthName(this.region3depthName)
+                .roadName(this.roadName)
+                .undergroundYN(this.undergroundYN)
+                .mainBuildingNo(this.mainBuildingNo)
+                .subBuildingNo(this.subBuildingNo)
+                .buildingName(this.buildingName)
+                .zoneNo(this.zoneNo)
+                .x(this.x)
+                .y(this.y)
+                .build();
+    }
 }
