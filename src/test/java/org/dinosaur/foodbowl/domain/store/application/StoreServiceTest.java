@@ -23,6 +23,7 @@ class StoreServiceTest extends IntegrationTest {
     @Nested
     @DisplayName("save 메서드는 ")
     class Save {
+
         @Test
         @DisplayName("가게를 저장한다.")
         void saveSuccess() {
@@ -62,6 +63,7 @@ class StoreServiceTest extends IntegrationTest {
     @Nested
     @DisplayName("find 메서드는")
     class Find {
+
         @Test
         @DisplayName("ID에 해당하는 가게 정보를 가져온다.")
         void findOneSuccess() {

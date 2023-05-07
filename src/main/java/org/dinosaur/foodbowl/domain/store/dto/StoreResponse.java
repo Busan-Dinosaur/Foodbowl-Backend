@@ -57,6 +57,7 @@ public class StoreResponse {
                 address.getBuildingName(),
                 address.getZoneNo(),
                 address.getX(),
-                address.getY());
+                address.getY()
+        );
     }
 }

@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.store.dto.StoreRequest;
 import org.dinosaur.foodbowl.domain.store.dto.StoreResponse;
+import org.dinosaur.foodbowl.domain.store.entity.Address;
 import org.dinosaur.foodbowl.domain.store.entity.Store;
 import org.dinosaur.foodbowl.domain.store.repository.StoreRepository;
 import org.dinosaur.foodbowl.global.exception.ErrorStatus;
@@ -47,7 +48,24 @@ public class StoreService {
     private Store createStore(StoreRequest storeRequest) {
         return Store.builder()
                 .storeName(storeRequest.getStoreName())
-                .address(storeRequest.toAddress())
+                .address(convertToAddress(storeRequest))
+                .build();
+    }
+
+    private Address convertToAddress(StoreRequest storeRequest) {
+        return Address.builder()
+                .addressName(storeRequest.getAddressName())
+                .region1depthName(storeRequest.getRegion1depthName())
+                .region2depthName(storeRequest.getRegion2depthName())
+                .region3depthName(storeRequest.getRegion3depthName())
+                .roadName(storeRequest.getRoadName())
+                .undergroundYN(storeRequest.getUndergroundYN())
+                .mainBuildingNo(storeRequest.getMainBuildingNo())
+                .subBuildingNo(storeRequest.getSubBuildingNo())
+                .buildingName(storeRequest.getBuildingName())
+                .zoneNo(storeRequest.getZoneNo())
+                .x(storeRequest.getX())
+                .y(storeRequest.getY())
                 .build();
     }
 }

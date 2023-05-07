@@ -20,6 +20,7 @@ class StoreRepositoryTest extends RepositoryTest {
     @Nested
     @DisplayName("findById 메서드는")
     class FindById {
+
         @Test
         @DisplayName("가게 ID에 해당하는 정보를 가져온다.")
         void findByIdSuccess() {
@@ -44,6 +45,7 @@ class StoreRepositoryTest extends RepositoryTest {
     @Nested
     @DisplayName("findByStoreName 메서드는")
     class FindByStoreName {
+
         @Test
         @DisplayName("가게 이름에 해당하는 가게 정보를 가져온다.")
         void findByStoreNameSuccess() {
