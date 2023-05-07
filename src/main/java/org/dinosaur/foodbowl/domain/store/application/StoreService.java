@@ -19,8 +19,8 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
 
-    public StoreResponse findOne(Long memberId) {
-        Store store = storeRepository.findById(memberId)
+    public StoreResponse findOne(Long storeId) {
+        Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new FoodbowlException(ErrorStatus.STORE_NOT_FOUND));
 
         return StoreResponse.from(store);
@@ -34,9 +34,11 @@ public class StoreService {
 
     @Transactional
     public StoreResponse save(StoreRequest storeRequest) {
-        if (storeRepository.findByStoreName(storeRequest.getStoreName()).isPresent()) {
-            throw new FoodbowlException(ErrorStatus.STORE_DUPLICATED);
-        }
+        storeRepository.findByStoreName(storeRequest.getStoreName()).ifPresent(
+                store -> {
+                    throw new FoodbowlException(ErrorStatus.STORE_DUPLICATED);
+                }
+        );
 
         Store savedStore = storeRepository.save(createStore(storeRequest));
         return StoreResponse.from(savedStore);
