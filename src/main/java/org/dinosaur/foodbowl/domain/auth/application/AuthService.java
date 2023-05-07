@@ -53,4 +53,8 @@ public class AuthService {
                         TimeUnit.MILLISECONDS
                 );
     }
+
+    public void appleLogout(Long memberId) {
+        redisTemplate.delete(String.valueOf(memberId));
+    }
 }
