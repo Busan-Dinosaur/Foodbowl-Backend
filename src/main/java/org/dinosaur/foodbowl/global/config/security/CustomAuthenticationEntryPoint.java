@@ -14,6 +14,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException authException) throws IOException, ServletException {
+        response.getWriter().write("인증에 실패하였습니다.");
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
     }
 }
