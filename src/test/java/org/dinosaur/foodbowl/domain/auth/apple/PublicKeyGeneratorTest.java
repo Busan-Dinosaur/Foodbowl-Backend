@@ -1,16 +1,15 @@
 package org.dinosaur.foodbowl.domain.auth.apple;
 
-import org.dinosaur.foodbowl.global.exception.FoodbowlException;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.dinosaur.foodbowl.global.exception.FoodbowlException;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 class PublicKeyGeneratorTest {
 

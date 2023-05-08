@@ -1,18 +1,5 @@
 package org.dinosaur.foodbowl.domain.auth.apple;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import org.dinosaur.foodbowl.IntegrationTest;
-import org.dinosaur.foodbowl.domain.auth.dto.response.ApplePlatformUserResponse;
-import org.dinosaur.foodbowl.global.exception.FoodbowlException;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.security.PublicKey;
-import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -20,6 +7,18 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import java.security.PublicKey;
+import java.util.Map;
+import org.dinosaur.foodbowl.IntegrationTest;
+import org.dinosaur.foodbowl.domain.auth.dto.response.ApplePlatformUserResponse;
+import org.dinosaur.foodbowl.global.exception.FoodbowlException;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 class AppleOAuthUserProviderTest extends IntegrationTest {
 

@@ -1,18 +1,27 @@
 package org.dinosaur.foodbowl.domain.auth.apple;
 
+import static org.dinosaur.foodbowl.global.exception.ErrorStatus.APPLE_INVALID_TOKEN;
+import static org.dinosaur.foodbowl.global.exception.ErrorStatus.JWT_EXPIRED;
+import static org.dinosaur.foodbowl.global.exception.ErrorStatus.JWT_MALFORMED;
+import static org.dinosaur.foodbowl.global.exception.ErrorStatus.JWT_UNKNOWN;
+import static org.dinosaur.foodbowl.global.exception.ErrorStatus.JWT_UNSUPPORTED;
+import static org.dinosaur.foodbowl.global.exception.ErrorStatus.JWT_WRONG_SIGNATURE;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
-import lombok.RequiredArgsConstructor;
-import org.dinosaur.foodbowl.global.exception.FoodbowlException;
-import org.springframework.stereotype.Component;
-
 import java.security.PublicKey;
 import java.util.Base64;
 import java.util.Map;
-
-import static org.dinosaur.foodbowl.global.exception.ErrorStatus.*;
+import lombok.RequiredArgsConstructor;
+import org.dinosaur.foodbowl.global.exception.FoodbowlException;
+import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component

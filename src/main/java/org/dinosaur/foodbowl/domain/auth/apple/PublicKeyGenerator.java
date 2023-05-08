@@ -1,7 +1,6 @@
 package org.dinosaur.foodbowl.domain.auth.apple;
 
-import org.dinosaur.foodbowl.global.exception.FoodbowlException;
-import org.springframework.stereotype.Component;
+import static org.dinosaur.foodbowl.global.exception.ErrorStatus.APPLE_INVALID_PUBLIC_KEY;
 
 import java.math.BigInteger;
 import java.security.KeyFactory;
@@ -11,8 +10,8 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
 import java.util.Map;
-
-import static org.dinosaur.foodbowl.global.exception.ErrorStatus.APPLE_INVALID_PUBLIC_KEY;
+import org.dinosaur.foodbowl.global.exception.FoodbowlException;
+import org.springframework.stereotype.Component;
 
 @Component
 public class PublicKeyGenerator {
