@@ -32,11 +32,7 @@ class AppleClaimsValidatorTest {
     }
 
     @ParameterizedTest
-    @CsvSource(value = {
-            "invalidIss,clientID,nonce",
-            "iss,invalidClientID,nonce",
-            "iss,clientID,invalidNonce"
-    })
+    @CsvSource(value = {"invalidIss,clientID,nonce", "iss,invalidClientID,nonce", "iss,clientID,invalidNonce"})
     @DisplayName("유효하지 않은 claims 정보를 가지고 있으면 false 반환한다.")
     void invalidClaims(String iss, String clientId, String nonce) {
         Claims claims = Jwts.claims()
