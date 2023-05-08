@@ -35,7 +35,7 @@ class MemberServiceTest extends IntegrationTest {
 
             DuplicateCheckResponse duplicateCheckResponse = memberService.checkDuplicate(nickname);
 
-            assertThat(duplicateCheckResponse.isDuplicate()).isTrue();
+            assertThat(duplicateCheckResponse.isHasDuplicate()).isTrue();
         }
 
         @Test
@@ -51,7 +51,7 @@ class MemberServiceTest extends IntegrationTest {
 
             DuplicateCheckResponse duplicateCheckResponse = memberService.checkDuplicate(nickname);
 
-            assertThat(duplicateCheckResponse.isDuplicate()).isFalse();
+            assertThat(duplicateCheckResponse.isHasDuplicate()).isFalse();
         }
     }
 

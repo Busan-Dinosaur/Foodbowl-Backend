@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DuplicateCheckResponse {
 
-    private boolean isDuplicate;
+    private boolean hasDuplicate;
 }

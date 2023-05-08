@@ -46,7 +46,7 @@ class MemberControllerTest extends MockApiTest {
                             .queryParam("nickname", "gray")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.duplicate").value(true))
+                    .andExpect(jsonPath("$.hasDuplicate").value(true))
                     .andDo(print());
         }
 
@@ -60,7 +60,7 @@ class MemberControllerTest extends MockApiTest {
                             .queryParam("nickname", "gray")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.duplicate").value(false))
+                    .andExpect(jsonPath("$.hasDuplicate").value(false))
                     .andDo(print());
         }
     }

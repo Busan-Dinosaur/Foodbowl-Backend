@@ -52,7 +52,7 @@ public class MemberControllerDocsTest extends MockApiTest {
                                 parameterWithName("nickname").description("닉네임")
                         ),
                         responseFields(
-                                fieldWithPath("duplicate").type(JsonFieldType.BOOLEAN).description("닉네임 중복 여부")
+                                fieldWithPath("hasDuplicate").type(JsonFieldType.BOOLEAN).description("닉네임 중복 여부")
                         )));
     }
 }
