@@ -23,7 +23,6 @@ public enum ErrorStatus {
     APPLE_INVALID_PUBLIC_KEY(HttpStatus.INTERNAL_SERVER_ERROR, "애플 OAuth 퍼블릭 키 생성 중 문제가 발생하였습니다.", 3003),
     APPLE_NOT_REGISTER(HttpStatus.UNAUTHORIZED, "애플 회원가입이 되지 않은 회원입니다.", 3004);
 
-
     private final HttpStatus httpStatus;
     private final String message;
     private final int code;
