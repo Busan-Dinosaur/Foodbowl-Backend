@@ -16,8 +16,10 @@ import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.global.exception.FoodbowlException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Service
 public class AuthService {
 
@@ -26,6 +28,7 @@ public class AuthService {
     private final AppleOAuthUserProvider appleOAuthUserProvider;
     private final RedisTemplate<String, Object> redisTemplate;
 
+    @Transactional
     public FoodbowlTokenDto appleLogin(AppleLoginRequest appleLoginRequest) {
         ApplePlatformUserResponse applePlatformUserResponse =
                 appleOAuthUserProvider.extractApplePlatformUser(appleLoginRequest.getAppleToken());
@@ -54,6 +57,7 @@ public class AuthService {
                 );
     }
 
+    @Transactional
     public void appleLogout(Long memberId) {
         redisTemplate.delete(String.valueOf(memberId));
     }
