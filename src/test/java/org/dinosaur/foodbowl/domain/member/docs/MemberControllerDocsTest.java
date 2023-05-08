@@ -38,7 +38,6 @@ public class MemberControllerDocsTest extends MockApiTest {
     @DisplayName("닉네임 중복 검증을 문서화한다.")
     void appleLogin() throws Exception {
         String token = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
-        System.out.println(token);
         given(memberService.checkDuplicate(any())).willReturn(new DuplicateCheckResponse(false));
 
         mockMvc.perform(post("/api/v1/members/check-nicknames")
