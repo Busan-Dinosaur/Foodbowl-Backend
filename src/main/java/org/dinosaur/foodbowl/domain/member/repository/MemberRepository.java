@@ -12,4 +12,6 @@ public interface MemberRepository extends Repository<Member, Long> {
     Member save(Member member);
 
     Optional<Member> findBySocialTypeAndSocialId(SocialType socialType, String socialId);
+
+    Optional<Member> findByNickname(String nickname);
 }

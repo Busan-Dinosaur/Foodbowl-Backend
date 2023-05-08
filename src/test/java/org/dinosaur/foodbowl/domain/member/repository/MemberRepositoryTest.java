@@ -57,4 +57,35 @@ class MemberRepositoryTest extends RepositoryTest {
             assertThat(findMember).isEmpty();
         }
     }
+
+    @Nested
+    @DisplayName("findByNickname 메서드는 ")
+    class FindByNickname {
+
+        @BeforeEach
+        void setUp() {
+            Member member = builder()
+                    .socialType(SocialType.APPLE)
+                    .socialId("1234")
+                    .nickname("gray")
+                    .build();
+            memberRepository.save(member);
+        }
+
+        @Test
+        @DisplayName("일치하는 닉네임이 존재하는 경우 회원을 가져온다.")
+        void getMember() {
+            String nickName = "gray";
+
+            assertThat(memberRepository.findByNickname(nickName).isPresent()).isTrue();
+        }
+
+        @Test
+        @DisplayName("일치하는 닉네임이 존재하지 않는 경우 회원을 가져오지 않는다.")
+        void getNoMember() {
+            String nickName = "hoy";
+
+            assertThat(memberRepository.findByNickname(nickName).isPresent()).isFalse();
+        }
+    }
 }
