@@ -3,7 +3,7 @@ package org.dinosaur.foodbowl.domain.member.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.dinosaur.foodbowl.IntegrationTest;
-import org.dinosaur.foodbowl.domain.member.dto.DuplicateCheckResponse;
+import org.dinosaur.foodbowl.domain.member.dto.response.DuplicateCheckResponse;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +15,7 @@ class MemberServiceTest extends IntegrationTest {
 
     @Autowired
     private MemberService memberService;
+
     @Autowired
     private MemberRepository memberRepository;
 
