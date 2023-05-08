@@ -36,6 +36,14 @@ public class MemberIdArgumentResolver implements HandlerMethodArgumentResolver {
                         .orElseThrow(() -> new FoodbowlException(JWT_NOT_FOUND));
         String memberId = jwtTokenProvider.extractSubject(accessToken)
                 .orElseThrow(() -> new FoodbowlException(JWT_MALFORMED));
-        return Long.parseLong(memberId);
+        return parseToLong(memberId);
+    }
+    
+    private Long parseToLong(String memberId) {
+        try {
+            return Long.parseLong(memberId);
+        } catch (NumberFormatException e) {
+            throw new FoodbowlException(JWT_MALFORMED);
+        }
     }
 }
