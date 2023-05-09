@@ -19,22 +19,44 @@ link:../foodbowl.html[API 목록으로 돌아가기]
 
 === Request
 
-include::{snippets}/api-v1-apple-login/http-request.adoc[]
+include::{snippets}/api-v1-auth-apple-login/http-request.adoc[]
 
 === Request Fields
 
-include::{snippets}/api-v1-apple-login/request-fields.adoc[]
+include::{snippets}/api-v1-auth-apple-login/request-fields.adoc[]
 
 == 응답
 
 === Response
 
-include::{snippets}/api-v1-apple-login/http-response.adoc[]
+include::{snippets}/api-v1-auth-apple-login/http-response.adoc[]
 
 === Response Fields
 
-include::{snippets}/api-v1-apple-login/response-fields.adoc[]
+include::{snippets}/api-v1-auth-apple-login/response-fields.adoc[]
 
 === Response Cookies
 
-include::{snippets}/api-v1-apple-login/response-cookies.adoc[]
+include::{snippets}/api-v1-auth-apple-login/response-cookies.adoc[]
+
+== *애플 로그아웃* ==
+
+=== 요청
+
+=== Request
+
+include::{snippets}/api-v1-auth-apple-logout/http-request.adoc[]
+
+=== Request Headers
+
+include::{snippets}/api-v1-auth-apple-logout/request-headers.adoc[]
+
+=== Request Cookies
+
+include::{snippets}/api-v1-auth-apple-logout/request-cookies.adoc[]
+
+== 응답
+
+=== Response
+
+include::{snippets}/api-v1-auth-apple-logout/http-response.adoc[]

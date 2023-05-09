@@ -1,8 +1,22 @@
 package org.dinosaur.foodbowl.domain.member.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.dinosaur.foodbowl.domain.photo.entity.Thumbnail;
 import org.dinosaur.foodbowl.global.entity.AuditingEntity;
 
@@ -49,14 +63,8 @@ public class Member extends AuditingEntity {
 
     @Builder
     private Member(
-            Thumbnail thumbnail,
-            SocialType socialType,
-            String socialId,
-            String email,
-            String nickname,
-            String introduction,
-            String region1depthName,
-            String region2depthName
+            Thumbnail thumbnail, SocialType socialType, String socialId, String email, String nickname,
+            String introduction, String region1depthName, String region2depthName
     ) {
         this.thumbnail = thumbnail;
         this.socialType = socialType;

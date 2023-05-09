@@ -1,10 +1,9 @@
 package org.dinosaur.foodbowl.global.config.security.jwt;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.stereotype.Component;
-
 import java.util.Enumeration;
 import java.util.Optional;
+import org.springframework.stereotype.Component;
 
 @Component
 public class JwtAuthorizationExtractor {

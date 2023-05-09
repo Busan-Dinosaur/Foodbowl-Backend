@@ -1,25 +1,30 @@
 package org.dinosaur.foodbowl.global.config.security.jwt;
 
-import io.jsonwebtoken.*;
+import static org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
+import static org.dinosaur.foodbowl.global.config.security.jwt.JwtConstant.CLAMS_ROLES;
+import static org.dinosaur.foodbowl.global.config.security.jwt.JwtConstant.DELIMITER;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import javax.crypto.SecretKey;
 import org.dinosaur.foodbowl.global.exception.ErrorStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-
-import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
-import static org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
-import static org.dinosaur.foodbowl.global.config.security.jwt.JwtConstant.CLAMS_ROLES;
-import static org.dinosaur.foodbowl.global.config.security.jwt.JwtConstant.DELIMITER;
 
 @Component
 public class JwtTokenProvider {
@@ -91,7 +96,8 @@ public class JwtTokenProvider {
                     claims.get(CLAMS_ROLES.getName()).toString().split(DELIMITER.getName())
             ).toList();
             UserDetails userDetails = new JwtUser(claims.getSubject(), roleNames);
-            return Optional.of(new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities()));
+            return Optional.of(new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(),
+                    userDetails.getAuthorities()));
         }
         return Optional.empty();
     }

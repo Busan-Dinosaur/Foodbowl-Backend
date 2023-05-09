@@ -1,17 +1,16 @@
 package org.dinosaur.foodbowl.global.config.security.jwt;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.dinosaur.foodbowl.domain.member.entity.Role.RoleType.ROLE_회원;
+
+import java.util.List;
+import java.util.Optional;
 import org.dinosaur.foodbowl.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.dinosaur.foodbowl.domain.member.entity.Role.RoleType.ROLE_회원;
 
 class JwtTokenProviderTest extends IntegrationTest {
 

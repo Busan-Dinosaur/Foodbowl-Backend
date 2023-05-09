@@ -1,5 +1,12 @@
 package org.dinosaur.foodbowl.domain.auth.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+
+import java.util.concurrent.TimeUnit;
 import org.dinosaur.foodbowl.IntegrationTest;
 import org.dinosaur.foodbowl.domain.auth.apple.AppleOAuthUserProvider;
 import org.dinosaur.foodbowl.domain.auth.dto.FoodbowlTokenDto;
@@ -14,12 +21,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.redis.core.RedisTemplate;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
 
 class AuthServiceTest extends IntegrationTest {
 
@@ -79,5 +80,21 @@ class AuthServiceTest extends IntegrationTest {
                     .isInstanceOf(FoodbowlException.class)
                     .hasMessage("애플 회원가입이 되지 않은 회원입니다.");
         }
+    }
+
+    @Test
+    @DisplayName("애플 로그아웃은 리프레쉬 토큰을 삭제한다.")
+    void appleLogout() {
+        Long memberId = 1L;
+        redisTemplate.opsForValue().set(
+                String.valueOf(memberId),
+                "refreshToken",
+                5,
+                TimeUnit.MINUTES
+        );
+
+        authService.appleLogout(memberId);
+
+        assertThat(redisTemplate.opsForValue().get(String.valueOf(memberId))).isNull();
     }
 }
