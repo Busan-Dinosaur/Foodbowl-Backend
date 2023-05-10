@@ -17,6 +17,17 @@ class BlameRepositoryTest extends RepositoryTest {
     @Autowired
     private BlameRepository blameRepository;
 
+    @Test
+    @DisplayName("멤버가 신고한 목록을 삭제한다.")
+    void deleteAllByMember() {
+        Member member = memberTestSupport.memberBuilder().build();
+        blameTestSupport.builder().member(member).build();
+
+        blameRepository.deleteAllByMember(member);
+
+        assertThat(blameRepository.findAll()).isEmpty();
+    }
+
     @Nested
     @DisplayName("deleteAllByTargetIdAndBlameTarget 메서드는 ")
     class DeleteAllByTargetIdAndBlameTarget {
@@ -51,16 +62,5 @@ class BlameRepositoryTest extends RepositoryTest {
 
             assertThat(blameRepository.findAll()).hasSize(1);
         }
-    }
-
-    @Test
-    @DisplayName("멤버가 신고한 목록을 삭제한다.")
-    void deleteAllByMember() {
-        Member member = memberTestSupport.memberBuilder().build();
-        blameTestSupport.builder().member(member).build();
-
-        blameRepository.deleteAllByMember(member);
-
-        assertThat(blameRepository.findAll()).isEmpty();
     }
 }
