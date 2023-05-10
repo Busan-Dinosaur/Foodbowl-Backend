@@ -42,7 +42,7 @@ public class BlameTestSupport {
         public Blame build() {
             return blameRepository.save(
                     Blame.builder()
-                            .member(member == null ? memberTestSupport.builder().build() : member)
+                            .member(member == null ? memberTestSupport.memberBuilder().build() : member)
                             .targetId(targetId == null ? 1L : targetId)
                             .blameTarget(blameTarget == null ? BlameTarget.POST : blameTarget)
                             .build()
