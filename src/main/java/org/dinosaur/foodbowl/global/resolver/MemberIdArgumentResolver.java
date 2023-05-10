@@ -38,7 +38,7 @@ public class MemberIdArgumentResolver implements HandlerMethodArgumentResolver {
                 .orElseThrow(() -> new FoodbowlException(JWT_MALFORMED));
         return parseToLong(memberId);
     }
-    
+
     private Long parseToLong(String memberId) {
         try {
             return Long.parseLong(memberId);
