@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.dinosaur.foodbowl.RepositoryTest;
 import org.dinosaur.foodbowl.domain.blame.entity.Blame.BlameTarget;
-import org.dinosaur.foodbowl.testsupport.BlameTestSupport;
+import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 class BlameRepositoryTest extends RepositoryTest {
 
-    @Autowired
-    private BlameTestSupport blameTestSupport;
     @Autowired
     private BlameRepository blameRepository;
 
@@ -53,5 +51,16 @@ class BlameRepositoryTest extends RepositoryTest {
 
             assertThat(blameRepository.findAll()).hasSize(1);
         }
+    }
+
+    @Test
+    @DisplayName("멤버가 신고한 목록을 삭제한다.")
+    void deleteAllByMember() {
+        Member member = memberTestSupport.memberBuilder().build();
+        blameTestSupport.builder().member(member).build();
+
+        blameRepository.deleteAllByMember(member);
+
+        assertThat(blameRepository.findAll()).isEmpty();
     }
 }
