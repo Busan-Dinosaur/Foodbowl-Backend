@@ -41,5 +41,4 @@ public class RepositoryTest {
     protected BookmarkTestSupport bookmarkTestSupport;
     @Autowired
     protected BlameTestSupport blameTestSupport;
-
 }
