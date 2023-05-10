@@ -4,7 +4,11 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.member.entity.Member.SocialType;
+import org.dinosaur.foodbowl.domain.member.entity.MemberRole;
+import org.dinosaur.foodbowl.domain.member.entity.Role;
+import org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRepository;
+import org.dinosaur.foodbowl.domain.member.repository.MemberRoleRepository;
 import org.dinosaur.foodbowl.domain.photo.entity.Thumbnail;
 import org.springframework.stereotype.Component;
 
@@ -13,9 +17,14 @@ import org.springframework.stereotype.Component;
 public class MemberTestSupport {
 
     private final MemberRepository memberRepository;
+    private final MemberRoleRepository memberRoleRepository;
 
-    public MemberBuilder builder() {
+    public MemberBuilder memberBuilder() {
         return new MemberBuilder();
+    }
+
+    public MemberRoleBuilder memberRoleBuilder() {
+        return new MemberRoleBuilder();
     }
 
     public final class MemberBuilder {
@@ -80,6 +89,31 @@ public class MemberTestSupport {
                             .introduction(introduce)
                             .region1depthName(region1depthName)
                             .region2depthName(region2depthName)
+                            .build()
+            );
+        }
+    }
+
+    public final class MemberRoleBuilder {
+
+        private Member member;
+        private Role role;
+
+        public MemberRoleBuilder member(Member member) {
+            this.member = member;
+            return this;
+        }
+
+        public MemberRoleBuilder role(Role role) {
+            this.role = role;
+            return this;
+        }
+
+        public MemberRole build() {
+            return memberRoleRepository.save(
+                    MemberRole.builder()
+                            .member(member == null ? memberBuilder().build() : member)
+                            .role(role == null ? Role.from(RoleType.ROLE_회원) : role)
                             .build()
             );
         }
