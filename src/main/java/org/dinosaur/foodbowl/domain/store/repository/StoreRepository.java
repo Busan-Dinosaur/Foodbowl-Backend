@@ -5,4 +5,5 @@ import org.springframework.data.repository.Repository;
 
 public interface StoreRepository extends Repository<Store, Long> {
 
+    Store save(Store store);
 }
