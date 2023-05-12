@@ -25,6 +25,3 @@ logging:
     org:
       hibernate: info
       springframework: debug
-
-file:
-  dir: foodbowl-res
