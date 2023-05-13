@@ -22,7 +22,7 @@ class BookmarkRepositoryTest extends RepositoryTest {
 
         bookmarkRepository.deleteAllByMember(member);
 
-        assertThat(bookmarkRepository.findAll()).isEmpty();
+        assertThat(bookmarkRepository.findAllByMember(member)).isEmpty();
     }
 
     @Test
@@ -33,6 +33,6 @@ class BookmarkRepositoryTest extends RepositoryTest {
 
         bookmarkRepository.deleteAllByPost(post);
 
-        assertThat(bookmarkRepository.findAll()).isEmpty();
+        assertThat(bookmarkRepository.findAllByPost(post)).isEmpty();
     }
 }

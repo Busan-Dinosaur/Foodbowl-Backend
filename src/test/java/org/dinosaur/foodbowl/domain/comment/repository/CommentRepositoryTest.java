@@ -22,7 +22,7 @@ class CommentRepositoryTest extends RepositoryTest {
 
         commentRepository.deleteAllByMember(member);
 
-        assertThat(commentRepository.findAll()).isEmpty();
+        assertThat(commentRepository.findAllByMember(member)).isEmpty();
     }
 
     @Test
@@ -33,6 +33,6 @@ class CommentRepositoryTest extends RepositoryTest {
 
         commentRepository.deleteAllByPost(post);
 
-        assertThat(commentRepository.findAll()).isEmpty();
+        assertThat(commentRepository.findAllByPost(post)).isEmpty();
     }
 }

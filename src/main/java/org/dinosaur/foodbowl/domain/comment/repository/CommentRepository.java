@@ -10,6 +10,10 @@ public interface CommentRepository extends Repository<Comment, Long> {
 
     List<Comment> findAll();
 
+    List<Comment> findAllByMember(Member member);
+
+    List<Comment> findAllByPost(Post post);
+
     Comment save(Comment comment);
 
     void deleteAllByMember(Member member);

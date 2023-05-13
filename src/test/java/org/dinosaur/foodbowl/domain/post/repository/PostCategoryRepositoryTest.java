@@ -21,6 +21,6 @@ class PostCategoryRepositoryTest extends RepositoryTest {
 
         postCategoryRepository.deleteAllByPost(post);
 
-        assertThat(postCategoryRepository.findAll()).isEmpty();
+        assertThat(postCategoryRepository.findAllByPost(post)).isEmpty();
     }
 }

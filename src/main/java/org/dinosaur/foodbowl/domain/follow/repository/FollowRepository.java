@@ -9,6 +9,10 @@ public interface FollowRepository extends Repository<Follow, Long> {
 
     List<Follow> findAll();
 
+    List<Follow> findAllByFollowing(Member following);
+
+    List<Follow> findAllByFollower(Member follower);
+
     Follow save(Follow follow);
 
     void deleteAllByFollowing(Member following);

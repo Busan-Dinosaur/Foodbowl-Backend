@@ -10,6 +10,10 @@ public interface BookmarkRepository extends Repository<Bookmark, Long> {
 
     List<Bookmark> findAll();
 
+    List<Bookmark> findAllByMember(Member member);
+
+    List<Bookmark> findAllByPost(Post post);
+
     Bookmark save(Bookmark bookmark);
 
     void deleteAllByMember(Member member);

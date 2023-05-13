@@ -9,6 +9,8 @@ public interface MemberRoleRepository extends Repository<MemberRole, Long> {
 
     List<MemberRole> findAll();
 
+    List<MemberRole> findAllByMember(Member member);
+
     MemberRole save(MemberRole memberRole);
 
     void deleteAllByMember(Member member);

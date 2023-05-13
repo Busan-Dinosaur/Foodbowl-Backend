@@ -9,6 +9,8 @@ public interface PostCategoryRepository extends Repository<PostCategory, Long> {
 
     List<PostCategory> findAll();
 
+    List<PostCategory> findAllByPost(Post post);
+
     PostCategory save(PostCategory postCategory);
 
     void deleteAllByPost(Post post);

@@ -21,6 +21,6 @@ class MemberRoleRepositoryTest extends RepositoryTest {
 
         memberRoleRepository.deleteAllByMember(member);
 
-        assertThat(memberRoleRepository.findAll()).isEmpty();
+        assertThat(memberRoleRepository.findAllByMember(member)).isEmpty();
     }
 }

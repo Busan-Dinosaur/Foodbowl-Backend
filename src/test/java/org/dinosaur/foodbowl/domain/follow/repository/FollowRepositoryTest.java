@@ -21,7 +21,7 @@ class FollowRepositoryTest extends RepositoryTest {
 
         followRepository.deleteAllByFollower(member);
 
-        assertThat(followRepository.findAll()).isEmpty();
+        assertThat(followRepository.findAllByFollower(member)).isEmpty();
     }
 
     @Test
@@ -32,6 +32,6 @@ class FollowRepositoryTest extends RepositoryTest {
 
         followRepository.deleteAllByFollowing(member);
 
-        assertThat(followRepository.findAll()).isEmpty();
+        assertThat(followRepository.findAllByFollowing(member)).isEmpty();
     }
 }

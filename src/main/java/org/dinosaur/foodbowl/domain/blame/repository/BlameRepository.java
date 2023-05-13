@@ -10,6 +10,8 @@ public interface BlameRepository extends Repository<Blame, Long> {
 
     List<Blame> findAll();
 
+    List<Blame> findAllByMember(Member member);
+
     Blame save(Blame blame);
 
     void deleteAllByMember(Member member);

@@ -25,7 +25,7 @@ class BlameRepositoryTest extends RepositoryTest {
 
         blameRepository.deleteAllByMember(member);
 
-        assertThat(blameRepository.findAll()).isEmpty();
+        assertThat(blameRepository.findAllByMember(member)).isEmpty();
     }
 
     @Nested
