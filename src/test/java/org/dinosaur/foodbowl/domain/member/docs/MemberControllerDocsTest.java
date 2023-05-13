@@ -2,6 +2,8 @@ package org.dinosaur.foodbowl.domain.member.docs;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -22,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
@@ -34,11 +37,10 @@ public class MemberControllerDocsTest extends MockApiTest {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    private final DuplicationCheckRequest request = new DuplicationCheckRequest("gray");
-
     @Test
     @DisplayName("닉네임 중복 검증을 문서화한다.")
     void appleLogin() throws Exception {
+        DuplicationCheckRequest request = new DuplicationCheckRequest("gray");
         String token = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
         given(memberService.checkDuplicate(any())).willReturn(new DuplicateCheckResponse(false));
 
@@ -49,6 +51,9 @@ public class MemberControllerDocsTest extends MockApiTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("api-v1-members-check-nicknames",
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("서버에서 발급한 엑세스 토큰")
+                        ),
                         requestFields(
                                 fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임")
                         ),
