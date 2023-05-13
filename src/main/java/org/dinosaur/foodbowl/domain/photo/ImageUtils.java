@@ -3,9 +3,9 @@ package org.dinosaur.foodbowl.domain.photo;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,15 +16,13 @@ public abstract class ImageUtils {
     @Value("${file.dir}")
     protected String fileDir = "foodbowl-res";
 
-    public List<String> storeImageFiles(List<MultipartFile> files) {
-        return files.stream()
-                .map(file -> {
-                    try {
-                        return storeImageFile(file);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }).collect(Collectors.toList());
+    public List<String> storeImageFiles(List<MultipartFile> files) throws IOException {
+        List<String> storedImagesPaths = new ArrayList<>();
+
+        for (MultipartFile file : files) {
+            storedImagesPaths.add(storeImageFile(file));
+        }
+        return storedImagesPaths;
     }
 
     public abstract String storeImageFile(MultipartFile file) throws IOException;

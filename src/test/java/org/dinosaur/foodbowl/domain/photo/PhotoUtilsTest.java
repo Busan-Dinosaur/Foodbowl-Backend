@@ -15,6 +15,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 class PhotoUtilsTest {
+
     private final List<String> trash = new LinkedList<>();
 
     private final PhotoUtils photoUtils = new PhotoUtils();
@@ -52,7 +53,7 @@ class PhotoUtilsTest {
 
     @Test
     @DisplayName("이미지 파일 여러개를 저장하면 \"지정 경로 + UUID + 확장자\"를 가진 List를 반환한다")
-    void storeImageFiles() {
+    void storeImageFiles() throws IOException {
         int imageFileCount = 2;
         List<MultipartFile> testImageFiles = new ArrayList<>(imageFileCount);
         for (int i = 0; i < imageFileCount; i++) {
