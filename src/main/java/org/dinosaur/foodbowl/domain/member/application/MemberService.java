@@ -14,7 +14,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     public DuplicateCheckResponse checkDuplicate(String nickname) {
-        boolean hasDuplicate = memberRepository.findByNickname(nickname).isPresent();
+        boolean hasDuplicate = memberRepository.existsByNickname(nickname);
         return new DuplicateCheckResponse(hasDuplicate);
     }
 }

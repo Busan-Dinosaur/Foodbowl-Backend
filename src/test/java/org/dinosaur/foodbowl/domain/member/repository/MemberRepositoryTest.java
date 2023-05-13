@@ -59,7 +59,7 @@ class MemberRepositoryTest extends RepositoryTest {
     }
 
     @Nested
-    @DisplayName("findByNickname 메서드는 ")
+    @DisplayName("existsByNickname 메서드는 ")
     class FindByNickname {
 
         @BeforeEach
@@ -73,11 +73,11 @@ class MemberRepositoryTest extends RepositoryTest {
         }
 
         @Test
-        @DisplayName("일치하는 닉네임이 존재하는 경우 회원을 가져온다.")
+        @DisplayName("일치하는 닉네임이 존재하는 true를 반환한다.")
         void getMember() {
             String nickName = "gray";
 
-            assertThat(memberRepository.findByNickname(nickName).isPresent()).isTrue();
+            assertThat(memberRepository.existsByNickname(nickName)).isTrue();
         }
 
         @Test
@@ -85,7 +85,7 @@ class MemberRepositoryTest extends RepositoryTest {
         void getNoMember() {
             String nickName = "hoy";
 
-            assertThat(memberRepository.findByNickname(nickName).isPresent()).isFalse();
+            assertThat(memberRepository.existsByNickname(nickName)).isFalse();
         }
     }
 }

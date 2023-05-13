@@ -13,5 +13,5 @@ public interface MemberRepository extends Repository<Member, Long> {
 
     Optional<Member> findBySocialTypeAndSocialId(SocialType socialType, String socialId);
 
-    Optional<Member> findByNickname(String nickname);
+    boolean existsByNickname(String nickname);
 }
