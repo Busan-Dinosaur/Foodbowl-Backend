@@ -11,7 +11,7 @@ public interface FollowRepository extends Repository<Follow, Long> {
 
     Follow save(Follow follow);
 
-    void deleteAllByFollowing(Member member);
+    void deleteAllByFollowing(Member following);
 
-    void deleteAllByFollower(Member member);
+    void deleteAllByFollower(Member follower);
 }
