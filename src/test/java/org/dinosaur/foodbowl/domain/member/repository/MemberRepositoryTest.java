@@ -26,7 +26,7 @@ class MemberRepositoryTest extends RepositoryTest {
 
         memberRepository.delete(member);
 
-        assertThat(memberRepository.findAll()).isEmpty();
+        assertThat(memberRepository.findById(member.getId())).isEmpty();
     }
 
     @Nested
