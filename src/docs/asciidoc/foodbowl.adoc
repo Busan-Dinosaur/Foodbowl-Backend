@@ -19,4 +19,4 @@ link:auth/auth.html[API 문서 보기]
 
 == *Member*
 
-link:auth/member.html[API 문서 보기]
+link:member/member.html[API 문서 보기]

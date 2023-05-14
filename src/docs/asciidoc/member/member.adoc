@@ -2,7 +2,7 @@ ifndef::snippets[]
 :snippets: ./build/generated-snippets
 endif::[]
 
-= USER API 문서
+= MEMBER API 문서
 :icons: font
 :source-highlighter: highlight.js
 :toc: left
@@ -29,7 +29,7 @@ include::{snippets}/api-v1-members-check-nickname/request-headers.adoc[]
 
 include::{snippets}/api-v1-members-check-nickname/query-parameters.adoc[]
 
-== 응답
+=== 응답
 
 === Response
 
@@ -38,7 +38,3 @@ include::{snippets}/api-v1-members-check-nickname/http-response.adoc[]
 === Response Fields
 
 include::{snippets}/api-v1-members-check-nickname/response-fields.adoc[]
-
-=== Response Body
-
-include::{snippets}/api-v1-members-check-nickname/response-body.adoc[]
