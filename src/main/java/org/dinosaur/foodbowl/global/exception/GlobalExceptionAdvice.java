@@ -1,5 +1,6 @@
 package org.dinosaur.foodbowl.global.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -34,5 +35,11 @@ public class GlobalExceptionAdvice {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new FoodbowlErrorResponse(stringBuilder.toString(), -1000));
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<FoodbowlErrorResponse> handleConstraintViolationException(ConstraintViolationException e) {
+        return ResponseEntity.badRequest()
+                .body(new FoodbowlErrorResponse(e.getMessage(), -5000));
     }
 }

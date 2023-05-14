@@ -1,16 +1,17 @@
 package org.dinosaur.foodbowl.domain.member.api;
 
-import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.application.MemberService;
 import org.dinosaur.foodbowl.domain.member.dto.response.DuplicateCheckResponse;
-import org.dinosaur.foodbowl.domain.member.dto.request.DuplicationCheckRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/members")
 @RestController
@@ -18,8 +19,10 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @PostMapping("/check-nicknames")
-    public ResponseEntity<DuplicateCheckResponse> checkDuplicate(@RequestBody @Valid DuplicationCheckRequest request) {
-        return ResponseEntity.ok(memberService.checkDuplicate(request.getNickname()));
+    @GetMapping("/check-nickname")
+    public ResponseEntity<DuplicateCheckResponse> checkDuplicate(@RequestParam
+                                                                 @Pattern(regexp = "^[a-zA-Z가-힣0-9]{1,16}$", message = "닉네임은 1자 이상 16자 이하 한글,영문,숫자만 가능합니다")
+                                                                 String nickname) {
+        return ResponseEntity.ok(memberService.checkDuplicate(nickname));
     }
 }
