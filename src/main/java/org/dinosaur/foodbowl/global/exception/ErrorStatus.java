@@ -25,7 +25,7 @@ public enum ErrorStatus {
     APPLE_NOT_REGISTER(HttpStatus.UNAUTHORIZED, "애플 회원가입이 되지 않은 회원입니다.", 3004),
 
     //Member code: 4xxx
-    MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "등록되지 않은 회원입니다.", 4000);
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "등록되지 않은 회원입니다.", 4000);
 
     private final HttpStatus httpStatus;
     private final String message;
