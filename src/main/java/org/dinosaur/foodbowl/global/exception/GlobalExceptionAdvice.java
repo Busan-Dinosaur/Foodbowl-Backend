@@ -66,6 +66,6 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<FoodbowlErrorResponse> handleException(Exception ex) {
         logger.error(ex.getMessage());
         return ResponseEntity.internalServerError()
-                .body(new FoodbowlErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, -2000));
+                .body(new FoodbowlErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE, -9999));
     }
 }
