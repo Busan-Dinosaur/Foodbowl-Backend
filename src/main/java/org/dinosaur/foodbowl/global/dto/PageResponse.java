@@ -13,8 +13,8 @@ import org.springframework.data.domain.Page;
 public class PageResponse<T> {
 
     private List<T> content;
-    private boolean isFirst;
-    private boolean isLast;
+    private boolean first;
+    private boolean last;
     private boolean hasNext;
     private int currentPage;
     private int currentElementSize;
