@@ -9,8 +9,6 @@ import org.springframework.data.repository.Repository;
 
 public interface MemberRepository extends Repository<Member, Long> {
 
-    Optional<Member> findById(Long id);
-
     Optional<Member> findById(Long memberId);
 
     Optional<Member> findBySocialTypeAndSocialId(SocialType socialType, String socialId);
