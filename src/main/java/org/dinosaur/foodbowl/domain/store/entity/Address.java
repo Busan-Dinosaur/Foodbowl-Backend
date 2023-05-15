@@ -56,18 +56,11 @@ public class Address {
     private BigDecimal y;
 
     @Builder
-    private Address(String addressName,
-                    String region1depthName,
-                    String region2depthName,
-                    String region3depthName,
-                    String roadName,
-                    String undergroundYN,
-                    String mainBuildingNo,
-                    String subBuildingNo,
-                    String buildingName,
-                    String zoneNo,
-                    BigDecimal x,
-                    BigDecimal y) {
+    private Address(
+            String addressName, String region1depthName, String region2depthName, String region3depthName,
+            String roadName, String undergroundYN, String mainBuildingNo, String subBuildingNo, String buildingName,
+            String zoneNo, BigDecimal x, BigDecimal y
+    ) {
         this.addressName = addressName;
         this.region1depthName = region1depthName;
         this.region2depthName = region2depthName;

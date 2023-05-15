@@ -11,7 +11,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -21,15 +20,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.post.entity.Post;
-import org.dinosaur.foodbowl.global.entity.BaseEntity;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.dinosaur.foodbowl.global.entity.AuditingEntity;
 
 @Getter
 @Entity
 @Table(name = "comment")
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Comment extends BaseEntity {
+public class Comment extends AuditingEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,11 +54,6 @@ public class Comment extends BaseEntity {
     @NotNull
     @Column(name = "message", length = 255)
     private String message;
-
-    @LastModifiedDate
-    @NotNull
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 
     @Builder
     private Comment(Comment parent, Post post, Member member, String message) {

@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
+@RestController
 public class HealthCheckController {
 
     private final HealthCheckService healthCheckService;
@@ -18,7 +18,12 @@ public class HealthCheckController {
     @GetMapping("/health-check")
     public ResponseEntity<HealthCheckDto> check() {
         HealthCheckDto response = healthCheckService.check();
+        return ResponseEntity.ok(response);
+    }
 
+    @GetMapping("/health-check/auth")
+    public ResponseEntity<HealthCheckDto> authCheck() {
+        HealthCheckDto response = healthCheckService.check();
         return ResponseEntity.ok(response);
     }
 }

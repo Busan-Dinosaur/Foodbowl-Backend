@@ -15,14 +15,14 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.dinosaur.foodbowl.global.entity.BaseEntity;
+import org.dinosaur.foodbowl.global.entity.AuditingEntity;
 
 @Getter
 @Entity
 @Table(name = "post_category")
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostCategory extends BaseEntity {
+public class PostCategory extends AuditingEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

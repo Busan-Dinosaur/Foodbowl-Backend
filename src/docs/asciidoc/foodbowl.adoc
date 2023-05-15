@@ -9,22 +9,14 @@ endif::[]
 :toclevels: 1
 :sectlinks:
 
-== *Health Check*
+== *헬스 체크* ==
 
-헬스 체크시 확인할 수 있는 응답 형식을 제공합니다.
+link:health_check/health_check.html[API 문서 보기]
 
-=== 요청
+== *인증*
 
-=== Request
+link:auth/auth.html[API 문서 보기]
 
-include::{snippets}/api-v1-health-check/http-request.adoc[]
+== *멤버*
 
-=== 응답
-
-=== Response
-
-include::{snippets}/api-v1-health-check/http-response.adoc[]
-
-=== Response Fields
-
-include::{snippets}/api-v1-health-check/response-fields.adoc[]
+link:member/member.html[API 문서 보기]
