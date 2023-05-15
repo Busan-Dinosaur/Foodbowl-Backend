@@ -3,7 +3,7 @@ package org.dinosaur.foodbowl.domain.member.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.dinosaur.foodbowl.IntegrationTest;
-import org.dinosaur.foodbowl.domain.member.dto.response.DuplicateCheckResponse;
+import org.dinosaur.foodbowl.domain.member.dto.response.NicknameDuplicateCheckResponse;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -34,9 +34,9 @@ class MemberServiceTest extends IntegrationTest {
                     .build();
             memberRepository.save(member);
 
-            DuplicateCheckResponse duplicateCheckResponse = memberService.checkDuplicate(nickname);
+            NicknameDuplicateCheckResponse nicknameDuplicateCheckResponse = memberService.checkDuplicate(nickname);
 
-            assertThat(duplicateCheckResponse.isHasDuplicate()).isTrue();
+            assertThat(nicknameDuplicateCheckResponse.isHasDuplicate()).isTrue();
         }
 
         @Test
@@ -50,9 +50,9 @@ class MemberServiceTest extends IntegrationTest {
                     .build();
             memberRepository.save(member);
 
-            DuplicateCheckResponse duplicateCheckResponse = memberService.checkDuplicate(nickname);
+            NicknameDuplicateCheckResponse nicknameDuplicateCheckResponse = memberService.checkDuplicate(nickname);
 
-            assertThat(duplicateCheckResponse.isHasDuplicate()).isFalse();
+            assertThat(nicknameDuplicateCheckResponse.isHasDuplicate()).isFalse();
         }
     }
 

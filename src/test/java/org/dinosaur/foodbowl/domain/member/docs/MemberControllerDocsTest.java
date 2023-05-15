@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.dinosaur.foodbowl.MockApiTest;
 import org.dinosaur.foodbowl.domain.member.api.MemberController;
 import org.dinosaur.foodbowl.domain.member.application.MemberService;
-import org.dinosaur.foodbowl.domain.member.dto.response.DuplicateCheckResponse;
+import org.dinosaur.foodbowl.domain.member.dto.response.NicknameDuplicateCheckResponse;
 import org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
 import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
@@ -40,9 +40,8 @@ public class MemberControllerDocsTest extends MockApiTest {
     @Test
     @DisplayName("닉네임 중복 검증을 문서화한다.")
     void appleLogin() throws Exception {
-
         String token = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
-        given(memberService.checkDuplicate(any())).willReturn(new DuplicateCheckResponse(false));
+        given(memberService.checkDuplicate(any())).willReturn(new NicknameDuplicateCheckResponse(false));
 
         mockMvc.perform(get("/api/v1/members/check-nickname")
                         .header("Authorization", "Bearer " + token)

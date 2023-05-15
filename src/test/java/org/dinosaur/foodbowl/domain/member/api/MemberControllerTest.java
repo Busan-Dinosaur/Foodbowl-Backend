@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.dinosaur.foodbowl.MockApiTest;
 import org.dinosaur.foodbowl.domain.member.application.MemberService;
-import org.dinosaur.foodbowl.domain.member.dto.response.DuplicateCheckResponse;
+import org.dinosaur.foodbowl.domain.member.dto.response.NicknameDuplicateCheckResponse;
 import org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
 import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
@@ -40,7 +40,7 @@ class MemberControllerTest extends MockApiTest {
         @Test
         @DisplayName("요청 파라미터가 없으면 BAD REQUEST가 발생한다.")
         void checkDuplicateFailWithNoParams() throws Exception {
-            given(memberService.checkDuplicate(any())).willReturn(new DuplicateCheckResponse(false));
+            given(memberService.checkDuplicate(any())).willReturn(new NicknameDuplicateCheckResponse(false));
 
             mockMvc.perform(get("/api/v1/members/check-nickname")
                             .header("Authorization", "Bearer " + token)
@@ -52,7 +52,7 @@ class MemberControllerTest extends MockApiTest {
         @Test
         @DisplayName("요청 닉네임이 존재하면 true를 반환한다.")
         void checkDuplicateTrue() throws Exception {
-            given(memberService.checkDuplicate(any())).willReturn(new DuplicateCheckResponse(true));
+            given(memberService.checkDuplicate(any())).willReturn(new NicknameDuplicateCheckResponse(true));
 
             mockMvc.perform(get("/api/v1/members/check-nickname")
                             .header("Authorization", "Bearer " + token)
@@ -66,7 +66,7 @@ class MemberControllerTest extends MockApiTest {
         @Test
         @DisplayName("요청 닉네임이 존재하지 않으면 false를 반환한다.")
         void checkDuplicateFalse() throws Exception {
-            given(memberService.checkDuplicate(any())).willReturn(new DuplicateCheckResponse(false));
+            given(memberService.checkDuplicate(any())).willReturn(new NicknameDuplicateCheckResponse(false));
 
             mockMvc.perform(get("/api/v1/members/check-nickname")
                             .header("Authorization", "Bearer " + token)
@@ -81,7 +81,7 @@ class MemberControllerTest extends MockApiTest {
         @ValueSource(strings = {"", " ", "graygraygraygrayhoy", "@!!dsafdsf$"})
         @DisplayName("닉네임은 1자 이상 16자 이하 한글,영문,숫자가 아니면 BAD REQUEST가 발생한다.")
         void checkDuplicateFail(String nickname) throws Exception {
-            given(memberService.checkDuplicate(any())).willReturn(new DuplicateCheckResponse(false));
+            given(memberService.checkDuplicate(any())).willReturn(new NicknameDuplicateCheckResponse(false));
 
             mockMvc.perform(get("/api/v1/members/check-nickname")
                             .header("Authorization", "Bearer " + token)

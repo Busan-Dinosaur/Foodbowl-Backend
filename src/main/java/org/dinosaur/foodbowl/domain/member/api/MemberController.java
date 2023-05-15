@@ -3,7 +3,7 @@ package org.dinosaur.foodbowl.domain.member.api;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.application.MemberService;
-import org.dinosaur.foodbowl.domain.member.dto.response.DuplicateCheckResponse;
+import org.dinosaur.foodbowl.domain.member.dto.response.NicknameDuplicateCheckResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +20,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/check-nickname")
-    public ResponseEntity<DuplicateCheckResponse> checkDuplicate(
+    public ResponseEntity<NicknameDuplicateCheckResponse> checkDuplicate(
             @Pattern(regexp = "^[a-zA-Z가-힣0-9]{1,16}$", message = "닉네임은 1자 이상 16자 이하 한글,영문,숫자만 가능합니다")
             @RequestParam String nickname
     ) {

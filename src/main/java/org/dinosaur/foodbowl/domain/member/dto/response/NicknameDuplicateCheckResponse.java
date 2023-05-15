@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class DuplicateCheckResponse {
+public class NicknameDuplicateCheckResponse {
 
     private boolean hasDuplicate;
 }
