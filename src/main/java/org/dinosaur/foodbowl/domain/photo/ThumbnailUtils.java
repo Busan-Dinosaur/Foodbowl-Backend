@@ -5,8 +5,10 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
+import java.util.List;
 import javax.imageio.ImageIO;
+import org.dinosaur.foodbowl.global.exception.ErrorStatus;
+import org.dinosaur.foodbowl.global.exception.FoodbowlException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,44 +16,73 @@ import org.springframework.web.multipart.MultipartFile;
 public class ThumbnailUtils extends ImageUtils {
 
     private static final String dir = "/thumbnail/";
-    private static final int NEW_WIDTH = 450;
+    private static final int SIZE = 450;
+    private static final int DEFAULT_TOP_LEFT_X = 0;
+    private static final int DEFAULT_TOP_LEFT_Y = 0;
+    private static final int WIDTH_INDEX = 0;
+    private static final int HEIGHT_INDEX = 1;
 
     @Override
-    public String storeImageFile(MultipartFile file) throws IOException {
-        validateEmptyFile(file);
-        BufferedImage inputImage = ImageIO.read(file.getInputStream());
+    public String storeImageFile(MultipartFile file) {
+        validateImageFile(file);
+        BufferedImage inputImage = getImageFrom(file);
         String originalFilename = file.getOriginalFilename();
         String storeFilename = createStoreFilename(originalFilename);
         String path = dir + storeFilename;
         String fullPath = getFullPath(path);
 
-        if (inputImage.getWidth() <= NEW_WIDTH) {
-            file.transferTo(Path.of(fullPath));
+        if (inputImage.getWidth() <= SIZE && inputImage.getHeight() <= SIZE) {
+            storeFile(fullPath, file);
             return path;
         }
 
         BufferedImage newImage = drawNewImage(inputImage);
-        String format = extractExt(originalFilename);
-        storeImage(fullPath, format, newImage);
+        String format = extractExtension(originalFilename);
+        storeNewFile(fullPath, format, newImage);
         return path;
     }
 
-    private BufferedImage drawNewImage(BufferedImage inputImage) {
-        int originWidth = inputImage.getWidth();
-        int originHeight = inputImage.getHeight();
-        int newHeight = (originHeight * NEW_WIDTH) / originWidth;
+    private BufferedImage getImageFrom(final MultipartFile file) {
+        try {
+            return ImageIO.read(file.getInputStream());
+        } catch (IOException e) {
+            throw new FoodbowlException(ErrorStatus.IMAGE_IO_EXCEPTION);
+        }
+    }
 
-        BufferedImage newImage = new BufferedImage(NEW_WIDTH, newHeight, BufferedImage.TYPE_INT_RGB);
-        Image resizeImage = inputImage.getScaledInstance(NEW_WIDTH, newHeight, Image.SCALE_FAST);
+    private BufferedImage drawNewImage(BufferedImage inputImage) {
+        List<Integer> imageSize = calculateImageSize(inputImage);
+        int newWidth = imageSize.get(WIDTH_INDEX);
+        int newHeight = imageSize.get(HEIGHT_INDEX);
+
+        BufferedImage newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
+        Image resizeImage = inputImage.getScaledInstance(newWidth, newHeight, Image.SCALE_FAST);
 
         Graphics graphics = newImage.getGraphics();
-        graphics.drawImage(resizeImage, 0, 0, null);
+        graphics.drawImage(resizeImage, DEFAULT_TOP_LEFT_X, DEFAULT_TOP_LEFT_Y, null);
         graphics.dispose();
         return newImage;
     }
 
-    private void storeImage(String fullPath, String format, BufferedImage newImage) throws IOException {
+    private List<Integer> calculateImageSize(BufferedImage inputImage) {
+        int originWidth = inputImage.getWidth();
+        int originHeight = inputImage.getHeight();
+        if (originWidth >= originHeight) {
+            int newWidth = SIZE;
+            int newHeight = (originHeight * SIZE) / originWidth;
+            return List.of(newWidth, newHeight);
+        }
+        int newHeight = SIZE;
+        int newWidth = (originWidth * SIZE) / originHeight;
+        return List.of(newWidth, newHeight);
+    }
+
+    private void storeNewFile(String fullPath, String format, BufferedImage newImage) {
         File newFile = new File(fullPath);
-        ImageIO.write(newImage, format, newFile);
+        try {
+            ImageIO.write(newImage, format, newFile);
+        } catch (IOException e) {
+            throw new FoodbowlException(ErrorStatus.IMAGE_IO_EXCEPTION);
+        }
     }
 }
