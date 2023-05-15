@@ -25,8 +25,8 @@ class HealthCheckControllerDocsTest extends MockApiTest {
     @MockBean
     private HealthCheckService healthCheckService;
 
-    @DisplayName("헬스 체크")
     @Test
+    @DisplayName("헬스 체크")
     void healthCheck() throws Exception {
         String message = "success";
         LocalDateTime now = LocalDateTime.now();

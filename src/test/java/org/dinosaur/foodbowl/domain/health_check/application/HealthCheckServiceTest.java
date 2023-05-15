@@ -13,8 +13,8 @@ class HealthCheckServiceTest extends IntegrationTest {
     @Autowired
     private HealthCheckService healthCheckService;
 
-    @DisplayName("헬스 체크 응답을 생성한다.")
     @Test
+    @DisplayName("헬스 체크 응답을 생성한다.")
     void createHealthCheckResponse() {
         HealthCheckDto result = healthCheckService.check();
 

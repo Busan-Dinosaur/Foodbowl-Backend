@@ -34,9 +34,8 @@ public class AuthService {
                 appleOAuthUserProvider.extractApplePlatformUser(appleLoginRequest.getAppleToken());
         String socialId = applePlatformUserResponse.getSocialId();
 
-        final Member member = memberRepository.findBySocialTypeAndSocialId(SocialType.APPLE, socialId)
+        Member member = memberRepository.findBySocialTypeAndSocialId(SocialType.APPLE, socialId)
                 .orElseThrow(() -> new FoodbowlException(APPLE_NOT_REGISTER));
-
         return generateFoodbowlToken(member);
     }
 

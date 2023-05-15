@@ -11,6 +11,7 @@ public enum ErrorStatus {
     JWT_WRONG_SIGNATURE(HttpStatus.UNAUTHORIZED, "시그니처 검증에 실패한 토큰입니다.", 1003),
     JWT_UNKNOWN(HttpStatus.UNAUTHORIZED, "알 수 없는 이유로 유효하지 않은 토큰입니다.", 1004),
     JWT_NOT_FOUND(HttpStatus.UNAUTHORIZED, "로그인 토큰이 존재하지 않습니다.", 1005),
+    JWT_NOT_AUTHENTICATION(HttpStatus.UNAUTHORIZED, "인증 정보가 존재하지 않습니다.", 1006),
 
     //Store code: 2xxx
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "일치하는 가게를 찾을 수 없습니다.", 2000),

@@ -10,9 +10,9 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 class RoleTest {
 
-    @DisplayName("역할 타입에 해당하는 역할을 생성한다.")
     @EnumSource
     @ParameterizedTest
+    @DisplayName("역할 타입에 해당하는 역할을 생성한다.")
     void createRoleByType(RoleType roleType) {
         Role role = Role.from(roleType);
 
