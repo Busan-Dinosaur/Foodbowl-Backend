@@ -1,11 +1,14 @@
 package org.dinosaur.foodbowl.domain.photo;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import org.dinosaur.foodbowl.global.exception.ErrorStatus;
+import org.dinosaur.foodbowl.global.exception.FoodbowlException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,10 +16,14 @@ import org.springframework.web.multipart.MultipartFile;
 @Component
 public abstract class ImageUtils {
 
+    private static final Set<String> imageExtensions = Set.of("jpeg", "jpg", "png", "webp");
+    private static final String DOT = ".";
+    public static final int MAX_FILE_NAME = 15;
+
     @Value("${file.dir}")
     protected String fileDir = "foodbowl-res";
 
-    public List<String> storeImageFiles(List<MultipartFile> files) throws IOException {
+    public List<String> storeImageFiles(List<MultipartFile> files) {
         List<String> storedImagesPaths = new ArrayList<>();
 
         for (MultipartFile file : files) {
@@ -25,17 +32,25 @@ public abstract class ImageUtils {
         return storedImagesPaths;
     }
 
-    public abstract String storeImageFile(MultipartFile file) throws IOException;
+    public abstract String storeImageFile(MultipartFile file);
+
+    protected void storeFile(final String fullPath, final MultipartFile file) {
+        try {
+            file.transferTo(Path.of(fullPath));
+        } catch (IOException e) {
+            throw new FoodbowlException(ErrorStatus.IMAGE_IO_EXCEPTION);
+        }
+    }
 
     protected String createStoreFilename(String originalFilename) {
         String uuid = UUID.randomUUID().toString();
-        String ext = extractExt(originalFilename);
-        return uuid + "." + ext;
+        String extension = extractExtension(originalFilename);
+        return uuid + DOT + extension;
     }
 
-    protected String extractExt(String originalFilename) {
-        int dotIndex = originalFilename.lastIndexOf(".");
-        return originalFilename.substring(dotIndex + 1);
+    protected String extractExtension(String originalFilename) {
+        int extensionIndex = originalFilename.lastIndexOf(DOT) + 1;
+        return originalFilename.substring(extensionIndex).toLowerCase();
     }
 
     protected String getFullPath(String imagePath) {
@@ -43,9 +58,6 @@ public abstract class ImageUtils {
     }
 
     public void deleteImageFiles(List<String> imagePaths) {
-        if (imagePaths == null) {
-            return;
-        }
         imagePaths.forEach(this::deleteImageFile);
     }
 
@@ -54,9 +66,31 @@ public abstract class ImageUtils {
         file.delete();
     }
 
-    protected void validateEmptyFile(MultipartFile file) throws FileNotFoundException {
-        if (file.isEmpty()) {
-            throw new FileNotFoundException("파일이 존재하지 않습니다.");
+    protected void validateImageFile(MultipartFile file) {
+        validateEmptyFile(file);
+        validateFileName(file);
+        validateImageType(file);
+    }
+
+    private void validateFileName(MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename.length() > MAX_FILE_NAME) {
+            throw new FoodbowlException(ErrorStatus.IMAGE_INVALID_NAME_LENGTH);
         }
+    }
+
+    private void validateEmptyFile(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new FoodbowlException(ErrorStatus.IMAGE_NOT_FOUND);
+        }
+    }
+
+    private void validateImageType(MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
+        String extension = extractExtension(originalFilename);
+        if (imageExtensions.contains(extension)) {
+            return;
+        }
+        throw new FoodbowlException(ErrorStatus.IMAGE_INVALID_EXTENSION);
     }
 }
