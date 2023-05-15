@@ -2,7 +2,7 @@ ifndef::snippets[]
 :snippets: ./build/generated-snippets
 endif::[]
 
-= USER API 문서
+= HEALTH CHECK API 문서
 :icons: font
 :source-highlighter: highlight.js
 :toc: left
@@ -13,7 +13,7 @@ endif::[]
 
 link:../foodbowl.html[API 목록으로 돌아가기]
 
-== *Health Check*
+== *헬스 체크*
 
 헬스 체크시 확인할 수 있는 응답 형식을 제공합니다.
 

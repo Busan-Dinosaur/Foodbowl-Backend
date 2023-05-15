@@ -13,6 +13,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,6 +45,13 @@ public class Blame extends AuditingEntity {
     @NotNull
     @Column(name = "target_type", updatable = false)
     private BlameTarget blameTarget;
+
+    @Builder
+    private Blame(Member member, Long targetId, BlameTarget blameTarget) {
+        this.member = member;
+        this.targetId = targetId;
+        this.blameTarget = blameTarget;
+    }
 
     public enum BlameTarget {
 

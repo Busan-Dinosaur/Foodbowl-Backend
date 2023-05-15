@@ -9,15 +9,19 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.dinosaur.foodbowl.domain.photo.entity.Thumbnail;
+import org.dinosaur.foodbowl.domain.post.entity.Post;
 import org.dinosaur.foodbowl.global.entity.AuditingEntity;
 
 @Getter
@@ -32,7 +36,7 @@ public class Member extends AuditingEntity {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "thumbnail_id")
     private Thumbnail thumbnail;
 
@@ -60,6 +64,9 @@ public class Member extends AuditingEntity {
 
     @Column(name = "region_2depth_name", length = 45)
     private String region2depthName;
+
+    @OneToMany(mappedBy = "member")
+    private List<Post> posts = new ArrayList<>();
 
     @Builder
     private Member(

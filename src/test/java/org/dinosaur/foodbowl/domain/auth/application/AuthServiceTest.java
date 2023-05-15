@@ -34,6 +34,22 @@ class AuthServiceTest extends IntegrationTest {
     @MockBean
     private AppleOAuthUserProvider appleOAuthUserProvider;
 
+    @Test
+    @DisplayName("애플 로그아웃은 리프레쉬 토큰을 삭제한다.")
+    void appleLogout() {
+        Long memberId = 1L;
+        redisTemplate.opsForValue().set(
+                String.valueOf(memberId),
+                "refreshToken",
+                5,
+                TimeUnit.MINUTES
+        );
+
+        authService.appleLogout(memberId);
+
+        assertThat(redisTemplate.opsForValue().get(String.valueOf(memberId))).isNull();
+    }
+
     @Nested
     @DisplayName("appleLogin 메서드는 ")
     class AppleLogin {
@@ -80,21 +96,5 @@ class AuthServiceTest extends IntegrationTest {
                     .isInstanceOf(FoodbowlException.class)
                     .hasMessage("애플 회원가입이 되지 않은 회원입니다.");
         }
-    }
-
-    @Test
-    @DisplayName("애플 로그아웃은 리프레쉬 토큰을 삭제한다.")
-    void appleLogout() {
-        Long memberId = 1L;
-        redisTemplate.opsForValue().set(
-                String.valueOf(memberId),
-                "refreshToken",
-                5,
-                TimeUnit.MINUTES
-        );
-
-        authService.appleLogout(memberId);
-
-        assertThat(redisTemplate.opsForValue().get(String.valueOf(memberId))).isNull();
     }
 }
