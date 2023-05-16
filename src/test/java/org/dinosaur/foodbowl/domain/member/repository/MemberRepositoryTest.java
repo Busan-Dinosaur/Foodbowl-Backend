@@ -19,16 +19,6 @@ class MemberRepositoryTest extends RepositoryTest {
     @Autowired
     private MemberRepository memberRepository;
 
-    @Test
-    @DisplayName("멤버를 삭제한다.")
-    void delete() {
-        Member member = memberTestSupport.memberBuilder().build();
-
-        memberRepository.delete(member);
-
-        assertThat(memberRepository.findById(member.getId())).isEmpty();
-    }
-
     @Nested
     @DisplayName("findBySocialTypeAndSocialId 메서드는 ")
     class FindBySocialTypeAndSocialId {
@@ -95,7 +85,10 @@ class MemberRepositoryTest extends RepositoryTest {
             String nickName = "hoy";
 
             assertThat(memberRepository.existsByNickname(nickName)).isFalse();
+        }
+    }
 
+    @Nested
     @DisplayName("findById 메서드는 ")
     class FindById {
 
@@ -125,5 +118,15 @@ class MemberRepositoryTest extends RepositoryTest {
 
             assertThat(result).isEmpty();
         }
+    }
+
+    @Test
+    @DisplayName("멤버를 삭제한다.")
+    void delete() {
+        Member member = memberTestSupport.memberBuilder().build();
+
+        memberRepository.delete(member);
+
+        assertThat(memberRepository.findById(member.getId())).isEmpty();
     }
 }

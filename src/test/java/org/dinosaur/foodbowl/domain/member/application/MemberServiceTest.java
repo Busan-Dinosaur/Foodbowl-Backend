@@ -1,12 +1,6 @@
 package org.dinosaur.foodbowl.domain.member.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
-
-import org.dinosaur.foodbowl.IntegrationTest;
-import org.dinosaur.foodbowl.domain.member.dto.response.NicknameDuplicateCheckResponse;
-import org.dinosaur.foodbowl.domain.member.entity.Member;
-
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -16,6 +10,7 @@ import org.dinosaur.foodbowl.domain.blame.repository.BlameRepository;
 import org.dinosaur.foodbowl.domain.bookmark.repository.BookmarkRepository;
 import org.dinosaur.foodbowl.domain.comment.repository.CommentRepository;
 import org.dinosaur.foodbowl.domain.follow.repository.FollowRepository;
+import org.dinosaur.foodbowl.domain.member.dto.response.NicknameDuplicateCheckResponse;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRepository;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRoleRepository;
@@ -26,7 +21,6 @@ import org.dinosaur.foodbowl.domain.post.entity.Post;
 import org.dinosaur.foodbowl.domain.post.repository.PostCategoryRepository;
 import org.dinosaur.foodbowl.domain.post.repository.PostRepository;
 import org.dinosaur.foodbowl.global.exception.FoodbowlException;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -38,8 +32,6 @@ class MemberServiceTest extends IntegrationTest {
     private MemberService memberService;
     @Autowired
     private EntityManager em;
-    @Autowired
-    private MemberService memberService;
     @Autowired
     private MemberRepository memberRepository;
     @Autowired
