@@ -3,6 +3,7 @@ ifndef::snippets[]
 endif::[]
 
 = MEMBER API 문서
+
 :icons: font
 :source-highlighter: highlight.js
 :toc: left
@@ -38,3 +39,22 @@ include::{snippets}/api-v1-members-check-nickname/http-response.adoc[]
 === Response Fields
 
 include::{snippets}/api-v1-members-check-nickname/response-fields.adoc[]
+
+
+== *회원 탈퇴* ==
+
+=== 요청
+
+=== Request
+
+include::{snippets}/api-v1-members-delete/http-request.adoc[]
+
+=== Request Headers
+
+include::{snippets}/api-v1-members-delete/request-headers.adoc[]
+
+=== 응답
+
+=== Response
+
+include::{snippets}/api-v1-members-delete/http-response.adoc[]

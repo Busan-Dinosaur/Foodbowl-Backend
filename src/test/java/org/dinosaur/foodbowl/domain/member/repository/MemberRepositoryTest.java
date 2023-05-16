@@ -1,5 +1,11 @@
 package org.dinosaur.foodbowl.domain.member.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.dinosaur.foodbowl.domain.member.entity.Member.SocialType;
+import static org.dinosaur.foodbowl.domain.member.entity.Member.builder;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
+import java.util.Optional;
 import org.dinosaur.foodbowl.RepositoryTest;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,17 +14,20 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.dinosaur.foodbowl.domain.member.entity.Member.SocialType;
-import static org.dinosaur.foodbowl.domain.member.entity.Member.builder;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
 class MemberRepositoryTest extends RepositoryTest {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Test
+    @DisplayName("멤버를 삭제한다.")
+    void delete() {
+        Member member = memberTestSupport.memberBuilder().build();
+
+        memberRepository.delete(member);
+
+        assertThat(memberRepository.findById(member.getId())).isEmpty();
+    }
 
     @Nested
     @DisplayName("findBySocialTypeAndSocialId 메서드는 ")
@@ -86,6 +95,35 @@ class MemberRepositoryTest extends RepositoryTest {
             String nickName = "hoy";
 
             assertThat(memberRepository.existsByNickname(nickName)).isFalse();
+
+    @DisplayName("findById 메서드는 ")
+    class FindById {
+
+        private Member member = builder()
+                .socialType(SocialType.APPLE)
+                .socialId("1234")
+                .nickname("member1234")
+                .build();
+
+        @Test
+        @DisplayName("해당 ID를 가진 멤버가 존재하면 멤버를 조회한다.")
+        void findById() {
+            Member savedMember = memberRepository.save(member);
+
+            Optional<Member> result = memberRepository.findById(savedMember.getId());
+
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.get().getNickname()).isEqualTo("member1234")
+            );
+        }
+
+        @Test
+        @DisplayName("해당 ID를 가진 멤버가 존재하지 않으면 빈 값을 반환한다.")
+        void findByIdWithEmpty() {
+            Optional<Member> result = memberRepository.findById(-1L);
+
+            assertThat(result).isEmpty();
         }
     }
 }

@@ -5,10 +5,16 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
+import static org.mockito.BDDMockito.anyLong;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.dinosaur.foodbowl.MockApiTest;
 import org.dinosaur.foodbowl.domain.member.application.MemberService;
+
 import org.dinosaur.foodbowl.domain.member.dto.response.NicknameDuplicateCheckResponse;
 import org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
 import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
@@ -91,5 +97,18 @@ class MemberControllerTest extends MockApiTest {
                     .andExpect(jsonPath("$.message").value("닉네임은 1자 이상 16자 이하 한글,영문,숫자만 가능합니다"))
                     .andDo(print());
         }
-    }
+      
+      @Test
+      @DisplayName("회원 탈퇴 요청 시 회원을 탈퇴시킨다.")
+      void withDraw() throws Exception {
+          willDoNothing().given(memberService).withDraw(anyLong());
+
+          mockMvc.perform(delete("/api/v1/members")
+                          .header(HttpHeaders.AUTHORIZATION,
+                                  "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원))
+                  )
+                  .andDo(print())
+                  .andExpect(status().isNoContent());
+
+      }
 }

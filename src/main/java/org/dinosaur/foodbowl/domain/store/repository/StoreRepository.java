@@ -7,11 +7,11 @@ import org.springframework.data.repository.Repository;
 
 public interface StoreRepository extends Repository<Store, Long> {
 
-    Store save(Store store);
-
     Optional<Store> findById(Long id);
 
     Optional<Store> findByStoreName(String storeName);
 
     List<Store> findAll();
+
+    Store save(Store store);
 }

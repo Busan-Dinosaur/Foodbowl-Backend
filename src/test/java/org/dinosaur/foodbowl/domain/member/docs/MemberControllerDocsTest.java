@@ -10,6 +10,12 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -59,5 +65,28 @@ public class MemberControllerDocsTest extends MockApiTest {
                         responseFields(
                                 fieldWithPath("hasDuplicate").type(JsonFieldType.BOOLEAN).description("닉네임 중복 여부")
                         )));
+    }
+  
+    
+    @Test
+    @DisplayName("회원 탈퇴를 문서화한다.")
+    void withDraw() throws Exception {
+        willDoNothing().given(memberService).withDraw(anyLong());
+
+        var headerDescriptors = new HeaderDescriptor[]{
+                headerWithName(HttpHeaders.AUTHORIZATION).description("서버에서 발급한 엑세스 토큰")
+        };
+
+        mockMvc.perform(delete("/api/v1/members")
+                        .header(HttpHeaders.AUTHORIZATION,
+                                "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원))
+                )
+                .andDo(print())
+                .andExpect(status().isNoContent())
+                .andDo(document("api-v1-members-delete",
+                        requestHeaders(
+                                headerDescriptors
+                        )
+                ));
     }
 }

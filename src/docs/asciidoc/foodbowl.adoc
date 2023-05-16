@@ -9,13 +9,14 @@ endif::[]
 :toclevels: 1
 :sectlinks:
 
-== *Health Check* ==
+== *헬스 체크* ==
 
 link:health_check/health_check.html[API 문서 보기]
 
-== *Auth*
+== *인증*
 
 link:auth/auth.html[API 문서 보기]
+
 
 == *Member*
 

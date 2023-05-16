@@ -20,6 +20,37 @@ class StoreServiceTest extends IntegrationTest {
     @Autowired
     StoreService storeService;
 
+    @Test
+    @DisplayName("저장된 모든 가게를 가져온다.")
+    void findAllSuccess() {
+        int initialSize = storeService.findAll().size();
+
+        storeService.save(createRequest("국민연금공단 구내식당", "서울시 송파구 올림픽로 123"));
+        storeService.save(createRequest("시부야돈까스", "서울시 송파구 장미상가로 424"));
+
+        List<StoreResponse> storeResponses = storeService.findAll();
+
+        assertThat(storeResponses).hasSize(initialSize + 2);
+    }
+
+    private StoreRequest createRequest(String storeName, String addressName) {
+        return new StoreRequest(
+                storeName,
+                addressName,
+                "서울시",
+                "송파구",
+                "신천동",
+                "연금공단로",
+                "N",
+                "123",
+                "1층 101호",
+                "국민연금공단 송파지점",
+                "12345",
+                BigDecimal.valueOf(127.3435356),
+                BigDecimal.valueOf(37.12314545)
+        );
+    }
+
     @Nested
     @DisplayName("save 메서드는 ")
     class Save {
@@ -83,36 +114,5 @@ class StoreServiceTest extends IntegrationTest {
                     .isInstanceOf(FoodbowlException.class)
                     .hasMessageContaining("일치하는 가게를 찾을 수 없습니다.");
         }
-    }
-
-    @Test
-    @DisplayName("저장된 모든 가게를 가져온다.")
-    void findAllSuccess() {
-        int initialSize = storeService.findAll().size();
-
-        storeService.save(createRequest("국민연금공단 구내식당", "서울시 송파구 올림픽로 123"));
-        storeService.save(createRequest("시부야돈까스", "서울시 송파구 장미상가로 424"));
-
-        List<StoreResponse> storeResponses = storeService.findAll();
-
-        assertThat(storeResponses).hasSize(initialSize + 2);
-    }
-
-    private StoreRequest createRequest(String storeName, String addressName) {
-        return new StoreRequest(
-                storeName,
-                addressName,
-                "서울시",
-                "송파구",
-                "신천동",
-                "연금공단로",
-                "N",
-                "123",
-                "1층 101호",
-                "국민연금공단 송파지점",
-                "12345",
-                BigDecimal.valueOf(127.3435356),
-                BigDecimal.valueOf(37.12314545)
-        );
     }
 }
