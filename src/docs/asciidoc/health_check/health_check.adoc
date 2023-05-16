@@ -2,7 +2,7 @@ ifndef::snippets[]
 :snippets: ./build/generated-snippets
 endif::[]
 
-= HEALTH CHECK API 문서
+= 헬스 체크 API 문서
 :icons: font
 :source-highlighter: highlight.js
 :toc: left
