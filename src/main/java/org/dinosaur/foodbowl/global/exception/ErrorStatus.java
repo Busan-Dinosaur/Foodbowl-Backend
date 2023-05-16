@@ -1,6 +1,5 @@
 package org.dinosaur.foodbowl.global.exception;
 
-import org.dinosaur.foodbowl.domain.photo.ImageUtils;
 import org.springframework.http.HttpStatus;
 
 public enum ErrorStatus {
@@ -28,12 +27,10 @@ public enum ErrorStatus {
     //Member code: 4xxx
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "등록되지 않은 회원입니다.", 4000),
 
-    //ImageUtils code: 5xxx
+    //Image code: 5xxx
     IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "파일이 존재하지 않습니다.", 5000),
     IMAGE_INVALID_EXTENSION(HttpStatus.BAD_REQUEST, "지원하지 않는 확장자입니다.", 5001),
-    IMAGE_IO_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 파일을 저장하는데 실패했습니다.", 5002),
-    IMAGE_INVALID_NAME_LENGTH(HttpStatus.BAD_REQUEST, String.format("파일이름이 %s자를 초과합니다.", ImageUtils.MAX_FILE_NAME),
-            5003);
+    IMAGE_IO_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 파일을 저장하는데 실패했습니다.", 5002);
 
 
     private final HttpStatus httpStatus;
