@@ -22,8 +22,7 @@ class ThumbnailUtilsTest {
 
     private static final int IMAGE_MAX_SIZE = 450;
     private final List<String> trash = new LinkedList<>();
-
-    private final ThumbnailUtils thumbnailUtils = new ThumbnailUtils();
+    private final ThumbnailUtils thumbnailUtils = new ThumbnailUtils("bucket");
     private MockMultipartFile testImage;
 
     @BeforeEach

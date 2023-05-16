@@ -18,10 +18,16 @@ public abstract class ImageUtils {
 
     private static final Set<String> imageExtensions = Set.of("jpeg", "jpg", "png", "webp");
     private static final String DOT = ".";
-    public static final int MAX_FILE_NAME = 15;
 
     @Value("${file.dir}")
-    protected String fileDir = "foodbowl-res";
+    protected String fileDir;
+
+    public ImageUtils() {
+    }
+
+    public ImageUtils(final String fileDir) {
+        this.fileDir = fileDir;
+    }
 
     public List<String> storeImageFiles(List<MultipartFile> files) {
         List<String> storedImagesPaths = new ArrayList<>();
@@ -68,15 +74,7 @@ public abstract class ImageUtils {
 
     protected void validateImageFile(MultipartFile file) {
         validateEmptyFile(file);
-        validateFileName(file);
         validateImageType(file);
-    }
-
-    private void validateFileName(MultipartFile file) {
-        String originalFilename = file.getOriginalFilename();
-        if (originalFilename.length() > MAX_FILE_NAME) {
-            throw new FoodbowlException(ErrorStatus.IMAGE_INVALID_NAME_LENGTH);
-        }
     }
 
     private void validateEmptyFile(MultipartFile file) {

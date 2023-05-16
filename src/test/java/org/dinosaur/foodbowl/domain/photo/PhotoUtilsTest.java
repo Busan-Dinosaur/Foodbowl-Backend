@@ -20,8 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 class PhotoUtilsTest {
 
     private final List<String> trash = new LinkedList<>();
-
-    private final PhotoUtils photoUtils = new PhotoUtils();
+    private final PhotoUtils photoUtils = new PhotoUtils("bucket");
     private MockMultipartFile testImage;
 
     @BeforeEach

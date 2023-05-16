@@ -8,6 +8,13 @@ public class PhotoUtils extends ImageUtils {
 
     private static final String dir = "/photo/";
 
+    public PhotoUtils() {
+    }
+
+    public PhotoUtils(final String fileDir) {
+        super(fileDir);
+    }
+
     @Override
     public String storeImageFile(MultipartFile file) {
         validateImageFile(file);

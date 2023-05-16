@@ -22,6 +22,13 @@ public class ThumbnailUtils extends ImageUtils {
     private static final int WIDTH_INDEX = 0;
     private static final int HEIGHT_INDEX = 1;
 
+    public ThumbnailUtils() {
+    }
+
+    public ThumbnailUtils(final String fileDir) {
+        super(fileDir);
+    }
+
     @Override
     public String storeImageFile(MultipartFile file) {
         validateImageFile(file);
