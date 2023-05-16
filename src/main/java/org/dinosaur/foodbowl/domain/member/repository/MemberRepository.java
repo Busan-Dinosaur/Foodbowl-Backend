@@ -17,5 +17,8 @@ public interface MemberRepository extends Repository<Member, Long> {
 
     Member save(Member member);
 
+    boolean existsByNickname(String nickname);
+
     void delete(Member member);
+
 }

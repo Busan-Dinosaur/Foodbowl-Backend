@@ -2,7 +2,8 @@ ifndef::snippets[]
 :snippets: ./build/generated-snippets
 endif::[]
 
-= 멤버 API 문서
+= MEMBER API 문서
+
 :icons: font
 :source-highlighter: highlight.js
 :toc: left
@@ -12,6 +13,33 @@ endif::[]
 == API 목록
 
 link:../foodbowl.html[API 목록으로 돌아가기]
+
+== *닉네임 중복 확인* ==
+
+=== 요청
+
+=== Request
+
+include::{snippets}/api-v1-members-check-nickname/http-request.adoc[]
+
+=== Request Headers
+
+include::{snippets}/api-v1-members-check-nickname/request-headers.adoc[]
+
+=== Query Parameters
+
+include::{snippets}/api-v1-members-check-nickname/query-parameters.adoc[]
+
+=== 응답
+
+=== Response
+
+include::{snippets}/api-v1-members-check-nickname/http-response.adoc[]
+
+=== Response Fields
+
+include::{snippets}/api-v1-members-check-nickname/response-fields.adoc[]
+
 
 == *회원 탈퇴* ==
 
