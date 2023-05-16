@@ -68,7 +68,7 @@ public abstract class ImageUtils {
     }
 
     public void deleteImageFile(String imagePath) {
-        File file = new File(getFullPath(imagePath));
+        File file = new File(imagePath);
         file.delete();
     }
 
