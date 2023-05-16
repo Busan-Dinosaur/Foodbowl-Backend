@@ -74,7 +74,7 @@ class ThumbnailUtilsTest {
     @DisplayName("Thumbnail으로 저장할 경우 사진의 사이즈가 줄어든다.")
     void storeThumbnail() throws IOException {
         String path = thumbnailUtils.storeImageFile(testImage);
-        File file = new File(thumbnailUtils.getFullPath(path));
+        File file = new File(path);
         BufferedImage image = ImageIO.read(file);
         trash.add(path);
 

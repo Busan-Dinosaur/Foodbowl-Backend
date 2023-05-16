@@ -35,18 +35,17 @@ public class ThumbnailUtils extends ImageUtils {
         BufferedImage inputImage = getImageFrom(file);
         String originalFilename = file.getOriginalFilename();
         String storeFilename = createStoreFilename(originalFilename);
-        String path = dir + storeFilename;
-        String fullPath = getFullPath(path);
+        String fullPath = getFullPath(dir + storeFilename);
 
         if (inputImage.getWidth() <= SIZE && inputImage.getHeight() <= SIZE) {
             storeFile(fullPath, file);
-            return path;
+            return fullPath;
         }
 
         BufferedImage newImage = drawNewImage(inputImage);
         String format = extractExtension(originalFilename);
         storeNewFile(fullPath, format, newImage);
-        return path;
+        return fullPath;
     }
 
     private BufferedImage getImageFrom(final MultipartFile file) {

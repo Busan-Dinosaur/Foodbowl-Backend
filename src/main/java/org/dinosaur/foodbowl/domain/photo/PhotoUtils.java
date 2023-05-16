@@ -21,10 +21,9 @@ public class PhotoUtils extends ImageUtils {
 
         String originalFilename = file.getOriginalFilename();
         String storeFileName = createStoreFilename(originalFilename);
-        String path = dir + storeFileName;
-        String fullPath = getFullPath(path);
+        String fullPath = getFullPath(dir + storeFileName);
 
         storeFile(fullPath, file);
-        return path;
+        return fullPath;
     }
 }
