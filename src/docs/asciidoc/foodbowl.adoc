@@ -17,6 +17,7 @@ link:health_check/health_check.html[API 문서 보기]
 
 link:auth/auth.html[API 문서 보기]
 
-== *멤버*
+
+== *Member*
 
 link:member/member.html[API 문서 보기]

@@ -10,6 +10,7 @@ import org.dinosaur.foodbowl.domain.comment.repository.CommentRepository;
 import org.dinosaur.foodbowl.domain.follow.repository.FollowRepository;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRepository;
+import org.dinosaur.foodbowl.domain.member.dto.response.NicknameDuplicateCheckResponse;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRoleRepository;
 import org.dinosaur.foodbowl.domain.photo.repository.PhotoRepository;
 import org.dinosaur.foodbowl.domain.photo.repository.ThumbnailRepository;
@@ -17,6 +18,7 @@ import org.dinosaur.foodbowl.domain.post.entity.Post;
 import org.dinosaur.foodbowl.domain.post.repository.PostCategoryRepository;
 import org.dinosaur.foodbowl.domain.post.repository.PostRepository;
 import org.dinosaur.foodbowl.global.exception.FoodbowlException;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +37,11 @@ public class MemberService {
     private final CommentRepository commentRepository;
     private final BookmarkRepository bookmarkRepository;
     private final BlameRepository blameRepository;
+  
+    public NicknameDuplicateCheckResponse checkDuplicate(String nickname) {
+        boolean hasDuplicate = memberRepository.existsByNickname(nickname);
+        return new NicknameDuplicateCheckResponse(hasDuplicate);
+    }
 
     @Transactional
     public void withDraw(Long memberId) {
