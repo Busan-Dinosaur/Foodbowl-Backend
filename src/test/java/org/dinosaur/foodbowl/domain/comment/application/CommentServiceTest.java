@@ -35,7 +35,7 @@ class CommentServiceTest extends IntegrationTest {
 
             assertAll(
                     () -> assertThat(commentResponse.getPostId()).isEqualTo(commentRequest.getPostId()),
-                    () -> assertThat(commentResponse.getContent()).isEqualTo(commentRequest.getMessage())
+                    () -> assertThat(commentResponse.getMessage()).isEqualTo(commentRequest.getMessage())
             );
         }
 
