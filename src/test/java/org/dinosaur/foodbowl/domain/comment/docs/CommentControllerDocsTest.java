@@ -66,8 +66,7 @@ public class CommentControllerDocsTest extends MockApiTest {
                                 fieldWithPath("postId").type(JsonFieldType.NUMBER).description("게시글 ID"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("추가된 댓글 내용"),
                                 fieldWithPath("createdAt").type(JsonFieldType.STRING).description("댓글 생성 시간"),
-                                fieldWithPath("updatedAt").type(JsonFieldType.STRING).description("댓글 최종 업데이트 시간")
+                                fieldWithPath("updatedAt").type(JsonFieldType.STRING).description("댓글 수정 시간")
                         )));
     }
-
 }

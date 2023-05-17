@@ -1,0 +1,39 @@
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+= 인증 API 문서
+:icons: font
+:source-highlighter: highlight.js
+:toc: left
+:toclevels: 1
+:sectlinks:
+
+== API 목록
+
+link:../foodbowl.html[API 목록으로 돌아가기]
+
+== *댓글 추가* ==
+
+=== 요청
+
+=== Request
+
+include::{snippets}/api-v1-comments/http-request.adoc[]
+
+=== Request Headers
+
+include::{snippets}/api-v1-comments/request-headers.adoc[]
+
+=== Request Fields
+
+include::{snippets}/api-v1-comments/request-fields.adoc[]
+
+=== Response
+
+include::{snippets}/api-v1-comments/http-response.adoc[]
+
+=== Response Fields
+
+include::{snippets}/api-v1-comments/response-fields.adoc[]
+
