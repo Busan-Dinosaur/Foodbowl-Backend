@@ -29,7 +29,7 @@ public class MemberController {
     ) {
         return ResponseEntity.ok(memberService.checkDuplicate(nickname));
     }
-  
+
     @DeleteMapping
     public ResponseEntity<Void> withDraw(@MemberId Long memberId) {
         memberService.withDraw(memberId);

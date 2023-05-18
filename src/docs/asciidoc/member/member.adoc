@@ -2,7 +2,7 @@ ifndef::snippets[]
 :snippets: ./build/generated-snippets
 endif::[]
 
-= MEMBER API 문서
+= 멤버 API 문서
 
 :icons: font
 :source-highlighter: highlight.js
@@ -39,7 +39,6 @@ include::{snippets}/api-v1-members-check-nickname/http-response.adoc[]
 === Response Fields
 
 include::{snippets}/api-v1-members-check-nickname/response-fields.adoc[]
-
 
 == *회원 탈퇴* ==
 

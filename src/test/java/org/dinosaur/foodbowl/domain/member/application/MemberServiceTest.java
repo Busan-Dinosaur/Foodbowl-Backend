@@ -102,7 +102,7 @@ class MemberServiceTest extends IntegrationTest {
                     .hasMessage("등록되지 않은 회원입니다.");
         }
     }
-  
+
     @Nested
     @DisplayName("checkDuplicate 메서드는")
     class checkDuplicate {
