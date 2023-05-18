@@ -25,6 +25,7 @@ public class PostService {
     public PageResponse<PostThumbnailResponse> findThumbnailsInProfile(Long memberId, Pageable pageable) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new FoodbowlException(MEMBER_NOT_FOUND));
+
         Page<PostThumbnailResponse> pageOfResponse = postRepository.findAllByMember(member, pageable)
                 .map(PostThumbnailResponse::from);
         return PageResponse.from(pageOfResponse);

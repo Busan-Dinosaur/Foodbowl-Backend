@@ -49,7 +49,8 @@ class PostRepositoryTest extends RepositoryTest {
             List<Post> posts = result.getContent();
             assertAll(
                     () -> assertThat(posts).hasSize(1),
-                    () -> assertThat(posts.get(0)).isEqualTo(post)
+                    () -> assertThat(posts.get(0)).isEqualTo(post),
+                    () -> assertThat(posts.get(0).getMember().getId()).isEqualTo(member.getId())
             );
         }
 
