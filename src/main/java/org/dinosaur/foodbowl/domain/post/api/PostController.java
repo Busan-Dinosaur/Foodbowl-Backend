@@ -25,7 +25,7 @@ public class PostController {
             @RequestParam Long memberId,
             @PageableDefault(size = 18, page = 0, sort = "createdAt", direction = Direction.DESC) Pageable pageable
     ) {
-        PageResponse response = postService.findThumbnailsInProfile(memberId, pageable);
+        PageResponse<PostThumbnailResponse> response = postService.findThumbnailsInProfile(memberId, pageable);
         return ResponseEntity.ok(response);
     }
 }
