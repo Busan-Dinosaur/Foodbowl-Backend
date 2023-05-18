@@ -4,7 +4,7 @@ import static org.dinosaur.foodbowl.global.exception.ErrorStatus.MEMBER_NOT_FOUN
 import static org.dinosaur.foodbowl.global.exception.ErrorStatus.POST_NOT_FOUND;
 
 import lombok.RequiredArgsConstructor;
-import org.dinosaur.foodbowl.domain.comment.dto.CommentRequest;
+import org.dinosaur.foodbowl.domain.comment.dto.CommentCreateRequest;
 import org.dinosaur.foodbowl.domain.comment.dto.CommentResponse;
 import org.dinosaur.foodbowl.domain.comment.entity.Comment;
 import org.dinosaur.foodbowl.domain.comment.repository.CommentRepository;
@@ -26,14 +26,15 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public CommentResponse save(Long memberId, CommentRequest commentRequest) {
-        Long postId = commentRequest.getPostId();
+    public CommentResponse save(Long memberId, CommentCreateRequest commentCreateRequest) {
+        Long postId = commentCreateRequest.getPostId();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new FoodbowlException(POST_NOT_FOUND));
+
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new FoodbowlException(MEMBER_NOT_FOUND));
 
-        return saveComment(post, member, commentRequest.getMessage());
+        return saveComment(post, member, commentCreateRequest.getMessage());
     }
 
     private CommentResponse saveComment(Post post, Member member, String message) {

@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.dinosaur.foodbowl.IntegrationTest;
-import org.dinosaur.foodbowl.domain.comment.dto.CommentRequest;
+import org.dinosaur.foodbowl.domain.comment.dto.CommentCreateRequest;
 import org.dinosaur.foodbowl.domain.comment.dto.CommentResponse;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.post.entity.Post;
@@ -29,13 +29,13 @@ class CommentServiceTest extends IntegrationTest {
         void save() {
             Member member = memberTestSupport.memberBuilder().build();
             Post post = postTestSupport.postBuilder().build();
-            CommentRequest commentRequest = new CommentRequest(post.getId(), "안녕하세요.");
+            CommentCreateRequest commentCreateRequest = new CommentCreateRequest(post.getId(), "안녕하세요.");
 
-            CommentResponse commentResponse = commentService.save(member.getId(), commentRequest);
+            CommentResponse commentResponse = commentService.save(member.getId(), commentCreateRequest);
 
             assertAll(
-                    () -> assertThat(commentResponse.getPostId()).isEqualTo(commentRequest.getPostId()),
-                    () -> assertThat(commentResponse.getMessage()).isEqualTo(commentRequest.getMessage())
+                    () -> assertThat(commentResponse.getPostId()).isEqualTo(commentCreateRequest.getPostId()),
+                    () -> assertThat(commentResponse.getMessage()).isEqualTo(commentCreateRequest.getMessage())
             );
         }
 
@@ -44,9 +44,9 @@ class CommentServiceTest extends IntegrationTest {
         void saveFailWithWrongPostId() {
             Member member = memberTestSupport.memberBuilder().build();
             postTestSupport.postBuilder().build();
-            CommentRequest commentRequest = new CommentRequest(Long.MAX_VALUE, "안녕하세요.");
+            CommentCreateRequest commentCreateRequest = new CommentCreateRequest(Long.MAX_VALUE, "안녕하세요.");
 
-            assertThatThrownBy(() -> commentService.save(member.getId(), commentRequest))
+            assertThatThrownBy(() -> commentService.save(member.getId(), commentCreateRequest))
                     .isInstanceOf(FoodbowlException.class)
                     .hasMessage("게시글이 존재하지 않습니다.");
         }
@@ -56,9 +56,9 @@ class CommentServiceTest extends IntegrationTest {
         void saveFailWithWrongMemberId() {
             memberTestSupport.memberBuilder().build();
             Post post = postTestSupport.postBuilder().build();
-            CommentRequest commentRequest = new CommentRequest(post.getId(), "안녕하세요.");
+            CommentCreateRequest commentCreateRequest = new CommentCreateRequest(post.getId(), "안녕하세요.");
 
-            assertThatThrownBy(() -> commentService.save(Long.MAX_VALUE, commentRequest))
+            assertThatThrownBy(() -> commentService.save(Long.MAX_VALUE, commentCreateRequest))
                     .isInstanceOf(FoodbowlException.class)
                     .hasMessage("등록되지 않은 회원입니다.");
         }

@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.comment.application.CommentService;
-import org.dinosaur.foodbowl.domain.comment.dto.CommentRequest;
+import org.dinosaur.foodbowl.domain.comment.dto.CommentCreateRequest;
 import org.dinosaur.foodbowl.domain.comment.dto.CommentResponse;
 import org.dinosaur.foodbowl.global.resolver.MemberId;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +22,9 @@ public class CommentController {
 
     @PostMapping
     public ResponseEntity<CommentResponse> createComment(
-            @Valid @RequestBody CommentRequest commentRequest,
+            @Valid @RequestBody CommentCreateRequest commentCreateRequest,
             @MemberId Long memberId) {
-        CommentResponse commentResponse = commentService.save(memberId, commentRequest);
+        CommentResponse commentResponse = commentService.save(memberId, commentCreateRequest);
         return ResponseEntity.created(URI.create("/comments/" + commentResponse.getId()))
                 .body(commentResponse);
     }

@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import org.dinosaur.foodbowl.MockApiTest;
 import org.dinosaur.foodbowl.domain.comment.application.CommentService;
-import org.dinosaur.foodbowl.domain.comment.dto.CommentRequest;
+import org.dinosaur.foodbowl.domain.comment.dto.CommentCreateRequest;
 import org.dinosaur.foodbowl.domain.comment.dto.CommentResponse;
 import org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
 import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
@@ -46,7 +46,7 @@ class CommentControllerTest extends MockApiTest {
 
             mockMvc.perform(post("/comments")
                             .header("Authorization", "Bearer " + token)
-                            .content(objectMapper.writeValueAsString(new CommentRequest(1L, "호이 너무 멋져")))
+                            .content(objectMapper.writeValueAsString(new CommentCreateRequest(1L, "호이 너무 멋져")))
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andExpect(status().isCreated())
@@ -59,7 +59,7 @@ class CommentControllerTest extends MockApiTest {
         void createCommentWithNoPostId() throws Exception {
             mockMvc.perform(post("/comments")
                             .header("Authorization", "Bearer " + token)
-                            .content(objectMapper.writeValueAsString(new CommentRequest(null, "댓글 등록합니다.")))
+                            .content(objectMapper.writeValueAsString(new CommentCreateRequest(null, "댓글 등록합니다.")))
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andExpect(status().isBadRequest())
@@ -71,7 +71,7 @@ class CommentControllerTest extends MockApiTest {
         void createCommentWithNegativePostId() throws Exception {
             mockMvc.perform(post("/comments")
                             .header("Authorization", "Bearer " + token)
-                            .content(objectMapper.writeValueAsString(new CommentRequest(-1L, "댓글 등록합니다.")))
+                            .content(objectMapper.writeValueAsString(new CommentCreateRequest(-1L, "댓글 등록합니다.")))
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andExpect(status().isBadRequest())
@@ -81,9 +81,23 @@ class CommentControllerTest extends MockApiTest {
         @Test
         @DisplayName("댓글 내용이 없으면 BAD REQUEST를 반환한다.")
         void createCommentWithNoMessage() throws Exception {
+            System.out.print("a".repeat(255));
             mockMvc.perform(post("/comments")
                             .header("Authorization", "Bearer " + token)
-                            .content(objectMapper.writeValueAsString(new CommentRequest(1L, null)))
+                            .content(objectMapper.writeValueAsString(new CommentCreateRequest(1L, null)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andExpect(status().isBadRequest())
+                    .andDo(print());
+        }
+
+        @Test
+        @DisplayName("댓글 길이가 255이상 이면 BAD REQUEST를 반환한다.")
+        void createCommentWithWrongLengthMessage() throws Exception {
+            String requestMessage = "a".repeat(256);
+            mockMvc.perform(post("/comments")
+                            .header("Authorization", "Bearer " + token)
+                            .content(objectMapper.writeValueAsString(new CommentCreateRequest(1L, requestMessage)))
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andExpect(status().isBadRequest())

@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import org.dinosaur.foodbowl.MockApiTest;
 import org.dinosaur.foodbowl.domain.comment.api.CommentController;
 import org.dinosaur.foodbowl.domain.comment.application.CommentService;
-import org.dinosaur.foodbowl.domain.comment.dto.CommentRequest;
+import org.dinosaur.foodbowl.domain.comment.dto.CommentCreateRequest;
 import org.dinosaur.foodbowl.domain.comment.dto.CommentResponse;
 import org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
 import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
@@ -48,7 +48,7 @@ public class CommentControllerDocsTest extends MockApiTest {
 
         mockMvc.perform(post("/comments")
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.writeValueAsString(new CommentRequest(1L, "다즐 너무 멋져")))
+                        .content(objectMapper.writeValueAsString(new CommentCreateRequest(1L, "다즐 너무 멋져")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
