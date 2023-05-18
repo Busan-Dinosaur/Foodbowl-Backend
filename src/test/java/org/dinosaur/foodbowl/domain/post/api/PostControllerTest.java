@@ -38,6 +38,8 @@ class PostControllerTest extends MockApiTest {
     @DisplayName("프로필 게시글 목록 조회 시 ")
     class FindThumbnailsInProfile {
 
+        private String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
+
         @Test
         @DisplayName("유효한 요청이라면 게시글 목록을 조회한다.")
         void findThumbnailsInProfile() throws Exception {
@@ -54,7 +56,7 @@ class PostControllerTest extends MockApiTest {
             given(postService.findThumbnailsInProfile(anyLong(), any(Pageable.class))).willReturn(response);
 
             mockMvc.perform(get("/api/v1/posts/thumbnails")
-                            .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원))
+                            .header("Authorization", "Bearer " + accessToken)
                             .queryParam("memberId", String.valueOf(1L)))
                     .andDo(print())
                     .andExpect(status().isOk())
@@ -74,7 +76,7 @@ class PostControllerTest extends MockApiTest {
         @DisplayName("멤버 ID를 파라미터로 전달하지 않으면 400 상태를 반환한다.")
         void findThumbnailsInProfileWithEmptyParam() throws Exception {
             mockMvc.perform(get("/api/v1/posts/thumbnails")
-                            .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원)))
+                            .header("Authorization", "Bearer " + accessToken))
                     .andDo(print())
                     .andExpect(status().isBadRequest());
         }
@@ -83,7 +85,7 @@ class PostControllerTest extends MockApiTest {
         @DisplayName("멤버 ID가 변환할 수 없는 타입이라면 400 상태를 반환한다.")
         void findThumbnailsInProfileWithInvalidType() throws Exception {
             mockMvc.perform(get("/api/v1/posts/thumbnails")
-                            .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원))
+                            .header("Authorization", "Bearer " + accessToken)
                             .queryParam("memberId", "id"))
                     .andDo(print())
                     .andExpect(status().isBadRequest());
