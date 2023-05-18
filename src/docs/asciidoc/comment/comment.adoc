@@ -2,7 +2,7 @@ ifndef::snippets[]
 :snippets: ./build/generated-snippets
 endif::[]
 
-= 인증 API 문서
+= 댓글 API 문서
 :icons: font
 :source-highlighter: highlight.js
 :toc: left
@@ -28,6 +28,8 @@ include::{snippets}/api-v1-comments/request-headers.adoc[]
 === Request Fields
 
 include::{snippets}/api-v1-comments/request-fields.adoc[]
+
+=== 응답
 
 === Response
 
