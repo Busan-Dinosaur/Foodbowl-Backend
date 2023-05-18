@@ -57,7 +57,7 @@ class BookmarkRepositoryTest extends RepositoryTest {
 
         assertAll(
                 () -> assertThat(result.getContent()).hasSize(1),
-                () -> assertThat(result.hasNext()).isEqualTo(true),
+                () -> assertThat(result.hasNext()).isTrue(),
                 () -> assertThat(result.getTotalElements()).isEqualTo(2),
                 () -> assertThat(result.getTotalPages()).isEqualTo(2)
         );
