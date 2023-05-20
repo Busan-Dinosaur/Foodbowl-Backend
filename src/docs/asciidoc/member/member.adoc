@@ -30,3 +30,25 @@ include::{snippets}/api-v1-members-delete/request-headers.adoc[]
 === Response
 
 include::{snippets}/api-v1-members-delete/http-response.adoc[]
+
+== *닉네임, 소개 수정* ==
+
+=== 요청
+
+=== Request
+
+include::{snippets}/api-v1-members-update-profile/http-request.adoc[]
+
+=== Request Headers
+
+include::{snippets}/api-v1-members-update-profile/request-headers.adoc[]
+
+=== Request Fields
+
+include::{snippets}/api-v1-members-update-profile/request-fields.adoc[]
+
+=== 응답
+
+=== Response
+
+include::{snippets}/api-v1-members-update-profile/http-response.adoc[]
