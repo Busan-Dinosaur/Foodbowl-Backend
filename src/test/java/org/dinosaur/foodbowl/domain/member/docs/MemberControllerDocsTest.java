@@ -64,8 +64,7 @@ public class MemberControllerDocsTest extends MockApiTest {
                                 fieldWithPath("hasDuplicate").type(JsonFieldType.BOOLEAN).description("닉네임 중복 여부")
                         )));
     }
-  
-    
+
     @Test
     @DisplayName("회원 탈퇴를 문서화한다.")
     void withDraw() throws Exception {

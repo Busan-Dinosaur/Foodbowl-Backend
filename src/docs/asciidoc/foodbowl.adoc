@@ -17,11 +17,14 @@ link:health_check/health_check.html[API 문서 보기]
 
 link:auth/auth.html[API 문서 보기]
 
-
-== *회원*
-
-link:member/member.html[API 문서 보기]
-
 == *댓글*
 
 link:comment/comment.html[API 문서 보기]
+
+== *멤버*
+
+link:member/member.html[API 문서 보기]
+
+== *게시글*
+
+link:post/post.html[API 문서 보기]
