@@ -41,8 +41,7 @@ public class CommentControllerDocsTest extends MockApiTest {
     @DisplayName("댓글 등록을 문서화한다.")
     void createComment() throws Exception {
         String token = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
-        given(commentService.save(anyLong(), any()))
-                .willReturn(1L);
+        given(commentService.save(anyLong(), any())).willReturn(1L);
 
         mockMvc.perform(post("/comments")
                         .header("Authorization", "Bearer " + token)
@@ -50,7 +49,7 @@ public class CommentControllerDocsTest extends MockApiTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(header().string("Location", "/comments/1"))
+                .andExpect(header().string("Location", "/posts/1"))
                 .andDo(document("api-v1-comments",
                                 requestHeaders(
                                         headerWithName(HttpHeaders.AUTHORIZATION).description("서버에서 발급한 엑세스 토큰")
@@ -61,6 +60,5 @@ public class CommentControllerDocsTest extends MockApiTest {
                                 )
                         )
                 );
-
     }
 }

@@ -49,7 +49,7 @@ class CommentControllerTest extends MockApiTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andExpect(status().isCreated())
-                    .andExpect(header().string("Location", "/comments/1"))
+                    .andExpect(header().string("Location", "/posts/1"))
                     .andDo(print());
         }
 

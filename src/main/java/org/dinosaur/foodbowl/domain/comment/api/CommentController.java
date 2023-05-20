@@ -23,7 +23,7 @@ public class CommentController {
     public ResponseEntity<Void> createComment(
             @Valid @RequestBody CommentCreateRequest commentCreateRequest,
             @MemberId Long memberId) {
-        Long commendId = commentService.save(memberId, commentCreateRequest);
-        return ResponseEntity.created(URI.create("/comments/" + commendId)).build();
+        commentService.save(memberId, commentCreateRequest);
+        return ResponseEntity.created(URI.create("/posts/" + commentCreateRequest.getPostId())).build();
     }
 }

@@ -28,7 +28,6 @@ public class CommentService {
     public Long save(Long memberId, CommentCreateRequest commentCreateRequest) {
         Post post = postRepository.findById(commentCreateRequest.getPostId())
                 .orElseThrow(() -> new FoodbowlException(POST_NOT_FOUND));
-
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new FoodbowlException(MEMBER_NOT_FOUND));
 
