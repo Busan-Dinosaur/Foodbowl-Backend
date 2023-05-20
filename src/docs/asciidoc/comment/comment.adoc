@@ -35,7 +35,3 @@ include::{snippets}/api-v1-comments/request-fields.adoc[]
 
 include::{snippets}/api-v1-comments/http-response.adoc[]
 
-=== Response Fields
-
-include::{snippets}/api-v1-comments/response-fields.adoc[]
-
