@@ -18,6 +18,9 @@ public interface PostRepository extends Repository<Post, Long> {
 
     List<Post> findAll();
 
+    @EntityGraph(attributePaths = "thumbnail")
+    Page<Post> findAll(Pageable pageable);
+
     Post save(Post post);
 
     void delete(Post post);
