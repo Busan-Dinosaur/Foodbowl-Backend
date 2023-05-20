@@ -2,11 +2,9 @@ package org.dinosaur.foodbowl.domain.comment.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.dinosaur.foodbowl.IntegrationTest;
 import org.dinosaur.foodbowl.domain.comment.dto.CommentCreateRequest;
-import org.dinosaur.foodbowl.domain.comment.dto.CommentResponse;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.post.entity.Post;
 import org.dinosaur.foodbowl.global.exception.FoodbowlException;
@@ -31,12 +29,9 @@ class CommentServiceTest extends IntegrationTest {
             Post post = postTestSupport.postBuilder().build();
             CommentCreateRequest commentCreateRequest = new CommentCreateRequest(post.getId(), "안녕하세요.");
 
-            CommentResponse commentResponse = commentService.save(member.getId(), commentCreateRequest);
+            Long commentId = commentService.save(member.getId(), commentCreateRequest);
 
-            assertAll(
-                    () -> assertThat(commentResponse.getPostId()).isEqualTo(commentCreateRequest.getPostId()),
-                    () -> assertThat(commentResponse.getMessage()).isEqualTo(commentCreateRequest.getMessage())
-            );
+            assertThat(commentId).isPositive();
         }
 
         @Test

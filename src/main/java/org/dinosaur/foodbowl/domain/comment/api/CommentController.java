@@ -5,7 +5,6 @@ import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.comment.application.CommentService;
 import org.dinosaur.foodbowl.domain.comment.dto.CommentCreateRequest;
-import org.dinosaur.foodbowl.domain.comment.dto.CommentResponse;
 import org.dinosaur.foodbowl.global.resolver.MemberId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,11 +20,10 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<CommentResponse> createComment(
+    public ResponseEntity<Void> createComment(
             @Valid @RequestBody CommentCreateRequest commentCreateRequest,
             @MemberId Long memberId) {
-        CommentResponse commentResponse = commentService.save(memberId, commentCreateRequest);
-        return ResponseEntity.created(URI.create("/comments/" + commentResponse.getId()))
-                .body(commentResponse);
+        Long commendId = commentService.save(memberId, commentCreateRequest);
+        return ResponseEntity.created(URI.create("/comments/" + commendId)).build();
     }
 }

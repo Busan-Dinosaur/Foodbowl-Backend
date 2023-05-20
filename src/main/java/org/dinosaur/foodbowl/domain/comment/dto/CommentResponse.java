@@ -12,14 +12,19 @@ import org.dinosaur.foodbowl.domain.comment.entity.Comment;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CommentResponse {
 
-    private Long id;
+    private Long commentId;
     private Long postId;
     private String message;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     public static CommentResponse from(Comment comment) {
-        return new CommentResponse(comment.getId(), comment.getPost().getId(), comment.getMessage(),
-                comment.getCreatedAt(), comment.getUpdatedAt());
+        return new CommentResponse(
+                comment.getId(),
+                comment.getPost().getId(),
+                comment.getMessage(),
+                comment.getCreatedAt(),
+                comment.getUpdatedAt()
+        );
     }
 }

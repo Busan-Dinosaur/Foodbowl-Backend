@@ -5,7 +5,6 @@ import static org.dinosaur.foodbowl.global.exception.ErrorStatus.POST_NOT_FOUND;
 
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.comment.dto.CommentCreateRequest;
-import org.dinosaur.foodbowl.domain.comment.dto.CommentResponse;
 import org.dinosaur.foodbowl.domain.comment.entity.Comment;
 import org.dinosaur.foodbowl.domain.comment.repository.CommentRepository;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
@@ -26,25 +25,20 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public CommentResponse save(Long memberId, CommentCreateRequest commentCreateRequest) {
-        Long postId = commentCreateRequest.getPostId();
-        Post post = postRepository.findById(postId)
+    public Long save(Long memberId, CommentCreateRequest commentCreateRequest) {
+        Post post = postRepository.findById(commentCreateRequest.getPostId())
                 .orElseThrow(() -> new FoodbowlException(POST_NOT_FOUND));
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new FoodbowlException(MEMBER_NOT_FOUND));
 
-        return saveComment(post, member, commentCreateRequest.getMessage());
-    }
-
-    private CommentResponse saveComment(Post post, Member member, String message) {
         Comment comment = Comment.builder()
                 .parent(null)
                 .post(post)
                 .member(member)
-                .message(message)
+                .message(commentCreateRequest.getMessage())
                 .build();
         Comment savedComment = commentRepository.save(comment);
-        return CommentResponse.from(savedComment);
+        return savedComment.getId();
     }
 }

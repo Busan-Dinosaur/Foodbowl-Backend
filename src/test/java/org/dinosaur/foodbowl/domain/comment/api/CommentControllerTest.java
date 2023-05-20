@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.domain.comment.api;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -8,11 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import org.dinosaur.foodbowl.MockApiTest;
 import org.dinosaur.foodbowl.domain.comment.application.CommentService;
 import org.dinosaur.foodbowl.domain.comment.dto.CommentCreateRequest;
-import org.dinosaur.foodbowl.domain.comment.dto.CommentResponse;
 import org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
 import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
@@ -41,8 +40,8 @@ class CommentControllerTest extends MockApiTest {
         @Test
         @DisplayName("정상적으로 생성되면 CREATED를 반환한다.")
         void createComment() throws Exception {
-            given(commentService.save(any(), any()))
-                    .willReturn(new CommentResponse(1L, 1L, "호이 너무 멋져", LocalDateTime.now(), LocalDateTime.now()));
+            given(commentService.save(anyLong(), any()))
+                    .willReturn(1L);
 
             mockMvc.perform(post("/comments")
                             .header("Authorization", "Bearer " + token)
