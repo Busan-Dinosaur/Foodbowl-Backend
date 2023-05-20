@@ -1,8 +1,10 @@
 package org.dinosaur.foodbowl.domain.comment.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.dinosaur.foodbowl.RepositoryTest;
+import org.dinosaur.foodbowl.domain.comment.entity.Comment;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.post.entity.Post;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +15,29 @@ class CommentRepositoryTest extends RepositoryTest {
 
     @Autowired
     private CommentRepository commentRepository;
+
+    @Test
+    @DisplayName("댓글을 저장한다.")
+    void createComment() {
+        Post post = postTestSupport.postBuilder().build();
+        Member member = memberTestSupport.memberBuilder().build();
+        Comment comment = Comment.builder()
+                .post(post)
+                .member(member)
+                .parent(null)
+                .message("정답은 없다. 자신만의 기준을 가지면 된다.")
+                .build();
+
+        Comment savedComment = commentRepository.save(comment);
+
+        assertAll(
+                () -> assertThat(savedComment.getId()).isNotNull(),
+                () -> assertThat(savedComment.getMember()).isEqualTo(comment.getMember()),
+                () -> assertThat(savedComment.getPost()).isEqualTo(comment.getPost()),
+                () -> assertThat(savedComment.getParent()).isNull(),
+                () -> assertThat(savedComment.getMessage()).isEqualTo(comment.getMessage())
+        );
+    }
 
     @Test
     @DisplayName("멤버가 작성한 댓글 목록을 삭제한다.")

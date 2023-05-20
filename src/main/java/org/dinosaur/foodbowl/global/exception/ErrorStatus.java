@@ -30,7 +30,13 @@ public enum ErrorStatus {
     //Image code: 5xxx
     IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "파일이 존재하지 않습니다.", 5000),
     IMAGE_INVALID_EXTENSION(HttpStatus.BAD_REQUEST, "지원하지 않는 확장자입니다.", 5001),
-    IMAGE_IO_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 파일을 저장하는데 실패했습니다.", 5002);
+    IMAGE_IO_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 파일을 저장하는데 실패했습니다.", 5002),
+
+    //Post code: 6xxx
+    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "게시글이 존재하지 않습니다.", 6000),
+
+    //Comment code: 7xxx
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글이 존재하지 않습니다.", 7000);
 
 
     private final HttpStatus httpStatus;
