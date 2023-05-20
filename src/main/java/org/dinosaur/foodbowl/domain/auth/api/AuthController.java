@@ -65,7 +65,7 @@ public class AuthController {
 
     @GetMapping("/check-nickname")
     public ResponseEntity<NicknameDuplicateCheckResponse> checkDuplicate(
-            @Pattern(regexp = "^[a-zA-Z가-힣0-9]{1,16}$", message = "닉네임은 1자 이상 16자 이하 한글,영문,숫자만 가능합니다")
+            @Pattern(regexp = "^[a-zA-Z가-힣0-9]{1,16}$", message = "닉네임은 1자 이상 16자 이하 한글, 영문, 숫자만 가능합니다")
             @RequestParam String nickname
     ) {
         return ResponseEntity.ok(authService.checkDuplicate(nickname));

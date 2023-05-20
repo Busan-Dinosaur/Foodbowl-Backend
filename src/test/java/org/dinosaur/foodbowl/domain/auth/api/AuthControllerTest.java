@@ -163,7 +163,7 @@ class AuthControllerTest extends MockApiTest {
                             .queryParam("nickname", nickname)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.message").value("닉네임은 1자 이상 16자 이하 한글,영문,숫자만 가능합니다"))
+                    .andExpect(jsonPath("$.message").value("닉네임은 1자 이상 16자 이하 한글, 영문, 숫자만 가능합니다"))
                     .andDo(print());
         }
     }
