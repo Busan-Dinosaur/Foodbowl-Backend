@@ -2,7 +2,6 @@ package org.dinosaur.foodbowl.domain.post.repository;
 
 import java.util.List;
 import java.util.Optional;
-
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.post.entity.Post;
 import org.springframework.data.domain.Page;
