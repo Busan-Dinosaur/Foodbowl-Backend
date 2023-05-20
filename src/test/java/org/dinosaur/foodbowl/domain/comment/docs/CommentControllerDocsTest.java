@@ -11,6 +11,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import org.dinosaur.foodbowl.MockApiTest;
 import org.dinosaur.foodbowl.domain.comment.api.CommentController;
@@ -36,6 +37,9 @@ public class CommentControllerDocsTest extends MockApiTest {
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     @DisplayName("댓글 등록을 문서화한다.")
