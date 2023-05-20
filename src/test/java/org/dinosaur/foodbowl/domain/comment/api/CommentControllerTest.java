@@ -32,7 +32,7 @@ class CommentControllerTest extends MockApiTest {
     private JwtTokenProvider jwtTokenProvider;
 
     @Nested
-    @DisplayName("댓글 추가는")
+    @DisplayName("댓글 추가는 ")
     class CreateComment {
 
         private final String token = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
@@ -103,5 +103,4 @@ class CommentControllerTest extends MockApiTest {
                     .andDo(print());
         }
     }
-
 }
