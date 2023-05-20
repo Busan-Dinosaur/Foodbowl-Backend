@@ -28,3 +28,7 @@ link:member/member.html[API 문서 보기]
 == *게시글*
 
 link:post/post.html[API 문서 보기]
+
+== *북마크*
+
+link:bookmark/bookmark.html[API 문서 보기]

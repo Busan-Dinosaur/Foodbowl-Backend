@@ -5,7 +5,6 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.mo
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.dinosaur.foodbowl.global.config.security.CustomAccessDeniedHandler;
 import org.dinosaur.foodbowl.global.config.security.CustomAuthenticationEntryPoint;
 import org.dinosaur.foodbowl.global.config.security.SecurityConfig;
@@ -34,7 +33,6 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 @ExtendWith({SpringExtension.class, RestDocumentationExtension.class})
 public class MockApiTest {
 
-    protected ObjectMapper objectMapper = new ObjectMapper();
     protected MockMvc mockMvc;
 
     @BeforeEach
