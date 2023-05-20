@@ -10,7 +10,6 @@ import org.dinosaur.foodbowl.domain.blame.repository.BlameRepository;
 import org.dinosaur.foodbowl.domain.bookmark.repository.BookmarkRepository;
 import org.dinosaur.foodbowl.domain.comment.repository.CommentRepository;
 import org.dinosaur.foodbowl.domain.follow.repository.FollowRepository;
-import org.dinosaur.foodbowl.domain.member.dto.response.NicknameDuplicateCheckResponse;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRepository;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRoleRepository;
@@ -100,43 +99,6 @@ class MemberServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> memberService.withDraw(-1L))
                     .isInstanceOf(FoodbowlException.class)
                     .hasMessage("등록되지 않은 회원입니다.");
-        }
-    }
-
-    @Nested
-    @DisplayName("checkDuplicate 메서드는")
-    class checkDuplicate {
-
-        @Test
-        @DisplayName("닉네임과 일치하는 회원이 존재하면 true를 반환한다.")
-        void checkDuplicateMember() {
-            String nickname = "gray";
-            Member member = Member.builder()
-                    .socialType(Member.SocialType.APPLE)
-                    .socialId("1234")
-                    .nickname(nickname)
-                    .build();
-            memberRepository.save(member);
-
-            NicknameDuplicateCheckResponse nicknameDuplicateCheckResponse = memberService.checkDuplicate(nickname);
-
-            assertThat(nicknameDuplicateCheckResponse.isHasDuplicate()).isTrue();
-        }
-
-        @Test
-        @DisplayName("닉네임과 일치하는 회원이 존재하면 false를 반환한다.")
-        void checkNoneDuplicateMember() {
-            String nickname = "gray";
-            Member member = Member.builder()
-                    .socialType(Member.SocialType.APPLE)
-                    .socialId("1234")
-                    .nickname("dazzle")
-                    .build();
-            memberRepository.save(member);
-
-            NicknameDuplicateCheckResponse nicknameDuplicateCheckResponse = memberService.checkDuplicate(nickname);
-
-            assertThat(nicknameDuplicateCheckResponse.isHasDuplicate()).isFalse();
         }
     }
 }

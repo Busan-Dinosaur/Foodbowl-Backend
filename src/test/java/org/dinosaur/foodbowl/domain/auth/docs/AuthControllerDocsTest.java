@@ -14,6 +14,9 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -23,6 +26,7 @@ import org.dinosaur.foodbowl.domain.auth.api.AuthController;
 import org.dinosaur.foodbowl.domain.auth.application.AuthService;
 import org.dinosaur.foodbowl.domain.auth.dto.FoodbowlTokenDto;
 import org.dinosaur.foodbowl.domain.auth.dto.request.AppleLoginRequest;
+import org.dinosaur.foodbowl.domain.auth.dto.response.NicknameDuplicateCheckResponse;
 import org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
 import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
@@ -34,6 +38,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.cookies.CookieDescriptor;
 import org.springframework.restdocs.headers.HeaderDescriptor;
 import org.springframework.restdocs.payload.FieldDescriptor;
+import org.springframework.restdocs.payload.JsonFieldType;
 
 @WebMvcTest(AuthController.class)
 public class AuthControllerDocsTest extends MockApiTest {
@@ -108,6 +113,25 @@ public class AuthControllerDocsTest extends MockApiTest {
                         ),
                         requestCookies(
                                 requestCookies
+                        )));
+    }
+
+    @Test
+    @DisplayName("닉네임 중복 검증을 문서화한다.")
+    void checkDuplicate() throws Exception {
+        given(authService.checkDuplicate(any())).willReturn(new NicknameDuplicateCheckResponse(false));
+
+        mockMvc.perform(get("/api/v1/auth/check-nickname")
+                        .queryParam("nickname", "gray")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("api-v1-auth-check-nickname",
+                        queryParameters(
+                                parameterWithName("nickname").description("닉네임")
+                        ),
+                        responseFields(
+                                fieldWithPath("hasDuplicate").type(JsonFieldType.BOOLEAN).description("닉네임 중복 여부")
                         )));
     }
 }
