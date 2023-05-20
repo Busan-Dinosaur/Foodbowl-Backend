@@ -65,6 +65,7 @@ class MemberControllerTest extends MockApiTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request))
                     )
+                    .andDo(print())
                     .andExpect(status().isUnauthorized());
         }
 
@@ -79,6 +80,7 @@ class MemberControllerTest extends MockApiTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request))
                     )
+                    .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(content().string(containsString("닉네임은 존재해야 합니다.")));
         }
@@ -94,8 +96,24 @@ class MemberControllerTest extends MockApiTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request))
                     )
+                    .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(content().string(containsString("닉네임은 1자 이상 16자 이하 한글, 영문, 숫자만 가능합니다")));
+        }
+
+        @Test
+        @DisplayName("소개가 255자를 넘는다면 400 상태를 반환한다.")
+        void updateProfileWithInvalidIntroduction() throws Exception {
+            ProfileUpdateRequest request = new ProfileUpdateRequest("foodbowl", "a".repeat(256));
+
+            mockMvc.perform(put("/api/v1/members")
+                            .header("Authorization", "Bearer " + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request))
+                    )
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().string(containsString("소개는 최대 255자까지만 가능합니다.")));
         }
 
         @Test
@@ -110,6 +128,7 @@ class MemberControllerTest extends MockApiTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request))
                     )
+                    .andDo(print())
                     .andExpect(status().isNoContent());
         }
     }

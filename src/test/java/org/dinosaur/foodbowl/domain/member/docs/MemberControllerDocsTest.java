@@ -82,6 +82,7 @@ public class MemberControllerDocsTest extends MockApiTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                 )
+                .andDo(print())
                 .andExpect(status().isNoContent())
                 .andDo(document("api-v1-members-update-profile",
                         requestHeaders(
