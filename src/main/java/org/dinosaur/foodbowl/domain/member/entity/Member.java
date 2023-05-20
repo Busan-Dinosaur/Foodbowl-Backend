@@ -83,6 +83,11 @@ public class Member extends AuditingEntity {
         this.region2depthName = region2depthName;
     }
 
+    public void updateProfile(final String nickname, final String introduction) {
+        this.nickname = nickname;
+        this.introduction = introduction;
+    }
+
     public enum SocialType {
 
         APPLE

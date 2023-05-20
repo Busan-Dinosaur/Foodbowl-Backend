@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
@@ -19,11 +20,14 @@ import org.dinosaur.foodbowl.MockApiTest;
 import org.dinosaur.foodbowl.domain.auth.application.AuthService;
 import org.dinosaur.foodbowl.domain.auth.dto.FoodbowlTokenDto;
 import org.dinosaur.foodbowl.domain.auth.dto.request.AppleLoginRequest;
+import org.dinosaur.foodbowl.domain.auth.dto.response.NicknameDuplicateCheckResponse;
 import org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
 import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -108,6 +112,62 @@ class AuthControllerTest extends MockApiTest {
             return mockMvc.perform(post("/api/v1/auth/apple/logout")
                             .header("Authorization", "Bearer " + accessToken)
                             .cookie(new Cookie(REFRESH_TOKEN.getName(), "refreshToken")))
+                    .andDo(print());
+        }
+    }
+
+    @Nested
+    @DisplayName("닉네임 중복 검증은")
+    class CheckDuplicate {
+
+        @Test
+        @DisplayName("요청 파라미터가 없으면 BAD REQUEST가 발생한다.")
+        void checkDuplicateFailWithNoParams() throws Exception {
+            given(authService.checkDuplicate(any())).willReturn(new NicknameDuplicateCheckResponse(false));
+
+            mockMvc.perform(get("/api/v1/auth/check-nickname")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isBadRequest())
+                    .andDo(print());
+        }
+
+        @Test
+        @DisplayName("요청 닉네임이 존재하면 true를 반환한다.")
+        void checkDuplicateTrue() throws Exception {
+            given(authService.checkDuplicate(any())).willReturn(new NicknameDuplicateCheckResponse(true));
+
+            mockMvc.perform(get("/api/v1/auth/check-nickname")
+                            .queryParam("nickname", "gray")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.hasDuplicate").value(true))
+                    .andDo(print());
+        }
+
+        @Test
+        @DisplayName("요청 닉네임이 존재하지 않으면 false를 반환한다.")
+        void checkDuplicateFalse() throws Exception {
+            given(authService.checkDuplicate(any())).willReturn(new NicknameDuplicateCheckResponse(false));
+
+            mockMvc.perform(get("/api/v1/auth/check-nickname")
+                            .queryParam("nickname", "gray")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.hasDuplicate").value(false))
+                    .andDo(print());
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"", " ", "graygraygraygrayhoy", "@!!dsafdsf$"})
+        @DisplayName("닉네임은 1자 이상 16자 이하 한글,영문,숫자가 아니면 BAD REQUEST가 발생한다.")
+        void checkDuplicateFail(String nickname) throws Exception {
+            given(authService.checkDuplicate(any())).willReturn(new NicknameDuplicateCheckResponse(false));
+
+            mockMvc.perform(get("/api/v1/auth/check-nickname")
+                            .queryParam("nickname", nickname)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value("닉네임은 1자 이상 16자 이하 한글, 영문, 숫자만 가능합니다"))
                     .andDo(print());
         }
     }

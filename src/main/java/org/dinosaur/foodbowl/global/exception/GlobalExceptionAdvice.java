@@ -37,7 +37,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
         for (FieldError fieldError : bindingResult.getFieldErrors()) {
             stringBuilder.append("[");
             stringBuilder.append(fieldError.getField());
-            stringBuilder.append("] 필드는 ");
+            stringBuilder.append("] ");
             stringBuilder.append(fieldError.getDefaultMessage());
             stringBuilder.append(" 입력된 값 : [");
             stringBuilder.append(fieldError.getRejectedValue());

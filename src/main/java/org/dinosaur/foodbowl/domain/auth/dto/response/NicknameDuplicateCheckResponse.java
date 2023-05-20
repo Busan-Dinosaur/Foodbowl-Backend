@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.member.dto.response;
+package org.dinosaur.foodbowl.domain.auth.dto.response;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

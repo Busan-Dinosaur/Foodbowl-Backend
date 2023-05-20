@@ -29,7 +29,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests()
                 .requestMatchers("/docs/**", "/api/v1/health-check").permitAll()
-                .requestMatchers("/api/v1/auth/apple/login").permitAll()
+                .requestMatchers("/api/v1/auth/apple/login", "/api/v1/auth/check-nickname").permitAll()
                 .anyRequest().hasRole("회원")
                 .and()
                 .httpBasic().disable()

@@ -1,24 +1,25 @@
 package org.dinosaur.foodbowl.domain.member.api;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.anyLong;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.dinosaur.foodbowl.MockApiTest;
 import org.dinosaur.foodbowl.domain.member.application.MemberService;
-import org.dinosaur.foodbowl.domain.member.dto.response.NicknameDuplicateCheckResponse;
+import org.dinosaur.foodbowl.domain.member.dto.request.ProfileUpdateRequest;
 import org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
 import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -35,79 +36,100 @@ class MemberControllerTest extends MockApiTest {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
+    @Test
+    @DisplayName("회원 탈퇴 요청 시 회원을 탈퇴시킨다.")
+    void withDraw() throws Exception {
+        willDoNothing().given(memberService).withDraw(anyLong());
+
+        mockMvc.perform(delete("/api/v1/members")
+                        .header(HttpHeaders.AUTHORIZATION,
+                                "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원))
+                )
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+    }
+
     @Nested
-    @DisplayName("닉네임 중복 검증은")
-    class CheckDuplicate {
+    @DisplayName("닉네임, 소개 수정 요청 시 ")
+    class updateProfile {
 
-        private final String token = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
+        private String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
 
         @Test
-        @DisplayName("요청 파라미터가 없으면 BAD REQUEST가 발생한다.")
-        void checkDuplicateFailWithNoParams() throws Exception {
-            given(memberService.checkDuplicate(any())).willReturn(new NicknameDuplicateCheckResponse(false));
+        @DisplayName("인증되지 않은 회원이라면 401 상태를 반환한다.")
+        void updateProfileWithUnAuthenticated() throws Exception {
+            ProfileUpdateRequest request = new ProfileUpdateRequest("foodbowl", "Foodbowl is Good");
 
-            mockMvc.perform(get("/api/v1/members/check-nickname")
-                            .header("Authorization", "Bearer " + token)
-                            .contentType(MediaType.APPLICATION_JSON))
+            mockMvc.perform(put("/api/v1/members")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request))
+                    )
+                    .andDo(print())
+                    .andExpect(status().isUnauthorized());
+        }
+
+        @ParameterizedTest
+        @NullAndEmptySource
+        @DisplayName("닉네임 정보가 존재하지 않으면 400 상태를 반환한다.")
+        void updateProfileWithNotExistNickname(String nickname) throws Exception {
+            ProfileUpdateRequest request = new ProfileUpdateRequest(nickname, "Foodbowl is Good");
+
+            mockMvc.perform(put("/api/v1/members")
+                            .header("Authorization", "Bearer " + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request))
+                    )
+                    .andDo(print())
                     .andExpect(status().isBadRequest())
-                    .andDo(print());
-        }
-
-        @Test
-        @DisplayName("요청 닉네임이 존재하면 true를 반환한다.")
-        void checkDuplicateTrue() throws Exception {
-            given(memberService.checkDuplicate(any())).willReturn(new NicknameDuplicateCheckResponse(true));
-
-            mockMvc.perform(get("/api/v1/members/check-nickname")
-                            .header("Authorization", "Bearer " + token)
-                            .queryParam("nickname", "gray")
-                            .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.hasDuplicate").value(true))
-                    .andDo(print());
-        }
-
-        @Test
-        @DisplayName("요청 닉네임이 존재하지 않으면 false를 반환한다.")
-        void checkDuplicateFalse() throws Exception {
-            given(memberService.checkDuplicate(any())).willReturn(new NicknameDuplicateCheckResponse(false));
-
-            mockMvc.perform(get("/api/v1/members/check-nickname")
-                            .header("Authorization", "Bearer " + token)
-                            .queryParam("nickname", "gray")
-                            .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.hasDuplicate").value(false))
-                    .andDo(print());
+                    .andExpect(content().string(containsString("닉네임은 존재해야 합니다.")));
         }
 
         @ParameterizedTest
         @ValueSource(strings = {"", " ", "graygraygraygrayhoy", "@!!dsafdsf$"})
-        @DisplayName("닉네임은 1자 이상 16자 이하 한글,영문,숫자가 아니면 BAD REQUEST가 발생한다.")
-        void checkDuplicateFail(String nickname) throws Exception {
-            given(memberService.checkDuplicate(any())).willReturn(new NicknameDuplicateCheckResponse(false));
+        @DisplayName("유효하지 않은 닉네임이라면 400 상태를 반환한다.")
+        void updateProfileWithInvalidNickname(String nickname) throws Exception {
+            ProfileUpdateRequest request = new ProfileUpdateRequest(nickname, "Foodbowl is Good");
 
-            mockMvc.perform(get("/api/v1/members/check-nickname")
-                            .header("Authorization", "Bearer " + token)
-                            .queryParam("nickname", nickname)
-                            .contentType(MediaType.APPLICATION_JSON))
+            mockMvc.perform(put("/api/v1/members")
+                            .header("Authorization", "Bearer " + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request))
+                    )
+                    .andDo(print())
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.message").value("닉네임은 1자 이상 16자 이하 한글,영문,숫자만 가능합니다"))
-                    .andDo(print());
+                    .andExpect(content().string(containsString("닉네임은 1자 이상 16자 이하 한글, 영문, 숫자만 가능합니다")));
         }
 
         @Test
-        @DisplayName("회원 탈퇴 요청 시 회원을 탈퇴시킨다.")
-        void withDraw() throws Exception {
-            willDoNothing().given(memberService).withDraw(anyLong());
+        @DisplayName("소개가 255자를 넘는다면 400 상태를 반환한다.")
+        void updateProfileWithInvalidIntroduction() throws Exception {
+            ProfileUpdateRequest request = new ProfileUpdateRequest("foodbowl", "a".repeat(256));
 
-            mockMvc.perform(delete("/api/v1/members")
-                            .header(HttpHeaders.AUTHORIZATION,
-                                    "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원))
+            mockMvc.perform(put("/api/v1/members")
+                            .header("Authorization", "Bearer " + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request))
+                    )
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().string(containsString("소개는 최대 255자까지만 가능합니다.")));
+        }
+
+        @Test
+        @DisplayName("유효한 정보라면 204 상태를 반환한다.")
+        void updateProfile() throws Exception {
+            ProfileUpdateRequest request = new ProfileUpdateRequest("foodbowl", "Foodbowl is Good");
+
+            willDoNothing().given(memberService).updateProfile(anyLong(), any(ProfileUpdateRequest.class));
+
+            mockMvc.perform(put("/api/v1/members")
+                            .header("Authorization", "Bearer " + accessToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request))
                     )
                     .andDo(print())
                     .andExpect(status().isNoContent());
-
         }
     }
 }

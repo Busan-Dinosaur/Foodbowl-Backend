@@ -10,7 +10,7 @@ import org.dinosaur.foodbowl.domain.blame.repository.BlameRepository;
 import org.dinosaur.foodbowl.domain.bookmark.repository.BookmarkRepository;
 import org.dinosaur.foodbowl.domain.comment.repository.CommentRepository;
 import org.dinosaur.foodbowl.domain.follow.repository.FollowRepository;
-import org.dinosaur.foodbowl.domain.member.dto.response.NicknameDuplicateCheckResponse;
+import org.dinosaur.foodbowl.domain.member.dto.request.ProfileUpdateRequest;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRepository;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRoleRepository;
@@ -104,39 +104,35 @@ class MemberServiceTest extends IntegrationTest {
     }
 
     @Nested
-    @DisplayName("checkDuplicate 메서드는")
-    class checkDuplicate {
+    @DisplayName("updateProfile 메서드는 ")
+    class UpdateProfile {
 
         @Test
-        @DisplayName("닉네임과 일치하는 회원이 존재하면 true를 반환한다.")
-        void checkDuplicateMember() {
-            String nickname = "gray";
-            Member member = Member.builder()
-                    .socialType(Member.SocialType.APPLE)
-                    .socialId("1234")
-                    .nickname(nickname)
-                    .build();
-            memberRepository.save(member);
+        @DisplayName("해당 멤버가 존재하지 않으면 예외를 던진다.")
+        void updateProfileWithNotExistMember() {
+            ProfileUpdateRequest request = new ProfileUpdateRequest("foodbowl", "Foodbowl is Good");
 
-            NicknameDuplicateCheckResponse nicknameDuplicateCheckResponse = memberService.checkDuplicate(nickname);
-
-            assertThat(nicknameDuplicateCheckResponse.isHasDuplicate()).isTrue();
+            assertThatThrownBy(() -> memberService.updateProfile(-1L, request))
+                    .isInstanceOf(FoodbowlException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
         }
 
         @Test
-        @DisplayName("닉네임과 일치하는 회원이 존재하면 false를 반환한다.")
-        void checkNoneDuplicateMember() {
-            String nickname = "gray";
-            Member member = Member.builder()
-                    .socialType(Member.SocialType.APPLE)
-                    .socialId("1234")
-                    .nickname("dazzle")
-                    .build();
-            memberRepository.save(member);
+        @DisplayName("유효한 정보라면 멤버의 닉네임, 소개를 수정한다.")
+        void updateProfile() {
+            Member member = memberTestSupport.memberBuilder().build();
+            ProfileUpdateRequest request = new ProfileUpdateRequest("foodbowl", "Foodbowl is Good");
 
-            NicknameDuplicateCheckResponse nicknameDuplicateCheckResponse = memberService.checkDuplicate(nickname);
+            memberService.updateProfile(member.getId(), request);
 
-            assertThat(nicknameDuplicateCheckResponse.isHasDuplicate()).isFalse();
+            em.flush();
+            em.clear();
+
+            Member updatedMember = memberRepository.findById(member.getId()).get();
+            assertAll(
+                    () -> assertThat(updatedMember.getNickname()).isEqualTo("foodbowl"),
+                    () -> assertThat(updatedMember.getIntroduction()).isEqualTo("Foodbowl is Good")
+            );
         }
     }
 }

@@ -10,6 +10,7 @@ import org.dinosaur.foodbowl.domain.auth.apple.AppleOAuthUserProvider;
 import org.dinosaur.foodbowl.domain.auth.dto.FoodbowlTokenDto;
 import org.dinosaur.foodbowl.domain.auth.dto.request.AppleLoginRequest;
 import org.dinosaur.foodbowl.domain.auth.dto.response.ApplePlatformUserResponse;
+import org.dinosaur.foodbowl.domain.auth.dto.response.NicknameDuplicateCheckResponse;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRepository;
 import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
@@ -59,5 +60,10 @@ public class AuthService {
     @Transactional
     public void appleLogout(Long memberId) {
         redisTemplate.delete(String.valueOf(memberId));
+    }
+
+    public NicknameDuplicateCheckResponse checkDuplicate(String nickname) {
+        boolean hasDuplicate = memberRepository.existsByNickname(nickname);
+        return new NicknameDuplicateCheckResponse(hasDuplicate);
     }
 }

@@ -8,7 +8,7 @@ import org.dinosaur.foodbowl.domain.blame.repository.BlameRepository;
 import org.dinosaur.foodbowl.domain.bookmark.repository.BookmarkRepository;
 import org.dinosaur.foodbowl.domain.comment.repository.CommentRepository;
 import org.dinosaur.foodbowl.domain.follow.repository.FollowRepository;
-import org.dinosaur.foodbowl.domain.member.dto.response.NicknameDuplicateCheckResponse;
+import org.dinosaur.foodbowl.domain.member.dto.request.ProfileUpdateRequest;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRepository;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRoleRepository;
@@ -37,11 +37,6 @@ public class MemberService {
     private final BookmarkRepository bookmarkRepository;
     private final BlameRepository blameRepository;
 
-    public NicknameDuplicateCheckResponse checkDuplicate(String nickname) {
-        boolean hasDuplicate = memberRepository.existsByNickname(nickname);
-        return new NicknameDuplicateCheckResponse(hasDuplicate);
-    }
-
     @Transactional
     public void withDraw(Long memberId) {
         Member member = memberRepository.findById(memberId)
@@ -63,5 +58,13 @@ public class MemberService {
         }
         memberRepository.delete(member);
         thumbnailRepository.delete(member.getThumbnail());
+    }
+
+    @Transactional
+    public void updateProfile(Long memberId, ProfileUpdateRequest request) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new FoodbowlException(MEMBER_NOT_FOUND));
+
+        member.updateProfile(request.getNickname(), request.getIntroduction());
     }
 }

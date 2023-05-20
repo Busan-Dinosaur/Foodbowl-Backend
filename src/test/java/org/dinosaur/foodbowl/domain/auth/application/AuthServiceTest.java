@@ -12,6 +12,7 @@ import org.dinosaur.foodbowl.domain.auth.apple.AppleOAuthUserProvider;
 import org.dinosaur.foodbowl.domain.auth.dto.FoodbowlTokenDto;
 import org.dinosaur.foodbowl.domain.auth.dto.request.AppleLoginRequest;
 import org.dinosaur.foodbowl.domain.auth.dto.response.ApplePlatformUserResponse;
+import org.dinosaur.foodbowl.domain.auth.dto.response.NicknameDuplicateCheckResponse;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRepository;
 import org.dinosaur.foodbowl.global.exception.FoodbowlException;
@@ -95,6 +96,43 @@ class AuthServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> authService.appleLogin(appleLoginRequest))
                     .isInstanceOf(FoodbowlException.class)
                     .hasMessage("애플 회원가입이 되지 않은 회원입니다.");
+        }
+    }
+
+    @Nested
+    @DisplayName("checkDuplicate 메서드는")
+    class checkDuplicate {
+
+        @Test
+        @DisplayName("닉네임과 일치하는 회원이 존재하면 true를 반환한다.")
+        void checkDuplicateMember() {
+            String nickname = "gray";
+            Member member = Member.builder()
+                    .socialType(Member.SocialType.APPLE)
+                    .socialId("1234")
+                    .nickname(nickname)
+                    .build();
+            memberRepository.save(member);
+
+            NicknameDuplicateCheckResponse nicknameDuplicateCheckResponse = authService.checkDuplicate(nickname);
+
+            assertThat(nicknameDuplicateCheckResponse.isHasDuplicate()).isTrue();
+        }
+
+        @Test
+        @DisplayName("닉네임과 일치하는 회원이 존재하면 false를 반환한다.")
+        void checkNoneDuplicateMember() {
+            String nickname = "gray";
+            Member member = Member.builder()
+                    .socialType(Member.SocialType.APPLE)
+                    .socialId("1234")
+                    .nickname("dazzle")
+                    .build();
+            memberRepository.save(member);
+
+            NicknameDuplicateCheckResponse nicknameDuplicateCheckResponse = authService.checkDuplicate(nickname);
+
+            assertThat(nicknameDuplicateCheckResponse.isHasDuplicate()).isFalse();
         }
     }
 }
