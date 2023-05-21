@@ -44,16 +44,17 @@ public class CommentService {
     }
 
     @Transactional
-    public void update(Long commentId, Long memberId, CommentUpdateRequest commentUpdateRequest) {
+    public void updateComment(Long commentId, Long memberId, CommentUpdateRequest commentUpdateRequest) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new FoodbowlException(COMMENT_NOT_FOUND));
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new FoodbowlException(MEMBER_NOT_FOUND));
 
-        if (comment.isNotCorrectAuthor(member)) {
+        if (comment.isNotBelongTo(member)) {
             throw new FoodbowlException(MEMBER_UNAUTHORIZED);
         }
 
         comment.update(commentUpdateRequest.getMessage());
     }
+
 }

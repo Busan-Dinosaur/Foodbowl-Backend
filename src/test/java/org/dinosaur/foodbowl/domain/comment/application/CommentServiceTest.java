@@ -2,9 +2,17 @@ package org.dinosaur.foodbowl.domain.comment.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.dinosaur.foodbowl.global.exception.ErrorStatus.COMMENT_NOT_FOUND;
+import static org.dinosaur.foodbowl.global.exception.ErrorStatus.MEMBER_NOT_FOUND;
+import static org.dinosaur.foodbowl.global.exception.ErrorStatus.MEMBER_UNAUTHORIZED;
+import static org.dinosaur.foodbowl.global.exception.ErrorStatus.POST_NOT_FOUND;
 
+import jakarta.persistence.EntityManager;
 import org.dinosaur.foodbowl.IntegrationTest;
 import org.dinosaur.foodbowl.domain.comment.dto.CommentCreateRequest;
+import org.dinosaur.foodbowl.domain.comment.dto.CommentUpdateRequest;
+import org.dinosaur.foodbowl.domain.comment.entity.Comment;
+import org.dinosaur.foodbowl.domain.comment.repository.CommentRepository;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.post.entity.Post;
 import org.dinosaur.foodbowl.global.exception.FoodbowlException;
@@ -16,7 +24,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 class CommentServiceTest extends IntegrationTest {
 
     @Autowired
-    CommentService commentService;
+    private CommentService commentService;
+
+    @Autowired
+    private CommentRepository commentRepository;
+
+    @Autowired
+    private EntityManager em;
 
     @Nested
     @DisplayName("게시글에 ")
@@ -43,7 +57,7 @@ class CommentServiceTest extends IntegrationTest {
 
             assertThatThrownBy(() -> commentService.save(member.getId(), commentCreateRequest))
                     .isInstanceOf(FoodbowlException.class)
-                    .hasMessage("게시글이 존재하지 않습니다.");
+                    .hasMessage(POST_NOT_FOUND.getMessage());
         }
 
         @Test
@@ -55,7 +69,77 @@ class CommentServiceTest extends IntegrationTest {
 
             assertThatThrownBy(() -> commentService.save(Long.MAX_VALUE, commentCreateRequest))
                     .isInstanceOf(FoodbowlException.class)
-                    .hasMessage("등록되지 않은 회원입니다.");
+                    .hasMessage(MEMBER_NOT_FOUND.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("댓글을 수정할 때 ")
+    class UpdateComment {
+
+        @Test
+        @DisplayName("정상적으로 내용이 수정된다.")
+        void updateComment() {
+            Member member = memberTestSupport.memberBuilder().build();
+            Post post = postTestSupport.postBuilder().build();
+            Comment comment = commentTestSupport.builder().member(member).post(post).message("돈까스 드시죠").build();
+            CommentUpdateRequest commentUpdateRequest = new CommentUpdateRequest("아, 돈까스 말고 그냥 국밥 드시죠");
+            em.flush();
+            em.clear();
+
+            commentService.updateComment(comment.getId(), member.getId(), commentUpdateRequest);
+            em.flush();
+            em.clear();
+            Comment updatedComment = commentRepository.findById(comment.getId()).get();
+
+            assertThat(updatedComment.getMessage()).isEqualTo(commentUpdateRequest.getMessage());
+        }
+
+        @Test
+        @DisplayName("댓글이 존재하지 않는 경우 예외가 발생한다.")
+        void updateCommentFailWithWrongCommentId() {
+            Member member = memberTestSupport.memberBuilder().build();
+            Post post = postTestSupport.postBuilder().build();
+            commentTestSupport.builder().member(member).post(post).message("돈까스 드시죠").build();
+            CommentUpdateRequest commentUpdateRequest = new CommentUpdateRequest("아, 돈까스 말고 그냥 국밥 드시죠");
+            em.flush();
+            em.clear();
+
+            assertThatThrownBy(() -> commentService.updateComment(-1L, member.getId(), commentUpdateRequest))
+                    .isInstanceOf(FoodbowlException.class)
+                    .hasMessage(COMMENT_NOT_FOUND.getMessage());
+        }
+
+        @Test
+        @DisplayName("요청 회원이 존재하지 않는 경우 예외가 발생한다.")
+        void updateCommentFailWithWrongMemberId() {
+            Member member = memberTestSupport.memberBuilder().build();
+            Post post = postTestSupport.postBuilder().build();
+            Comment comment = commentTestSupport.builder().member(member).post(post).message("오늘 남으시나요?").build();
+            CommentUpdateRequest commentUpdateRequest = new CommentUpdateRequest("오늘도 칼퇴 하시나요?");
+            em.flush();
+            em.clear();
+
+            assertThatThrownBy(() -> commentService.updateComment(comment.getId(), -1L, commentUpdateRequest))
+                    .isInstanceOf(FoodbowlException.class)
+                    .hasMessage(MEMBER_NOT_FOUND.getMessage());
+        }
+
+        @Test
+        @DisplayName("댓글 작성자와 댓글 수정 요청자가 다르면 예외가 발생한다.")
+        void updateCommentFailWithDifferentAuthor() {
+            Member gray = memberTestSupport.memberBuilder().build();
+            Member dazzle = memberTestSupport.memberBuilder().build();
+            Post post = postTestSupport.postBuilder().build();
+            Comment comment = commentTestSupport.builder().member(gray).post(post).message("아 날씨 좋다").build();
+            CommentUpdateRequest commentUpdateRequest = new CommentUpdateRequest("아 내일 비온다.");
+            em.flush();
+            em.clear();
+
+            assertThatThrownBy(
+                    () -> commentService.updateComment(comment.getId(), dazzle.getId(), commentUpdateRequest))
+                    .isInstanceOf(FoodbowlException.class)
+                    .hasMessage(MEMBER_UNAUTHORIZED.getMessage());
         }
     }
 }

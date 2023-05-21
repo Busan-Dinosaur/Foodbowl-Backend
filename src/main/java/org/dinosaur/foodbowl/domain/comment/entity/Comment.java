@@ -67,7 +67,7 @@ public class Comment extends AuditingEntity {
         this.message = message;
     }
 
-    public boolean isNotCorrectAuthor(Member member) {
+    public boolean isNotBelongTo(Member member) {
         return !this.member.equals(member);
     }
 }
