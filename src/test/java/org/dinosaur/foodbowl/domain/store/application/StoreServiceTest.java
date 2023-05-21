@@ -1,11 +1,11 @@
 package org.dinosaur.foodbowl.domain.store.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import org.assertj.core.api.Assertions;
 import org.dinosaur.foodbowl.IntegrationTest;
 import org.dinosaur.foodbowl.domain.store.dto.StoreRequest;
 import org.dinosaur.foodbowl.domain.store.dto.StoreResponse;
@@ -31,24 +31,6 @@ class StoreServiceTest extends IntegrationTest {
         List<StoreResponse> storeResponses = storeService.findAll();
 
         assertThat(storeResponses).hasSize(initialSize + 2);
-    }
-
-    private StoreRequest createRequest(String storeName, String addressName) {
-        return new StoreRequest(
-                storeName,
-                addressName,
-                "서울시",
-                "송파구",
-                "신천동",
-                "연금공단로",
-                "N",
-                "123",
-                "1층 101호",
-                "국민연금공단 송파지점",
-                "12345",
-                BigDecimal.valueOf(127.3435356),
-                BigDecimal.valueOf(37.12314545)
-        );
     }
 
     @Nested
@@ -85,14 +67,14 @@ class StoreServiceTest extends IntegrationTest {
         void saveFail() {
             storeService.save(createRequest("국민연금공단 구내식당", "서울시 송파구 올림픽로 123"));
 
-            Assertions.assertThatThrownBy(() -> storeService.save(createRequest("국민연금공단 구내식당", "서울시 송파구 올림픽로 123")))
+            assertThatThrownBy(() -> storeService.save(createRequest("국민연금공단 구내식당", "서울시 송파구 올림픽로 123")))
                     .isInstanceOf(FoodbowlException.class)
                     .hasMessageContaining("이미 등록된 가게입니다.");
         }
     }
 
     @Nested
-    @DisplayName("find 메서드는")
+    @DisplayName("find 메서드는 ")
     class Find {
 
         @Test
@@ -110,9 +92,46 @@ class StoreServiceTest extends IntegrationTest {
         void findOneFail() {
             storeService.save(createRequest("국민연금공단 구내식당", "서울시 송파구 올림픽로 123"));
 
-            Assertions.assertThatThrownBy(() -> storeService.findOne(Long.MAX_VALUE))
+            assertThatThrownBy(() -> storeService.findOne(Long.MAX_VALUE))
                     .isInstanceOf(FoodbowlException.class)
                     .hasMessageContaining("일치하는 가게를 찾을 수 없습니다.");
         }
+    }
+
+    @Nested
+    @DisplayName("findByAddress 메서드는 ")
+    class FindByName {
+
+        @Test
+        @DisplayName("주소에 해당하는 가게 정보를 가져온다.")
+        void findByNameSuccess() {
+            String address = "서울시 송파구 신천동 1542";
+            StoreResponse savedStoreResponse = storeService.save(createRequest("맥도날드 잠실점", address));
+
+            StoreResponse findStoreResponse = storeService.findByAddress(address);
+
+            assertAll(
+                    () -> assertThat(findStoreResponse.getId()).isEqualTo(savedStoreResponse.getId()),
+                    () -> assertThat(findStoreResponse.getAddressName()).isEqualTo(savedStoreResponse.getAddressName())
+            );
+        }
+    }
+
+    private StoreRequest createRequest(String storeName, String addressName) {
+        return new StoreRequest(
+                storeName,
+                addressName,
+                "서울시",
+                "송파구",
+                "신천동",
+                "연금공단로",
+                "N",
+                "123",
+                "1층 101호",
+                "국민연금공단 송파지점",
+                "12345",
+                BigDecimal.valueOf(127.3435356),
+                BigDecimal.valueOf(37.12314545)
+        );
     }
 }

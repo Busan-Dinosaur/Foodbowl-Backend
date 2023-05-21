@@ -11,6 +11,8 @@ public interface StoreRepository extends Repository<Store, Long> {
 
     Optional<Store> findByStoreName(String storeName);
 
+    Optional<Store> findByAddress_AddressName(String address);
+
     List<Store> findAll();
 
     Store save(Store store);
