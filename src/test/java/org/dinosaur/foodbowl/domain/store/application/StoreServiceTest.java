@@ -100,7 +100,7 @@ class StoreServiceTest extends IntegrationTest {
 
     @Nested
     @DisplayName("findByAddress 메서드는 ")
-    class FindByName {
+    class FindByAddress {
 
         @Test
         @DisplayName("주소에 해당하는 가게 정보를 가져온다.")
