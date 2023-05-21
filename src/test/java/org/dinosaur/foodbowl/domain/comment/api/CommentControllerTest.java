@@ -153,5 +153,18 @@ class CommentControllerTest extends MockApiTest {
                     .andExpect(status().isBadRequest())
                     .andDo(print());
         }
+
+        @Test
+        @DisplayName("댓글 길이가 255이상 이면 BAD REQUEST를 반환한다.")
+        void updateCommentWithWrongLengthMessage() throws Exception {
+            String updateMessage = "a".repeat(256);
+            mockMvc.perform(put("/api/v1/comments/{commentId}", 1L)
+                            .header("Authorization", "Bearer " + token)
+                            .content(objectMapper.writeValueAsString(new CommentUpdateRequest(updateMessage)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andExpect(status().isBadRequest())
+                    .andDo(print());
+        }
     }
 }
