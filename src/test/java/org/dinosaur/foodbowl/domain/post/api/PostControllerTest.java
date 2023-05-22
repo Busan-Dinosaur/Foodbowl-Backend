@@ -40,6 +40,37 @@ class PostControllerTest extends MockApiTest {
     @MockBean
     private PostService postService;
 
+    @Test
+    @DisplayName("최근 게시글 썸네일 목록을 조회한다.")
+    void findLatestThumbnails() throws Exception {
+        PageResponse<PostThumbnailResponse> response = new PageResponse<>(
+                List.of(
+                        new PostThumbnailResponse(1L, "path", LocalDateTime.now()),
+                        new PostThumbnailResponse(2L, "path", LocalDateTime.now())
+                ),
+                true,
+                true,
+                false,
+                0,
+                1,
+                1,
+                1
+        );
+        given(postService.findLatestThumbnails(any(Pageable.class))).willReturn(response);
+
+        MvcResult mvcResult = mockMvc.perform(get("/api/v1/posts/thumbnails/latest")
+                        .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        String jsonResponse = mvcResult.getResponse().getContentAsString(Charset.forName("UTF-8"));
+        PageResponse<PostThumbnailResponse> result =
+                objectMapper.readValue(jsonResponse, new TypeReference<PageResponse<PostThumbnailResponse>>() {
+                });
+        assertThat(result).usingRecursiveComparison().isEqualTo(response);
+    }
+
     @Nested
     @DisplayName("프로필 게시글 목록 조회 시 ")
     class FindThumbnailsInProfile {
@@ -95,36 +126,5 @@ class PostControllerTest extends MockApiTest {
                     .andDo(print())
                     .andExpect(status().isBadRequest());
         }
-    }
-
-    @Test
-    @DisplayName("최근 게시글 썸네일 목록을 조회한다.")
-    void findLatestThumbnails() throws Exception {
-        PageResponse<PostThumbnailResponse> response = new PageResponse<>(
-                List.of(
-                        new PostThumbnailResponse(1L, "path", LocalDateTime.now()),
-                        new PostThumbnailResponse(2L, "path", LocalDateTime.now())
-                ),
-                true,
-                true,
-                false,
-                0,
-                1,
-                1,
-                1
-        );
-        given(postService.findLatestThumbnails(any(Pageable.class))).willReturn(response);
-
-        MvcResult mvcResult = mockMvc.perform(get("/api/v1/posts/thumbnails/latest")
-                        .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원))
-                )
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
-        String jsonResponse = mvcResult.getResponse().getContentAsString(Charset.forName("UTF-8"));
-        PageResponse<PostThumbnailResponse> result =
-                objectMapper.readValue(jsonResponse, new TypeReference<PageResponse<PostThumbnailResponse>>() {
-                });
-        assertThat(result).usingRecursiveComparison().isEqualTo(response);
     }
 }
