@@ -18,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import org.dinosaur.foodbowl.MockApiTest;
 import org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
 import org.dinosaur.foodbowl.domain.store.api.StoreController;
@@ -61,9 +62,9 @@ public class StoreControllerDocsTest extends MockApiTest {
                         .characterEncoding(StandardCharsets.UTF_8))
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andDo(document("api-v1-stores-read",
+                .andDo(document("api-v1-stores-find",
                         requestHeaders(
-                                headerWithName("Authorization").description("Foodbowl 인증 토큰")
+                                headerWithName("Authorization").description("서버에서 발급한 엑세스 토큰")
                         ),
                         queryParameters(
                                 parameterWithName("address").description("주소(공백은 반드시 '+'로 치환해야 합니다.")
@@ -82,7 +83,9 @@ public class StoreControllerDocsTest extends MockApiTest {
                                 fieldWithPath("buildingName").type(JsonFieldType.STRING).description("건물 이름"),
                                 fieldWithPath("zoneNo").type(JsonFieldType.STRING).description("우편 번호"),
                                 fieldWithPath("x").type(JsonFieldType.NUMBER).description("경도"),
-                                fieldWithPath("y").type(JsonFieldType.NUMBER).description("위도")
+                                fieldWithPath("y").type(JsonFieldType.NUMBER).description("위도"),
+                                fieldWithPath("createdAt").type(JsonFieldType.STRING).description("생성 시간"),
+                                fieldWithPath("updatedAt").type(JsonFieldType.STRING).description("최종 수정 시간")
                         )));
     }
 
@@ -141,14 +144,16 @@ public class StoreControllerDocsTest extends MockApiTest {
                 fieldWithPath("buildingName").type(JsonFieldType.STRING).description("건물 이름"),
                 fieldWithPath("zoneNo").type(JsonFieldType.STRING).description("우편 번호"),
                 fieldWithPath("x").type(JsonFieldType.NUMBER).description("경도"),
-                fieldWithPath("y").type(JsonFieldType.NUMBER).description("위도")
+                fieldWithPath("y").type(JsonFieldType.NUMBER).description("위도"),
+                fieldWithPath("createdAt").type(JsonFieldType.STRING).description("생성 시간"),
+                fieldWithPath("updatedAt").type(JsonFieldType.STRING).description("최종 수정 시간"),
         };
 
         mockMvc.perform(post("/api/v1/stores")
-                .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원))
-                .content(objectMapper.writeValueAsString(storeRequest))
-                .contentType(MediaType.APPLICATION_JSON)
-                .characterEncoding(StandardCharsets.UTF_8))
+                        .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원))
+                        .content(objectMapper.writeValueAsString(storeRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("api-v1-stores-create",
@@ -178,7 +183,9 @@ public class StoreControllerDocsTest extends MockApiTest {
                 "루터회관",
                 "12345",
                 BigDecimal.valueOf(127.3435356),
-                BigDecimal.valueOf(37.12314545)
+                BigDecimal.valueOf(37.12314545),
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
     }
 }

@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.domain.store.dto;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -41,6 +42,11 @@ public class StoreResponse {
 
     private BigDecimal y;
 
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
+
     public static StoreResponse from(Store store) {
         Address address = store.getAddress();
         return new StoreResponse(
@@ -57,7 +63,9 @@ public class StoreResponse {
                 address.getBuildingName(),
                 address.getZoneNo(),
                 address.getX(),
-                address.getY()
+                address.getY(),
+                store.getCreatedAt(),
+                store.getUpdatedAt()
         );
     }
 }

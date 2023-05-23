@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import org.dinosaur.foodbowl.MockApiTest;
 import org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
 import org.dinosaur.foodbowl.domain.store.application.StoreService;
@@ -385,7 +386,9 @@ class StoreControllerTest extends MockApiTest {
                 "루터회관",
                 "12345",
                 BigDecimal.valueOf(127.3435356),
-                BigDecimal.valueOf(37.12314545)
+                BigDecimal.valueOf(37.12314545),
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
     }
 }
