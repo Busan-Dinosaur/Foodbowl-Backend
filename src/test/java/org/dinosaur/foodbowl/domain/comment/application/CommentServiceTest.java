@@ -102,8 +102,6 @@ class CommentServiceTest extends IntegrationTest {
             Post post = postTestSupport.postBuilder().build();
             commentTestSupport.builder().member(member).post(post).message("돈까스 드시죠").build();
             CommentUpdateRequest commentUpdateRequest = new CommentUpdateRequest("아, 돈까스 말고 그냥 국밥 드시죠");
-            em.flush();
-            em.clear();
 
             assertThatThrownBy(() -> commentService.updateComment(-1L, member.getId(), commentUpdateRequest))
                     .isInstanceOf(FoodbowlException.class)
@@ -117,8 +115,6 @@ class CommentServiceTest extends IntegrationTest {
             Post post = postTestSupport.postBuilder().build();
             Comment comment = commentTestSupport.builder().member(member).post(post).message("오늘 남으시나요?").build();
             CommentUpdateRequest commentUpdateRequest = new CommentUpdateRequest("오늘도 칼퇴 하시나요?");
-            em.flush();
-            em.clear();
 
             assertThatThrownBy(() -> commentService.updateComment(comment.getId(), -1L, commentUpdateRequest))
                     .isInstanceOf(FoodbowlException.class)
@@ -133,8 +129,6 @@ class CommentServiceTest extends IntegrationTest {
             Post post = postTestSupport.postBuilder().build();
             Comment comment = commentTestSupport.builder().member(gray).post(post).message("아 날씨 좋다").build();
             CommentUpdateRequest commentUpdateRequest = new CommentUpdateRequest("아 내일 비온다.");
-            em.flush();
-            em.clear();
 
             assertThatThrownBy(
                     () -> commentService.updateComment(comment.getId(), dazzle.getId(), commentUpdateRequest))
