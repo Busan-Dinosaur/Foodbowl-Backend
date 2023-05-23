@@ -56,5 +56,4 @@ public class CommentService {
 
         comment.update(commentUpdateRequest.getMessage());
     }
-
 }
