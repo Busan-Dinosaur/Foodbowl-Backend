@@ -1,5 +1,6 @@
 package org.dinosaur.foodbowl.domain.comment.api;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -8,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.StandardCharsets;
@@ -67,6 +69,7 @@ class CommentControllerTest extends MockApiTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value(containsString("게시글 ID는 반드시 포함되어야 합니다.")))
                     .andDo(print());
         }
 
@@ -79,6 +82,7 @@ class CommentControllerTest extends MockApiTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value(containsString("댓글 ID는 양수만 가능합니다.")))
                     .andDo(print());
         }
 
@@ -92,6 +96,7 @@ class CommentControllerTest extends MockApiTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value(containsString("댓글 내용은 반드시 포함되어야 합니다.")))
                     .andDo(print());
         }
 
@@ -105,6 +110,7 @@ class CommentControllerTest extends MockApiTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value(containsString("댓글은 최소 1자, 최대 255자까지 가능합니다.")))
                     .andDo(print());
         }
     }
@@ -139,6 +145,7 @@ class CommentControllerTest extends MockApiTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value(containsString("댓글 내용은 반드시 포함되어야 합니다.")))
                     .andDo(print());
         }
 
@@ -151,6 +158,7 @@ class CommentControllerTest extends MockApiTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value(containsString("댓글 ID는 양수만 가능합니다.")))
                     .andDo(print());
         }
 
@@ -164,6 +172,7 @@ class CommentControllerTest extends MockApiTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value(containsString("댓글은 최소 1자, 최대 255자까지 가능합니다.")))
                     .andDo(print());
         }
     }
