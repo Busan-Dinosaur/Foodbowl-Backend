@@ -9,6 +9,8 @@ import java.util.List;
 import org.dinosaur.foodbowl.IntegrationTest;
 import org.dinosaur.foodbowl.domain.store.dto.StoreRequest;
 import org.dinosaur.foodbowl.domain.store.dto.StoreResponse;
+import org.dinosaur.foodbowl.domain.store.entity.Address;
+import org.dinosaur.foodbowl.domain.store.entity.Store;
 import org.dinosaur.foodbowl.global.exception.FoodbowlException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -80,7 +82,7 @@ class StoreServiceTest extends IntegrationTest {
         @Test
         @DisplayName("ID에 해당하는 가게 정보를 가져온다.")
         void findOneSuccess() {
-            Long savedId = storeService.save(createRequest("국민연금공단 구내식당", "서울시 송파구 올림픽로 123")).getId();
+            Long savedId = storeTestSupport.builder().build().getId();
 
             StoreResponse findStore = storeService.findOne(savedId);
 
@@ -90,9 +92,7 @@ class StoreServiceTest extends IntegrationTest {
         @Test
         @DisplayName("ID에 해당하는 가게가 없으면 예외가 발생한다.")
         void findOneFail() {
-            storeService.save(createRequest("국민연금공단 구내식당", "서울시 송파구 올림픽로 123"));
-
-            assertThatThrownBy(() -> storeService.findOne(Long.MAX_VALUE))
+            assertThatThrownBy(() -> storeService.findOne(-1L))
                     .isInstanceOf(FoodbowlException.class)
                     .hasMessageContaining("일치하는 가게를 찾을 수 없습니다.");
         }
@@ -105,16 +105,33 @@ class StoreServiceTest extends IntegrationTest {
         @Test
         @DisplayName("주소에 해당하는 가게 정보를 가져온다.")
         void findByNameSuccess() {
-            String address = "서울시 송파구 신천동 1542";
-            StoreResponse savedStoreResponse = storeService.save(createRequest("맥도날드 잠실점", address));
+            Address address = createAddress();
+            Store store = storeTestSupport.builder().address(address).storeName("맥도날드 잠실점").build();
 
-            StoreResponse findStoreResponse = storeService.findByAddress(address);
+            StoreResponse findStoreResponse = storeService.findByAddress(address.getAddressName());
 
             assertAll(
-                    () -> assertThat(findStoreResponse.getId()).isEqualTo(savedStoreResponse.getId()),
-                    () -> assertThat(findStoreResponse.getAddressName()).isEqualTo(savedStoreResponse.getAddressName())
+                    () -> assertThat(findStoreResponse.getId()).isEqualTo(store.getId()),
+                    () -> assertThat(findStoreResponse.getAddressName()).isEqualTo(store.getAddress().getAddressName())
             );
         }
+    }
+
+    private Address createAddress() {
+        return Address.builder()
+                .addressName("서울시 송파구 신천동 1542")
+                .region1depthName("서울시")
+                .region2depthName("송파구")
+                .region3depthName("신천동")
+                .roadName("연금공단로")
+                .undergroundYN("N")
+                .mainBuildingNo("123")
+                .subBuildingNo("1층 101호")
+                .buildingName("국민연금공단 송파지점")
+                .zoneNo("12345")
+                .x(BigDecimal.valueOf(127.3435356))
+                .y(BigDecimal.valueOf(37.12314545))
+                .build();
     }
 
     private StoreRequest createRequest(String storeName, String addressName) {
