@@ -47,6 +47,10 @@ include::{snippets}/api-v1-comments-update/http-request.adoc[]
 
 include::{snippets}/api-v1-comments-update/request-headers.adoc[]
 
+=== Request Fields
+
+include::{snippets}/api-v1-comments-update/request-fields.adoc[]
+
 === Path parameters
 
 include::{snippets}/api-v1-comments-update/path-parameters.adoc[]
