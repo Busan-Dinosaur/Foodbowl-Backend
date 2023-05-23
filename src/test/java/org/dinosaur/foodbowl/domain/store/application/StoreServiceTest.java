@@ -2,6 +2,8 @@ package org.dinosaur.foodbowl.domain.store.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.dinosaur.foodbowl.global.exception.ErrorStatus.STORE_DUPLICATED;
+import static org.dinosaur.foodbowl.global.exception.ErrorStatus.STORE_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
@@ -71,7 +73,7 @@ class StoreServiceTest extends IntegrationTest {
 
             assertThatThrownBy(() -> storeService.save(createRequest("국민연금공단 구내식당", "서울시 송파구 올림픽로 123")))
                     .isInstanceOf(FoodbowlException.class)
-                    .hasMessageContaining("이미 등록된 가게입니다.");
+                    .hasMessageContaining(STORE_DUPLICATED.getMessage());
         }
     }
 
@@ -94,7 +96,7 @@ class StoreServiceTest extends IntegrationTest {
         void findOneFail() {
             assertThatThrownBy(() -> storeService.findOne(-1L))
                     .isInstanceOf(FoodbowlException.class)
-                    .hasMessageContaining("일치하는 가게를 찾을 수 없습니다.");
+                    .hasMessageContaining(STORE_NOT_FOUND.getMessage());
         }
     }
 
@@ -104,7 +106,7 @@ class StoreServiceTest extends IntegrationTest {
 
         @Test
         @DisplayName("주소에 해당하는 가게 정보를 가져온다.")
-        void findByNameSuccess() {
+        void findByAddressSuccess() {
             Address address = createAddress();
             Store store = storeTestSupport.builder().address(address).storeName("맥도날드 잠실점").build();
 
@@ -114,6 +116,17 @@ class StoreServiceTest extends IntegrationTest {
                     () -> assertThat(findStoreResponse.getId()).isEqualTo(store.getId()),
                     () -> assertThat(findStoreResponse.getAddressName()).isEqualTo(store.getAddress().getAddressName())
             );
+        }
+
+        @Test
+        @DisplayName("주소에 해당하는 가게 정보를 가져온다.")
+        void findByAddressFail() {
+            Address address = createAddress();
+            storeTestSupport.builder().address(address).storeName("맥도날드 잠실점").build();
+
+            assertThatThrownBy(() -> storeService.findByAddress("제주시 송파구 신천동"))
+                    .isInstanceOf(FoodbowlException.class)
+                    .hasMessageContaining(STORE_NOT_FOUND.getMessage());
         }
     }
 
