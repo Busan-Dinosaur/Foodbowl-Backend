@@ -27,7 +27,7 @@ public class CommentController {
 
     @PostMapping
     public ResponseEntity<Void> createComment(
-            @Valid @RequestBody CommentCreateRequest commentCreateRequest,
+            @RequestBody @Valid CommentCreateRequest commentCreateRequest,
             @MemberId Long memberId
     ) {
         commentService.save(memberId, commentCreateRequest);
@@ -36,9 +36,9 @@ public class CommentController {
 
     @PutMapping("/{commentId}")
     public ResponseEntity<Void> updateComment(
-            @Positive(message = "댓글 ID는 양수만 가능합니다.") @PathVariable Long commentId,
+            @PathVariable @Positive(message = "댓글 ID는 양수만 가능합니다.") Long commentId,
             @MemberId Long memberId,
-            @Valid @RequestBody CommentUpdateRequest commentUpdateRequest
+            @RequestBody @Valid CommentUpdateRequest commentUpdateRequest
     ) {
         commentService.updateComment(commentId, memberId, commentUpdateRequest);
         return ResponseEntity.noContent().build();
