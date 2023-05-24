@@ -50,7 +50,7 @@ public class CommentService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new FoodbowlException(MEMBER_NOT_FOUND));
 
-        if (comment.isNotBelongTo(member)) {
+        if (comment.isNotWrittenBy(member)) {
             throw new FoodbowlException(MEMBER_UNAUTHORIZED);
         }
 

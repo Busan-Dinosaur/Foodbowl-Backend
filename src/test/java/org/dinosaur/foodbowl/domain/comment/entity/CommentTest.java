@@ -24,7 +24,7 @@ class CommentTest extends RepositoryTest {
             Post post = postTestSupport.postBuilder().build();
             Comment comment = commentTestSupport.builder().post(post).member(gray).message("안녕하세요").build();
 
-            assertThat(comment.isNotBelongTo(hoy)).isTrue();
+            assertThat(comment.isNotWrittenBy(hoy)).isTrue();
         }
 
         @Test
@@ -34,7 +34,7 @@ class CommentTest extends RepositoryTest {
             Post post = postTestSupport.postBuilder().build();
             Comment comment = commentTestSupport.builder().post(post).member(gray).message("안녕하세요").build();
 
-            assertThat(comment.isNotBelongTo(gray)).isFalse();
+            assertThat(comment.isNotWrittenBy(gray)).isFalse();
         }
     }
 }
