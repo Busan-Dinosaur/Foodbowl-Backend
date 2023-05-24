@@ -51,7 +51,7 @@ public class CommentService {
                 .orElseThrow(() -> new FoodbowlException(MEMBER_NOT_FOUND));
 
         if (comment.isNotWrittenBy(member)) {
-            throw new FoodbowlException(MEMBER_UNAUTHORIZED);
+            throw new FoodbowlException(COMMENT_UNAUTHORIZED);
         }
 
         comment.update(commentUpdateRequest.getMessage());

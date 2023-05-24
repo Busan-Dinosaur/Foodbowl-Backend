@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.dinosaur.foodbowl.global.exception.ErrorStatus.COMMENT_NOT_FOUND;
 import static org.dinosaur.foodbowl.global.exception.ErrorStatus.MEMBER_NOT_FOUND;
-import static org.dinosaur.foodbowl.global.exception.ErrorStatus.MEMBER_UNAUTHORIZED;
+import static org.dinosaur.foodbowl.global.exception.ErrorStatus.COMMENT_UNAUTHORIZED;
 import static org.dinosaur.foodbowl.global.exception.ErrorStatus.POST_NOT_FOUND;
 
 import jakarta.persistence.EntityManager;
@@ -133,7 +133,7 @@ class CommentServiceTest extends IntegrationTest {
             assertThatThrownBy(
                     () -> commentService.updateComment(comment.getId(), dazzle.getId(), commentUpdateRequest))
                     .isInstanceOf(FoodbowlException.class)
-                    .hasMessage(MEMBER_UNAUTHORIZED.getMessage());
+                    .hasMessage(COMMENT_UNAUTHORIZED.getMessage());
         }
     }
 }

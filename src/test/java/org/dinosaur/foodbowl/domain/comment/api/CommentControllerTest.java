@@ -82,7 +82,7 @@ class CommentControllerTest extends MockApiTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.message").value(containsString("댓글 ID는 양수만 가능합니다.")))
+                    .andExpect(jsonPath("$.message").value(containsString("게시글 ID는 음수가 될 수 없습니다.")))
                     .andDo(print());
         }
 
