@@ -44,6 +44,81 @@ class StoreControllerTest extends MockApiTest {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
+    @Test
+    @DisplayName("가게를 생성한다.")
+    void createSuccess() throws Exception {
+        StoreRequest storeRequest = new StoreRequest(
+                "신천직화집",
+                "서울시 송파구 올림픽로 473",
+                "서울시",
+                "송파구",
+                "신천동",
+                "올림픽로",
+                "N",
+                "473",
+                "14층 1400호",
+                "루터회관",
+                "12345",
+                BigDecimal.valueOf(127.3435356),
+                BigDecimal.valueOf(37.12314545)
+        );
+        StoreResponse storeResponse = createResponse();
+        given(storeService.save(any(StoreRequest.class))).willReturn(storeResponse);
+
+        ResultActions resultActions = mockMvc.perform(post("/api/v1/stores")
+                .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원))
+                .content(objectMapper.writeValueAsString(storeRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding(StandardCharsets.UTF_8));
+
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(storeResponse.getId()))
+                .andExpect(jsonPath("$.storeName").value(storeResponse.getStoreName()))
+                .andExpect(jsonPath("$.addressName").value(storeResponse.getAddressName()))
+                .andExpect(jsonPath("$.region1depthName").value(storeResponse.getRegion1depthName()))
+                .andExpect(jsonPath("$.region2depthName").value(storeResponse.getRegion2depthName()))
+                .andExpect(jsonPath("$.region3depthName").value(storeResponse.getRegion3depthName()))
+                .andExpect(jsonPath("$.roadName").value(storeResponse.getRoadName()))
+                .andExpect(jsonPath("$.undergroundYN").value(storeResponse.getUndergroundYN()))
+                .andExpect(jsonPath("$.mainBuildingNo").value(storeResponse.getMainBuildingNo()))
+                .andExpect(jsonPath("$.subBuildingNo").value(storeResponse.getSubBuildingNo()))
+                .andExpect(jsonPath("$.buildingName").value(storeResponse.getBuildingName()))
+                .andExpect(jsonPath("$.zoneNo").value(storeResponse.getZoneNo()))
+                .andExpect(jsonPath("$.x").value(storeResponse.getX()))
+                .andExpect(jsonPath("$.y").value(storeResponse.getY()));
+    }
+
+    private void execute(StoreRequest storeRequest, String token) throws Exception {
+        mockMvc.perform(post("/api/v1/stores")
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.writeValueAsString(storeRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    private StoreResponse createResponse() {
+        return new StoreResponse(
+                1L,
+                "신천직화집",
+                "서울시 송파구 올림픽로 473",
+                "서울시",
+                "송파구",
+                "신천동",
+                "올림픽로",
+                "N",
+                "473",
+                "14층 1400호",
+                "루터회관",
+                "12345",
+                BigDecimal.valueOf(127.3435356),
+                BigDecimal.valueOf(37.12314545),
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+    }
+
     @Nested
     @DisplayName("가게를 조회할 때 ")
     class FindStore {
@@ -88,51 +163,6 @@ class StoreControllerTest extends MockApiTest {
                     .andExpect(status().isNotFound())
                     .andDo(print());
         }
-    }
-
-
-    @Test
-    @DisplayName("가게를 생성한다.")
-    void createSuccess() throws Exception {
-        StoreRequest storeRequest = new StoreRequest(
-                "신천직화집",
-                "서울시 송파구 올림픽로 473",
-                "서울시",
-                "송파구",
-                "신천동",
-                "올림픽로",
-                "N",
-                "473",
-                "14층 1400호",
-                "루터회관",
-                "12345",
-                BigDecimal.valueOf(127.3435356),
-                BigDecimal.valueOf(37.12314545)
-        );
-        StoreResponse storeResponse = createResponse();
-        given(storeService.save(any(StoreRequest.class))).willReturn(storeResponse);
-
-        ResultActions resultActions = mockMvc.perform(post("/api/v1/stores")
-                .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원))
-                .content(objectMapper.writeValueAsString(storeRequest))
-                .contentType(MediaType.APPLICATION_JSON)
-                .characterEncoding(StandardCharsets.UTF_8));
-
-        resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(storeResponse.getId()))
-                .andExpect(jsonPath("$.storeName").value(storeResponse.getStoreName()))
-                .andExpect(jsonPath("$.addressName").value(storeResponse.getAddressName()))
-                .andExpect(jsonPath("$.region1depthName").value(storeResponse.getRegion1depthName()))
-                .andExpect(jsonPath("$.region2depthName").value(storeResponse.getRegion2depthName()))
-                .andExpect(jsonPath("$.region3depthName").value(storeResponse.getRegion3depthName()))
-                .andExpect(jsonPath("$.roadName").value(storeResponse.getRoadName()))
-                .andExpect(jsonPath("$.undergroundYN").value(storeResponse.getUndergroundYN()))
-                .andExpect(jsonPath("$.mainBuildingNo").value(storeResponse.getMainBuildingNo()))
-                .andExpect(jsonPath("$.subBuildingNo").value(storeResponse.getSubBuildingNo()))
-                .andExpect(jsonPath("$.buildingName").value(storeResponse.getBuildingName()))
-                .andExpect(jsonPath("$.zoneNo").value(storeResponse.getZoneNo()))
-                .andExpect(jsonPath("$.x").value(storeResponse.getX()))
-                .andExpect(jsonPath("$.y").value(storeResponse.getY()));
     }
 
     @Nested
@@ -359,36 +389,5 @@ class StoreControllerTest extends MockApiTest {
 
             execute(storeRequest, accessToken);
         }
-    }
-
-    private void execute(StoreRequest storeRequest, String token) throws Exception {
-        mockMvc.perform(post("/api/v1/stores")
-                        .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.writeValueAsString(storeRequest))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding(StandardCharsets.UTF_8))
-                .andDo(print())
-                .andExpect(status().isBadRequest());
-    }
-
-    private StoreResponse createResponse() {
-        return new StoreResponse(
-                1L,
-                "신천직화집",
-                "서울시 송파구 올림픽로 473",
-                "서울시",
-                "송파구",
-                "신천동",
-                "올림픽로",
-                "N",
-                "473",
-                "14층 1400호",
-                "루터회관",
-                "12345",
-                BigDecimal.valueOf(127.3435356),
-                BigDecimal.valueOf(37.12314545),
-                LocalDateTime.now(),
-                LocalDateTime.now()
-        );
     }
 }
