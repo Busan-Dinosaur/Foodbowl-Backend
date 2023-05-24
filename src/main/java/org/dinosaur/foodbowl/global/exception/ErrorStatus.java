@@ -36,8 +36,8 @@ public enum ErrorStatus {
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "게시글이 존재하지 않습니다.", 6000),
 
     //Comment code: 7xxx
-    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글이 존재하지 않습니다.", 7000);
-
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글이 존재하지 않습니다.", 7000),
+    COMMENT_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "해당 댓글에 권한이 없는 사용자 입니다.", 7001);
 
     private final HttpStatus httpStatus;
     private final String message;

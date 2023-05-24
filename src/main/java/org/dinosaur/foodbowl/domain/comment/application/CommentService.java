@@ -1,10 +1,12 @@
 package org.dinosaur.foodbowl.domain.comment.application;
 
+import static org.dinosaur.foodbowl.global.exception.ErrorStatus.*;
 import static org.dinosaur.foodbowl.global.exception.ErrorStatus.MEMBER_NOT_FOUND;
 import static org.dinosaur.foodbowl.global.exception.ErrorStatus.POST_NOT_FOUND;
 
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.comment.dto.CommentCreateRequest;
+import org.dinosaur.foodbowl.domain.comment.dto.CommentUpdateRequest;
 import org.dinosaur.foodbowl.domain.comment.entity.Comment;
 import org.dinosaur.foodbowl.domain.comment.repository.CommentRepository;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
@@ -39,5 +41,19 @@ public class CommentService {
                 .build();
         Comment savedComment = commentRepository.save(comment);
         return savedComment.getId();
+    }
+
+    @Transactional
+    public void updateComment(Long commentId, Long memberId, CommentUpdateRequest commentUpdateRequest) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new FoodbowlException(COMMENT_NOT_FOUND));
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new FoodbowlException(MEMBER_NOT_FOUND));
+
+        if (comment.isNotWrittenBy(member)) {
+            throw new FoodbowlException(COMMENT_UNAUTHORIZED);
+        }
+
+        comment.update(commentUpdateRequest.getMessage());
     }
 }
