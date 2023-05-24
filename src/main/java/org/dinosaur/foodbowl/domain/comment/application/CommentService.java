@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.domain.comment.application;
 
-import static org.dinosaur.foodbowl.global.exception.ErrorStatus.*;
+import static org.dinosaur.foodbowl.global.exception.ErrorStatus.COMMENT_NOT_FOUND;
+import static org.dinosaur.foodbowl.global.exception.ErrorStatus.COMMENT_UNAUTHORIZED;
 import static org.dinosaur.foodbowl.global.exception.ErrorStatus.MEMBER_NOT_FOUND;
 import static org.dinosaur.foodbowl.global.exception.ErrorStatus.POST_NOT_FOUND;
 
@@ -55,5 +56,19 @@ public class CommentService {
         }
 
         comment.update(commentUpdateRequest.getMessage());
+    }
+
+    @Transactional
+    public void deleteComment(Long commentId, Long memberId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new FoodbowlException(COMMENT_NOT_FOUND));
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new FoodbowlException(MEMBER_NOT_FOUND));
+
+        if (comment.isNotWrittenBy(member)) {
+            throw new FoodbowlException(COMMENT_UNAUTHORIZED);
+        }
+
+        commentRepository.deleteById(commentId);
     }
 }
