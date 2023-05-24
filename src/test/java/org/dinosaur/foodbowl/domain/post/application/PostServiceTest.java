@@ -44,10 +44,10 @@ class PostServiceTest extends IntegrationTest {
                 () -> assertThat(result.isFirst()).isTrue(),
                 () -> assertThat(result.isLast()).isTrue(),
                 () -> assertThat(result.isHasNext()).isFalse(),
-                () -> assertThat(result.getCurrentPage()).isEqualTo(0),
+                () -> assertThat(result.getCurrentPageIndex()).isEqualTo(0),
                 () -> assertThat(result.getCurrentElementSize()).isEqualTo(5),
                 () -> assertThat(result.getTotalPage()).isEqualTo(1),
-                () -> assertThat(result.getTotalElementSize()).isEqualTo(3)
+                () -> assertThat(result.getTotalElementCount()).isEqualTo(3)
         );
     }
 
