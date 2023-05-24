@@ -32,3 +32,7 @@ link:post/post.html[API 문서 보기]
 == *북마크*
 
 link:bookmark/bookmark.html[API 문서 보기]
+
+== *가게*
+
+link:store/store.html[API 문서 보기]

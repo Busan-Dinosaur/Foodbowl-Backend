@@ -27,6 +27,12 @@ public class StoreService {
         return StoreResponse.from(store);
     }
 
+    public StoreResponse findByAddress(String address) {
+        Store store = storeRepository.findByAddress_AddressName(address)
+                .orElseThrow(() -> new FoodbowlException(ErrorStatus.STORE_NOT_FOUND));
+        return StoreResponse.from(store);
+    }
+
     public List<StoreResponse> findAll() {
         return storeRepository.findAll().stream()
                 .map(StoreResponse::from)
