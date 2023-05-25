@@ -4,8 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.List;
 import org.dinosaur.foodbowl.IntegrationTest;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
+import org.dinosaur.foodbowl.domain.post.dto.response.PostStoreMarkerResponse;
 import org.dinosaur.foodbowl.domain.post.dto.response.PostThumbnailResponse;
 import org.dinosaur.foodbowl.domain.post.entity.Post;
 import org.dinosaur.foodbowl.global.dto.PageResponse;
@@ -50,6 +52,37 @@ class PostServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> postService.findThumbnailsInProfile(1L, pageable))
                     .isInstanceOf(FoodbowlException.class)
                     .hasMessage("등록되지 않은 회원입니다.");
+        }
+    }
+
+    @Nested
+    @DisplayName("findPostStoreMarkers 메서드는 ")
+    class FindPostStoreMarkers {
+
+        @Test
+        @DisplayName("등록되지 않는 멤버라면 예외를 던진다.")
+        void unregisteredMember() {
+            Long memberId = -1L;
+
+            assertThatThrownBy(() -> postService.findPostStoreMarkers(memberId))
+                    .isInstanceOf(FoodbowlException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
+
+        @Test
+        @DisplayName("지도에 마킹하기 위해 멤버가 작성한 게시글 가게 정보 목록을 조회한다.")
+        void findListOfStoreInformationForMarkingOnTheMap() {
+            Member member = memberTestSupport.memberBuilder().build();
+            Post postA = postTestSupport.postBuilder().member(member).build();
+            Post postB = postTestSupport.postBuilder().member(member).build();
+
+            List<PostStoreMarkerResponse> result = postService.findPostStoreMarkers(member.getId());
+
+            List<PostStoreMarkerResponse> expected = List.of(
+                    PostStoreMarkerResponse.from(postA.getStore()),
+                    PostStoreMarkerResponse.from(postB.getStore())
+            );
+            assertThat(result).usingRecursiveComparison().isEqualTo(expected);
         }
     }
 }

@@ -2,10 +2,13 @@ package org.dinosaur.foodbowl.domain.post.application;
 
 import static org.dinosaur.foodbowl.global.exception.ErrorStatus.MEMBER_NOT_FOUND;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRepository;
+import org.dinosaur.foodbowl.domain.post.dto.response.PostStoreMarkerResponse;
 import org.dinosaur.foodbowl.domain.post.dto.response.PostThumbnailResponse;
+import org.dinosaur.foodbowl.domain.post.entity.Post;
 import org.dinosaur.foodbowl.domain.post.repository.PostRepository;
 import org.dinosaur.foodbowl.global.dto.PageResponse;
 import org.dinosaur.foodbowl.global.exception.FoodbowlException;
@@ -29,5 +32,16 @@ public class PostService {
         Page<PostThumbnailResponse> pageOfResponse = postRepository.findAllByMember(member, pageable)
                 .map(PostThumbnailResponse::from);
         return PageResponse.from(pageOfResponse);
+    }
+
+    public List<PostStoreMarkerResponse> findPostStoreMarkers(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new FoodbowlException(MEMBER_NOT_FOUND));
+
+        return postRepository.findWithStoreAllByMember(member)
+                .stream()
+                .map(Post::getStore)
+                .map(PostStoreMarkerResponse::from)
+                .toList();
     }
 }
