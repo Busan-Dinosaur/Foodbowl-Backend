@@ -7,15 +7,17 @@ import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import org.dinosaur.foodbowl.MockApiTest;
 import org.dinosaur.foodbowl.domain.comment.api.CommentController;
@@ -42,8 +44,11 @@ public class CommentControllerDocsTest extends MockApiTest {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Test
-    @DisplayName("등록을 문서화한다.")
+    @DisplayName("댓글 등록을 문서화한다.")
     void createComment() throws Exception {
         given(commentService.save(anyLong(), any(CommentCreateRequest.class))).willReturn(1L);
 
@@ -89,5 +94,25 @@ public class CommentControllerDocsTest extends MockApiTest {
                                 )
                         )
                 );
+    }
+
+    @Test
+    @DisplayName("댓글 삭제를 문서화한다.")
+    void deleteComment() throws Exception {
+        willDoNothing().given(commentService).deleteComment(anyLong(), anyLong());
+
+        mockMvc.perform(delete("/api/v1/comments/{commentId}", 1L)
+                        .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원))
+                        .characterEncoding(StandardCharsets.UTF_8))
+                .andExpect(status().isNoContent())
+                .andDo(document("api-v1-comments-delete",
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("서버에서 발급한 엑세스 토큰")
+                        ),
+                        pathParameters(
+                                parameterWithName("commentId").description("삭제할 댓글 ID")
+                        )
+                ));
+
     }
 }
