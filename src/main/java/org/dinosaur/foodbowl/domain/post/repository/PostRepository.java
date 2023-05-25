@@ -13,6 +13,9 @@ public interface PostRepository extends Repository<Post, Long> {
 
     Optional<Post> findById(Long id);
 
+    @EntityGraph(attributePaths = "store")
+    List<Post> findWithStoreAllByMember(Member member);
+
     @EntityGraph(attributePaths = "thumbnail")
     Page<Post> findAllByMember(Member member, Pageable pageable);
 
