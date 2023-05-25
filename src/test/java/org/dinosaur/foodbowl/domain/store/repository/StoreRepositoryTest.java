@@ -23,6 +23,31 @@ class StoreRepositoryTest extends RepositoryTest {
         assertThat(storeRepository.findAll()).hasSizeGreaterThanOrEqualTo(0);
     }
 
+    private Store createStore() {
+        Address address = createAddress();
+        return Store.builder()
+                .address(address)
+                .storeName("작살치킨")
+                .build();
+    }
+
+    private Address createAddress() {
+        return Address.builder()
+                .addressName("서울시 송파구 방이동 방이로 1234")
+                .region1depthName("서울시")
+                .region2depthName("송파구")
+                .region3depthName("방이동")
+                .roadName("방이로")
+                .mainBuildingNo("1234")
+                .subBuildingNo("14층 1400호")
+                .undergroundYN("N")
+                .buildingName("작살치킨 빌딩")
+                .zoneNo("12345")
+                .x(BigDecimal.valueOf(127.3437575))
+                .y(BigDecimal.valueOf(37.12567))
+                .build();
+    }
+
     @Nested
     @DisplayName("findById 메서드는")
     class FindById {
@@ -96,30 +121,5 @@ class StoreRepositoryTest extends RepositoryTest {
 
             assertThat(findStore).isEmpty();
         }
-    }
-
-    private Store createStore() {
-        Address address = createAddress();
-        return Store.builder()
-                .address(address)
-                .storeName("작살치킨")
-                .build();
-    }
-
-    private Address createAddress() {
-        return Address.builder()
-                .addressName("서울시 송파구 방이동 방이로 1234")
-                .region1depthName("서울시")
-                .region2depthName("송파구")
-                .region3depthName("방이동")
-                .roadName("방이로")
-                .mainBuildingNo("1234")
-                .subBuildingNo("14층 1400호")
-                .undergroundYN("N")
-                .buildingName("작살치킨 빌딩")
-                .zoneNo("12345")
-                .x(BigDecimal.valueOf(127.3437575))
-                .y(BigDecimal.valueOf(37.12567))
-                .build();
     }
 }

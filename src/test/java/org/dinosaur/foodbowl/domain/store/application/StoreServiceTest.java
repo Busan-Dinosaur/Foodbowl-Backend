@@ -37,6 +37,41 @@ class StoreServiceTest extends IntegrationTest {
         assertThat(storeResponses).hasSize(initialSize + 2);
     }
 
+    private Address createAddress() {
+        return Address.builder()
+                .addressName("서울시 송파구 신천동 1542")
+                .region1depthName("서울시")
+                .region2depthName("송파구")
+                .region3depthName("신천동")
+                .roadName("연금공단로")
+                .undergroundYN("N")
+                .mainBuildingNo("123")
+                .subBuildingNo("1층 101호")
+                .buildingName("국민연금공단 송파지점")
+                .zoneNo("12345")
+                .x(BigDecimal.valueOf(127.3435356))
+                .y(BigDecimal.valueOf(37.12314545))
+                .build();
+    }
+
+    private StoreRequest createRequest(String storeName, String addressName) {
+        return new StoreRequest(
+                storeName,
+                addressName,
+                "서울시",
+                "송파구",
+                "신천동",
+                "연금공단로",
+                "N",
+                "123",
+                "1층 101호",
+                "국민연금공단 송파지점",
+                "12345",
+                BigDecimal.valueOf(127.3435356),
+                BigDecimal.valueOf(37.12314545)
+        );
+    }
+
     @Nested
     @DisplayName("save 메서드는 ")
     class Save {
@@ -128,40 +163,5 @@ class StoreServiceTest extends IntegrationTest {
                     .isInstanceOf(FoodbowlException.class)
                     .hasMessageContaining(STORE_NOT_FOUND.getMessage());
         }
-    }
-
-    private Address createAddress() {
-        return Address.builder()
-                .addressName("서울시 송파구 신천동 1542")
-                .region1depthName("서울시")
-                .region2depthName("송파구")
-                .region3depthName("신천동")
-                .roadName("연금공단로")
-                .undergroundYN("N")
-                .mainBuildingNo("123")
-                .subBuildingNo("1층 101호")
-                .buildingName("국민연금공단 송파지점")
-                .zoneNo("12345")
-                .x(BigDecimal.valueOf(127.3435356))
-                .y(BigDecimal.valueOf(37.12314545))
-                .build();
-    }
-
-    private StoreRequest createRequest(String storeName, String addressName) {
-        return new StoreRequest(
-                storeName,
-                addressName,
-                "서울시",
-                "송파구",
-                "신천동",
-                "연금공단로",
-                "N",
-                "123",
-                "1층 101호",
-                "국민연금공단 송파지점",
-                "12345",
-                BigDecimal.valueOf(127.3435356),
-                BigDecimal.valueOf(37.12314545)
-        );
     }
 }

@@ -39,7 +39,6 @@ include::{snippets}/api-v1-stores-find/http-response.adoc[]
 
 include::{snippets}/api-v1-stores-find/response-fields.adoc[]
 
-
 == *가게 생성* ==
 
 === 요청

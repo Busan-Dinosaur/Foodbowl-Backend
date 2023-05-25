@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.domain.comment.application;
 
-import static org.dinosaur.foodbowl.global.exception.ErrorStatus.*;
+import static org.dinosaur.foodbowl.global.exception.ErrorStatus.COMMENT_NOT_FOUND;
+import static org.dinosaur.foodbowl.global.exception.ErrorStatus.COMMENT_UNAUTHORIZED;
 import static org.dinosaur.foodbowl.global.exception.ErrorStatus.MEMBER_NOT_FOUND;
 import static org.dinosaur.foodbowl.global.exception.ErrorStatus.POST_NOT_FOUND;
 
