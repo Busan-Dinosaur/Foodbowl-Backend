@@ -34,6 +34,12 @@ public class PostService {
         return PageResponse.from(pageOfResponse);
     }
 
+    public PageResponse<PostThumbnailResponse> findLatestThumbnails(Pageable pageable) {
+        Page<PostThumbnailResponse> pageOfResponse = postRepository.findAll(pageable)
+                .map(PostThumbnailResponse::from);
+        return PageResponse.from(pageOfResponse);
+    }
+
     public List<PostStoreMarkerResponse> findPostStoreMarkers(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new FoodbowlException(MEMBER_NOT_FOUND));

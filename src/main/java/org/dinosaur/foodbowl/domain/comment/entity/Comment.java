@@ -67,7 +67,7 @@ public class Comment extends AuditingEntity {
         this.message = message;
     }
 
-    public boolean isNotWrittenBy(Member member) {
-        return !this.member.equals(member);
+    public boolean isWrittenBy(Member member) {
+        return this.member.equals(member);
     }
 }

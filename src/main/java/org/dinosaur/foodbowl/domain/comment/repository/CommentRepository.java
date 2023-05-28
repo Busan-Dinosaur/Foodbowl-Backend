@@ -22,4 +22,6 @@ public interface CommentRepository extends Repository<Comment, Long> {
     void deleteAllByMember(Member member);
 
     void deleteAllByPost(Post post);
+
+    void deleteById(Long id);
 }

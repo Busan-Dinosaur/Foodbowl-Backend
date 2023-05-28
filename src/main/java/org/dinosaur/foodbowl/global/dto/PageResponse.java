@@ -16,10 +16,10 @@ public class PageResponse<T> {
     private boolean first;
     private boolean last;
     private boolean hasNext;
-    private int currentPage;
+    private int currentPageIndex;
     private int currentElementSize;
     private int totalPage;
-    private long totalElementSize;
+    private long totalElementCount;
 
     public static <T> PageResponse<T> from(final Page<T> page) {
         return new PageResponse<>(

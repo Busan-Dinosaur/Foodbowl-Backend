@@ -136,4 +136,59 @@ class CommentServiceTest extends IntegrationTest {
                     .hasMessage(COMMENT_UNAUTHORIZED.getMessage());
         }
     }
+
+    @Nested
+    @DisplayName("댓글을 삭제하면 ")
+    class DeleteComment {
+
+        @Test
+        @DisplayName("정상적으로 삭제된다.")
+        void deleteComment() {
+            Member member = memberTestSupport.memberBuilder().build();
+            Post post = postTestSupport.postBuilder().build();
+            Comment comment = commentTestSupport.builder().member(member).post(post).message("댓글 생성").build();
+
+            commentService.deleteComment(comment.getId(), member.getId());
+
+            assertThat(commentRepository.findById(comment.getId())).isEmpty();
+        }
+
+        @Test
+        @DisplayName("댓글이 존재하지 않는 경우 예외가 발생한다.")
+        void deleteCommentFailWithWrongCommentId() {
+            Member member = memberTestSupport.memberBuilder().build();
+            Post post = postTestSupport.postBuilder().build();
+            commentTestSupport.builder().member(member).post(post).message("돈까스 드시죠").build();
+
+            assertThatThrownBy(() -> commentService.deleteComment(-1L, member.getId()))
+                    .isInstanceOf(FoodbowlException.class)
+                    .hasMessage(COMMENT_NOT_FOUND.getMessage());
+        }
+
+        @Test
+        @DisplayName("요청 회원이 존재하지 않는 경우 예외가 발생한다.")
+        void deleteCommentFailWithWrongMemberId() {
+            Member member = memberTestSupport.memberBuilder().build();
+            Post post = postTestSupport.postBuilder().build();
+            Comment comment = commentTestSupport.builder().member(member).post(post).message("오늘 남으시나요?").build();
+
+            assertThatThrownBy(() -> commentService.deleteComment(comment.getId(), -1L))
+                    .isInstanceOf(FoodbowlException.class)
+                    .hasMessage(MEMBER_NOT_FOUND.getMessage());
+        }
+
+        @Test
+        @DisplayName("댓글 작성자와 댓글 삭제 요청자가 다르면 예외가 발생한다.")
+        void deleteCommentFailWithDifferentAuthor() {
+            Member gray = memberTestSupport.memberBuilder().build();
+            Member dazzle = memberTestSupport.memberBuilder().build();
+            Post post = postTestSupport.postBuilder().build();
+            Comment comment = commentTestSupport.builder().member(gray).post(post).message("아 날씨 좋다").build();
+
+            assertThatThrownBy(
+                    () -> commentService.deleteComment(comment.getId(), dazzle.getId()))
+                    .isInstanceOf(FoodbowlException.class)
+                    .hasMessage(COMMENT_UNAUTHORIZED.getMessage());
+        }
+    }
 }

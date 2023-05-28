@@ -60,3 +60,25 @@ include::{snippets}/api-v1-comments-update/path-parameters.adoc[]
 === Response
 
 include::{snippets}/api-v1-comments-update/http-response.adoc[]
+
+== *댓글 삭제* ==
+
+=== 요청
+
+=== Request
+
+include::{snippets}/api-v1-comments-delete/http-request.adoc[]
+
+=== Request Headers
+
+include::{snippets}/api-v1-comments-delete/request-headers.adoc[]
+
+=== Path parameters
+
+include::{snippets}/api-v1-comments-delete/path-parameters.adoc[]
+
+=== 응답
+
+=== Response
+
+include::{snippets}/api-v1-comments-delete/http-response.adoc[]

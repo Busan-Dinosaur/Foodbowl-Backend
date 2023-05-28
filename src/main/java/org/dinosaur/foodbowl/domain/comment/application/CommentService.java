@@ -51,10 +51,24 @@ public class CommentService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new FoodbowlException(MEMBER_NOT_FOUND));
 
-        if (comment.isNotWrittenBy(member)) {
+        if (!comment.isWrittenBy(member)) {
             throw new FoodbowlException(COMMENT_UNAUTHORIZED);
         }
 
         comment.update(commentUpdateRequest.getMessage());
+    }
+
+    @Transactional
+    public void deleteComment(Long commentId, Long memberId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new FoodbowlException(COMMENT_NOT_FOUND));
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new FoodbowlException(MEMBER_NOT_FOUND));
+
+        if (!comment.isWrittenBy(member)) {
+            throw new FoodbowlException(COMMENT_UNAUTHORIZED);
+        }
+
+        commentRepository.deleteById(commentId);
     }
 }

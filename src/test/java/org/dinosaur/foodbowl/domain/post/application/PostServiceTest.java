@@ -27,6 +27,32 @@ class PostServiceTest extends IntegrationTest {
     @Autowired
     private PostService postService;
 
+    @Test
+    @DisplayName("최근 게시글 썸네일 목록을 조회한다.")
+    void findLatestThumbnails() {
+        Post postA = postTestSupport.postBuilder().build();
+        Post postB = postTestSupport.postBuilder().build();
+        Post postC = postTestSupport.postBuilder().build();
+
+        Pageable pageable = PageRequest.of(0, 5, Sort.by(Direction.DESC, "id"));
+        PageResponse<PostThumbnailResponse> result = postService.findLatestThumbnails(pageable);
+
+        List<PostThumbnailResponse> response = result.getContent();
+        assertAll(
+                () -> assertThat(response).hasSize(3),
+                () -> assertThat(response.get(0).getPostId()).isEqualTo(postC.getId()),
+                () -> assertThat(response.get(1).getPostId()).isEqualTo(postB.getId()),
+                () -> assertThat(response.get(2).getPostId()).isEqualTo(postA.getId()),
+                () -> assertThat(result.isFirst()).isTrue(),
+                () -> assertThat(result.isLast()).isTrue(),
+                () -> assertThat(result.isHasNext()).isFalse(),
+                () -> assertThat(result.getCurrentPageIndex()).isEqualTo(0),
+                () -> assertThat(result.getCurrentElementSize()).isEqualTo(5),
+                () -> assertThat(result.getTotalPage()).isEqualTo(1),
+                () -> assertThat(result.getTotalElementCount()).isEqualTo(3)
+        );
+    }
+
     @Nested
     @DisplayName("findThumbnailsInProfile 메서드는 ")
     class FindThumbnailsInProfile {

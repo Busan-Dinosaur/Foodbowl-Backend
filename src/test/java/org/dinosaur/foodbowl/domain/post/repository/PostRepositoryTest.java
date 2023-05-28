@@ -101,4 +101,42 @@ class PostRepositoryTest extends RepositoryTest {
             );
         }
     }
+
+    @Nested
+    @DisplayName("findAll - pageable 메서드는 ")
+    class FindAllPageable {
+
+        @Test
+        @DisplayName("전체 게시글을 조회한다.")
+        void findAllPageable() {
+            Post oldPost = postTestSupport.postBuilder().build();
+            Post newPost = postTestSupport.postBuilder().build();
+
+            Pageable pageable = PageRequest.of(0, 5, Sort.by(Direction.DESC, "id"));
+            Page<Post> result = postRepository.findAll(pageable);
+
+            List<Post> posts = result.getContent();
+            assertAll(
+                    () -> assertThat(posts).hasSize(2),
+                    () -> assertThat(posts.get(0)).isEqualTo(newPost),
+                    () -> assertThat(posts.get(1)).isEqualTo(oldPost)
+            );
+        }
+
+        @Test
+        @DisplayName("페이징 설정만큼 게시글을 조회한다.")
+        void findAllPageableByPaging() {
+            postTestSupport.postBuilder().build();
+            Post newPost = postTestSupport.postBuilder().build();
+
+            Pageable pageable = PageRequest.of(0, 1, Sort.by(Direction.DESC, "id"));
+            Page<Post> result = postRepository.findAll(pageable);
+
+            List<Post> posts = result.getContent();
+            assertAll(
+                    () -> assertThat(posts).hasSize(1),
+                    () -> assertThat(posts.get(0)).isEqualTo(newPost)
+            );
+        }
+    }
 }

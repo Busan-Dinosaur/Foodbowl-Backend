@@ -79,10 +79,10 @@ class BookmarkControllerDocsTest extends MockApiTest {
                 fieldWithPath("first").description("첫 페이지 여부"),
                 fieldWithPath("last").description("마지막 페이지 여부"),
                 fieldWithPath("hasNext").description("다음 페이지 존재 여부"),
-                fieldWithPath("currentPage").description("현재 페이지 인덱스"),
+                fieldWithPath("currentPageIndex").description("현재 페이지 인덱스"),
                 fieldWithPath("currentElementSize").description("현재 데이터 개수"),
                 fieldWithPath("totalPage").description("전체 페이지 숫자"),
-                fieldWithPath("totalElementSize").description("전체 데이터 개수"),
+                fieldWithPath("totalElementCount").description("전체 데이터 개수"),
         };
 
         mockMvc.perform(get("/api/v1/bookmarks/thumbnails")
