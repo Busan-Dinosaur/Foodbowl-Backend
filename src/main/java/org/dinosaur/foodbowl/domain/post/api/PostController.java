@@ -23,9 +23,15 @@ public class PostController {
     @GetMapping("/thumbnails")
     public ResponseEntity<PageResponse<PostThumbnailResponse>> findThumbnailsInProfile(
             @RequestParam Long memberId,
-            @PageableDefault(size = 18, page = 0, sort = "createdAt", direction = Direction.DESC) Pageable pageable
-    ) {
+            @PageableDefault(page = 0, size = 18, sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
         PageResponse<PostThumbnailResponse> response = postService.findThumbnailsInProfile(memberId, pageable);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/thumbnails/latest")
+    public ResponseEntity<PageResponse<PostThumbnailResponse>> findLatestThumbnails(
+            @PageableDefault(page = 0, size = 18, sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
+        PageResponse<PostThumbnailResponse> response = postService.findLatestThumbnails(pageable);
         return ResponseEntity.ok(response);
     }
 }
