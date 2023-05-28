@@ -17,24 +17,25 @@ class CommentTest extends RepositoryTest {
     class IsBelongTo {
 
         @Test
-        @DisplayName("검증하려는 회원이 일치하지 않으면 true를 반환한다.")
+        @DisplayName("검증하려는 회원이 일치하면 true를 반환한다.")
         void isBelongToFalse() {
             Member gray = memberTestSupport.memberBuilder().nickname("gray").build();
-            Member hoy = memberTestSupport.memberBuilder().nickname("hoy").build();
             Post post = postTestSupport.postBuilder().build();
             Comment comment = commentTestSupport.builder().post(post).member(gray).message("안녕하세요").build();
 
-            assertThat(comment.isNotWrittenBy(hoy)).isTrue();
+            assertThat(comment.isWrittenBy(gray)).isTrue();
         }
 
         @Test
-        @DisplayName("검증하려는 회원이 일치하면 false를 반환한다.")
+        @DisplayName("검증하려는 회원이 일치하지 않으면 false를 반환한다.")
         void isBelongToTrue() {
             Member gray = memberTestSupport.memberBuilder().nickname("gray").build();
+            Member hoy = memberTestSupport.memberBuilder().nickname("hoy").build();
+
             Post post = postTestSupport.postBuilder().build();
             Comment comment = commentTestSupport.builder().post(post).member(gray).message("안녕하세요").build();
 
-            assertThat(comment.isNotWrittenBy(gray)).isFalse();
+            assertThat(comment.isWrittenBy(hoy)).isFalse();
         }
     }
 }
