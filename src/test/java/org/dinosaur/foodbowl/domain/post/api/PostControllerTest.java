@@ -1,14 +1,16 @@
 package org.dinosaur.foodbowl.domain.post.api;
 
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.dinosaur.foodbowl.MockApiTest;
@@ -24,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.web.servlet.MvcResult;
 
 @WebMvcTest(PostController.class)
 class PostControllerTest extends MockApiTest {
@@ -31,8 +34,42 @@ class PostControllerTest extends MockApiTest {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @MockBean
     private PostService postService;
+
+    @Test
+    @DisplayName("최근 게시글 썸네일 목록을 조회한다.")
+    void findLatestThumbnails() throws Exception {
+        PageResponse<PostThumbnailResponse> response = new PageResponse<>(
+                List.of(
+                        new PostThumbnailResponse(1L, "path", LocalDateTime.now()),
+                        new PostThumbnailResponse(2L, "path", LocalDateTime.now())
+                ),
+                true,
+                true,
+                false,
+                0,
+                1,
+                1,
+                1
+        );
+        given(postService.findLatestThumbnails(any(Pageable.class))).willReturn(response);
+
+        MvcResult mvcResult = mockMvc.perform(get("/api/v1/posts/thumbnails/latest")
+                        .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        String jsonResponse = mvcResult.getResponse().getContentAsString(Charset.forName("UTF-8"));
+        PageResponse<PostThumbnailResponse> result =
+                objectMapper.readValue(jsonResponse, new TypeReference<PageResponse<PostThumbnailResponse>>() {
+                });
+        assertThat(result).usingRecursiveComparison().isEqualTo(response);
+    }
 
     @Nested
     @DisplayName("프로필 게시글 목록 조회 시 ")
@@ -55,28 +92,26 @@ class PostControllerTest extends MockApiTest {
             );
             given(postService.findThumbnailsInProfile(anyLong(), any(Pageable.class))).willReturn(response);
 
-            mockMvc.perform(get("/api/v1/posts/thumbnails")
+            MvcResult mvcResult = mockMvc.perform(get("/api/v1/posts/thumbnails")
                             .header("Authorization", "Bearer " + accessToken)
-                            .queryParam("memberId", String.valueOf(1L)))
+                            .queryParam("memberId", String.valueOf(1L))
+                    )
                     .andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.content", hasSize(1)))
-                    .andExpect(jsonPath("$.content[0].postId").value(1L))
-                    .andExpect(jsonPath("$.content[0].thumbnailPath").value("path"))
-                    .andExpect(jsonPath("$.first").value(true))
-                    .andExpect(jsonPath("$.last").value(true))
-                    .andExpect(jsonPath("$.hasNext").value(false))
-                    .andExpect(jsonPath("$.currentPage").value(0))
-                    .andExpect(jsonPath("$.currentElementSize").value(1))
-                    .andExpect(jsonPath("$.totalPage").value(1))
-                    .andExpect(jsonPath("$.totalElementSize").value(1));
+                    .andReturn();
+            String jsonResponse = mvcResult.getResponse().getContentAsString(Charset.forName("UTF-8"));
+            PageResponse<PostThumbnailResponse> result =
+                    objectMapper.readValue(jsonResponse, new TypeReference<PageResponse<PostThumbnailResponse>>() {
+                    });
+            assertThat(result).usingRecursiveComparison().isEqualTo(response);
         }
 
         @Test
         @DisplayName("멤버 ID를 파라미터로 전달하지 않으면 400 상태를 반환한다.")
         void findThumbnailsInProfileWithEmptyParam() throws Exception {
             mockMvc.perform(get("/api/v1/posts/thumbnails")
-                            .header("Authorization", "Bearer " + accessToken))
+                            .header("Authorization", "Bearer " + accessToken)
+                    )
                     .andDo(print())
                     .andExpect(status().isBadRequest());
         }
@@ -86,7 +121,8 @@ class PostControllerTest extends MockApiTest {
         void findThumbnailsInProfileWithInvalidType() throws Exception {
             mockMvc.perform(get("/api/v1/posts/thumbnails")
                             .header("Authorization", "Bearer " + accessToken)
-                            .queryParam("memberId", "id"))
+                            .queryParam("memberId", "id")
+                    )
                     .andDo(print())
                     .andExpect(status().isBadRequest());
         }

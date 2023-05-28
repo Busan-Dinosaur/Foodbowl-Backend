@@ -30,4 +30,10 @@ public class PostService {
                 .map(PostThumbnailResponse::from);
         return PageResponse.from(pageOfResponse);
     }
+
+    public PageResponse<PostThumbnailResponse> findLatestThumbnails(Pageable pageable) {
+        Page<PostThumbnailResponse> pageOfResponse = postRepository.findAll(pageable)
+                .map(PostThumbnailResponse::from);
+        return PageResponse.from(pageOfResponse);
+    }
 }
