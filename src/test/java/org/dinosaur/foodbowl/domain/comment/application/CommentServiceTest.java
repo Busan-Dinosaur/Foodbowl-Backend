@@ -16,6 +16,7 @@ import org.dinosaur.foodbowl.domain.comment.dto.CommentUpdateRequest;
 import org.dinosaur.foodbowl.domain.comment.entity.Comment;
 import org.dinosaur.foodbowl.domain.comment.repository.CommentRepository;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
+import org.dinosaur.foodbowl.domain.photo.entity.Thumbnail;
 import org.dinosaur.foodbowl.domain.post.entity.Post;
 import org.dinosaur.foodbowl.global.dto.PageResponse;
 import org.dinosaur.foodbowl.global.exception.FoodbowlException;
@@ -205,8 +206,10 @@ class CommentServiceTest extends IntegrationTest {
         @Test
         @DisplayName("작성된 순서대로 조회한다.")
         void findAllCommentsInPostSuccess() throws InterruptedException {
-            Member gray = memberTestSupport.memberBuilder().nickname("gray").build();
-            Member hoy = memberTestSupport.memberBuilder().nickname("hoy").build();
+            Thumbnail grayThumbnail = thumbnailTestSupport.builder().build();
+            Thumbnail hoyThumbnail = thumbnailTestSupport.builder().build();
+            Member gray = memberTestSupport.memberBuilder().nickname("gray").thumbnail(grayThumbnail).build();
+            Member hoy = memberTestSupport.memberBuilder().nickname("hoy").thumbnail(hoyThumbnail).build();
             Post post = postTestSupport.postBuilder().build();
             commentTestSupport.builder().post(post).member(gray).message("그레이 댓글").build();
             Thread.sleep(1000);

@@ -18,7 +18,6 @@ public class MemberTestSupport {
 
     private final MemberRepository memberRepository;
     private final MemberRoleRepository memberRoleRepository;
-    private final ThumbnailTestSupport thumbnailTestSupport;
 
     public MemberBuilder memberBuilder() {
         return new MemberBuilder();
@@ -82,7 +81,7 @@ public class MemberTestSupport {
         public Member build() {
             return memberRepository.save(
                     Member.builder()
-                            .thumbnail(thumbnail == null ? thumbnailTestSupport.builder().build() : thumbnail)
+                            .thumbnail(thumbnail)
                             .socialType(socialType == null ? SocialType.APPLE : socialType)
                             .socialId(socialId == null ? "a1b2c3d4" : socialId)
                             .email(email)
