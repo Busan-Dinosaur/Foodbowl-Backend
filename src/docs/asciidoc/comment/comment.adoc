@@ -69,7 +69,7 @@ include::{snippets}/api-v1-comments-update/http-response.adoc[]
 
 include::{snippets}/api-v1-comments-delete/http-request.adoc[]
 
-=== Request Fields
+=== Request Header
 
 include::{snippets}/api-v1-comments-delete/request-headers.adoc[]
 
