@@ -13,6 +13,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.dinosaur.foodbowl.MockApiTest;
 import org.dinosaur.foodbowl.domain.member.api.MemberController;
 import org.dinosaur.foodbowl.domain.member.application.MemberService;
@@ -37,6 +38,9 @@ public class MemberControllerDocsTest extends MockApiTest {
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     @DisplayName("회원 탈퇴를 문서화한다.")

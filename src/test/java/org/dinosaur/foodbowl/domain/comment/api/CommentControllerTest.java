@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -12,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import org.dinosaur.foodbowl.MockApiTest;
 import org.dinosaur.foodbowl.domain.comment.application.CommentService;
@@ -24,6 +26,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -37,6 +40,9 @@ class CommentControllerTest extends MockApiTest {
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Nested
     @DisplayName("댓글 추가는 ")
@@ -173,6 +179,60 @@ class CommentControllerTest extends MockApiTest {
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.message").value(containsString("댓글은 최소 1자, 최대 255자까지 가능합니다.")))
+                    .andDo(print());
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"hi", "1.5", "@!#"})
+        @DisplayName("댓글 ID가 Long 타입이 아니면 BAD REQUEST를 반환한다.")
+        void updateCommentFailWithNoId(String commentId) throws Exception {
+            mockMvc.perform(put("/api/v1/comments/{commentId}", commentId)
+                            .header("Authorization", "Bearer " + token)
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value("commentId의 타입이 잘못되었습니다."))
+                    .andDo(print());
+        }
+    }
+
+    @Nested
+    @DisplayName("댓글 삭제는 ")
+    class DeleteComment {
+
+        private final String token = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
+
+        @Test
+        @DisplayName("정상적으로 삭제되면 NO CONTENT를 반환한다.")
+        void deleteSuccess() throws Exception {
+            willDoNothing().given(commentService).deleteComment(anyLong(), anyLong());
+
+            mockMvc.perform(delete("/api/v1/comments/{commentId}", 1L)
+                            .header("Authorization", "Bearer " + token)
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andExpect(status().isNoContent())
+                    .andDo(print());
+        }
+
+        @Test
+        @DisplayName("댓글 ID가 양수가 아니면 BAD REQUEST를 반환한다.")
+        void deleteCommentFailWithInvalidId() throws Exception {
+            mockMvc.perform(delete("/api/v1/comments/{commentId}", -1L)
+                            .header("Authorization", "Bearer " + token)
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value(containsString("댓글 ID는 양수만 가능합니다.")))
+                    .andDo(print());
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"hi", "1.5", "@!#"})
+        @DisplayName("댓글 ID가 Long 타입이 아니면 BAD REQUEST를 반환한다.")
+        void deleteCommentFailWithNoId(String commentId) throws Exception {
+            mockMvc.perform(delete("/api/v1/comments/{commentId}", commentId)
+                            .header("Authorization", "Bearer " + token)
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value("commentId의 타입이 잘못되었습니다."))
                     .andDo(print());
         }
     }

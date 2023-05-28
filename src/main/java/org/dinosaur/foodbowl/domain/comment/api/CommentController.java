@@ -10,6 +10,7 @@ import org.dinosaur.foodbowl.domain.comment.dto.CommentUpdateRequest;
 import org.dinosaur.foodbowl.global.resolver.MemberId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -41,6 +42,15 @@ public class CommentController {
             @RequestBody @Valid CommentUpdateRequest commentUpdateRequest
     ) {
         commentService.updateComment(commentId, memberId, commentUpdateRequest);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<Void> deleteComment(
+            @PathVariable @Positive(message = "댓글 ID는 양수만 가능합니다.") Long commentId,
+            @MemberId Long memberId
+    ) {
+        commentService.deleteComment(commentId, memberId);
         return ResponseEntity.noContent().build();
     }
 }

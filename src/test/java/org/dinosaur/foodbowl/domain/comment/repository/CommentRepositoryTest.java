@@ -40,6 +40,16 @@ class CommentRepositoryTest extends RepositoryTest {
     }
 
     @Test
+    @DisplayName("댓글을 삭제한다.")
+    void deleteByCommentId() {
+        Comment comment = commentTestSupport.builder().build();
+
+        commentRepository.deleteById(comment.getId());
+
+        assertThat(commentRepository.findById(comment.getId())).isEmpty();
+    }
+
+    @Test
     @DisplayName("멤버가 작성한 댓글 목록을 삭제한다.")
     void deleteAllByMember() {
         Member member = memberTestSupport.memberBuilder().build();
