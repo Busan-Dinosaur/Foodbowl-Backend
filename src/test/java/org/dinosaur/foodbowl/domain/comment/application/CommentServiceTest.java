@@ -6,20 +6,26 @@ import static org.dinosaur.foodbowl.global.exception.ErrorStatus.COMMENT_NOT_FOU
 import static org.dinosaur.foodbowl.global.exception.ErrorStatus.COMMENT_UNAUTHORIZED;
 import static org.dinosaur.foodbowl.global.exception.ErrorStatus.MEMBER_NOT_FOUND;
 import static org.dinosaur.foodbowl.global.exception.ErrorStatus.POST_NOT_FOUND;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import jakarta.persistence.EntityManager;
 import org.dinosaur.foodbowl.IntegrationTest;
 import org.dinosaur.foodbowl.domain.comment.dto.CommentCreateRequest;
+import org.dinosaur.foodbowl.domain.comment.dto.CommentResponse;
 import org.dinosaur.foodbowl.domain.comment.dto.CommentUpdateRequest;
 import org.dinosaur.foodbowl.domain.comment.entity.Comment;
 import org.dinosaur.foodbowl.domain.comment.repository.CommentRepository;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.post.entity.Post;
+import org.dinosaur.foodbowl.global.dto.PageResponse;
 import org.dinosaur.foodbowl.global.exception.FoodbowlException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 
 class CommentServiceTest extends IntegrationTest {
 
@@ -34,7 +40,7 @@ class CommentServiceTest extends IntegrationTest {
 
     @Nested
     @DisplayName("게시글에 ")
-    class Save {
+    class SaveComment {
 
         @Test
         @DisplayName("댓글을 추가한다.")
@@ -189,6 +195,43 @@ class CommentServiceTest extends IntegrationTest {
                     () -> commentService.deleteComment(comment.getId(), dazzle.getId()))
                     .isInstanceOf(FoodbowlException.class)
                     .hasMessage(COMMENT_UNAUTHORIZED.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("게시글에 속해있는 모든 댓글을 조회할 때 ")
+    class FindAllCommentsInPost {
+
+        @Test
+        @DisplayName("작성된 순서대로 조회한다.")
+        void findAllCommentsInPostSuccess() throws InterruptedException {
+            Member gray = memberTestSupport.memberBuilder().nickname("gray").build();
+            Member hoy = memberTestSupport.memberBuilder().nickname("hoy").build();
+            Post post = postTestSupport.postBuilder().build();
+            commentTestSupport.builder().post(post).member(gray).message("그레이 댓글").build();
+            Thread.sleep(1000);
+            commentTestSupport.builder().post(post).member(hoy).message("호이 댓글").build();
+            PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Direction.ASC, "createdAt"));
+
+            PageResponse<CommentResponse> pageCommentResponses = commentService.findAllCommentsInPost(post.getId(),
+                    pageRequest);
+
+            assertAll(
+                    () -> assertThat(pageCommentResponses.getContent()).hasSize(2),
+                    () -> assertThat(pageCommentResponses.getContent()).extracting(CommentResponse::getCreatedAt).isSorted(),
+                    () -> assertThat(pageCommentResponses.isLast()).isTrue(),
+                    () -> assertThat(pageCommentResponses.isHasNext()).isFalse()
+            );
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 게시글이면 예외가 발생한다.")
+        void findAllCommentsInPostFail() {
+            PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Direction.ASC, "createdAt"));
+
+            assertThatThrownBy(() -> commentService.findAllCommentsInPost(-1L, pageRequest))
+                    .isInstanceOf(FoodbowlException.class)
+                    .hasMessage(POST_NOT_FOUND.getMessage());
         }
     }
 }

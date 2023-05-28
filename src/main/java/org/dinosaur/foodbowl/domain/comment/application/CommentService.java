@@ -7,6 +7,7 @@ import static org.dinosaur.foodbowl.global.exception.ErrorStatus.POST_NOT_FOUND;
 
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.comment.dto.CommentCreateRequest;
+import org.dinosaur.foodbowl.domain.comment.dto.CommentResponse;
 import org.dinosaur.foodbowl.domain.comment.dto.CommentUpdateRequest;
 import org.dinosaur.foodbowl.domain.comment.entity.Comment;
 import org.dinosaur.foodbowl.domain.comment.repository.CommentRepository;
@@ -14,7 +15,10 @@ import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRepository;
 import org.dinosaur.foodbowl.domain.post.entity.Post;
 import org.dinosaur.foodbowl.domain.post.repository.PostRepository;
+import org.dinosaur.foodbowl.global.dto.PageResponse;
 import org.dinosaur.foodbowl.global.exception.FoodbowlException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +46,15 @@ public class CommentService {
                 .build();
         Comment savedComment = commentRepository.save(comment);
         return savedComment.getId();
+    }
+
+    public PageResponse<CommentResponse> findAllCommentsInPost(Long postId, Pageable pageable) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new FoodbowlException(POST_NOT_FOUND));
+
+        Page<CommentResponse> commentResponses = commentRepository.findAllByPost(post, pageable)
+                .map(comment -> CommentResponse.from(comment, post));
+        return PageResponse.from(commentResponses);
     }
 
     @Transactional
