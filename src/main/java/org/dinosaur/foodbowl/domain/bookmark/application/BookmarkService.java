@@ -43,6 +43,7 @@ public class BookmarkService {
                 .stream()
                 .map(Bookmark::getPost)
                 .map(Post::getStore)
+                .distinct()
                 .map(BookmarkStoreMarkerResponse::from)
                 .toList();
     }

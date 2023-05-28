@@ -10,7 +10,9 @@ import org.dinosaur.foodbowl.domain.bookmark.dto.response.BookmarkStoreMarkerRes
 import org.dinosaur.foodbowl.domain.bookmark.dto.response.BookmarkThumbnailResponse;
 import org.dinosaur.foodbowl.domain.bookmark.entity.Bookmark;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
+import org.dinosaur.foodbowl.domain.post.dto.response.PostStoreMarkerResponse;
 import org.dinosaur.foodbowl.domain.post.entity.Post;
+import org.dinosaur.foodbowl.domain.store.entity.Store;
 import org.dinosaur.foodbowl.global.dto.PageResponse;
 import org.dinosaur.foodbowl.global.exception.FoodbowlException;
 import org.junit.jupiter.api.DisplayName;
@@ -70,6 +72,22 @@ class BookmarkServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> bookmarkService.findBookmarkStoreMarkers(-1L))
                     .isInstanceOf(FoodbowlException.class)
                     .hasMessage("등록되지 않은 회원입니다.");
+        }
+
+        @Test
+        @DisplayName("가게 중복이 발생하지 않는다.")
+        void noDuplicationStore() {
+            Member member = memberTestSupport.memberBuilder().build();
+            Store store = storeTestSupport.builder().build();
+            Post postA = postTestSupport.postBuilder().store(store).build();
+            Post postB = postTestSupport.postBuilder().store(store).build();
+            Bookmark bookmarkA = bookmarkTestSupport.builder().member(member).post(postA).build();
+            bookmarkTestSupport.builder().member(member).post(postB).build();
+
+            List<BookmarkStoreMarkerResponse> result = bookmarkService.findBookmarkStoreMarkers(member.getId());
+
+            List<PostStoreMarkerResponse> expected = List.of(PostStoreMarkerResponse.from(bookmarkA.getPost().getStore()));
+            assertThat(result).usingRecursiveComparison().isEqualTo(expected);
         }
 
         @Test

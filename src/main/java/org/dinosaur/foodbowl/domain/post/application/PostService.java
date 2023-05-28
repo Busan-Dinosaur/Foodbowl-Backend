@@ -41,6 +41,7 @@ public class PostService {
         return postRepository.findWithStoreAllByMember(member)
                 .stream()
                 .map(Post::getStore)
+                .distinct()
                 .map(PostStoreMarkerResponse::from)
                 .toList();
     }
