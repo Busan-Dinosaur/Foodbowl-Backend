@@ -53,7 +53,7 @@ public class CommentService {
                 .orElseThrow(() -> new FoodbowlException(POST_NOT_FOUND));
 
         Page<CommentResponse> commentResponses = commentRepository.findAllByPost(post, pageable)
-                .map(comment -> CommentResponse.from(comment, post));
+                .map(comment -> CommentResponse.of(comment, post));
         return PageResponse.from(commentResponses);
     }
 

@@ -22,7 +22,7 @@ public class CommentResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public static CommentResponse from(Comment comment, Post post) {
+    public static CommentResponse of(Comment comment, Post post) {
         return new CommentResponse(
                 comment.getId(),
                 post.getId(),
