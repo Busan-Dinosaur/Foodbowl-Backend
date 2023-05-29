@@ -168,14 +168,12 @@ public class CommentControllerDocsTest extends MockApiTest {
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("서버에서 발급한 엑세스 토큰")
                         ),
-                        pathParameters(
+                        queryParameters(
+                                parameterWithName("postId").description("댓글을 조회하는 게시글 ID"),
                                 parameterWithName("page").optional()
                                         .description("게시글에 존재하는 댓글 페이지 숫자 (입력하지 않으면, default = 0)"),
                                 parameterWithName("size").optional()
                                         .description("게시글에 존재하는 댓글 데이터 개수 (입력하지 않으면, default = 18)")
-                        ),
-                        queryParameters(
-                                parameterWithName("postId").description("댓글을 조회하는 게시글 ID")
                         ),
                         responseFields(
                                 responseFieldDescriptors
