@@ -164,7 +164,7 @@ public class CommentControllerDocsTest extends MockApiTest {
                         .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원))
                         .characterEncoding(StandardCharsets.UTF_8))
                 .andExpect(status().isOk())
-                .andDo(document("api-v1-comments-findAll",
+                .andDo(document("api-v1-comments-findAllInPost",
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("서버에서 발급한 엑세스 토큰")
                         ),
