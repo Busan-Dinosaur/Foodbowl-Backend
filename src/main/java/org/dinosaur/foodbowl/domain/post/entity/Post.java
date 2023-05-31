@@ -9,14 +9,19 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.dinosaur.foodbowl.domain.bookmark.entity.Bookmark;
+import org.dinosaur.foodbowl.domain.comment.entity.Comment;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.photo.entity.Thumbnail;
 import org.dinosaur.foodbowl.domain.store.entity.Store;
@@ -52,6 +57,12 @@ public class Post extends AuditingEntity {
     @NotNull
     @Column(name = "content", length = 2000)
     private String content;
+
+    @OneToMany(mappedBy = "post")
+    private final List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post")
+    private final List<Bookmark> bookmarks = new ArrayList<>();
 
     @Builder
     private Post(Member member, Thumbnail thumbnail, Store store, String content) {

@@ -11,5 +11,7 @@ public interface PhotoRepository extends Repository<Photo, Long> {
 
     Photo save(Photo photo);
 
+    List<Photo> saveAll(Iterable<Photo> photos);
+
     void deleteAllByPost(Post post);
 }

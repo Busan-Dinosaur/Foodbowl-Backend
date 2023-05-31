@@ -13,6 +13,8 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.dinosaur.foodbowl.global.exception.ErrorStatus;
+import org.dinosaur.foodbowl.global.exception.FoodbowlException;
 
 @Getter
 @Entity
@@ -34,6 +36,15 @@ public class Category {
     private Category(Long id, CategoryType categoryType) {
         this.id = id;
         this.categoryType = categoryType;
+    }
+
+    public static Category from(String categoryName) {
+        try {
+            CategoryType categoryType = CategoryType.valueOf(categoryName);
+            return from(categoryType);
+        } catch (IllegalArgumentException e) {
+            throw new FoodbowlException(ErrorStatus.CATEGORY_NOT_FOUND);
+        }
     }
 
     public static Category from(CategoryType categoryType) {

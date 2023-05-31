@@ -13,5 +13,7 @@ public interface PostCategoryRepository extends Repository<PostCategory, Long> {
 
     PostCategory save(PostCategory postCategory);
 
+    List<PostCategory> saveAll(Iterable<PostCategory> postCategories);
+
     void deleteAllByPost(Post post);
 }

@@ -34,10 +34,14 @@ public enum ErrorStatus {
 
     //Post code: 6xxx
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "게시글이 존재하지 않습니다.", 6000),
+    POST_INVALID_FILE_SIZE(HttpStatus.BAD_REQUEST, "이미지 파일은 최소 1개, 최대 10개까지 선택 가능합니다.", 6001),
 
     //Comment code: 7xxx
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글이 존재하지 않습니다.", 7000),
-    COMMENT_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "해당 댓글에 권한이 없는 사용자 입니다.", 7001);
+    COMMENT_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "해당 댓글에 권한이 없는 사용자 입니다.", 7001),
+
+    //Category code: 8xxx
+    CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "카테고리가 존재하지 않습니다.", 8000);
 
     private final HttpStatus httpStatus;
     private final String message;
