@@ -13,6 +13,32 @@ endif::[]
 
 link:../foodbowl.html[API 목록으로 돌아가기]
 
+== *게시글 생성* ==
+
+=== 요청
+
+=== Request
+
+include::{snippets}/api-v1-posts/http-request.adoc[]
+
+=== Request Headers
+
+include::{snippets}/api-v1-posts/request-headers.adoc[]
+
+=== Request Parts
+
+include::{snippets}/api-v1-posts/request-parts.adoc[]
+
+==== request
+
+include::{snippets}/api-v1-posts/request-part-request-fields.adoc[]
+
+=== 응답
+
+=== Response
+
+include::{snippets}/api-v1-posts/http-response.adoc[]
+
 == *프로필 게시글 썸네일 목록 조회* ==
 
 === 요청
