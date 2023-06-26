@@ -100,8 +100,8 @@ class BookmarkControllerTest extends MockApiTest {
     }
 
     @Nested
-    @DisplayName("findBookmarkStoreMarkers 메서드는 ")
-    class FindBookmarkStoreMarkers {
+    @DisplayName("지도에 마킹하기 위해 북마크한 가게 목록 조회 시 ")
+    class FindBookmarkedStoresForMarking {
 
         @Test
         @DisplayName("인증 정보가 존재하지 않으면 401 상태를 반환한다.")

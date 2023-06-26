@@ -39,7 +39,7 @@ public class BookmarkService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new FoodbowlException(MEMBER_NOT_FOUND));
 
-        return bookmarkRepository.findWithPostAndStoreAllByMember(member)
+        return bookmarkRepository.findAllWithPostAndStoreByMember(member)
                 .stream()
                 .map(Bookmark::getPost)
                 .map(Post::getStore)

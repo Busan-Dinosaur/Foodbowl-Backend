@@ -66,28 +66,29 @@ class BookmarkRepositoryTest extends RepositoryTest {
     }
 
     @Nested
-    @DisplayName("findWithPostAndStoreAllByMember 메서드는 ")
-    class FindWithPostAndStoreAllByMember {
+    @DisplayName("게시글, 가게 정보를 포함하여 특정 멤버의 모든 북마크 조회 기능은 ")
+    class FindBookmarksWithPostAndStoreOfMember {
 
         @Test
         @DisplayName("해당 멤버의 북마크만 조회한다.")
-        void findWithPostAndStoreAllOnlyMember() {
+        void findBookmarksOfMember() {
             Member member = memberTestSupport.memberBuilder().build();
+            bookmarkTestSupport.builder().member(member).build();
             bookmarkTestSupport.builder().build();
 
-            List<Bookmark> result = bookmarkRepository.findWithPostAndStoreAllByMember(member);
+            List<Bookmark> result = bookmarkRepository.findAllWithPostAndStoreByMember(member);
 
-            assertThat(result).hasSize(0);
+            assertThat(result).hasSize(1);
         }
 
         @Test
-        @DisplayName("해당 멤버의 북마크를 모두 조회한다.")
-        void findWithPostAndStoreAllMember() {
+        @DisplayName("북마크를 모두 조회한다.")
+        void findAllBookmarks() {
             Member member = memberTestSupport.memberBuilder().build();
             bookmarkTestSupport.builder().member(member).build();
             bookmarkTestSupport.builder().member(member).build();
 
-            List<Bookmark> result = bookmarkRepository.findWithPostAndStoreAllByMember(member);
+            List<Bookmark> result = bookmarkRepository.findAllWithPostAndStoreByMember(member);
 
             assertThat(result).hasSize(2);
         }

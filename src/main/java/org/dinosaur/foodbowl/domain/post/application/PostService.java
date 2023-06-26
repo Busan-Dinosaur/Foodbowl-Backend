@@ -44,7 +44,7 @@ public class PostService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new FoodbowlException(MEMBER_NOT_FOUND));
 
-        return postRepository.findWithStoreAllByMember(member)
+        return postRepository.findAllWithStoreByMember(member)
                 .stream()
                 .map(Post::getStore)
                 .distinct()
