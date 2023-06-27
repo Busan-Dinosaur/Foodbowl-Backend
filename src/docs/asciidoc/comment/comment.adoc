@@ -89,20 +89,20 @@ include::{snippets}/api-v1-comments-delete/http-response.adoc[]
 
 === Request
 
-include::{snippets}/api-v1-comments-findAllInPost/http-request.adoc[]
+include::{snippets}/api-v1-comments-find-all-in-post/http-request.adoc[]
 
 === Request Headers
 
-include::{snippets}/api-v1-comments-findAllInPost/request-headers.adoc[]
+include::{snippets}/api-v1-comments-find-all-in-post/request-headers.adoc[]
 
 === Query Parameters
 
-include::{snippets}/api-v1-comments-findAllInPost/query-parameters.adoc[]
+include::{snippets}/api-v1-comments-find-all-in-post/query-parameters.adoc[]
 
 === Response
 
-include::{snippets}/api-v1-comments-findAllInPost/http-response.adoc[]
+include::{snippets}/api-v1-comments-find-all-in-post/http-response.adoc[]
 
 === Response Fields
 
-include::{snippets}/api-v1-comments-findAllInPost/response-fields.adoc[]
+include::{snippets}/api-v1-comments-find-all-in-post/response-fields.adoc[]
