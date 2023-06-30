@@ -9,16 +9,15 @@ import org.springframework.data.repository.Repository;
 
 public interface MemberRepository extends Repository<Member, Long> {
 
+    Member save(Member member);
+
     Optional<Member> findById(Long memberId);
 
     Optional<Member> findBySocialTypeAndSocialId(SocialType socialType, String socialId);
 
     List<Member> findAll();
 
-    Member save(Member member);
-
     boolean existsByNickname(String nickname);
 
     void delete(Member member);
-
 }

@@ -11,6 +11,7 @@ import org.dinosaur.foodbowl.domain.bookmark.repository.BookmarkRepository;
 import org.dinosaur.foodbowl.domain.comment.repository.CommentRepository;
 import org.dinosaur.foodbowl.domain.follow.repository.FollowRepository;
 import org.dinosaur.foodbowl.domain.member.dto.request.ProfileUpdateRequest;
+import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRepository;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRoleRepository;
@@ -52,6 +53,56 @@ class MemberServiceTest extends IntegrationTest {
     private CommentRepository commentRepository;
     @Autowired
     private PhotoRepository photoRepository;
+
+    @Nested
+    @DisplayName("회원 프로필 정보 조회 기능은 ")
+    class GetMemberProfile {
+
+        @Test
+        @DisplayName("프로필 조회 대상 멤버가 존재하지 않으면 예외를 던진다.")
+        void throwExceptionWhenNotExistProfileMember() {
+            Member member = memberTestSupport.memberBuilder().build();
+
+            assertThatThrownBy(() -> memberService.getMemberProfile(-1L, member.getId()))
+                    .isInstanceOf(FoodbowlException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
+
+        @Test
+        @DisplayName("프로필을 조회한 멤버가 존재하지 않으면 예외를 던진다.")
+        void throwExceptionWhenNotExistMember() {
+            Member profileMember = memberTestSupport.memberBuilder().build();
+
+            assertThatThrownBy(() -> memberService.getMemberProfile(profileMember.getId(), -1L))
+                    .isInstanceOf(FoodbowlException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
+
+        @Test
+        @DisplayName("멤버 프로필 정보를 반환한다.")
+        void getMemberProfile() {
+            Member profileMember = memberTestSupport.memberBuilder().build();
+            Member member = memberTestSupport.memberBuilder().build();
+            Member followMember = memberTestSupport.memberBuilder().build();
+            followTestSupport.builder().following(profileMember).follower(member).build();
+            followTestSupport.builder().following(member).follower(profileMember).build();
+            followTestSupport.builder().following(profileMember).follower(followMember).build();
+
+            em.flush();
+            em.clear();
+
+            MemberProfileResponse response = memberService.getMemberProfile(profileMember.getId(), member.getId());
+
+            assertAll(
+                    () -> assertThat(response.getNickname()).isEqualTo(profileMember.getNickname()),
+                    () -> assertThat(response.getThumbnailPath()).isEqualTo(profileMember.getThumbnailPath()),
+                    () -> assertThat(response.getNumberOfFollower()).isEqualTo(2),
+                    () -> assertThat(response.getNumberOfFollowing()).isEqualTo(1),
+                    () -> assertThat(response.getIsSelfProfile()).isEqualTo(false),
+                    () -> assertThat(response.getIsFollowed()).isEqualTo(true)
+            );
+        }
+    }
 
     @Nested
     @DisplayName("회원 탈퇴 시 ")
