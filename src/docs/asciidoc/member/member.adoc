@@ -13,23 +13,31 @@ endif::[]
 
 link:../foodbowl.html[API 목록으로 돌아가기]
 
-== *회원 탈퇴* ==
+== *회원 프로필 정보 조회* ==
 
 === 요청
 
 === Request
 
-include::{snippets}/api-v1-members-delete/http-request.adoc[]
+include::{snippets}/api-v1-members-get-profile/http-request.adoc[]
 
 === Request Headers
 
-include::{snippets}/api-v1-members-delete/request-headers.adoc[]
+include::{snippets}/api-v1-members-get-profile/request-headers.adoc[]
+
+=== Path Parameters
+
+include::{snippets}/api-v1-members-get-profile/path-parameters.adoc[]
 
 === 응답
 
 === Response
 
-include::{snippets}/api-v1-members-delete/http-response.adoc[]
+include::{snippets}/api-v1-members-get-profile/http-response.adoc[]
+
+=== Response Fields
+
+include::{snippets}/api-v1-members-get-profile/response-fields.adoc[]
 
 == *닉네임, 소개 수정* ==
 
@@ -52,3 +60,21 @@ include::{snippets}/api-v1-members-update-profile/request-fields.adoc[]
 === Response
 
 include::{snippets}/api-v1-members-update-profile/http-response.adoc[]
+
+== *회원 탈퇴* ==
+
+=== 요청
+
+=== Request
+
+include::{snippets}/api-v1-members-delete/http-request.adoc[]
+
+=== Request Headers
+
+include::{snippets}/api-v1-members-delete/request-headers.adoc[]
+
+=== 응답
+
+=== Response
+
+include::{snippets}/api-v1-members-delete/http-response.adoc[]
