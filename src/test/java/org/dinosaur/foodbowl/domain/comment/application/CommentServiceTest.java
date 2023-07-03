@@ -221,7 +221,8 @@ class CommentServiceTest extends IntegrationTest {
 
             assertAll(
                     () -> assertThat(pageCommentResponses.getContent()).hasSize(2),
-                    () -> assertThat(pageCommentResponses.getContent()).extracting(CommentResponse::getCreatedAt).isSorted(),
+                    () -> assertThat(pageCommentResponses.getContent()).extracting(CommentResponse::getCreatedAt)
+                            .isSorted(),
                     () -> assertThat(pageCommentResponses.isLast()).isTrue(),
                     () -> assertThat(pageCommentResponses.isHasNext()).isFalse()
             );

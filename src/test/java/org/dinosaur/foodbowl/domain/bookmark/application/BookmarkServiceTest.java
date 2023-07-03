@@ -86,7 +86,8 @@ class BookmarkServiceTest extends IntegrationTest {
 
             List<BookmarkStoreMarkerResponse> result = bookmarkService.findBookmarkStoreMarkers(member.getId());
 
-            List<PostStoreMarkerResponse> expected = List.of(PostStoreMarkerResponse.from(bookmarkA.getPost().getStore()));
+            List<PostStoreMarkerResponse> expected =
+                    List.of(PostStoreMarkerResponse.from(bookmarkA.getPost().getStore()));
             assertThat(result).usingRecursiveComparison().isEqualTo(expected);
         }
 
