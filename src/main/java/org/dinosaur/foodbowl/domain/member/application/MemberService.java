@@ -2,12 +2,12 @@ package org.dinosaur.foodbowl.domain.member.application;
 
 import static org.dinosaur.foodbowl.global.exception.ErrorStatus.MEMBER_NOT_FOUND;
 
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.blame.entity.Blame.BlameTarget;
 import org.dinosaur.foodbowl.domain.blame.repository.BlameRepository;
 import org.dinosaur.foodbowl.domain.bookmark.repository.BookmarkRepository;
 import org.dinosaur.foodbowl.domain.comment.repository.CommentRepository;
-import org.dinosaur.foodbowl.domain.follow.entity.Follow;
 import org.dinosaur.foodbowl.domain.follow.repository.FollowRepository;
 import org.dinosaur.foodbowl.domain.member.dto.request.ProfileUpdateRequest;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
@@ -45,7 +45,10 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new FoodbowlException(MEMBER_NOT_FOUND));
 
-        boolean isSelfProfile = profileMember == member;
+        boolean isSelfProfile = Objects.equals(profileMember, member);
+        boolean isFollowed = profileMember.getFollowers()
+                .stream()
+                .anyMatch(follow -> follow.isFollower(member));
 
         return new MemberProfileResponse(
                 profileMember.getNickname(),
@@ -53,16 +56,8 @@ public class MemberService {
                 profileMember.getFollowers().size(),
                 profileMember.getFollowings().size(),
                 isSelfProfile,
-                isFollowed(profileMember, member)
+                isFollowed
         );
-    }
-
-    private boolean isFollowed(Member profileMember, Member member) {
-        boolean isFollowed = false;
-        for (Follow follower : profileMember.getFollowers()) {
-            isFollowed = isFollowed || follower.getFollower().getId().equals(member.getId());
-        }
-        return isFollowed;
     }
 
     @Transactional
