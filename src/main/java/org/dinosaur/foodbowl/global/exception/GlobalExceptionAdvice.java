@@ -31,7 +31,10 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
     @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request
     ) {
         BindingResult bindingResult = ex.getBindingResult();
         StringBuilder stringBuilder = new StringBuilder();
@@ -52,8 +55,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<FoodbowlErrorResponse> handleConstraintViolation(ConstraintViolationException ex) {
-        Iterator<ConstraintViolation<?>> iterator =
-                ex.getConstraintViolations().iterator();
+        Iterator<ConstraintViolation<?>> iterator = ex.getConstraintViolations().iterator();
 
         StringBuilder stringBuilder = new StringBuilder();
         while (iterator.hasNext()) {
@@ -65,10 +67,13 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<FoodbowlErrorResponse> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex) {
+    public ResponseEntity<FoodbowlErrorResponse> handleMethodArgumentTypeMismatch(
+            MethodArgumentTypeMismatchException ex
+    ) {
         String parameterName = ex.getParameter().getParameterName();
         logger.warn(ex.getMessage());
-        return ResponseEntity.badRequest().body(new FoodbowlErrorResponse(parameterName + FIELD_TYPE_ERROR_MESSAGE, -1002));
+        return ResponseEntity.badRequest()
+                .body(new FoodbowlErrorResponse(parameterName + FIELD_TYPE_ERROR_MESSAGE, -1002));
     }
 
     @ExceptionHandler(Exception.class)
