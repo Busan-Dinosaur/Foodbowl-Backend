@@ -2,14 +2,19 @@ package org.dinosaur.foodbowl.domain.member.docs;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -18,6 +23,7 @@ import org.dinosaur.foodbowl.MockApiTest;
 import org.dinosaur.foodbowl.domain.member.api.MemberController;
 import org.dinosaur.foodbowl.domain.member.application.MemberService;
 import org.dinosaur.foodbowl.domain.member.dto.request.ProfileUpdateRequest;
+import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
 import org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
 import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
@@ -29,6 +35,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.headers.HeaderDescriptor;
 import org.springframework.restdocs.payload.FieldDescriptor;
+import org.springframework.restdocs.request.ParameterDescriptor;
 
 @WebMvcTest(controllers = MemberController.class)
 public class MemberControllerDocsTest extends MockApiTest {
@@ -43,23 +50,51 @@ public class MemberControllerDocsTest extends MockApiTest {
     private ObjectMapper objectMapper;
 
     @Test
-    @DisplayName("회원 탈퇴를 문서화한다.")
-    void withDraw() throws Exception {
-        willDoNothing().given(memberService).withDraw(anyLong());
+    @DisplayName("회원 프로필 정보 조회를 문서화한다.")
+    void getMemberProfile() throws Exception {
+        String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
+        MemberProfileResponse response = new MemberProfileResponse(
+                "dazzle",
+                "http://foodbowl/thumbnail/1",
+                176,
+                124,
+                false,
+                true
+        );
+
+        given(memberService.getMemberProfile(anyLong(), anyLong())).willReturn(response);
 
         var headerDescriptors = new HeaderDescriptor[]{
                 headerWithName(HttpHeaders.AUTHORIZATION).description("서버에서 발급한 엑세스 토큰")
         };
 
-        mockMvc.perform(delete("/api/v1/members")
-                        .header(HttpHeaders.AUTHORIZATION,
-                                "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원))
+        var parameterDescriptors = new ParameterDescriptor[]{
+                parameterWithName("id").description("프로필 정보 조회 회원 ID")
+        };
+
+        var responseFieldDescriptors = new FieldDescriptor[]{
+                fieldWithPath("nickname").description("닉네임"),
+                fieldWithPath("thumbnailPath").description("썸네일 경로"),
+                fieldWithPath("numberOfFollower").description("팔로워 수"),
+                fieldWithPath("numberOfFollowing").description("팔로잉 수"),
+                fieldWithPath("isSelfProfile").description("본인 프로필 여부"),
+                fieldWithPath("isFollowed").description("팔로우 여부")
+        };
+
+        mockMvc.perform(get("/api/v1/members/{id}/profile", 2L)
+                        .header("Authorization", "Bearer " + accessToken)
                 )
                 .andDo(print())
-                .andExpect(status().isNoContent())
-                .andDo(document("api-v1-members-delete",
+                .andExpect(status().isOk())
+                .andDo(document("api-v1-members-get-profile",
                         requestHeaders(
                                 headerDescriptors
+                        ),
+                        pathParameters(
+                                parameterDescriptors
+                        ),
+                        responseFields(
+                                responseFieldDescriptors
                         )
                 ));
     }
@@ -94,6 +129,28 @@ public class MemberControllerDocsTest extends MockApiTest {
                         ),
                         requestFields(
                                 requestFieldDescriptors
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("회원 탈퇴를 문서화한다.")
+    void withDraw() throws Exception {
+        willDoNothing().given(memberService).withDraw(anyLong());
+
+        var headerDescriptors = new HeaderDescriptor[]{
+                headerWithName(HttpHeaders.AUTHORIZATION).description("서버에서 발급한 엑세스 토큰")
+        };
+
+        mockMvc.perform(delete("/api/v1/members")
+                        .header(HttpHeaders.AUTHORIZATION,
+                                "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원))
+                )
+                .andDo(print())
+                .andExpect(status().isNoContent())
+                .andDo(document("api-v1-members-delete",
+                        requestHeaders(
+                                headerDescriptors
                         )
                 ));
     }

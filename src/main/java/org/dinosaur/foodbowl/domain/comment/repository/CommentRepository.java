@@ -5,6 +5,9 @@ import java.util.Optional;
 import org.dinosaur.foodbowl.domain.comment.entity.Comment;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.post.entity.Post;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.repository.Repository;
 
 public interface CommentRepository extends Repository<Comment, Long> {
@@ -14,6 +17,9 @@ public interface CommentRepository extends Repository<Comment, Long> {
     List<Comment> findAllByMember(Member member);
 
     List<Comment> findAllByPost(Post post);
+
+    @EntityGraph(attributePaths = {"member", "member.thumbnail"})
+    Page<Comment> findAllByPost(Post post, Pageable pageable);
 
     Comment save(Comment comment);
 

@@ -107,7 +107,8 @@ class StoreRepositoryTest extends RepositoryTest {
         void findByAddress_AddressNameSuccess() {
             Store savedStore = storeRepository.save(createStore());
 
-            Optional<Store> findStore = storeRepository.findByAddress_AddressName(savedStore.getAddress().getAddressName());
+            String addressName = savedStore.getAddress().getAddressName();
+            Optional<Store> findStore = storeRepository.findByAddress_AddressName(addressName);
 
             assertThat(findStore.get()).isEqualTo(savedStore);
         }
