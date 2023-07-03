@@ -33,6 +33,35 @@ class PostRepositoryTest extends RepositoryTest {
     }
 
     @Nested
+    @DisplayName("가게 정보를 포함하여 특정 멤버의 모든 게시글 조회 기능은 ")
+    class FindPostsWithStoreOfMember {
+
+        @Test
+        @DisplayName("해당 멤버의 게시글만 조회한다.")
+        void findPostsOfMember() {
+            Member member = memberTestSupport.memberBuilder().build();
+            postTestSupport.postBuilder().member(member).build();
+            postTestSupport.postBuilder().build();
+
+            List<Post> result = postRepository.findAllWithStoreByMember(member);
+
+            assertThat(result).hasSize(1);
+        }
+
+        @Test
+        @DisplayName("게시글을 모두 조회한다.")
+        void findAllPosts() {
+            Member member = memberTestSupport.memberBuilder().build();
+            postTestSupport.postBuilder().member(member).build();
+            postTestSupport.postBuilder().member(member).build();
+
+            List<Post> result = postRepository.findAllWithStoreByMember(member);
+
+            assertThat(result).hasSize(2);
+        }
+    }
+
+    @Nested
     @DisplayName("findAllByMember 메서드는 ")
     class FindAllByMember {
 

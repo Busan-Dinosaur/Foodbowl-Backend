@@ -1,9 +1,12 @@
 package org.dinosaur.foodbowl.domain.post.api;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.post.application.PostService;
+import org.dinosaur.foodbowl.domain.post.dto.response.PostStoreMarkerResponse;
 import org.dinosaur.foodbowl.domain.post.dto.response.PostThumbnailResponse;
 import org.dinosaur.foodbowl.global.dto.PageResponse;
+import org.dinosaur.foodbowl.global.resolver.MemberId;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
@@ -32,6 +35,12 @@ public class PostController {
     public ResponseEntity<PageResponse<PostThumbnailResponse>> findLatestThumbnails(
             @PageableDefault(page = 0, size = 18, sort = "createdAt", direction = Direction.DESC) Pageable pageable) {
         PageResponse<PostThumbnailResponse> response = postService.findLatestThumbnails(pageable);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/markers")
+    public ResponseEntity<List<PostStoreMarkerResponse>> findPostStoreMarkers(@MemberId Long memberId) {
+        List<PostStoreMarkerResponse> response = postService.findPostStoreMarkers(memberId);
         return ResponseEntity.ok(response);
     }
 }

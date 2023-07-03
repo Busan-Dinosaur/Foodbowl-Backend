@@ -14,11 +14,13 @@ import static org.springframework.restdocs.request.RequestDocumentation.queryPar
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.dinosaur.foodbowl.MockApiTest;
 import org.dinosaur.foodbowl.domain.bookmark.api.BookmarkController;
 import org.dinosaur.foodbowl.domain.bookmark.application.BookmarkService;
+import org.dinosaur.foodbowl.domain.bookmark.dto.response.BookmarkStoreMarkerResponse;
 import org.dinosaur.foodbowl.domain.bookmark.dto.response.BookmarkThumbnailResponse;
 import org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
 import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
@@ -94,6 +96,55 @@ class BookmarkControllerDocsTest extends MockApiTest {
                         ),
                         queryParameters(
                                 parameterDescriptors
+                        ),
+                        responseFields(
+                                responseFieldDescriptors
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("북마크 게시글 가게 위치 정보 목록 조회를 문서화한다.")
+    void documentListOfBookmarkPostStoreLocationInformation() throws Exception {
+        List<BookmarkStoreMarkerResponse> response = List.of(
+                new BookmarkStoreMarkerResponse(
+                        1L,
+                        "깐부치킨",
+                        "서울특별시 송파구 잠실본동 올림픽로8길 19",
+                        BigDecimal.valueOf(127.65),
+                        BigDecimal.valueOf(55.65)
+                ),
+                new BookmarkStoreMarkerResponse(
+                        2L,
+                        "서오릉피자",
+                        "서울특별시 송파구 가락로 71 빌라드그리움 1층 101,102호",
+                        BigDecimal.valueOf(58.77),
+                        BigDecimal.valueOf(33.77)
+                )
+        );
+        given(bookmarkService.findBookmarkStoreMarkers(anyLong())).willReturn(response);
+
+        var headerDescriptors = new HeaderDescriptor[]{
+                headerWithName(HttpHeaders.AUTHORIZATION).description("서버에서 발급한 엑세스 토큰")
+        };
+
+        var responseFieldDescriptors = new FieldDescriptor[]{
+                fieldWithPath("[]").description("북마크 게시글 가게 위치 정보 목록"),
+                fieldWithPath("[].storeId").description("가게 ID"),
+                fieldWithPath("[].storeName").description("가게 이름"),
+                fieldWithPath("[].storeAddress").description("가게 주소"),
+                fieldWithPath("[].x").description("경도"),
+                fieldWithPath("[].y").description("위도")
+        };
+
+        mockMvc.perform(get("/api/v1/bookmarks/markers")
+                        .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("api-v1-bookmarks-markers",
+                        requestHeaders(
+                                headerDescriptors
                         ),
                         responseFields(
                                 responseFieldDescriptors

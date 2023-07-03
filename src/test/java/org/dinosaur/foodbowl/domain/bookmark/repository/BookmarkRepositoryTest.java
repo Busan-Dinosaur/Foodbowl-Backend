@@ -3,11 +3,13 @@ package org.dinosaur.foodbowl.domain.bookmark.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.List;
 import org.dinosaur.foodbowl.RepositoryTest;
 import org.dinosaur.foodbowl.domain.bookmark.entity.Bookmark;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.post.entity.Post;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -61,5 +63,34 @@ class BookmarkRepositoryTest extends RepositoryTest {
                 () -> assertThat(result.getTotalElements()).isEqualTo(2),
                 () -> assertThat(result.getTotalPages()).isEqualTo(2)
         );
+    }
+
+    @Nested
+    @DisplayName("게시글, 가게 정보를 포함하여 특정 멤버의 모든 북마크 조회 기능은 ")
+    class FindBookmarksWithPostAndStoreOfMember {
+
+        @Test
+        @DisplayName("해당 멤버의 북마크만 조회한다.")
+        void findBookmarksOfMember() {
+            Member member = memberTestSupport.memberBuilder().build();
+            bookmarkTestSupport.builder().member(member).build();
+            bookmarkTestSupport.builder().build();
+
+            List<Bookmark> result = bookmarkRepository.findAllWithPostAndStoreByMember(member);
+
+            assertThat(result).hasSize(1);
+        }
+
+        @Test
+        @DisplayName("북마크를 모두 조회한다.")
+        void findAllBookmarks() {
+            Member member = memberTestSupport.memberBuilder().build();
+            bookmarkTestSupport.builder().member(member).build();
+            bookmarkTestSupport.builder().member(member).build();
+
+            List<Bookmark> result = bookmarkRepository.findAllWithPostAndStoreByMember(member);
+
+            assertThat(result).hasSize(2);
+        }
     }
 }

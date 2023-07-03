@@ -2,11 +2,15 @@ package org.dinosaur.foodbowl.domain.bookmark.application;
 
 import static org.dinosaur.foodbowl.global.exception.ErrorStatus.MEMBER_NOT_FOUND;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.dinosaur.foodbowl.domain.bookmark.dto.response.BookmarkStoreMarkerResponse;
 import org.dinosaur.foodbowl.domain.bookmark.dto.response.BookmarkThumbnailResponse;
+import org.dinosaur.foodbowl.domain.bookmark.entity.Bookmark;
 import org.dinosaur.foodbowl.domain.bookmark.repository.BookmarkRepository;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRepository;
+import org.dinosaur.foodbowl.domain.post.entity.Post;
 import org.dinosaur.foodbowl.global.dto.PageResponse;
 import org.dinosaur.foodbowl.global.exception.FoodbowlException;
 import org.springframework.data.domain.Page;
@@ -29,5 +33,18 @@ public class BookmarkService {
         Page<BookmarkThumbnailResponse> pageOfResponse = bookmarkRepository.findAllByMember(member, pageable)
                 .map(BookmarkThumbnailResponse::from);
         return PageResponse.from(pageOfResponse);
+    }
+
+    public List<BookmarkStoreMarkerResponse> findBookmarkStoreMarkers(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new FoodbowlException(MEMBER_NOT_FOUND));
+
+        return bookmarkRepository.findAllWithPostAndStoreByMember(member)
+                .stream()
+                .map(Bookmark::getPost)
+                .map(Post::getStore)
+                .distinct()
+                .map(BookmarkStoreMarkerResponse::from)
+                .toList();
     }
 }

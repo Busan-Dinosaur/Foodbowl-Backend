@@ -48,7 +48,7 @@ public class PostTestSupport {
             return this;
         }
 
-        public PostBuilder Store(Store store) {
+        public PostBuilder store(Store store) {
             this.store = store;
             return this;
         }
