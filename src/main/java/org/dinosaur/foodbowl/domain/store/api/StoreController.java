@@ -28,8 +28,10 @@ public class StoreController {
 
     @GetMapping
     public ResponseEntity<StoreResponse> findStore(
-            @RequestParam @NotBlank(message = "주소는 반드시 포함되어야 합니다.") String address) {
-        StoreResponse storeResponse = storeService.findByAddress(address.replace(ADDRESS_REQUEST_DELIMITER, ADDRESS_DELIMITER));
+            @RequestParam @NotBlank(message = "주소는 반드시 포함되어야 합니다.") String address
+    ) {
+        String searchAddress = address.replace(ADDRESS_REQUEST_DELIMITER, ADDRESS_DELIMITER);
+        StoreResponse storeResponse = storeService.findByAddress(searchAddress);
         return ResponseEntity.ok(storeResponse);
     }
 

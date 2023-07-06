@@ -18,6 +18,9 @@ public interface BookmarkRepository extends Repository<Bookmark, Long> {
     @EntityGraph(attributePaths = {"post", "post.thumbnail"})
     Page<Bookmark> findAllByMember(Member member, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"post", "post.store"})
+    List<Bookmark> findAllWithPostAndStoreByMember(Member member);
+
     List<Bookmark> findAllByPost(Post post);
 
     Bookmark save(Bookmark bookmark);

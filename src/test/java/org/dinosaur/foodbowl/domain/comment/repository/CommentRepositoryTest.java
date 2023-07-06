@@ -10,6 +10,10 @@ import org.dinosaur.foodbowl.domain.post.entity.Post;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 
 class CommentRepositoryTest extends RepositoryTest {
 
@@ -40,6 +44,16 @@ class CommentRepositoryTest extends RepositoryTest {
     }
 
     @Test
+    @DisplayName("댓글을 삭제한다.")
+    void deleteByCommentId() {
+        Comment comment = commentTestSupport.builder().build();
+
+        commentRepository.deleteById(comment.getId());
+
+        assertThat(commentRepository.findById(comment.getId())).isEmpty();
+    }
+
+    @Test
     @DisplayName("멤버가 작성한 댓글 목록을 삭제한다.")
     void deleteAllByMember() {
         Member member = memberTestSupport.memberBuilder().build();
@@ -59,5 +73,25 @@ class CommentRepositoryTest extends RepositoryTest {
         commentRepository.deleteAllByPost(post);
 
         assertThat(commentRepository.findAllByPost(post)).isEmpty();
+    }
+
+    @Test
+    @DisplayName("엔티티 그래프, 멤버, 페이징 정보를 바탕으로 댓글을 조회한다.")
+    void findAllByPost() {
+        Member gray = memberTestSupport.memberBuilder().nickname("gray").build();
+        Member dazzle = memberTestSupport.memberBuilder().nickname("dazzle").build();
+        Post post = postTestSupport.postBuilder().build();
+        commentTestSupport.builder().post(post).member(gray).message("그레이 댓글").build();
+        commentTestSupport.builder().post(post).member(dazzle).message("다즐 댓글").build();
+
+        PageRequest pageRequest = PageRequest.of(0, 1, Sort.by(Direction.ASC, "createdAt"));
+        Page<Comment> findComment = commentRepository.findAllByPost(post, pageRequest);
+
+        assertAll(
+                () -> assertThat(findComment.getContent()).hasSize(1),
+                () -> assertThat(findComment.hasNext()).isTrue(),
+                () -> assertThat(findComment.getTotalElements()).isEqualTo(2),
+                () -> assertThat(findComment.getTotalPages()).isEqualTo(2)
+        );
     }
 }

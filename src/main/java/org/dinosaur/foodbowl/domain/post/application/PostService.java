@@ -4,7 +4,6 @@ import static org.dinosaur.foodbowl.global.exception.ErrorStatus.MEMBER_NOT_FOUN
 import static org.dinosaur.foodbowl.global.exception.ErrorStatus.STORE_NOT_FOUND;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRepository;
@@ -15,6 +14,7 @@ import org.dinosaur.foodbowl.domain.photo.entity.Photo;
 import org.dinosaur.foodbowl.domain.photo.entity.Thumbnail;
 import org.dinosaur.foodbowl.domain.photo.repository.PhotoRepository;
 import org.dinosaur.foodbowl.domain.post.dto.request.PostCreateRequest;
+import org.dinosaur.foodbowl.domain.post.dto.response.PostStoreMarkerResponse;
 import org.dinosaur.foodbowl.domain.post.dto.response.PostThumbnailResponse;
 import org.dinosaur.foodbowl.domain.post.entity.Category;
 import org.dinosaur.foodbowl.domain.post.entity.Post;
@@ -108,5 +108,23 @@ public class PostService {
         Page<PostThumbnailResponse> pageOfResponse = postRepository.findAllByMember(member, pageable)
                 .map(PostThumbnailResponse::from);
         return PageResponse.from(pageOfResponse);
+    }
+
+    public PageResponse<PostThumbnailResponse> findLatestThumbnails(Pageable pageable) {
+        Page<PostThumbnailResponse> pageOfResponse = postRepository.findAll(pageable)
+                .map(PostThumbnailResponse::from);
+        return PageResponse.from(pageOfResponse);
+    }
+
+    public List<PostStoreMarkerResponse> findPostStoreMarkers(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new FoodbowlException(MEMBER_NOT_FOUND));
+
+        return postRepository.findAllWithStoreByMember(member)
+                .stream()
+                .map(Post::getStore)
+                .distinct()
+                .map(PostStoreMarkerResponse::from)
+                .toList();
     }
 }

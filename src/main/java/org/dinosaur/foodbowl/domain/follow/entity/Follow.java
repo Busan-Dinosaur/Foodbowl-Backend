@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -44,6 +45,10 @@ public class Follow extends AuditingEntity {
     private Follow(Member following, Member follower) {
         this.following = following;
         this.follower = follower;
+    }
+
+    public boolean isFollower(Member member) {
+        return Objects.equals(follower, member);
     }
 }
 

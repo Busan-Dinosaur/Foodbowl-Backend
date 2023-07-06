@@ -2,7 +2,6 @@ package org.dinosaur.foodbowl.domain.post.repository;
 
 import java.util.List;
 import java.util.Optional;
-
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.post.entity.Post;
 import org.springframework.data.domain.Page;
@@ -14,10 +13,16 @@ public interface PostRepository extends Repository<Post, Long> {
 
     Optional<Post> findById(Long id);
 
+    @EntityGraph(attributePaths = "store")
+    List<Post> findAllWithStoreByMember(Member member);
+
     @EntityGraph(attributePaths = "thumbnail")
     Page<Post> findAllByMember(Member member, Pageable pageable);
 
     List<Post> findAll();
+
+    @EntityGraph(attributePaths = "thumbnail")
+    Page<Post> findAll(Pageable pageable);
 
     Post save(Post post);
 

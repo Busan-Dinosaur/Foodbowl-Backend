@@ -1,9 +1,12 @@
 package org.dinosaur.foodbowl.domain.bookmark.api;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.bookmark.application.BookmarkService;
+import org.dinosaur.foodbowl.domain.bookmark.dto.response.BookmarkStoreMarkerResponse;
 import org.dinosaur.foodbowl.domain.bookmark.dto.response.BookmarkThumbnailResponse;
 import org.dinosaur.foodbowl.global.dto.PageResponse;
+import org.dinosaur.foodbowl.global.resolver.MemberId;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
@@ -26,6 +29,12 @@ public class BookmarkController {
             @PageableDefault(page = 0, size = 18, sort = "createdAt", direction = Direction.DESC) Pageable pageable
     ) {
         PageResponse<BookmarkThumbnailResponse> response = bookmarkService.findThumbnailsInProfile(memberId, pageable);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/markers")
+    public ResponseEntity<List<BookmarkStoreMarkerResponse>> findBookmarkStoreMarkers(@MemberId Long memberId) {
+        List<BookmarkStoreMarkerResponse> response = bookmarkService.findBookmarkStoreMarkers(memberId);
         return ResponseEntity.ok(response);
     }
 }

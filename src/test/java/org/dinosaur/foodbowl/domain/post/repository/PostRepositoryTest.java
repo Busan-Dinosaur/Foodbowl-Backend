@@ -33,6 +33,35 @@ class PostRepositoryTest extends RepositoryTest {
     }
 
     @Nested
+    @DisplayName("가게 정보를 포함하여 특정 멤버의 모든 게시글 조회 기능은 ")
+    class FindPostsWithStoreOfMember {
+
+        @Test
+        @DisplayName("해당 멤버의 게시글만 조회한다.")
+        void findPostsOfMember() {
+            Member member = memberTestSupport.memberBuilder().build();
+            postTestSupport.postBuilder().member(member).build();
+            postTestSupport.postBuilder().build();
+
+            List<Post> result = postRepository.findAllWithStoreByMember(member);
+
+            assertThat(result).hasSize(1);
+        }
+
+        @Test
+        @DisplayName("게시글을 모두 조회한다.")
+        void findAllPosts() {
+            Member member = memberTestSupport.memberBuilder().build();
+            postTestSupport.postBuilder().member(member).build();
+            postTestSupport.postBuilder().member(member).build();
+
+            List<Post> result = postRepository.findAllWithStoreByMember(member);
+
+            assertThat(result).hasSize(2);
+        }
+    }
+
+    @Nested
     @DisplayName("findAllByMember 메서드는 ")
     class FindAllByMember {
 
@@ -69,6 +98,44 @@ class PostRepositoryTest extends RepositoryTest {
             assertAll(
                     () -> assertThat(posts).hasSize(2),
                     () -> assertThat(result.hasNext()).isTrue()
+            );
+        }
+    }
+
+    @Nested
+    @DisplayName("findAll - pageable 메서드는 ")
+    class FindAllPageable {
+
+        @Test
+        @DisplayName("전체 게시글을 조회한다.")
+        void findAllPageable() {
+            Post oldPost = postTestSupport.postBuilder().build();
+            Post newPost = postTestSupport.postBuilder().build();
+
+            Pageable pageable = PageRequest.of(0, 5, Sort.by(Direction.DESC, "id"));
+            Page<Post> result = postRepository.findAll(pageable);
+
+            List<Post> posts = result.getContent();
+            assertAll(
+                    () -> assertThat(posts).hasSize(2),
+                    () -> assertThat(posts.get(0)).isEqualTo(newPost),
+                    () -> assertThat(posts.get(1)).isEqualTo(oldPost)
+            );
+        }
+
+        @Test
+        @DisplayName("페이징 설정만큼 게시글을 조회한다.")
+        void findAllPageableByPaging() {
+            postTestSupport.postBuilder().build();
+            Post newPost = postTestSupport.postBuilder().build();
+
+            Pageable pageable = PageRequest.of(0, 1, Sort.by(Direction.DESC, "id"));
+            Page<Post> result = postRepository.findAll(pageable);
+
+            List<Post> posts = result.getContent();
+            assertAll(
+                    () -> assertThat(posts).hasSize(1),
+                    () -> assertThat(posts.get(0)).isEqualTo(newPost)
             );
         }
     }

@@ -13,12 +13,14 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @RestControllerAdvice
 public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
     private static final String INTERNAL_SERVER_ERROR_MESSAGE = "예상치 못한 문제가 발생했습니다.";
+    private static final String FIELD_TYPE_ERROR_MESSAGE = "의 타입이 잘못되었습니다.";
 
     @ExceptionHandler(FoodbowlException.class)
     public ResponseEntity<FoodbowlErrorResponse> handleFoodbowl(FoodbowlException ex) {
@@ -29,7 +31,10 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
     @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request
     ) {
         BindingResult bindingResult = ex.getBindingResult();
         StringBuilder stringBuilder = new StringBuilder();
@@ -50,8 +55,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<FoodbowlErrorResponse> handleConstraintViolation(ConstraintViolationException ex) {
-        Iterator<ConstraintViolation<?>> iterator =
-                ex.getConstraintViolations().iterator();
+        Iterator<ConstraintViolation<?>> iterator = ex.getConstraintViolations().iterator();
 
         StringBuilder stringBuilder = new StringBuilder();
         while (iterator.hasNext()) {
@@ -60,6 +64,16 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
         }
         logger.warn(stringBuilder.toString());
         return ResponseEntity.badRequest().body(new FoodbowlErrorResponse(stringBuilder.toString(), -1001));
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<FoodbowlErrorResponse> handleMethodArgumentTypeMismatch(
+            MethodArgumentTypeMismatchException ex
+    ) {
+        String parameterName = ex.getParameter().getParameterName();
+        logger.warn(ex.getMessage());
+        return ResponseEntity.badRequest()
+                .body(new FoodbowlErrorResponse(parameterName + FIELD_TYPE_ERROR_MESSAGE, -1002));
     }
 
     @ExceptionHandler(Exception.class)

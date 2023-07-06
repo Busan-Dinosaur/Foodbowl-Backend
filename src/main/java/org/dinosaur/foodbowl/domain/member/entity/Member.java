@@ -20,6 +20,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.dinosaur.foodbowl.domain.follow.entity.Follow;
 import org.dinosaur.foodbowl.domain.photo.entity.Thumbnail;
 import org.dinosaur.foodbowl.domain.post.entity.Post;
 import org.dinosaur.foodbowl.global.entity.AuditingEntity;
@@ -68,6 +69,12 @@ public class Member extends AuditingEntity {
     @OneToMany(mappedBy = "member")
     private List<Post> posts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "following")
+    private List<Follow> followers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "follower")
+    private List<Follow> followings = new ArrayList<>();
+
     @Builder
     private Member(
             Thumbnail thumbnail, SocialType socialType, String socialId, String email, String nickname,
@@ -86,6 +93,10 @@ public class Member extends AuditingEntity {
     public void updateProfile(final String nickname, final String introduction) {
         this.nickname = nickname;
         this.introduction = introduction;
+    }
+
+    public String getThumbnailPath() {
+        return thumbnail != null ? thumbnail.getPath() : null;
     }
 
     public enum SocialType {

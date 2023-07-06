@@ -1,18 +1,24 @@
 package org.dinosaur.foodbowl.domain.member.api;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.anyLong;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.dinosaur.foodbowl.MockApiTest;
 import org.dinosaur.foodbowl.domain.member.application.MemberService;
 import org.dinosaur.foodbowl.domain.member.dto.request.ProfileUpdateRequest;
+import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
 import org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
 import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +32,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
 
 @WebMvcTest(controllers = MemberController.class)
 class MemberControllerTest extends MockApiTest {
@@ -35,6 +42,9 @@ class MemberControllerTest extends MockApiTest {
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     @DisplayName("회원 탈퇴 요청 시 회원을 탈퇴시킨다.")
@@ -48,6 +58,50 @@ class MemberControllerTest extends MockApiTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
+    }
+
+    @Nested
+    @DisplayName("회원 프로필 정보 조회 요청 시 ")
+    class GetMemberProfile {
+
+        @ParameterizedTest
+        @ValueSource(strings = {"a", "가", "@"})
+        @DisplayName("정수로 변환할 수 없는 타입의 ID라면 400 상태를 반환한다.")
+        void return400WhenFailToConvertToLong(String id) throws Exception {
+            mockMvc.perform(get("/api/v1/members/{id}/profile", id)
+                            .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원)))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value(containsString("타입이 잘못되었습니다.")))
+                    .andExpect(jsonPath("$.code").value(-1002));
+        }
+
+        @Test
+        @DisplayName("요청에 성공한다면 200 상태를 반환한다.")
+        void return200WhenRequestSuccess() throws Exception {
+            String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
+            MemberProfileResponse response = new MemberProfileResponse(
+                    "dazzle",
+                    "http://foodbowl/thumbnail/1",
+                    176,
+                    124,
+                    false,
+                    true
+            );
+
+            given(memberService.getMemberProfile(anyLong(), anyLong())).willReturn(response);
+
+            MvcResult mvcResult = mockMvc.perform(get("/api/v1/members/{id}/profile", 2L)
+                            .header("Authorization", "Bearer " + accessToken)
+                    )
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andReturn();
+            String jsonResponse = mvcResult.getResponse().getContentAsString();
+            MemberProfileResponse result = objectMapper.readValue(jsonResponse, MemberProfileResponse.class);
+
+            assertThat(result).usingRecursiveComparison().isEqualTo(response);
+        }
     }
 
     @Nested
