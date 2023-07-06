@@ -48,7 +48,7 @@ public class Post extends AuditingEntity {
     @NotNull
     @JoinColumn(name = "thumbnail_id")
     private Thumbnail thumbnail;
-
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "store_id")
