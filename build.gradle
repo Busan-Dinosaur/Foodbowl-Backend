@@ -3,8 +3,6 @@ plugins {
     id 'jacoco'
     id 'org.springframework.boot' version '3.0.4'
     id 'io.spring.dependency-management' version '1.1.0'
-    //Gradle version 7 or later
-    id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
 
 group = 'org.dinosaur'
@@ -12,7 +10,6 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
 configurations {
-    asciidoctorExt
     compileOnly {
         extendsFrom annotationProcessor
     }
@@ -22,32 +19,18 @@ repositories {
     mavenCentral()
 }
 
-ext {
-    set('snippetsDir', file("build/generated-snippets"))
-}
-
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation platform("org.springframework.cloud:spring-cloud-dependencies:2022.0.2")
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    implementation platform("org.springframework.cloud:spring-cloud-dependencies:2022.0.2")
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-
-    runtimeOnly 'com.mysql:mysql-connector-j'
-
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-    testCompileOnly 'org.projectlombok:lombok'
-    testAnnotationProcessor 'org.projectlombok:lombok'
 
     //Start Querydsl
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
@@ -58,43 +41,17 @@ dependencies {
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
     //End Querydsl
 
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testImplementation 'org.springframework.security:spring-security-test'
 }
-
-//Start Spring REST docs
-tasks.named('test') {
-    outputs.dir snippetsDir
-    useJUnitPlatform()
-}
-
-tasks.named('asciidoctor') {
-    inputs.dir snippetsDir
-    dependsOn test
-}
-
-asciidoctor.doFirst {
-    delete file("src/main/resources/static/docs")
-}
-
-bootJar {
-    dependsOn asciidoctor
-    from("${asciidoctor.outputDir}") {
-        into 'static/docs'
-    }
-}
-
-tasks.register('copyDocument', Copy) {
-    dependsOn asciidoctor
-    from file("$buildDir/docs/asciidoc")
-    into file("src/main/resources/static/docs")
-}
-
-build {
-    dependsOn copyDocument
-}
-//End Spring REST docs
 
 //Start Querydsl
 //Where To Create Querydsl Q Class

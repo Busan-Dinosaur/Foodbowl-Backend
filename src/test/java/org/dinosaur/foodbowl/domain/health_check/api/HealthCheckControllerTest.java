@@ -3,7 +3,7 @@ package org.dinosaur.foodbowl.domain.health_check.api;
 import static org.dinosaur.foodbowl.TestUtils.jsonPathLocalDateTimeEquals;
 import static org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
