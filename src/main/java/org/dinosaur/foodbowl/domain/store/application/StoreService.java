@@ -8,8 +8,8 @@ import org.dinosaur.foodbowl.domain.store.dto.StoreResponse;
 import org.dinosaur.foodbowl.domain.store.entity.Address;
 import org.dinosaur.foodbowl.domain.store.entity.Store;
 import org.dinosaur.foodbowl.domain.store.repository.StoreRepository;
-import org.dinosaur.foodbowl.global.exception.ErrorStatus;
-import org.dinosaur.foodbowl.global.exception.FoodbowlException;
+import org.dinosaur.foodbowl.exception.ErrorStatus;
+import org.dinosaur.foodbowl.exception.FoodbowlException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

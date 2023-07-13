@@ -1,19 +1,19 @@
 package org.dinosaur.foodbowl.domain.auth.api;
 
-import static org.dinosaur.foodbowl.global.config.security.jwt.JwtConstant.REFRESH_TOKEN;
+import static org.dinosaur.foodbowl.config.security.jwt.JwtConstant.REFRESH_TOKEN;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
+import org.dinosaur.foodbowl.config.security.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.auth.application.AuthService;
 import org.dinosaur.foodbowl.domain.auth.dto.FoodbowlTokenDto;
 import org.dinosaur.foodbowl.domain.auth.dto.request.AppleLoginRequest;
 import org.dinosaur.foodbowl.domain.auth.dto.response.AppleTokenResponse;
 import org.dinosaur.foodbowl.domain.auth.dto.response.NicknameDuplicateCheckResponse;
-import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
-import org.dinosaur.foodbowl.global.resolver.MemberId;
+import org.dinosaur.foodbowl.resolver.MemberId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;

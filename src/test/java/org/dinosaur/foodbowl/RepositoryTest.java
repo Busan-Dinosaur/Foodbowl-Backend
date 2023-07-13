@@ -1,6 +1,6 @@
 package org.dinosaur.foodbowl;
 
-import org.dinosaur.foodbowl.global.config.jpa.JpaConfig;
+import org.dinosaur.foodbowl.config.JpaConfig;
 import org.dinosaur.foodbowl.testsupport.BlameTestSupport;
 import org.dinosaur.foodbowl.testsupport.BookmarkTestSupport;
 import org.dinosaur.foodbowl.testsupport.CommentTestSupport;

@@ -14,7 +14,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.dinosaur.foodbowl.global.entity.AuditingEntity;
+import org.dinosaur.foodbowl.domain.common.AuditingEntity;
 
 @Getter
 @Entity
