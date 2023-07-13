@@ -20,6 +20,20 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 public class SecurityConfig {
 
+    private static final String[] SWAGGER_URL = {
+            /* swagger v2 */
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            /* swagger v3 */
+            "/v3/api-docs/**",
+            "/swagger-ui/**"
+    };
+
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -28,7 +42,8 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests()
-                .requestMatchers("/docs/**", "/api/v1/health-check").permitAll()
+                .requestMatchers(SWAGGER_URL).permitAll()
+                .requestMatchers("/api/v1/health-check").permitAll()
                 .requestMatchers("/api/v1/auth/apple/login", "/api/v1/auth/check-nickname").permitAll()
                 .anyRequest().hasRole("회원")
                 .and()
