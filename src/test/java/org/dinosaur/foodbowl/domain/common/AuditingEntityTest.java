@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.entity;
+package org.dinosaur.foodbowl.domain.common;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
