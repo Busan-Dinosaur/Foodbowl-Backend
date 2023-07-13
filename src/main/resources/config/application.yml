@@ -3,14 +3,12 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
-    database: mysql
-    database-platform: org.hibernate.dialect.MySQL8Dialect
+    database-platform: org.hibernate.dialect.MySQLDialect
     properties:
       hibernate:
         show_sql: true
         format_sql: true
         default_batch_fetch_size: 50
-    defer-datasource-initialization: true
 
   servlet:
     multipart:
@@ -23,5 +21,13 @@ server:
 logging:
   level:
     org:
-      hibernate: info
-      springframework: debug
+      hibernate:
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+
+foodbowl:
+  openapi:
+    dev-url: http://localhost:8080
+    prod-url: http://foodbowl.com
