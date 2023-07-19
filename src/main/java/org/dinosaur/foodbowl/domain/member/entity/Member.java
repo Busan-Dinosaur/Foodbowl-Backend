@@ -20,10 +20,10 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.dinosaur.foodbowl.domain.common.AuditingEntity;
 import org.dinosaur.foodbowl.domain.follow.entity.Follow;
 import org.dinosaur.foodbowl.domain.photo.entity.Thumbnail;
 import org.dinosaur.foodbowl.domain.post.entity.Post;
-import org.dinosaur.foodbowl.global.entity.AuditingEntity;
 
 @Getter
 @Entity

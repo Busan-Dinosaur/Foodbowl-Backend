@@ -1,6 +1,6 @@
 package org.dinosaur.foodbowl.domain.bookmark.application;
 
-import static org.dinosaur.foodbowl.global.exception.ErrorStatus.MEMBER_NOT_FOUND;
+import static org.dinosaur.foodbowl.exception.ErrorStatus.MEMBER_NOT_FOUND;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +11,8 @@ import org.dinosaur.foodbowl.domain.bookmark.repository.BookmarkRepository;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRepository;
 import org.dinosaur.foodbowl.domain.post.entity.Post;
-import org.dinosaur.foodbowl.global.dto.PageResponse;
-import org.dinosaur.foodbowl.global.exception.FoodbowlException;
+import org.dinosaur.foodbowl.dto.PageResponse;
+import org.dinosaur.foodbowl.exception.FoodbowlException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

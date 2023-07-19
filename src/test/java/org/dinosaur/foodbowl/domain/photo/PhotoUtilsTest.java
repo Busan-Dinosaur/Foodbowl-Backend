@@ -2,14 +2,14 @@ package org.dinosaur.foodbowl.domain.photo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.dinosaur.foodbowl.global.exception.ErrorStatus.IMAGE_INVALID_EXTENSION;
+import static org.dinosaur.foodbowl.exception.ErrorStatus.IMAGE_INVALID_EXTENSION;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import org.dinosaur.foodbowl.global.exception.FoodbowlException;
+import org.dinosaur.foodbowl.exception.FoodbowlException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

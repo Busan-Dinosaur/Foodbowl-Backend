@@ -3,16 +3,16 @@ package org.dinosaur.foodbowl.domain.health_check.api;
 import static org.dinosaur.foodbowl.TestUtils.jsonPathLocalDateTimeEquals;
 import static org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
 import org.dinosaur.foodbowl.MockApiTest;
+import org.dinosaur.foodbowl.config.security.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.health_check.application.HealthCheckService;
 import org.dinosaur.foodbowl.domain.health_check.dto.HealthCheckDto;
-import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

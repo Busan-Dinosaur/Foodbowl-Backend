@@ -1,13 +1,13 @@
 package org.dinosaur.foodbowl.domain.auth.apple;
 
-import static org.dinosaur.foodbowl.global.exception.ErrorStatus.APPLE_INVALID_CLAIMS;
+import static org.dinosaur.foodbowl.exception.ErrorStatus.APPLE_INVALID_CLAIMS;
 
 import io.jsonwebtoken.Claims;
 import java.security.PublicKey;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.auth.dto.response.ApplePlatformUserResponse;
-import org.dinosaur.foodbowl.global.exception.FoodbowlException;
+import org.dinosaur.foodbowl.exception.FoodbowlException;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor

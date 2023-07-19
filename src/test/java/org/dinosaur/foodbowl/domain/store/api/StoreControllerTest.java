@@ -1,6 +1,6 @@
 package org.dinosaur.foodbowl.domain.store.api;
 
-import static org.dinosaur.foodbowl.global.exception.ErrorStatus.STORE_NOT_FOUND;
+import static org.dinosaur.foodbowl.exception.ErrorStatus.STORE_NOT_FOUND;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -14,12 +14,12 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import org.dinosaur.foodbowl.MockApiTest;
+import org.dinosaur.foodbowl.config.security.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
 import org.dinosaur.foodbowl.domain.store.application.StoreService;
 import org.dinosaur.foodbowl.domain.store.dto.StoreRequest;
 import org.dinosaur.foodbowl.domain.store.dto.StoreResponse;
-import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
-import org.dinosaur.foodbowl.global.exception.FoodbowlException;
+import org.dinosaur.foodbowl.exception.FoodbowlException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

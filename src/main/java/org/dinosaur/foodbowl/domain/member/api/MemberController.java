@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.application.MemberService;
 import org.dinosaur.foodbowl.domain.member.dto.request.ProfileUpdateRequest;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
-import org.dinosaur.foodbowl.global.resolver.MemberId;
+import org.dinosaur.foodbowl.resolver.MemberId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
