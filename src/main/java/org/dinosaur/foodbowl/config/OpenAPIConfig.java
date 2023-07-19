@@ -33,9 +33,9 @@ public class OpenAPIConfig {
         prodServer.description("운영 환경 서버 URL");
 
         final Info info = new Info()
-                .title("VoTogether API")
+                .title("Foodbowl API")
                 .version("v1.0.0")
-                .description("보투게더 API");
+                .description("푸드보울 API");
 
         return new OpenAPI()
                 .info(info)
