@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.blame.entity.Blame.BlameTarget;
 import org.dinosaur.foodbowl.domain.blame.repository.BlameRepository;
 import org.dinosaur.foodbowl.domain.bookmark.repository.BookmarkRepository;
-import org.dinosaur.foodbowl.domain.comment.repository.CommentRepository;
 import org.dinosaur.foodbowl.domain.follow.repository.FollowRepository;
 import org.dinosaur.foodbowl.domain.member.dto.request.ProfileUpdateRequest;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
@@ -34,7 +33,6 @@ public class MemberService {
     private final PhotoRepository photoRepository;
     private final PostRepository postRepository;
     private final PostCategoryRepository postCategoryRepository;
-    private final CommentRepository commentRepository;
     private final BookmarkRepository bookmarkRepository;
     private final BlameRepository blameRepository;
 
@@ -78,10 +76,8 @@ public class MemberService {
         blameRepository.deleteAllByMember(member);
         blameRepository.deleteAllByTargetIdAndBlameTarget(member.getId(), BlameTarget.MEMBER);
         bookmarkRepository.deleteAllByMember(member);
-        commentRepository.deleteAllByMember(member);
         for (Post post : member.getPosts()) {
             bookmarkRepository.deleteAllByPost(post);
-            commentRepository.deleteAllByPost(post);
             photoRepository.deleteAllByPost(post);
             postCategoryRepository.deleteAllByPost(post);
             postRepository.delete(post);

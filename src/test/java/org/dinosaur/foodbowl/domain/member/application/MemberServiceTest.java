@@ -8,7 +8,6 @@ import jakarta.persistence.EntityManager;
 import org.dinosaur.foodbowl.IntegrationTest;
 import org.dinosaur.foodbowl.domain.blame.repository.BlameRepository;
 import org.dinosaur.foodbowl.domain.bookmark.repository.BookmarkRepository;
-import org.dinosaur.foodbowl.domain.comment.repository.CommentRepository;
 import org.dinosaur.foodbowl.domain.follow.repository.FollowRepository;
 import org.dinosaur.foodbowl.domain.member.dto.request.ProfileUpdateRequest;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
@@ -49,8 +48,6 @@ class MemberServiceTest extends IntegrationTest {
     private PostRepository postRepository;
     @Autowired
     private PostCategoryRepository postCategoryRepository;
-    @Autowired
-    private CommentRepository commentRepository;
     @Autowired
     private PhotoRepository photoRepository;
 
@@ -122,8 +119,6 @@ class MemberServiceTest extends IntegrationTest {
             blameTestSupport.builder().member(member).build(); //신고1
             bookmarkTestSupport.builder().member(member).build(); //멤버1, 썸네일1, 가게1, 게시글1, 북마크1
             bookmarkTestSupport.builder().post(post).build(); //멤버1, 북마크1
-            commentTestSupport.builder().member(member).build(); //멤버1, 썸네일1, 가게1, 게시글1, 댓글1
-            commentTestSupport.builder().post(post).build(); //멤버1, 댓글1
             photoTestSupport.builder().post(post).build(); //사진1
 
             em.flush();
@@ -132,15 +127,14 @@ class MemberServiceTest extends IntegrationTest {
             memberService.withDraw(member.getId());
 
             assertAll(
-                    () -> assertThat(memberRepository.findAll()).hasSize(6),
-                    () -> assertThat(postRepository.findAll()).hasSize(2),
-                    () -> assertThat(thumbnailRepository.findAll()).hasSize(2),
+                    () -> assertThat(memberRepository.findAll()).hasSize(4),
+                    () -> assertThat(postRepository.findAll()).hasSize(1),
+                    () -> assertThat(thumbnailRepository.findAll()).hasSize(1),
                     () -> assertThat(memberRoleRepository.findAll()).isEmpty(),
                     () -> assertThat(followRepository.findAll()).isEmpty(),
                     () -> assertThat(blameRepository.findAll()).isEmpty(),
                     () -> assertThat(bookmarkRepository.findAll()).isEmpty(),
                     () -> assertThat(postCategoryRepository.findAll()).isEmpty(),
-                    () -> assertThat(commentRepository.findAll()).isEmpty(),
                     () -> assertThat(photoRepository.findAll()).isEmpty()
             );
         }

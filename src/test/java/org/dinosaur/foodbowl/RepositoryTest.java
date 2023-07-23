@@ -3,7 +3,6 @@ package org.dinosaur.foodbowl;
 import org.dinosaur.foodbowl.config.JpaConfig;
 import org.dinosaur.foodbowl.testsupport.BlameTestSupport;
 import org.dinosaur.foodbowl.testsupport.BookmarkTestSupport;
-import org.dinosaur.foodbowl.testsupport.CommentTestSupport;
 import org.dinosaur.foodbowl.testsupport.FollowTestSupport;
 import org.dinosaur.foodbowl.testsupport.MemberTestSupport;
 import org.dinosaur.foodbowl.testsupport.PhotoTestSupport;
@@ -35,8 +34,6 @@ public class RepositoryTest {
     protected PhotoTestSupport photoTestSupport;
     @Autowired
     protected ThumbnailTestSupport thumbnailTestSupport;
-    @Autowired
-    protected CommentTestSupport commentTestSupport;
     @Autowired
     protected BookmarkTestSupport bookmarkTestSupport;
     @Autowired
