@@ -1,0 +1,54 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 50
+
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 30MB
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+
+server:
+  forward-headers-strategy: framework
+
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+
+openapi:
+  dev_url: ${OPENAPI_DEV_URL}
+  prod_url: ${OPENAPI_PROD_URL}
+
+jwt:
+  secret_key: ${JWT_SECRET_KEY}
+  access_expire_time: ${JWT_ACCESS_EXPIRE_TIME}
+  refresh_expire_time: ${JWT_REFRESH_EXPIRE_TIME}
+
+oauth:
+  apple:
+    iss: https://appleid.apple.com
+    client_id: ${OAUTH_APPLE_CLIENT_ID}
+    nonce: ${OAUTH_APPLE_NONCE}
+
+file:
+  dir: bucket
