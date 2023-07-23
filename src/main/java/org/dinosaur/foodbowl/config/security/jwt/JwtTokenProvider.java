@@ -35,9 +35,9 @@ public class JwtTokenProvider {
     private final JwtParser jwtParser;
 
     public JwtTokenProvider(
-            @Value("${spring.jwt.token.secret-key}") String secretKey,
-            @Value("${spring.jwt.token.access-expire-time}") long validAccessMilliSecond,
-            @Value("${spring.jwt.token.refresh-expire-time}") long validRefreshMilliSecond
+            @Value("${jwt.secret_key}") String secretKey,
+            @Value("${jwt.access_expire_time}") long validAccessMilliSecond,
+            @Value("${jwt.refresh_expire_time}") long validRefreshMilliSecond
     ) {
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
         this.validAccessMilliSecond = validAccessMilliSecond;

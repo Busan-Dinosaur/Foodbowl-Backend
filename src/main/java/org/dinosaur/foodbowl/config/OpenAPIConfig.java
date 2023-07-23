@@ -15,8 +15,8 @@ public class OpenAPIConfig {
     private final String prodUrl;
 
     public OpenAPIConfig(
-            @Value("${foodbowl.openapi.dev-url}") final String devUrl,
-            @Value("${foodbowl.openapi.prod-url}") final String prodUrl
+            @Value("${openapi.dev_url}") final String devUrl,
+            @Value("${openapi.prod_url}") final String prodUrl
     ) {
         this.devUrl = devUrl;
         this.prodUrl = prodUrl;

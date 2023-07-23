@@ -36,17 +36,6 @@ out/
 ### VS Code ###
 .vscode/
 
-### application.yml ###
-.application.yml
-*.application.yml
-._.application.yml
-**/.application.yml
-**/._.application.yml
-src/main/resources/application.yml
-
-### API Docs ###
-src/main/resources/static/docs/**/*.html
-
 ### Mac ###
 .DS_Store
 *.DS_Store
@@ -63,3 +52,7 @@ logs
 
 ### local environment test files ###
 src/main/generated
+
+### application.yml ###
+application-local.yml
+src/test/resources/application.yml
