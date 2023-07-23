@@ -1,6 +1,6 @@
 package org.dinosaur.foodbowl.global.config.security.jwt;
 
-import static org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
+import static org.dinosaur.foodbowl.domain.member.domain.Role.RoleType;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
