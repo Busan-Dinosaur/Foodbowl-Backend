@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.blame.entity.Blame.BlameTarget;
 import org.dinosaur.foodbowl.domain.blame.repository.BlameRepository;
 import org.dinosaur.foodbowl.domain.bookmark.repository.BookmarkRepository;
-import org.dinosaur.foodbowl.domain.comment.repository.CommentRepository;
 import org.dinosaur.foodbowl.domain.follow.repository.FollowRepository;
 import org.dinosaur.foodbowl.domain.member.dto.request.ProfileUpdateRequest;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
@@ -16,8 +15,6 @@ import org.dinosaur.foodbowl.domain.member.repository.MemberRepository;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRoleRepository;
 import org.dinosaur.foodbowl.domain.photo.repository.PhotoRepository;
 import org.dinosaur.foodbowl.domain.photo.repository.ThumbnailRepository;
-import org.dinosaur.foodbowl.domain.post.entity.Post;
-import org.dinosaur.foodbowl.domain.post.repository.PostCategoryRepository;
 import org.dinosaur.foodbowl.domain.post.repository.PostRepository;
 import org.dinosaur.foodbowl.exception.FoodbowlException;
 import org.springframework.stereotype.Service;
@@ -33,8 +30,6 @@ public class MemberService {
     private final ThumbnailRepository thumbnailRepository;
     private final PhotoRepository photoRepository;
     private final PostRepository postRepository;
-    private final PostCategoryRepository postCategoryRepository;
-    private final CommentRepository commentRepository;
     private final BookmarkRepository bookmarkRepository;
     private final BlameRepository blameRepository;
 
@@ -52,7 +47,6 @@ public class MemberService {
 
         return new MemberProfileResponse(
                 profileMember.getNickname(),
-                profileMember.getThumbnailPath(),
                 profileMember.getFollowers().size(),
                 profileMember.getFollowings().size(),
                 isSelfProfile,
@@ -78,16 +72,6 @@ public class MemberService {
         blameRepository.deleteAllByMember(member);
         blameRepository.deleteAllByTargetIdAndBlameTarget(member.getId(), BlameTarget.MEMBER);
         bookmarkRepository.deleteAllByMember(member);
-        commentRepository.deleteAllByMember(member);
-        for (Post post : member.getPosts()) {
-            bookmarkRepository.deleteAllByPost(post);
-            commentRepository.deleteAllByPost(post);
-            photoRepository.deleteAllByPost(post);
-            postCategoryRepository.deleteAllByPost(post);
-            postRepository.delete(post);
-            thumbnailRepository.delete(post.getThumbnail());
-        }
         memberRepository.delete(member);
-        thumbnailRepository.delete(member.getThumbnail());
     }
 }

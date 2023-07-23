@@ -28,16 +28,6 @@ public class StoreResponse {
 
     private String roadName;
 
-    private String undergroundYN;
-
-    private String mainBuildingNo;
-
-    private String subBuildingNo;
-
-    private String buildingName;
-
-    private String zoneNo;
-
     private BigDecimal x;
 
     private BigDecimal y;
@@ -45,7 +35,6 @@ public class StoreResponse {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
-
 
     public static StoreResponse from(Store store) {
         Address address = store.getAddress();
@@ -57,11 +46,6 @@ public class StoreResponse {
                 address.getRegion2depthName(),
                 address.getRegion3depthName(),
                 address.getRoadName(),
-                address.getUndergroundYN(),
-                address.getMainBuildingNo(),
-                address.getSubBuildingNo(),
-                address.getBuildingName(),
-                address.getZoneNo(),
                 address.getX(),
                 address.getY(),
                 store.getCreatedAt(),

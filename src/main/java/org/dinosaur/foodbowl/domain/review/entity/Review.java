@@ -1,9 +1,7 @@
-package org.dinosaur.foodbowl.domain.blame.entity;
+package org.dinosaur.foodbowl.domain.review.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,43 +17,35 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.dinosaur.foodbowl.domain.common.AuditingEntity;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
+import org.dinosaur.foodbowl.domain.store.entity.Store;
 
 @Getter
 @Entity
-@Table(name = "blame")
+@Table(name = "review")
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Blame extends AuditingEntity {
+public class Review extends AuditingEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull
-    @JoinColumn(name = "member_id", updatable = false)
+    @JoinColumn(name = "member_id", nullable = false, updatable = false)
     private Member member;
 
-    @NotNull
-    @Column(name = "target_id", updatable = false)
-    private Long targetId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id", nullable = false, updatable = false)
+    private Store store;
 
-    @Enumerated(value = EnumType.STRING)
     @NotNull
-    @Column(name = "target_type", updatable = false)
-    private BlameTarget blameTarget;
+    @Column(name = "content", nullable = false, length = 100)
+    private String content;
 
     @Builder
-    private Blame(Member member, Long targetId, BlameTarget blameTarget) {
+    private Review(Member member, Store store, String content) {
         this.member = member;
-        this.targetId = targetId;
-        this.blameTarget = blameTarget;
-    }
-
-    public enum BlameTarget {
-
-        MEMBER,
-        REVIEW
+        this.store = store;
+        this.content = content;
     }
 }

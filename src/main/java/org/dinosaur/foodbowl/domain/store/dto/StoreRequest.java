@@ -1,10 +1,7 @@
 package org.dinosaur.foodbowl.domain.store.dto;
 
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import lombok.AccessLevel;
@@ -39,24 +36,14 @@ public class StoreRequest {
 
     private String roadName;
 
-    @Pattern(regexp = "^[YN]$")
-    private String undergroundYN;
+    @NotBlank(message = "가게 정보 url은 반드시 입력되어야 합니다.")
+    private String storeUrl;
 
-    private String mainBuildingNo;
-
-    private String subBuildingNo;
-
-    private String buildingName;
-
-    private String zoneNo;
+    private String phone;
 
     @NotNull(message = "경도는 반드시 입력되어야 합니다.")
-    @DecimalMin(value = "-180", message = "경도의 최소값은 {value}입니다.")
-    @DecimalMax(value = "180", message = "경도의 최대값은 {value}입니다.")
     private BigDecimal x;
 
     @NotNull(message = "위도는 반드시 입력되어야 합니다.")
-    @DecimalMin(value = "-90", message = "위도의 최소값은 {value}입니다.")
-    @DecimalMax(value = "90", message = "위도의 최대값은 {value}입니다.")
     private BigDecimal y;
 }

@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 public class MemberProfileResponse {
 
     private String nickname;
-    private String thumbnailPath;
     private int numberOfFollower;
     private int numberOfFollowing;
     private Boolean isSelfProfile;
