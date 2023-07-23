@@ -4,11 +4,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.photo.entity.Thumbnail;
-import org.dinosaur.foodbowl.domain.post.entity.Category;
-import org.dinosaur.foodbowl.domain.post.entity.Category.CategoryType;
 import org.dinosaur.foodbowl.domain.post.entity.Post;
-import org.dinosaur.foodbowl.domain.post.entity.PostCategory;
-import org.dinosaur.foodbowl.domain.post.repository.PostCategoryRepository;
 import org.dinosaur.foodbowl.domain.post.repository.PostRepository;
 import org.dinosaur.foodbowl.domain.store.entity.Store;
 import org.springframework.stereotype.Component;
@@ -18,17 +14,12 @@ import org.springframework.stereotype.Component;
 public class PostTestSupport {
 
     private final PostRepository postRepository;
-    private final PostCategoryRepository postCategoryRepository;
     private final MemberTestSupport memberTestSupport;
     private final ThumbnailTestSupport thumbnailTestSupport;
     private final StoreTestSupport storeTestSupport;
 
     public PostBuilder postBuilder() {
         return new PostBuilder();
-    }
-
-    public PostCategoryBuilder postCategoryBuilder() {
-        return new PostCategoryBuilder();
     }
 
     public final class PostBuilder {
@@ -65,31 +56,6 @@ public class PostTestSupport {
                             .thumbnail(thumbnail == null ? thumbnailTestSupport.builder().build() : thumbnail)
                             .store(store == null ? storeTestSupport.builder().build() : store)
                             .content(content == null ? "content" + UUID.randomUUID() : content)
-                            .build()
-            );
-        }
-    }
-
-    public final class PostCategoryBuilder {
-
-        private Post post;
-        private Category category;
-
-        public PostCategoryBuilder post(Post post) {
-            this.post = post;
-            return this;
-        }
-
-        public PostCategoryBuilder category(Category category) {
-            this.category = category;
-            return this;
-        }
-
-        public PostCategory build() {
-            return postCategoryRepository.save(
-                    PostCategory.builder()
-                            .post(post == null ? postBuilder().build() : post)
-                            .category(category == null ? Category.from(CategoryType.전체) : category)
                             .build()
             );
         }

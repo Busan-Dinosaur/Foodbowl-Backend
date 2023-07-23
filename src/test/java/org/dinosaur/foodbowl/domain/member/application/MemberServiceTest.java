@@ -18,7 +18,6 @@ import org.dinosaur.foodbowl.domain.photo.entity.Thumbnail;
 import org.dinosaur.foodbowl.domain.photo.repository.PhotoRepository;
 import org.dinosaur.foodbowl.domain.photo.repository.ThumbnailRepository;
 import org.dinosaur.foodbowl.domain.post.entity.Post;
-import org.dinosaur.foodbowl.domain.post.repository.PostCategoryRepository;
 import org.dinosaur.foodbowl.domain.post.repository.PostRepository;
 import org.dinosaur.foodbowl.exception.FoodbowlException;
 import org.junit.jupiter.api.DisplayName;
@@ -46,8 +45,6 @@ class MemberServiceTest extends IntegrationTest {
     private BookmarkRepository bookmarkRepository;
     @Autowired
     private PostRepository postRepository;
-    @Autowired
-    private PostCategoryRepository postCategoryRepository;
     @Autowired
     private PhotoRepository photoRepository;
 
@@ -112,7 +109,6 @@ class MemberServiceTest extends IntegrationTest {
             Thumbnail postThumbnail = thumbnailTestSupport.builder().build(); //썸네일1
             Member member = memberTestSupport.memberBuilder().thumbnail(memberThumbnail).build(); //멤버1
             Post post = postTestSupport.postBuilder().thumbnail(postThumbnail).member(member).build(); //가게1, 게시글1
-            postTestSupport.postCategoryBuilder().post(post).build(); //게시글 카테고리1
             memberTestSupport.memberRoleBuilder().member(member).build(); //멤버 역할1
             followTestSupport.builder().following(member).build(); //멤버1, 팔로우1
             followTestSupport.builder().follower(member).build(); //멤버1, 팔로우1
@@ -134,7 +130,6 @@ class MemberServiceTest extends IntegrationTest {
                     () -> assertThat(followRepository.findAll()).isEmpty(),
                     () -> assertThat(blameRepository.findAll()).isEmpty(),
                     () -> assertThat(bookmarkRepository.findAll()).isEmpty(),
-                    () -> assertThat(postCategoryRepository.findAll()).isEmpty(),
                     () -> assertThat(photoRepository.findAll()).isEmpty()
             );
         }

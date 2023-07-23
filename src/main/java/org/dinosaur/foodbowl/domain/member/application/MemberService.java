@@ -16,7 +16,6 @@ import org.dinosaur.foodbowl.domain.member.repository.MemberRoleRepository;
 import org.dinosaur.foodbowl.domain.photo.repository.PhotoRepository;
 import org.dinosaur.foodbowl.domain.photo.repository.ThumbnailRepository;
 import org.dinosaur.foodbowl.domain.post.entity.Post;
-import org.dinosaur.foodbowl.domain.post.repository.PostCategoryRepository;
 import org.dinosaur.foodbowl.domain.post.repository.PostRepository;
 import org.dinosaur.foodbowl.exception.FoodbowlException;
 import org.springframework.stereotype.Service;
@@ -32,7 +31,6 @@ public class MemberService {
     private final ThumbnailRepository thumbnailRepository;
     private final PhotoRepository photoRepository;
     private final PostRepository postRepository;
-    private final PostCategoryRepository postCategoryRepository;
     private final BookmarkRepository bookmarkRepository;
     private final BlameRepository blameRepository;
 
@@ -79,7 +77,6 @@ public class MemberService {
         for (Post post : member.getPosts()) {
             bookmarkRepository.deleteAllByPost(post);
             photoRepository.deleteAllByPost(post);
-            postCategoryRepository.deleteAllByPost(post);
             postRepository.delete(post);
             thumbnailRepository.delete(post.getThumbnail());
         }
