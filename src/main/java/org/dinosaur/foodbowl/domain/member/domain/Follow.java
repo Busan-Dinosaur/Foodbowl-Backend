@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.store.domain;
+package org.dinosaur.foodbowl.domain.member.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
@@ -22,14 +21,14 @@ import org.dinosaur.foodbowl.global.persistence.AuditingEntity;
 @Getter
 @Entity
 @Table(
-        name = "store_school",
+        name = "follow",
         uniqueConstraints = {
-                @UniqueConstraint(name = "UQ_STORE_SCHOOL", columnNames = {"store_id", "school_id"})
+                @UniqueConstraint(name = "UQ_FOLLOWING_FOLLOWER", columnNames = {"following_id", "follower_id"})
         }
 )
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class StoreSchool extends AuditingEntity {
+public class Follow extends AuditingEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,18 +36,19 @@ public class StoreSchool extends AuditingEntity {
     private Long id;
 
     @NotNull
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id", updatable = false)
-    private Store store;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "following_id", updatable = false)
+    private Member following;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "school_id", updatable = false)
-    private School school;
+    @JoinColumn(name = "follower_id", updatable = false)
+    private Member follower;
 
     @Builder
-    private StoreSchool(Store store, School school) {
-        this.store = store;
-        this.school = school;
+    private Follow(Member following, Member follower) {
+        this.following = following;
+        this.follower = follower;
     }
 }
+

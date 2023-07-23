@@ -1,16 +1,17 @@
-package org.dinosaur.foodbowl.domain.store.domain;
+package org.dinosaur.foodbowl.domain.store.domain.vo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Embeddable
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Address {
 
     @NotNull
@@ -29,6 +30,7 @@ public class Address {
     @Column(name = "region_3depth_name", length = 45)
     private String region3depthName;
 
+    @NotNull
     @Column(name = "road_name", length = 100)
     private String roadName;
 
@@ -42,8 +44,13 @@ public class Address {
 
     @Builder
     private Address(
-            String addressName, String region1depthName, String region2depthName, String region3depthName,
-            String roadName, BigDecimal x, BigDecimal y
+            String addressName,
+            String region1depthName,
+            String region2depthName,
+            String region3depthName,
+            String roadName,
+            BigDecimal x,
+            BigDecimal y
     ) {
         this.addressName = addressName;
         this.region1depthName = region1depthName;

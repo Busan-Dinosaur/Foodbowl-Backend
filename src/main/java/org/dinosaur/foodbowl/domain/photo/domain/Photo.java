@@ -15,7 +15,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.dinosaur.foodbowl.domain.post.entity.Post;
+import org.dinosaur.foodbowl.domain.review.domain.Review;
 import org.dinosaur.foodbowl.global.persistence.AuditingEntity;
 
 @Getter
@@ -30,18 +30,18 @@ public class Photo extends AuditingEntity {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
-    @JoinColumn(name = "post_id")
-    private Post post;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_id", updatable = false)
+    private Review review;
 
     @NotNull
     @Column(name = "path", length = 512)
     private String path;
 
     @Builder
-    private Photo(Post post, String path) {
-        this.post = post;
+    private Photo(Review review, String path) {
+        this.review = review;
         this.path = path;
     }
 }

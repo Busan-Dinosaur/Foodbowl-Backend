@@ -6,8 +6,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import lombok.AccessLevel;
@@ -26,21 +24,18 @@ public class School extends AuditingEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false)
     private Long id;
 
     @NotNull
-    @Column(name = "name", unique = true)
+    @Column(name = "name", unique = true, length = 45)
     private String name;
 
     @NotNull
-    @DecimalMin(value = "-180", message = "경도의 최소값은 {value}입니다.")
-    @DecimalMax(value = "180", message = "경도의 최대값은 {value}입니다.")
     @Column(name = "x", updatable = false)
     private BigDecimal x;
 
     @NotNull
-    @DecimalMin(value = "-90", message = "위도의 최소값은 {value}입니다.")
-    @DecimalMax(value = "90", message = "위도의 최대값은 {value}입니다.")
     @Column(name = "y", updatable = false)
     private BigDecimal y;
 

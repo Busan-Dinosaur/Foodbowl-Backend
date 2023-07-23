@@ -28,18 +28,21 @@ public class Review extends AuditingEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false)
     private Long id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false, updatable = false)
+    @JoinColumn(name = "member_id", updatable = false)
     private Member member;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id", nullable = false, updatable = false)
+    @JoinColumn(name = "store_id", updatable = false)
     private Store store;
 
     @NotNull
-    @Column(name = "content", nullable = false, length = 100)
+    @Column(name = "content", length = 255)
     private String content;
 
     @Builder

@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.follow.domain;
+package org.dinosaur.foodbowl.domain.member.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,47 +8,48 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
-import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.dinosaur.foodbowl.domain.member.domain.Member;
+import org.dinosaur.foodbowl.domain.photo.domain.Thumbnail;
 import org.dinosaur.foodbowl.global.persistence.AuditingEntity;
 
 @Getter
 @Entity
-@Table(name = "follow")
+@Table(
+        name = "member_thumbnail",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "UQ_MEMBER_THUMBNAIL", columnNames = {"member_id", "thumbnail_id"})
+        }
+)
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Follow extends AuditingEntity {
+public class MemberThumbnail extends AuditingEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
-    @JoinColumn(name = "following_id")
-    private Member following;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", updatable = false)
+    private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
-    @JoinColumn(name = "follower_id")
-    private Member follower;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "thumbnail_id")
+    private Thumbnail thumbnail;
 
     @Builder
-    private Follow(Member following, Member follower) {
-        this.following = following;
-        this.follower = follower;
-    }
-
-    public boolean isFollower(Member member) {
-        return Objects.equals(follower, member);
+    private MemberThumbnail(Member member, Thumbnail thumbnail) {
+        this.member = member;
+        this.thumbnail = thumbnail;
     }
 }
-

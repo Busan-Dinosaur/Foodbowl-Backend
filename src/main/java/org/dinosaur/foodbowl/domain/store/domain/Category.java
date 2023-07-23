@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.member.domain;
+package org.dinosaur.foodbowl.domain.store.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,14 +14,14 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
+import org.dinosaur.foodbowl.domain.store.domain.vo.CategoryType;
 
 @Getter
 @Entity
-@Table(name = "role")
+@Table(name = "category")
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Role {
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,11 +31,11 @@ public class Role {
     @NotNull
     @Enumerated(value = EnumType.STRING)
     @Column(name = "name", updatable = false, unique = true, length = 45)
-    private RoleType roleType;
+    private CategoryType categoryType;
 
     @Builder
-    private Role(Long id, RoleType roleType) {
+    private Category(Long id, CategoryType categoryType) {
         this.id = id;
-        this.roleType = roleType;
+        this.categoryType = categoryType;
     }
 }

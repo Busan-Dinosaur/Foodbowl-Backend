@@ -8,21 +8,33 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.dinosaur.foodbowl.domain.blame.domain.vo.BlameTarget;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.global.persistence.AuditingEntity;
 
 @Getter
 @Entity
-@Table(name = "blame")
+@Table(
+        name = "blame",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "UQ_MEMBER_TARGET_ID_TYPE",
+                        columnNames = {"member_id", "target_id", "target_type"}
+                )
+        },
+        indexes = {@Index(name = "IDX_BLAME", columnList = "target_id, target_type")}
+)
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Blame extends AuditingEntity {
@@ -32,8 +44,8 @@ public class Blame extends AuditingEntity {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", updatable = false)
     private Member member;
 
@@ -41,8 +53,8 @@ public class Blame extends AuditingEntity {
     @Column(name = "target_id", updatable = false)
     private Long targetId;
 
-    @Enumerated(value = EnumType.STRING)
     @NotNull
+    @Enumerated(value = EnumType.STRING)
     @Column(name = "target_type", updatable = false)
     private BlameTarget blameTarget;
 
@@ -51,11 +63,5 @@ public class Blame extends AuditingEntity {
         this.member = member;
         this.targetId = targetId;
         this.blameTarget = blameTarget;
-    }
-
-    public enum BlameTarget {
-
-        MEMBER,
-        REVIEW
     }
 }

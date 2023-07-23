@@ -1,7 +1,5 @@
 package org.dinosaur.foodbowl.global.config.security.jwt;
 
-import static org.dinosaur.foodbowl.domain.member.domain.Role.RoleType;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;
@@ -17,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import javax.crypto.SecretKey;
+import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
 import org.dinosaur.foodbowl.global.exception.ErrorStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

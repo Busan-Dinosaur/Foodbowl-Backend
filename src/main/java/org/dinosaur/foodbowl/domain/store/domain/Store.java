@@ -17,7 +17,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.dinosaur.foodbowl.domain.post.entity.Category;
+import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
 import org.dinosaur.foodbowl.global.persistence.AuditingEntity;
 
 @Getter
@@ -32,31 +32,31 @@ public class Store extends AuditingEntity {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @Valid
-    @Embedded
-    private Address address;
-
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false, updatable = false)
+    @JoinColumn(name = "category_id", updatable = false)
     private Category category;
 
     @NotNull
     @Column(name = "store_name", length = 100)
     private String storeName;
 
+    @Valid
+    @Embedded
+    private Address address;
+
     @NotNull
     @Column(name = "store_url", length = 100)
     private String storeUrl;
 
-    @NotNull
     @Column(name = "phone", length = 45)
     private String phone;
 
     @Builder
-    private Store(Category category, Address address, String storeName, String storeUrl, String phone) {
+    private Store(Category category, String storeName, Address address, String storeUrl, String phone) {
         this.category = category;
-        this.address = address;
         this.storeName = storeName;
+        this.address = address;
         this.storeUrl = storeUrl;
         this.phone = phone;
     }

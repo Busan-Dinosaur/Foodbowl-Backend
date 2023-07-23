@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -19,7 +20,12 @@ import org.dinosaur.foodbowl.global.persistence.AuditingEntity;
 
 @Getter
 @Entity
-@Table(name = "member_role")
+@Table(
+        name = "member_role",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "UQ_MEMBER_ROLE", columnNames = {"member_id", "role_id"})
+        }
+)
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberRole extends AuditingEntity {
@@ -29,14 +35,14 @@ public class MemberRole extends AuditingEntity {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
-    @JoinColumn(name = "member_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", updatable = false)
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
-    @JoinColumn(name = "role_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id", updatable = false)
     private Role role;
 
     @Builder
