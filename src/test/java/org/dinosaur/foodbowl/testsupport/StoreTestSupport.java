@@ -33,6 +33,8 @@ public class StoreTestSupport {
 
         private Address address;
         private String storeName;
+        private String storeUrl;
+        private String phone;
 
         public StoreBuilder address(Address address) {
             this.address = address;
@@ -44,11 +46,23 @@ public class StoreTestSupport {
             return this;
         }
 
+        public StoreBuilder storeUrl(String storeUrl) {
+            this.storeUrl = storeUrl;
+            return this;
+        }
+
+        public StoreBuilder phone(String phone) {
+            this.phone = phone;
+            return this;
+        }
+
         public Store build() {
             return storeRepository.save(
                     Store.builder()
                             .address(address == null ? randomAddress() : address)
                             .storeName(storeName == null ? "name" + UUID.randomUUID() : storeName)
+                            .storeUrl(storeUrl == null ? "http://kakao.image.url" : storeUrl)
+                            .phone(phone == null ? "010-1234-5678" : phone)
                             .build()
             );
         }

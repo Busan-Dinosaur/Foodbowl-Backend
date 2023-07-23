@@ -54,11 +54,8 @@ class StoreControllerTest extends MockApiTest {
                 "송파구",
                 "신천동",
                 "올림픽로",
-                "N",
-                "473",
-                "14층 1400호",
-                "루터회관",
-                "12345",
+                "http://kakao.image.com",
+                "010-1234-4567",
                 BigDecimal.valueOf(127.3435356),
                 BigDecimal.valueOf(37.12314545)
         );
@@ -171,11 +168,8 @@ class StoreControllerTest extends MockApiTest {
                     "송파구",
                     "신천동",
                     "올림픽로",
-                    "N",
-                    "473",
-                    "14층 1400호",
-                    "루터회관",
-                    "12345",
+                    "http://kakao.image.com",
+                    "010-1234-5678",
                     BigDecimal.valueOf(127.3435356),
                     BigDecimal.valueOf(37.12314545)
             );
@@ -193,11 +187,8 @@ class StoreControllerTest extends MockApiTest {
                     "송파구",
                     "신천동",
                     "올림픽로",
-                    "N",
-                    "473",
-                    "14층 1400호",
-                    "루터회관",
-                    "12345",
+                    "http://kakao.images.com",
+                    "010-1234-4567",
                     BigDecimal.valueOf(127.3435356),
                     BigDecimal.valueOf(37.12314545)
             );
@@ -215,11 +206,8 @@ class StoreControllerTest extends MockApiTest {
                     "송파구",
                     "신천동",
                     "올림픽로",
-                    "N",
-                    "473",
-                    "14층 1400호",
-                    "루터회관",
-                    "12345",
+                    "http://kakao.images.com",
+                    "010-1234-4567",
                     BigDecimal.valueOf(127.3435356),
                     BigDecimal.valueOf(37.12314545)
             );
@@ -237,11 +225,8 @@ class StoreControllerTest extends MockApiTest {
                     null,
                     "신천동",
                     "올림픽로",
-                    "N",
-                    "473",
-                    "14층 1400호",
-                    "루터회관",
-                    "12345",
+                    "http://kakao.images.com",
+                    "010-1234-4567",
                     BigDecimal.valueOf(127.3435356),
                     BigDecimal.valueOf(37.12314545)
             );
@@ -259,37 +244,12 @@ class StoreControllerTest extends MockApiTest {
                     "송파구",
                     null,
                     "올림픽로",
-                    "N",
-                    "473",
-                    "14층 1400호",
-                    "루터회관",
-                    "12345",
+                    "http://kakao.images.com",
+                    "010-1234-4567",
                     BigDecimal.valueOf(127.3435356),
                     BigDecimal.valueOf(37.12314545)
             );
 
-            execute(storeRequest, accessToken);
-        }
-
-        @ParameterizedTest
-        @ValueSource(strings = {"", " ", "s", "@", "y", "n", "1"})
-        @DisplayName("지하 여부가 Y or N이 아닌 경우 BAD REQUEST가 반환된다.")
-        void createStoreByWrongUnderground(String underground) throws Exception {
-            StoreRequest storeRequest = new StoreRequest(
-                    "신천직화집",
-                    "서울시 송파구 올림픽로 473",
-                    "서울시",
-                    "송파구",
-                    "신천동",
-                    "올림픽로",
-                    underground,
-                    "473",
-                    "14층 1400호",
-                    "루터회관",
-                    "12345",
-                    BigDecimal.valueOf(127.3435356),
-                    BigDecimal.valueOf(37.12314545)
-            );
             execute(storeRequest, accessToken);
         }
 
@@ -303,11 +263,8 @@ class StoreControllerTest extends MockApiTest {
                     "송파구",
                     "신천동",
                     "올림픽로",
-                    "N",
-                    "473",
-                    "14층 1400호",
-                    "루터회관",
-                    "12345",
+                    "http://kakao.images.com",
+                    "010-1234-4567",
                     null,
                     BigDecimal.valueOf(37.12314545)
             );
@@ -324,11 +281,8 @@ class StoreControllerTest extends MockApiTest {
                     "송파구",
                     "신천동",
                     "올림픽로",
-                    "N",
-                    "473",
-                    "14층 1400호",
-                    "루터회관",
-                    "12345",
+                    "http://kakao.images.com",
+                    "010-1234-4567",
                     BigDecimal.valueOf(127.3435356),
                     null
             );
@@ -346,11 +300,8 @@ class StoreControllerTest extends MockApiTest {
                     "송파구",
                     "신천동",
                     "올림픽로",
-                    "N",
-                    "473",
-                    "14층 1400호",
-                    "루터회관",
-                    "12345",
+                    "http://kakao.images.com",
+                    "010-1234-4567",
                     new BigDecimal(x),
                     BigDecimal.valueOf(37.12314545)
             );
@@ -368,11 +319,8 @@ class StoreControllerTest extends MockApiTest {
                     "송파구",
                     "신천동",
                     "올림픽로",
-                    "N",
-                    "473",
-                    "14층 1400호",
-                    "루터회관",
-                    "12345",
+                    "http://kakao.images.com",
+                    "010-1234-4567",
                     BigDecimal.valueOf(127.3435356),
                     new BigDecimal(y)
             );

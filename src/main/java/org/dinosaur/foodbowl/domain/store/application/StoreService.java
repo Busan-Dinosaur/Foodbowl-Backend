@@ -55,6 +55,8 @@ public class StoreService {
         return Store.builder()
                 .storeName(storeRequest.getStoreName())
                 .address(convertToAddress(storeRequest))
+                .storeUrl(storeRequest.getStoreUrl())
+                .phone(storeRequest.getPhone())
                 .build();
     }
 

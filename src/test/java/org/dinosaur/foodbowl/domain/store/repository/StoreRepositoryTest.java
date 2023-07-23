@@ -28,6 +28,8 @@ class StoreRepositoryTest extends RepositoryTest {
         return Store.builder()
                 .address(address)
                 .storeName("작살치킨")
+                .phone("010-1234-5678")
+                .storeUrl("http://kakaoApi/image2.com")
                 .build();
     }
 

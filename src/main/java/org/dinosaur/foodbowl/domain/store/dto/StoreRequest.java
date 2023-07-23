@@ -39,16 +39,10 @@ public class StoreRequest {
 
     private String roadName;
 
-    @Pattern(regexp = "^[YN]$")
-    private String undergroundYN;
+    @NotBlank(message = "가게 정보 url은 반드시 입력되어야 합니다.")
+    private String storeUrl;
 
-    private String mainBuildingNo;
-
-    private String subBuildingNo;
-
-    private String buildingName;
-
-    private String zoneNo;
+    private String phone;
 
     @NotNull(message = "경도는 반드시 입력되어야 합니다.")
     @DecimalMin(value = "-180", message = "경도의 최소값은 {value}입니다.")

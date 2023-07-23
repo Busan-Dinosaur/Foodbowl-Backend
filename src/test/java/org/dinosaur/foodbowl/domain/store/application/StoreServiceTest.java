@@ -57,11 +57,8 @@ class StoreServiceTest extends IntegrationTest {
                 "송파구",
                 "신천동",
                 "연금공단로",
-                "N",
-                "123",
-                "1층 101호",
-                "국민연금공단 송파지점",
-                "12345",
+                "http://kakao.images.com",
+                "010-1234-5678",
                 BigDecimal.valueOf(127.3435356),
                 BigDecimal.valueOf(37.12314545)
         );

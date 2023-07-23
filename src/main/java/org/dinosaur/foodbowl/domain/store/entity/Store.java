@@ -36,9 +36,19 @@ public class Store extends AuditingEntity {
     @Column(name = "store_name", length = 100)
     private String storeName;
 
+    @NotNull
+    @Column(name = "store_url", length = 100)
+    private String storeUrl;
+
+    @NotNull
+    @Column(name = "phone", length = 45)
+    private String phone;
+
     @Builder
-    private Store(Address address, String storeName) {
+    private Store(Address address, String storeName, String storeUrl, String phone) {
         this.address = address;
         this.storeName = storeName;
+        this.storeUrl = storeUrl;
+        this.phone = phone;
     }
 }
