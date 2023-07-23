@@ -17,10 +17,10 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.dinosaur.foodbowl.domain.common.AuditingEntity;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.photo.entity.Thumbnail;
 import org.dinosaur.foodbowl.domain.store.entity.Store;
+import org.dinosaur.foodbowl.global.persistence.AuditingEntity;
 
 @Getter
 @Entity

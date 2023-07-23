@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AppleClaimsValidator {
 
-    private static final String NONCE_KEY = "nonce";
+    private static String NONCE_KEY = "nonce";
 
     private final String iss;
     private final String clientId;

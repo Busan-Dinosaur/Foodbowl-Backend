@@ -14,7 +14,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
 import java.util.Map;
-import org.dinosaur.foodbowl.exception.FoodbowlException;
+import org.dinosaur.foodbowl.global.exception.FoodbowlException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

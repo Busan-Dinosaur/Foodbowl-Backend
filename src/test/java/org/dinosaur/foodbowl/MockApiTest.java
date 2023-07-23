@@ -2,12 +2,12 @@ package org.dinosaur.foodbowl;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
-import org.dinosaur.foodbowl.config.security.CustomAccessDeniedHandler;
-import org.dinosaur.foodbowl.config.security.CustomAuthenticationEntryPoint;
-import org.dinosaur.foodbowl.config.security.SecurityConfig;
-import org.dinosaur.foodbowl.config.security.jwt.JwtAuthenticationFilter;
-import org.dinosaur.foodbowl.config.security.jwt.JwtAuthorizationExtractor;
-import org.dinosaur.foodbowl.config.security.jwt.JwtTokenProvider;
+import org.dinosaur.foodbowl.global.config.SecurityConfig;
+import org.dinosaur.foodbowl.global.config.security.CustomAccessDeniedHandler;
+import org.dinosaur.foodbowl.global.config.security.CustomAuthenticationEntryPoint;
+import org.dinosaur.foodbowl.global.config.security.jwt.JwtAuthenticationFilter;
+import org.dinosaur.foodbowl.global.config.security.jwt.JwtAuthorizationExtractor;
+import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.context.annotation.Import;

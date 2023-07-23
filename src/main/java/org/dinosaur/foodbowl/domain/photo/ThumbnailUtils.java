@@ -7,8 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import javax.imageio.ImageIO;
-import org.dinosaur.foodbowl.exception.ErrorStatus;
-import org.dinosaur.foodbowl.exception.FoodbowlException;
+import org.dinosaur.foodbowl.global.exception.ErrorStatus;
+import org.dinosaur.foodbowl.global.exception.FoodbowlException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 

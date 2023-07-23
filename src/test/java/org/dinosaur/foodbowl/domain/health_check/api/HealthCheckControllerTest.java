@@ -10,9 +10,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 import org.dinosaur.foodbowl.MockApiTest;
-import org.dinosaur.foodbowl.config.security.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.health_check.application.HealthCheckService;
 import org.dinosaur.foodbowl.domain.health_check.dto.HealthCheckDto;
+import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

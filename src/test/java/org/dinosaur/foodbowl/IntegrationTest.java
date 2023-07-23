@@ -6,6 +6,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @SpringBootTest
 public class IntegrationTest {
-
 }
 

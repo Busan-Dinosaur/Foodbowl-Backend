@@ -1,6 +1,6 @@
 package org.dinosaur.foodbowl.domain.member.application;
 
-import static org.dinosaur.foodbowl.exception.ErrorStatus.MEMBER_NOT_FOUND;
+import static org.dinosaur.foodbowl.global.exception.ErrorStatus.MEMBER_NOT_FOUND;
 
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import org.dinosaur.foodbowl.domain.member.repository.MemberRoleRepository;
 import org.dinosaur.foodbowl.domain.photo.repository.PhotoRepository;
 import org.dinosaur.foodbowl.domain.photo.repository.ThumbnailRepository;
 import org.dinosaur.foodbowl.domain.post.repository.PostRepository;
-import org.dinosaur.foodbowl.exception.FoodbowlException;
+import org.dinosaur.foodbowl.global.exception.FoodbowlException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

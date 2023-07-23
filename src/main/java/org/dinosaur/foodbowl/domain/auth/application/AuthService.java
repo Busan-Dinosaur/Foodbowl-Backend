@@ -2,11 +2,10 @@ package org.dinosaur.foodbowl.domain.auth.application;
 
 import static org.dinosaur.foodbowl.domain.member.entity.Member.SocialType;
 import static org.dinosaur.foodbowl.domain.member.entity.Role.RoleType;
-import static org.dinosaur.foodbowl.exception.ErrorStatus.APPLE_NOT_REGISTER;
+import static org.dinosaur.foodbowl.global.exception.ErrorStatus.APPLE_NOT_REGISTER;
 
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
-import org.dinosaur.foodbowl.config.security.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.auth.apple.AppleOAuthUserProvider;
 import org.dinosaur.foodbowl.domain.auth.dto.FoodbowlTokenDto;
 import org.dinosaur.foodbowl.domain.auth.dto.request.AppleLoginRequest;
@@ -14,7 +13,8 @@ import org.dinosaur.foodbowl.domain.auth.dto.response.ApplePlatformUserResponse;
 import org.dinosaur.foodbowl.domain.auth.dto.response.NicknameDuplicateCheckResponse;
 import org.dinosaur.foodbowl.domain.member.entity.Member;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRepository;
-import org.dinosaur.foodbowl.exception.FoodbowlException;
+import org.dinosaur.foodbowl.global.config.security.jwt.JwtTokenProvider;
+import org.dinosaur.foodbowl.global.exception.FoodbowlException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
