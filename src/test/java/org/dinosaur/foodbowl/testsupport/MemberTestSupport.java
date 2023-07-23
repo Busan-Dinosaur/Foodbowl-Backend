@@ -87,8 +87,6 @@ public class MemberTestSupport {
                             .email(email)
                             .nickname(nickname == null ? "user" + UUID.randomUUID() : nickname)
                             .introduction(introduce)
-                            .region1depthName(region1depthName)
-                            .region2depthName(region2depthName)
                             .build()
             );
         }

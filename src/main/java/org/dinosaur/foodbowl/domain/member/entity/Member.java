@@ -60,12 +60,6 @@ public class Member extends AuditingEntity {
     @Column(name = "introduction", length = 255)
     private String introduction;
 
-    @Column(name = "region_1depth_name", length = 45)
-    private String region1depthName;
-
-    @Column(name = "region_2depth_name", length = 45)
-    private String region2depthName;
-
     @OneToMany(mappedBy = "member")
     private List<Post> posts = new ArrayList<>();
 
@@ -77,8 +71,8 @@ public class Member extends AuditingEntity {
 
     @Builder
     private Member(
-            Thumbnail thumbnail, SocialType socialType, String socialId, String email, String nickname,
-            String introduction, String region1depthName, String region2depthName
+            Thumbnail thumbnail, SocialType socialType, String socialId,
+            String email, String nickname, String introduction
     ) {
         this.thumbnail = thumbnail;
         this.socialType = socialType;
@@ -86,8 +80,6 @@ public class Member extends AuditingEntity {
         this.email = email;
         this.nickname = nickname;
         this.introduction = introduction;
-        this.region1depthName = region1depthName;
-        this.region2depthName = region2depthName;
     }
 
     public void updateProfile(final String nickname, final String introduction) {
