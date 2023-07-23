@@ -15,7 +15,6 @@ import org.dinosaur.foodbowl.domain.member.repository.MemberRepository;
 import org.dinosaur.foodbowl.domain.member.repository.MemberRoleRepository;
 import org.dinosaur.foodbowl.domain.photo.repository.PhotoRepository;
 import org.dinosaur.foodbowl.domain.photo.repository.ThumbnailRepository;
-import org.dinosaur.foodbowl.domain.post.entity.Post;
 import org.dinosaur.foodbowl.domain.post.repository.PostRepository;
 import org.dinosaur.foodbowl.exception.FoodbowlException;
 import org.springframework.stereotype.Service;
@@ -48,7 +47,6 @@ public class MemberService {
 
         return new MemberProfileResponse(
                 profileMember.getNickname(),
-                profileMember.getThumbnailPath(),
                 profileMember.getFollowers().size(),
                 profileMember.getFollowings().size(),
                 isSelfProfile,
@@ -74,13 +72,6 @@ public class MemberService {
         blameRepository.deleteAllByMember(member);
         blameRepository.deleteAllByTargetIdAndBlameTarget(member.getId(), BlameTarget.MEMBER);
         bookmarkRepository.deleteAllByMember(member);
-        for (Post post : member.getPosts()) {
-            bookmarkRepository.deleteAllByPost(post);
-            photoRepository.deleteAllByPost(post);
-            postRepository.delete(post);
-            thumbnailRepository.delete(post.getThumbnail());
-        }
         memberRepository.delete(member);
-        thumbnailRepository.delete(member.getThumbnail());
     }
 }
