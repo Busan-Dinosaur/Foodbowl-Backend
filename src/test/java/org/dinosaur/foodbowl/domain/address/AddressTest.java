@@ -18,11 +18,6 @@ class AddressTest {
                 .region2depthName("송파구")
                 .region3depthName("올림픽로")
                 .roadName("올림픽로")
-                .mainBuildingNo("473")
-                .subBuildingNo("14층 1400호")
-                .undergroundYN("N")
-                .buildingName("루터회관")
-                .zoneNo("12345")
                 .x(BigDecimal.valueOf(127.3437575))
                 .y(BigDecimal.valueOf(37.12567))
                 .build();

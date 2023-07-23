@@ -79,11 +79,6 @@ class StoreControllerTest extends MockApiTest {
                 .andExpect(jsonPath("$.region2depthName").value(storeResponse.getRegion2depthName()))
                 .andExpect(jsonPath("$.region3depthName").value(storeResponse.getRegion3depthName()))
                 .andExpect(jsonPath("$.roadName").value(storeResponse.getRoadName()))
-                .andExpect(jsonPath("$.undergroundYN").value(storeResponse.getUndergroundYN()))
-                .andExpect(jsonPath("$.mainBuildingNo").value(storeResponse.getMainBuildingNo()))
-                .andExpect(jsonPath("$.subBuildingNo").value(storeResponse.getSubBuildingNo()))
-                .andExpect(jsonPath("$.buildingName").value(storeResponse.getBuildingName()))
-                .andExpect(jsonPath("$.zoneNo").value(storeResponse.getZoneNo()))
                 .andExpect(jsonPath("$.x").value(storeResponse.getX()))
                 .andExpect(jsonPath("$.y").value(storeResponse.getY()));
     }
@@ -106,12 +101,7 @@ class StoreControllerTest extends MockApiTest {
                 "서울시",
                 "송파구",
                 "신천동",
-                "올림픽로",
-                "N",
-                "473",
-                "14층 1400호",
-                "루터회관",
-                "12345",
+                "올림픽로 14층 1240호",
                 BigDecimal.valueOf(127.3435356),
                 BigDecimal.valueOf(37.12314545),
                 LocalDateTime.now(),

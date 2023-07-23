@@ -65,11 +65,6 @@ public class StoreService {
                 .region2depthName(storeRequest.getRegion2depthName())
                 .region3depthName(storeRequest.getRegion3depthName())
                 .roadName(storeRequest.getRoadName())
-                .undergroundYN(storeRequest.getUndergroundYN())
-                .mainBuildingNo(storeRequest.getMainBuildingNo())
-                .subBuildingNo(storeRequest.getSubBuildingNo())
-                .buildingName(storeRequest.getBuildingName())
-                .zoneNo(storeRequest.getZoneNo())
                 .x(storeRequest.getX())
                 .y(storeRequest.getY())
                 .build();

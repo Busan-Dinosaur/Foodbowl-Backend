@@ -38,11 +38,6 @@ class StoreRepositoryTest extends RepositoryTest {
                 .region2depthName("송파구")
                 .region3depthName("방이동")
                 .roadName("방이로")
-                .mainBuildingNo("1234")
-                .subBuildingNo("14층 1400호")
-                .undergroundYN("N")
-                .buildingName("작살치킨 빌딩")
-                .zoneNo("12345")
                 .x(BigDecimal.valueOf(127.3437575))
                 .y(BigDecimal.valueOf(37.12567))
                 .build();

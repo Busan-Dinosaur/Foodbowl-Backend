@@ -44,11 +44,6 @@ class StoreServiceTest extends IntegrationTest {
                 .region2depthName("송파구")
                 .region3depthName("신천동")
                 .roadName("연금공단로")
-                .undergroundYN("N")
-                .mainBuildingNo("123")
-                .subBuildingNo("1층 101호")
-                .buildingName("국민연금공단 송파지점")
-                .zoneNo("12345")
                 .x(BigDecimal.valueOf(127.3435356))
                 .y(BigDecimal.valueOf(37.12314545))
                 .build();
@@ -91,11 +86,6 @@ class StoreServiceTest extends IntegrationTest {
                     () -> assertThat(storeResponse.getRegion2depthName()).isEqualTo(storeRequest.getRegion2depthName()),
                     () -> assertThat(storeResponse.getRegion3depthName()).isEqualTo(storeRequest.getRegion3depthName()),
                     () -> assertThat(storeResponse.getRoadName()).isEqualTo(storeRequest.getRoadName()),
-                    () -> assertThat(storeResponse.getUndergroundYN()).isEqualTo(storeRequest.getUndergroundYN()),
-                    () -> assertThat(storeResponse.getMainBuildingNo()).isEqualTo(storeRequest.getMainBuildingNo()),
-                    () -> assertThat(storeResponse.getSubBuildingNo()).isEqualTo(storeRequest.getSubBuildingNo()),
-                    () -> assertThat(storeResponse.getBuildingName()).isEqualTo(storeRequest.getBuildingName()),
-                    () -> assertThat(storeResponse.getZoneNo()).isEqualTo(storeRequest.getZoneNo()),
                     () -> assertThat(storeResponse.getX()).isEqualTo(storeRequest.getX()),
                     () -> assertThat(storeResponse.getY()).isEqualTo(storeRequest.getY())
             );
