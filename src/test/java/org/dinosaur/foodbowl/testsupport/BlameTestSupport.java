@@ -44,7 +44,7 @@ public class BlameTestSupport {
                     Blame.builder()
                             .member(member == null ? memberTestSupport.memberBuilder().build() : member)
                             .targetId(targetId == null ? 1L : targetId)
-                            .blameTarget(blameTarget == null ? BlameTarget.POST : blameTarget)
+                            .blameTarget(blameTarget == null ? BlameTarget.REVIEW : blameTarget)
                             .build()
             );
         }

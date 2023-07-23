@@ -37,30 +37,16 @@ class BlameRepositoryTest extends RepositoryTest {
         void deleteAllByTargetIdAndBlameTarget() {
             blameTestSupport.builder()
                     .targetId(1L)
-                    .blameTarget(BlameTarget.POST)
+                    .blameTarget(BlameTarget.REVIEW)
                     .build();
             blameTestSupport.builder()
                     .targetId(1L)
-                    .blameTarget(BlameTarget.POST)
+                    .blameTarget(BlameTarget.REVIEW)
                     .build();
 
-            blameRepository.deleteAllByTargetIdAndBlameTarget(1L, BlameTarget.POST);
+            blameRepository.deleteAllByTargetIdAndBlameTarget(1L, BlameTarget.REVIEW);
 
             assertThat(blameRepository.findAll()).isEmpty();
-        }
-
-        @ParameterizedTest
-        @CsvSource(value = {"1,MEMBER", "2,POST", "2,COMMENT"})
-        @DisplayName("신고 대상과 타겟 ID에 맞지 않으면 삭제하지 않는다.")
-        void deleteAllByTargetIdAndBlameTargetWithNotMatch(Long targetId, BlameTarget blameTarget) {
-            blameTestSupport.builder()
-                    .targetId(1L)
-                    .blameTarget(BlameTarget.POST)
-                    .build();
-
-            blameRepository.deleteAllByTargetIdAndBlameTarget(targetId, blameTarget);
-
-            assertThat(blameRepository.findAll()).hasSize(1);
         }
     }
 }

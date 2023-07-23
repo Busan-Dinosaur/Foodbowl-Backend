@@ -41,7 +41,7 @@ public class Blame extends AuditingEntity {
     @Column(name = "target_id", updatable = false)
     private Long targetId;
 
-    @Enumerated(value = EnumType.ORDINAL)
+    @Enumerated(value = EnumType.STRING)
     @NotNull
     @Column(name = "target_type", updatable = false)
     private BlameTarget blameTarget;
@@ -56,7 +56,6 @@ public class Blame extends AuditingEntity {
     public enum BlameTarget {
 
         MEMBER,
-        POST,
-        COMMENT
+        REVIEW
     }
 }
