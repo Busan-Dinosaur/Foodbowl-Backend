@@ -19,7 +19,7 @@ public enum CategoryType {
 
     private final Long id;
 
-    CategoryType(final Long id) {
+    CategoryType(Long id) {
         this.id = id;
     }
 }

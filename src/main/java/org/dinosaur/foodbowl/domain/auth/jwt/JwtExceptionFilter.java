@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.global.config.security.jwt;
+package org.dinosaur.foodbowl.domain.auth.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -7,8 +7,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
-import org.dinosaur.foodbowl.global.exception.FoodbowlErrorResponse;
-import org.dinosaur.foodbowl.global.exception.FoodbowlException;
+import org.dinosaur.foodbowl.global.exception.AuthenticationException;
+import org.dinosaur.foodbowl.global.exception.ExceptionResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -27,11 +28,11 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
-        } catch (FoodbowlException e) {
-            response.setStatus(e.getHttpStatus().value());
+        } catch (AuthenticationException e) {
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setCharacterEncoding("UTF-8");
-            objectMapper.writeValue(response.getWriter(), new FoodbowlErrorResponse(e.getMessage(), e.getCode()));
+            objectMapper.writeValue(response.getWriter(), ExceptionResponse.from(e));
         }
     }
 }

@@ -10,7 +10,7 @@ public enum RoleType {
 
     private final Long id;
 
-    RoleType(final Long id) {
+    RoleType(Long id) {
         this.id = id;
     }
 }

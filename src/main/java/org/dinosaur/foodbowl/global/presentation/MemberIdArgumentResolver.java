@@ -1,9 +1,9 @@
 package org.dinosaur.foodbowl.global.presentation;
 
 import lombok.RequiredArgsConstructor;
-import org.dinosaur.foodbowl.global.config.security.jwt.JwtUser;
-import org.dinosaur.foodbowl.global.exception.ErrorStatus;
-import org.dinosaur.foodbowl.global.exception.FoodbowlException;
+import org.dinosaur.foodbowl.domain.auth.exception.AuthExceptionType;
+import org.dinosaur.foodbowl.domain.auth.jwt.JwtUser;
+import org.dinosaur.foodbowl.global.exception.AuthenticationException;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,7 +32,7 @@ public class MemberIdArgumentResolver implements HandlerMethodArgumentResolver {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (!authentication.isAuthenticated()) {
-            throw new FoodbowlException(ErrorStatus.JWT_NOT_AUTHENTICATION);
+            new AuthenticationException(AuthExceptionType.NOT_AUTHENTICATION);
         }
         JwtUser jwtUser = (JwtUser) authentication.getPrincipal();
         return parseToLong(jwtUser.getUsername());
@@ -42,7 +42,7 @@ public class MemberIdArgumentResolver implements HandlerMethodArgumentResolver {
         try {
             return Long.parseLong(memberId);
         } catch (NumberFormatException e) {
-            throw new FoodbowlException(ErrorStatus.JWT_MALFORMED);
+            throw new AuthenticationException(AuthExceptionType.MALFORMED_JWT);
         }
     }
 }

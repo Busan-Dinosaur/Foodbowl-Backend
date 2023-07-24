@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.global.config.security.jwt;
+package org.dinosaur.foodbowl.domain.auth.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -15,8 +15,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import javax.crypto.SecretKey;
+import org.dinosaur.foodbowl.domain.auth.exception.AuthExceptionType;
 import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
-import org.dinosaur.foodbowl.global.exception.ErrorStatus;
+import org.dinosaur.foodbowl.global.exception.ExceptionType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -105,22 +106,22 @@ public class JwtTokenProvider {
     }
 
     private JwtTokenValid validateToken(String token) {
-        ErrorStatus errorStatus;
+        ExceptionType exceptionType;
         try {
             jwtParser.parseClaimsJws(token).getBody();
-            return new JwtTokenValid(true, "", 0);
+            return new JwtTokenValid(true, "", "");
         } catch (ExpiredJwtException e) {
-            errorStatus = ErrorStatus.JWT_EXPIRED;
+            exceptionType = AuthExceptionType.EXPIRED_JWT;
         } catch (MalformedJwtException e) {
-            errorStatus = ErrorStatus.JWT_MALFORMED;
+            exceptionType = AuthExceptionType.MALFORMED_JWT;
         } catch (UnsupportedJwtException e) {
-            errorStatus = ErrorStatus.JWT_UNSUPPORTED;
+            exceptionType = AuthExceptionType.UNSUPPORTED_JWT;
         } catch (SignatureException e) {
-            errorStatus = ErrorStatus.JWT_WRONG_SIGNATURE;
+            exceptionType = AuthExceptionType.SIGNATURE_JWT;
         } catch (Exception e) {
-            errorStatus = ErrorStatus.JWT_UNKNOWN;
+            exceptionType = AuthExceptionType.UNKNOWN_JWT;
         }
-        return new JwtTokenValid(false, errorStatus.getMessage(), errorStatus.getCode());
+        return new JwtTokenValid(false, exceptionType.getErrorCode(), exceptionType.getMessage());
     }
 
     public long getValidRefreshMilliSecond() {
