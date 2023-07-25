@@ -11,28 +11,28 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler
+    @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> handleException(Exception e) {
         log.error("[" + e.getClass() + "] " + e.getMessage());
         return ResponseEntity.internalServerError()
                 .body(new ExceptionResponse("-9999", "알 수 없는 서버 에러가 발생했습니다."));
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ExceptionResponse> handleBadRequestException(BadRequestException e) {
         log.warn("[" + e.getClass() + "] " + e.getMessage());
         return ResponseEntity.badRequest()
                 .body(ExceptionResponse.from(e));
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ExceptionResponse> handleAuthenticationException(AuthenticationException e) {
         log.warn("[" + e.getClass() + "] " + e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(ExceptionResponse.from(e));
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ExceptionResponse> handleNotFoundException(NotFoundException e) {
         log.warn("[" + e.getClass() + "] " + e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
