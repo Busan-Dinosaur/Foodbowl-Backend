@@ -32,10 +32,33 @@ jobs:
           username: ${{ secrets.ACTOR }}
           password: ${{ secrets.TOKEN }}
 
+      - name: DB 도커 이미지 캐시 디렉토리를 생성한다.
+        run: mkdir -p ~/db-docker-image
+
+      - name: Gradle 캐시
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: DB 도커 이미지 캐시
+        id: db-docker-image
+        uses: actions/cache@v3
+        with:
+          path: ~/db-docker-image
+          key: db-docker-image-${{ runner.os }}-${{ secrets.DB_IMAGE }}
+
       - name: DB 이미지를 내려받는다.
+        if: steps.db-docker-image.outputs.cache-hit != 'true'
         run: |
           docker pull ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.ACTOR }}/${{ secrets.DB_IMAGE }}
-          docker tag ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.ACTOR }}/${{ secrets.DB_IMAGE }} ${{ secrets.DB_IMAGE }}
+          docker save -o \
+            ~/db-docker-image/foodbowl-db.tar \
+            ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.ACTOR }}/${{ secrets.DB_IMAGE }}
 
       - name: application.yml 파일을 생성한다.
         working-directory: ./src/test/resources
@@ -52,16 +75,6 @@ jobs:
       - name: 컨테이너를 시작한다.
         working-directory: ./docker
         run: docker compose -f ./docker-compose-build.yml -p foodbowl up -d
-
-      - name: Gradle 캐시
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
 
       - name: Gradle 실행 권한 부여
         run: chmod +x gradlew
@@ -90,3 +103,4 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         if: failure()
+
