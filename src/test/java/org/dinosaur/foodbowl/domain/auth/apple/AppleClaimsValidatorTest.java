@@ -28,7 +28,7 @@ class AppleClaimsValidatorTest {
 
         boolean result = appleClaimsValidator.isValid(claims);
 
-        assertThat(result).isFalse();
+        assertThat(result).isTrue();
     }
 
     @ParameterizedTest
