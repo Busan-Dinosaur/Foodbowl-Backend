@@ -54,6 +54,10 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
 }
 
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
 //Start Querydsl
 //Where To Create Querydsl Q Class
 def generated = 'src/main/generated'
