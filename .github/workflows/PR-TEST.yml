@@ -57,7 +57,7 @@ jobs:
         run: |
           docker pull ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.ACTOR }}/${{ secrets.DB_IMAGE }}
           docker tag ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.ACTOR }}/${{ secrets.DB_IMAGE }} ${{ secrets.DB_IMAGE }}
-          docker save -o \정
+          docker save -o \
             ~/db-docker-image/foodbowl-db.tar \
             ${{ secrets.DB_IMAGE }}
 
