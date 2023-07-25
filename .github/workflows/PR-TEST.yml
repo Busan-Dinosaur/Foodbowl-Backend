@@ -34,8 +34,8 @@ jobs:
 
       - name: DB 이미지를 내려받는다.
         run: |
-          docker pull ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.GITHUB_USERNAME }}/${{ secrets.DB_IMAGE }}
-          docker tag ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.GITHUB_USERNAME }}/${{ secrets.DB_IMAGE }} ${{ secrets.DB_IMAGE }}
+          docker pull ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.ACTOR }}/${{ secrets.DB_IMAGE }}
+          docker tag ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.ACTOR }}/${{ secrets.DB_IMAGE }} ${{ secrets.DB_IMAGE }}
 
       - name: application.yml 파일을 생성한다.
         working-directory: ./src/test/resources
