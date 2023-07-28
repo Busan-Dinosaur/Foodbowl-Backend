@@ -61,7 +61,7 @@ jobs:
             ~/db-docker-image/foodbowl-db.tar \
             ${{ secrets.DB_IMAGE }}
 
-      - name: application.yml 파일을 생성한다.
+      - name: 테스트 application.yml 파일을 생성한다.
         working-directory: ./src/test/resources
         run: |
           touch .application.yml
@@ -102,5 +102,5 @@ jobs:
           author_name: 백엔드 테스트 실패 알림
           fields: repo, message, commit, author, action, eventName, ref, workflow, job, took
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TEST_WEBHOOK_URL }}
         if: failure()
