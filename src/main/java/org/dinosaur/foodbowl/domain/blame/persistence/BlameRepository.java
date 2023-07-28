@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.blame.repository;
+package org.dinosaur.foodbowl.domain.blame.persistence;
 
 import org.dinosaur.foodbowl.domain.blame.domain.Blame;
 import org.springframework.data.repository.Repository;
