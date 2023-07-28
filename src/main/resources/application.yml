@@ -28,12 +28,11 @@ server:
 
 logging:
   level:
-    org:
-      hibernate:
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE
+    org.hibernate.orm.jdbc.bind: trace
+
+springdoc:
+  swagger-ui:
+    enabled: ${SWAGGER_ENABLE}
 
 openapi:
   dev_url: ${OPENAPI_DEV_URL}
