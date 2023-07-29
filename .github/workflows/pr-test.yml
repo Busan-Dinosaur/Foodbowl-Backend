@@ -1,7 +1,7 @@
 name: Test When Pull Request
 
 on:
-  pull_request:
+  push:
     branches:
       - master
       - develop
