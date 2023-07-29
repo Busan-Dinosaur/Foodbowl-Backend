@@ -11,11 +11,9 @@ COPY ../application .
 
 ARG SPRING_PROFILE=dev
 
-ENV SPRING_ACTIVE_PROFILE=$SPRING_PROFILE
-
 ENTRYPOINT [ \
     "java", \
-    "-Dspring.profiles.active=$SPRING_ACTIVE_PROFILE", \
+    "-Dspring.profiles.active=${SPRING_PROFILE}", \
     "-Duser.timezone=Asia/Seoul", \
     "org.springframework.boot.loader.JarLauncher" \
 ]
