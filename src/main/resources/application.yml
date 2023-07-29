@@ -6,7 +6,7 @@ spring:
     password: ${DATASOURCE_PASSWORD}
 
   jpa:
-    database-platform: org.hibernate.dialect.MySQLDialect
+    database-platform: Dorg.hibernate.dialect.MySQLDialect
     show-sql: true
     properties:
       hibernate:
@@ -48,6 +48,3 @@ oauth:
     iss: https://appleid.apple.com
     client_id: ${OAUTH_APPLE_CLIENT_ID}
     nonce: ${OAUTH_APPLE_NONCE}
-
-file:
-  dir: bucket
