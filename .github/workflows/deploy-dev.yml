@@ -1,0 +1,127 @@
+name: Deploy Develop Server
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy-dev:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+
+    steps:
+      - name: 레포지토리 체크아웃
+        uses: actions/checkout@v3
+
+      - name: JDK 17 환경 설정
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: temurin
+
+      - name: Github Container Registry 로그인한다.
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ secrets.DOCKER_REGISTRY }}
+          username: ${{ secrets.ACTOR }}
+          password: ${{ secrets.TOKEN }}
+
+      - name: DB 도커 이미지 캐시 디렉토리를 생성한다.
+        run: mkdir -p ~/db-docker-image
+
+      - name: Gradle 캐시
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: DB 도커 이미지 캐시
+        id: db-docker-image
+        uses: actions/cache@v3
+        with:
+          path: ~/db-docker-image
+          key: db-docker-image-${{ runner.os }}-${{ secrets.DB_IMAGE }}
+
+      - name: DB 이미지를 내려받는다.
+        if: steps.db-docker-image.outputs.cache-hit != 'true'
+        run: |
+          docker pull ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.ACTOR }}/${{ secrets.DB_IMAGE }}
+          docker tag ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.ACTOR }}/${{ secrets.DB_IMAGE }} ${{ secrets.DB_IMAGE }}
+          docker save -o \
+            ~/db-docker-image/foodbowl-db.tar \
+            ${{ secrets.DB_IMAGE }}
+
+      - name: 테스트 application.yml 파일을 생성한다.
+        working-directory: ./src/test/resources
+        run: |
+          touch .application.yml
+          echo '${{ secrets.APPLICATION_YML }}' >> application.yml
+
+      - name: 도커 환경 파일을 생성한다.
+        working-directory: ./docker
+        run: |
+          touch .env
+          echo '${{ secrets.DOCKER_ENV }}' >> .env
+
+      - name: 컨테이너를 시작한다.
+        working-directory: ./docker
+        run: docker compose -f ./docker-compose-build.yml -p foodbowl up -d
+
+      - name: Gradle 실행 권한 부여
+        run: chmod +x gradlew
+
+      - name: Gradle 빌드 실행
+        run: |
+          ./gradlew build --daemon --build-cache --parallel
+          java -Djarmode=layertools -jar build/libs/foodbowl-0.0.1-SNAPSHOT.jar extract
+
+      - name: Docker 이미지에 대한 라벨을 추출한다.
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: foodbowl/foodbowl-server:dev
+
+      - name: Docker Hub에 로그인한다.
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Docker 이미지 빌드 및 푸시
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./docker/app.layer.dockerfile
+          push: true
+          tags: foodbowl/foodbowl-server:dev
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            SPRING_PROFILE=dev
+
+      - name: 배포를 수행한다.
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            cd ~/foodbowl/deploy
+            docker pull foodbowl/foodbowl-server:dev
+            docker-compose -p foodbowl-dev -f ./docker-compose-dev.yml up -d
+            docker image prune -f
+
+      - name: 개발 서버 배포 Slack 알림
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          author_name: 개발 서버 배포 알림
+          fields: repo, message, commit, author, action, took
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEPLOY_WEBHOOK_URL }}
