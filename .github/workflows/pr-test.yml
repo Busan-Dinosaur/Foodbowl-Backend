@@ -1,7 +1,7 @@
 name: Test When Pull Request
 
 on:
-  push:
+  pull_request:
     branches:
       - master
       - develop
@@ -32,9 +32,6 @@ jobs:
           username: ${{ secrets.ACTOR }}
           password: ${{ secrets.TOKEN }}
 
-      - name: DB 도커 이미지 캐시 디렉토리를 생성한다.
-        run: mkdir -p ~/db-docker-image
-
       - name: Gradle 캐시
         uses: actions/cache@v3
         with:
@@ -45,21 +42,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: DB 도커 이미지 캐시
-        id: db-docker-image
-        uses: actions/cache@v3
-        with:
-          path: ~/db-docker-image
-          key: db-docker-image-${{ runner.os }}-${{ secrets.DB_IMAGE }}
-
       - name: DB 이미지를 내려받는다.
-        if: steps.db-docker-image.outputs.cache-hit != 'true'
         run: |
           docker pull ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.ACTOR }}/${{ secrets.DB_IMAGE }}
           docker tag ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.ACTOR }}/${{ secrets.DB_IMAGE }} ${{ secrets.DB_IMAGE }}
-          docker save -o \
-            ~/db-docker-image/foodbowl-db.tar \
-            ${{ secrets.DB_IMAGE }}
 
       - name: 테스트 application.yml 파일을 생성한다.
         working-directory: ./src/test/resources
