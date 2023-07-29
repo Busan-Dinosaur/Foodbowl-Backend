@@ -36,7 +36,6 @@ springdoc:
 
 openapi:
   dev_url: ${OPENAPI_DEV_URL}
-  prod_url: ${OPENAPI_PROD_URL}
 
 jwt:
   secret_key: ${JWT_SECRET_KEY}

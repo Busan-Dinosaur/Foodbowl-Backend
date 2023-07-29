@@ -17,14 +17,10 @@ import org.springframework.context.annotation.Configuration;
 public class OpenAPIConfig {
 
     private final String devUrl;
-    private final String prodUrl;
+    ;
 
-    public OpenAPIConfig(
-            @Value("${openapi.dev_url}") String devUrl,
-            @Value("${openapi.prod_url}") String prodUrl
-    ) {
+    public OpenAPIConfig(@Value("${openapi.dev_url}") String devUrl) {
         this.devUrl = devUrl;
-        this.prodUrl = prodUrl;
     }
 
     @Bean
@@ -37,10 +33,6 @@ public class OpenAPIConfig {
         Server devServer = new Server();
         devServer.setUrl(devUrl);
         devServer.description("개발 환경 서버 URL");
-
-        Server prodServer = new Server();
-        prodServer.setUrl(prodUrl);
-        prodServer.description("운영 환경 서버 URL");
 
         SecurityScheme securityScheme = new SecurityScheme()
                 .type(Type.HTTP)
@@ -55,7 +47,7 @@ public class OpenAPIConfig {
 
         return new OpenAPI()
                 .info(info)
-                .servers(List.of(devServer, prodServer))
+                .servers(List.of(devServer))
                 .components(new Components().addSecuritySchemes("BearerAuth", securityScheme))
                 .security(List.of(securityRequirement));
     }
