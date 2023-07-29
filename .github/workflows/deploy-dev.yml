@@ -99,6 +99,8 @@ jobs:
           script: |
             cd ~/foodbowl/deploy
             docker pull foodbowl/foodbowl-server:dev
+            docker tag foodbowl/foodbowl-server:dev foodbowl-server:dev
+            docker rmi foodbowl/foodbowl-server:dev
             docker-compose -p foodbowl-dev -f docker-compose-dev.yml up -d
             docker image prune -f
 
