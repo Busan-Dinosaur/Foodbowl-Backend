@@ -113,7 +113,7 @@ jobs:
           script: |
             cd ~/foodbowl/deploy
             docker pull foodbowl/foodbowl-server:dev
-            docker-compose -p foodbowl-dev -f ./docker-compose-dev.yml up -d
+            docker-compose -p foodbowl-dev -f docker-compose-dev.yml up -d
             docker image prune -f
 
       - name: 개발 서버 배포 Slack 알림
