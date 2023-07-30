@@ -1,15 +1,23 @@
 package org.dinosaur.foodbowl.domain.healthcheck.presentation;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.dinosaur.foodbowl.domain.healthcheck.application.HealthCheckService;
 import org.dinosaur.foodbowl.domain.healthcheck.dto.response.HealthCheckResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "헬스 체크", description = "헬스 체크 API")
-public interface HealthCheckController {
+@RequiredArgsConstructor
+@RequestMapping("/v1/health-check")
+@RestController
+public class HealthCheckController implements HealthCheckControllerDocs {
 
-    @Operation(summary = "서버 상태 확인", description = "서버 상태를 확인한다.")
-    @ApiResponse(responseCode = "200", description = "서버 상태 확인 성공")
-    ResponseEntity<HealthCheckResponse> healthcheck();
+    private final HealthCheckService healthCheckService;
+
+    @GetMapping
+    public ResponseEntity<HealthCheckResponse> healthcheck() {
+        HealthCheckResponse response = healthCheckService.healthCheck();
+        return ResponseEntity.ok(response);
+    }
 }
