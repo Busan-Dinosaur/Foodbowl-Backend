@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.member.repository;
+package org.dinosaur.foodbowl.domain.member.persistence;
 
 import org.dinosaur.foodbowl.domain.member.domain.Follow;
 import org.springframework.data.repository.Repository;

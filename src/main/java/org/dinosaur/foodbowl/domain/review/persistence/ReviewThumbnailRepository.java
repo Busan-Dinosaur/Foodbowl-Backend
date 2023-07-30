@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.review.repository;
+package org.dinosaur.foodbowl.domain.review.persistence;
 
 import org.dinosaur.foodbowl.domain.review.domain.ReviewThumbnail;
 import org.springframework.data.repository.Repository;
