@@ -1,9 +1,9 @@
 package org.dinosaur.foodbowl.global.config;
 
 import lombok.RequiredArgsConstructor;
-import org.dinosaur.foodbowl.domain.auth.jwt.JwtAuthenticationFilter;
-import org.dinosaur.foodbowl.global.config.security.CustomAccessDeniedHandler;
-import org.dinosaur.foodbowl.global.config.security.CustomAuthenticationEntryPoint;
+import org.dinosaur.foodbowl.global.presentation.jwt.JwtAuthenticationFilter;
+import org.dinosaur.foodbowl.global.presentation.security.CustomAccessDeniedHandler;
+import org.dinosaur.foodbowl.global.presentation.security.CustomAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

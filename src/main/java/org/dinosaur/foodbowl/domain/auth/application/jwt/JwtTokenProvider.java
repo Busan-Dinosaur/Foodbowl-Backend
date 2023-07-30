@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.auth.jwt;
+package org.dinosaur.foodbowl.domain.auth.application.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -18,6 +18,7 @@ import javax.crypto.SecretKey;
 import org.dinosaur.foodbowl.domain.auth.exception.AuthExceptionType;
 import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
 import org.dinosaur.foodbowl.global.exception.ExceptionType;
+import org.dinosaur.foodbowl.global.presentation.jwt.JwtUser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

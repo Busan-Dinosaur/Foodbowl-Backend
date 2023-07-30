@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.auth.jwt;
+package org.dinosaur.foodbowl.global.presentation.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;

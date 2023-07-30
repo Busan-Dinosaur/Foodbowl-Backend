@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.auth.jwt;
+package org.dinosaur.foodbowl.domain.auth.application.jwt;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Enumeration;

@@ -2,8 +2,8 @@ package org.dinosaur.foodbowl.global.presentation;
 
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.auth.exception.AuthExceptionType;
-import org.dinosaur.foodbowl.domain.auth.jwt.JwtUser;
 import org.dinosaur.foodbowl.global.exception.AuthenticationException;
+import org.dinosaur.foodbowl.global.presentation.jwt.JwtUser;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

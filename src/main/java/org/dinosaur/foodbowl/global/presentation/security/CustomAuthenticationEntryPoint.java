@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.global.config.security;
+package org.dinosaur.foodbowl.global.presentation.security;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
