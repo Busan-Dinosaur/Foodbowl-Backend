@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class HealthCheckService {
 
-    @Transactional
+    @Transactional(readOnly = true)
     public HealthCheckResponse healthCheck() {
         return new HealthCheckResponse("good");
     }
