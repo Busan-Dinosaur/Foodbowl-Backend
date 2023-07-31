@@ -3,7 +3,11 @@ package org.dinosaur.foodbowl.global.presentation;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.auth.exception.AuthExceptionType;
 import org.dinosaur.foodbowl.domain.auth.jwt.JwtUser;
+import org.dinosaur.foodbowl.domain.member.domain.Member;
+import org.dinosaur.foodbowl.domain.member.exception.MemberExceptionType;
+import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
 import org.dinosaur.foodbowl.global.exception.AuthenticationException;
+import org.dinosaur.foodbowl.global.exception.NotFoundException;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,11 +19,13 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 @RequiredArgsConstructor
 @Component
-public class MemberIdArgumentResolver implements HandlerMethodArgumentResolver {
+public class MemberArgumentResolver implements HandlerMethodArgumentResolver {
+
+    private final MemberRepository memberRepository;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.getParameterType().equals(Long.class) && parameter.hasParameterAnnotation(MemberId.class);
+        return parameter.getParameterType().equals(Member.class) && parameter.hasParameterAnnotation(Auth.class);
     }
 
     @Override
@@ -32,10 +38,12 @@ public class MemberIdArgumentResolver implements HandlerMethodArgumentResolver {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (!authentication.isAuthenticated()) {
-            new AuthenticationException(AuthExceptionType.NOT_AUTHENTICATION);
+            throw new AuthenticationException(AuthExceptionType.NOT_AUTHENTICATION);
         }
         JwtUser jwtUser = (JwtUser) authentication.getPrincipal();
-        return parseToLong(jwtUser.getUsername());
+        Long memberId = parseToLong(jwtUser.getUsername());
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
     }
 
     private Long parseToLong(String memberId) {
