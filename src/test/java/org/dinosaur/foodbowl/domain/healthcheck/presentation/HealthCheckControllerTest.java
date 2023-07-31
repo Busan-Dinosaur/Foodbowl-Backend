@@ -59,7 +59,7 @@ class HealthCheckControllerTest extends PresentationTest {
                 .socialId("foodBowlId")
                 .socialType(SocialType.APPLE)
                 .nickname("foodbowl")
-                .introduce("푸드볼 서비스")
+                .introduction("푸드볼 서비스")
                 .build();
         given(memberRepository.findById(anyLong()))
                 .willReturn(Optional.of(member));
