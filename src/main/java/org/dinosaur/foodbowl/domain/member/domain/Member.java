@@ -45,8 +45,8 @@ public class Member extends AuditingEntity {
     @Column(name = "nickname", unique = true, length = 45)
     private String nickname;
 
-    @Column(name = "introduce", length = 255)
-    private String introduce;
+    @Column(name = "introduction", length = 255)
+    private String introduction;
 
     @Builder
     private Member(
@@ -54,12 +54,12 @@ public class Member extends AuditingEntity {
             String socialId,
             String email,
             String nickname,
-            String introduce
+            String introduction
     ) {
         this.socialType = socialType;
         this.socialId = socialId;
         this.email = email;
         this.nickname = nickname;
-        this.introduce = introduce;
+        this.introduction = introduction;
     }
 }
