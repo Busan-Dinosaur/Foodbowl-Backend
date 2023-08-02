@@ -2,9 +2,10 @@ package org.dinosaur.foodbowl.domain.member.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.dinosaur.foodbowl.PersistenceTest;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.domain.vo.SocialType;
+import org.dinosaur.foodbowl.test.PersistenceTest;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -43,5 +44,19 @@ class MemberRepositoryTest extends PersistenceTest {
         Member findMember = memberRepository.findById(saveMember.getId()).get();
 
         assertThat(findMember.getId()).isEqualTo(saveMember.getId());
+    }
+
+    @Nested
+    class 닉네임_존재_여부_확인 {
+
+        @Test
+        void 존재하는_닉네임이라면_true_반환한다() {
+
+        }
+
+        @Test
+        void 존재하지_않는_닉네임이라면_false_반환한다() {
+
+        }
     }
 }

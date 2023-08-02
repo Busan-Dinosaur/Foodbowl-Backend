@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl;
+package org.dinosaur.foodbowl.test;
 
 import org.dinosaur.foodbowl.global.config.JpaConfig;
 import org.junit.jupiter.api.DisplayNameGeneration;

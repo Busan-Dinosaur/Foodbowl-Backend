@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl;
+package org.dinosaur.foodbowl.test;
 
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.global.config.SecurityConfig;

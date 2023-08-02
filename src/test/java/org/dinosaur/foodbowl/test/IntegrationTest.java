@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl;
+package org.dinosaur.foodbowl.test;
 
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
