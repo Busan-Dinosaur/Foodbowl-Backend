@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.auth.application.jwt;
+package org.dinosaur.foodbowl.global.presentation.jwt;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtAuthorizationExtractor {
 
-    private static final String AUTHENTICATION_TYPE = "Bearer";
     private static final String AUTHENTICATION_HEADER_KEY = "Authorization";
+    private static final String AUTHENTICATION_TYPE = "Bearer";
     private static final String AUTHENTICATION_DELIMITER = " ";
     private static final int TOKEN_INDEX = 1;
 

@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.global.presentation.jwt;
+package org.dinosaur.foodbowl.domain.auth.application.jwt;
 
 import java.util.Collection;
 import java.util.List;

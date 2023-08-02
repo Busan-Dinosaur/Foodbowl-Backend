@@ -12,35 +12,23 @@ import io.jsonwebtoken.security.SignatureException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import javax.crypto.SecretKey;
 import org.dinosaur.foodbowl.domain.auth.exception.AuthExceptionType;
 import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
 import org.dinosaur.foodbowl.global.exception.ExceptionType;
-import org.dinosaur.foodbowl.global.presentation.jwt.JwtUser;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JwtTokenProvider {
 
     private final SecretKey key;
-    private final long validAccessMilliSecond;
-    private final long validRefreshMilliSecond;
+    private final JwtProperty jwtProperty;
     private final JwtParser jwtParser;
 
-    public JwtTokenProvider(
-            @Value("${jwt.secret_key}") String secretKey,
-            @Value("${jwt.access_expire_time}") long validAccessMilliSecond,
-            @Value("${jwt.refresh_expire_time}") long validRefreshMilliSecond
-    ) {
-        this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-        this.validAccessMilliSecond = validAccessMilliSecond;
-        this.validRefreshMilliSecond = validRefreshMilliSecond;
+    public JwtTokenProvider(JwtProperty jwtProperty) {
+        this.key = Keys.hmacShaKeyFor(jwtProperty.secretKey().getBytes(StandardCharsets.UTF_8));
+        this.jwtProperty = jwtProperty;
         this.jwtParser = Jwts.parserBuilder().setSigningKey(key).build();
     }
 
@@ -52,7 +40,7 @@ public class JwtTokenProvider {
         claims.put(JwtConstant.CLAMS_ROLES.getName(), String.join(JwtConstant.DELIMITER.getName(), roleNames));
 
         Date now = new Date();
-        Date validDate = new Date(now.getTime() + validAccessMilliSecond);
+        Date validDate = new Date(now.getTime() + jwtProperty.accessExpireTime());
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -66,7 +54,7 @@ public class JwtTokenProvider {
         Claims claims = Jwts.claims().setSubject(String.valueOf(userId));
 
         Date now = new Date();
-        Date validDate = new Date(now.getTime() + validRefreshMilliSecond);
+        Date validDate = new Date(now.getTime() + jwtProperty.refreshExpireTime());
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -76,32 +64,12 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public Optional<String> extractSubject(String token) {
+    public Optional<Claims> extractClaims(String token) {
         JwtTokenValid jwtTokenValid = validateToken(token);
 
         if (jwtTokenValid.isValid()) {
             Claims claims = jwtParser.parseClaimsJws(token).getBody();
-            return Optional.ofNullable(claims.getSubject());
-        }
-        return Optional.empty();
-    }
-
-    public Optional<Authentication> generateAuth(String token) {
-        JwtTokenValid jwtTokenValid = validateToken(token);
-
-        if (jwtTokenValid.isValid()) {
-            Claims claims = jwtParser.parseClaimsJws(token).getBody();
-            List<String> roleNames = Arrays.stream(
-                    claims.get(JwtConstant.CLAMS_ROLES.getName()).toString().split(JwtConstant.DELIMITER.getName())
-            ).toList();
-            UserDetails userDetails = new JwtUser(claims.getSubject(), roleNames);
-            return Optional.of(
-                    new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            userDetails.getPassword(),
-                            userDetails.getAuthorities()
-                    )
-            );
+            return Optional.of(claims);
         }
         return Optional.empty();
     }
@@ -126,6 +94,6 @@ public class JwtTokenProvider {
     }
 
     public long getValidRefreshMilliSecond() {
-        return validRefreshMilliSecond;
+        return jwtProperty.refreshExpireTime();
     }
 }
