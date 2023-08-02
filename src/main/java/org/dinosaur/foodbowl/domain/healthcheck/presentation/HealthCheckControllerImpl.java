@@ -25,7 +25,6 @@ public class HealthCheckControllerImpl implements HealthCheckController {
 
     @GetMapping("/auth")
     public ResponseEntity<HealthCheckResponse> authCheck(@Auth Member member) {
-        HealthCheckResponse response = healthCheckService.healthCheck();
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new HealthCheckResponse("good: " + member.getNickname()));
     }
 }

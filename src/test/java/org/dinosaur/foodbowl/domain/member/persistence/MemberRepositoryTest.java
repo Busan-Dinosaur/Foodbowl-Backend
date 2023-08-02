@@ -5,12 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.dinosaur.foodbowl.PersistenceTest;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.domain.vo.SocialType;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
 class MemberRepositoryTest extends PersistenceTest {
 

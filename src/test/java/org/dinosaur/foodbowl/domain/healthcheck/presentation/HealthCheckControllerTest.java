@@ -63,13 +63,11 @@ class HealthCheckControllerTest extends PresentationTest {
                 .build();
         given(memberRepository.findById(anyLong()))
                 .willReturn(Optional.of(member));
-        given(healthCheckService.healthCheck())
-                .willReturn(new HealthCheckResponse("good"));
 
         mockMvc.perform(get("/v1/health-check/auth")
                         .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(1L, ROLE_회원)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("good"))
+                .andExpect(jsonPath("$.status").value("good: " + member.getNickname()))
                 .andDo(print());
     }
 }
