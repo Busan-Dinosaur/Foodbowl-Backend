@@ -19,9 +19,14 @@ public class JwtAuthorizationExtractor {
         while (headers.hasMoreElements()) {
             String value = headers.nextElement();
             if (value.toLowerCase().startsWith(AUTHENTICATION_TYPE.toLowerCase())) {
-                return Optional.ofNullable(value.split(AUTHENTICATION_DELIMITER)[TOKEN_INDEX]);
+                return extractToken(value);
             }
         }
         return Optional.empty();
+    }
+
+    private Optional<String> extractToken(String auth) {
+        String[] splitAuth = auth.split(AUTHENTICATION_DELIMITER);
+        return splitAuth.length == 2 ? Optional.of(splitAuth[TOKEN_INDEX]) : Optional.empty();
     }
 }
