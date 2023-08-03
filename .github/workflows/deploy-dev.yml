@@ -70,7 +70,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: foodbowl/foodbowl-server:dev
+          images: foodbowl/foodbowl-app
 
       - name: Docker Hub에 로그인한다.
         uses: docker/login-action@v2
@@ -84,7 +84,7 @@ jobs:
           context: .
           file: ./docker/app.layer.dockerfile
           push: true
-          tags: foodbowl/foodbowl-server:dev
+          tags: foodbowl/foodbowl-app
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             SPRING_PROFILE=dev
@@ -98,10 +98,10 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           script: |
             cd ~/foodbowl/deploy
-            docker pull foodbowl/foodbowl-server:dev
-            docker tag foodbowl/foodbowl-server:dev foodbowl-server:dev
-            docker rmi foodbowl/foodbowl-server:dev
-            docker-compose -p foodbowl-dev -f docker-compose-dev.yml up -d
+            docker pull foodbowl/foodbowl-app
+            docker tag foodbowl/foodbowl-app foodbowl-app
+            docker rmi foodbowl/foodbowl-app
+            docker-compose -p foodbowl -f docker-compose.yml up -d
             docker image prune -f
 
       - name: 개발 서버 배포 Slack 알림
