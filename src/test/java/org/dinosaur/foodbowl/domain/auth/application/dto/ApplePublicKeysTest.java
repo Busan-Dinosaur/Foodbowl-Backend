@@ -38,7 +38,7 @@ class ApplePublicKeysTest {
 
             assertThatThrownBy(() -> applePublicKeys.getMatchingKey(alg, kid))
                     .isInstanceOf(BadRequestException.class)
-                    .hasMessage("지원하지 않은 토큰입니다.");
+                    .hasMessage("지원하지 않는 토큰입니다.");
         }
     }
 }
