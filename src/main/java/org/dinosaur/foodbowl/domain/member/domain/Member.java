@@ -7,7 +7,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -19,7 +21,13 @@ import org.dinosaur.foodbowl.global.persistence.AuditingEntity;
 
 @Getter
 @Entity
-@Table(name = "member")
+@Table(
+        name = "member",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "UQ_MEMBER", columnNames = {"social_id", "social_type"})
+        },
+        indexes = {@Index(name = "IDX_MEMBER", columnList = "social_id, social_type")}
+)
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends AuditingEntity {
