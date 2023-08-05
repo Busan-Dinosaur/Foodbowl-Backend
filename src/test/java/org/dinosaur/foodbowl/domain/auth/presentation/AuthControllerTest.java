@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.dinosaur.foodbowl.domain.auth.application.AuthService;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.AppleLoginRequest;
 import org.dinosaur.foodbowl.domain.auth.dto.response.TokenResponse;
-import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
 import org.dinosaur.foodbowl.test.PresentationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -32,9 +31,6 @@ class AuthControllerTest extends PresentationTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @MockBean
-    private MemberRepository memberRepository;
 
     @MockBean
     private AuthService authService;

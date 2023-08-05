@@ -14,7 +14,6 @@ import org.dinosaur.foodbowl.domain.healthcheck.dto.response.HealthCheckResponse
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
 import org.dinosaur.foodbowl.domain.member.domain.vo.SocialType;
-import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
 import org.dinosaur.foodbowl.test.PresentationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +30,6 @@ class HealthCheckControllerTest extends PresentationTest {
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
-
-    @MockBean
-    private MemberRepository memberRepository;
 
     @MockBean
     private HealthCheckService healthCheckService;

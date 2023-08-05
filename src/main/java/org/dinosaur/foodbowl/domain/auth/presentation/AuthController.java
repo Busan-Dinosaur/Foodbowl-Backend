@@ -17,8 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController implements AuthControllerDocs {
 
     private final AuthService authService;
-
-    @Override
+    
     @PostMapping("/login/oauth/apple")
     public ResponseEntity<TokenResponse> appleLogin(@RequestBody @Valid AppleLoginRequest appleLoginRequest) {
         TokenResponse response = authService.appleLogin(appleLoginRequest);
