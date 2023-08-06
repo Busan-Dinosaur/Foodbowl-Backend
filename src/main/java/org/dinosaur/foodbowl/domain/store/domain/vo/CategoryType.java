@@ -1,6 +1,9 @@
 package org.dinosaur.foodbowl.domain.store.domain.vo;
 
+import java.util.Arrays;
 import lombok.Getter;
+import org.dinosaur.foodbowl.domain.store.exception.CategoryExceptionType;
+import org.dinosaur.foodbowl.global.exception.BadRequestException;
 
 @Getter
 public enum CategoryType {
@@ -21,5 +24,12 @@ public enum CategoryType {
 
     CategoryType(Long id) {
         this.id = id;
+    }
+
+    public static CategoryType of(String categoryName) {
+        return Arrays.stream(values())
+                .filter(categoryType -> categoryType.name().equals(categoryName))
+                .findAny()
+                .orElseThrow(() -> new BadRequestException(CategoryExceptionType.NOT_FOUND));
     }
 }
