@@ -42,21 +42,21 @@ class SchoolServiceTest extends IntegrationTest {
     }
 
     @Nested
-    class 학교_존재_확인_메서드는 {
+    class 학교_조회_ {
 
         @Test
-        void 존재하면_false_반환() {
+        void 존재하는_학교로_조회() {
             String name = "부산대학교";
             BigDecimal x = BigDecimal.valueOf(123.1234);
             BigDecimal y = BigDecimal.valueOf(37.12421);
             schoolService.save(name, x, y);
 
-            assertThat(schoolService.checkIfSchoolEmpty(name)).isFalse();
+            assertThat(schoolService.findByName(name)).isPresent();
         }
 
         @Test
-        void 존재하지_않으면_true_반환() {
-            assertThat(schoolService.checkIfSchoolEmpty("우테코대학교")).isTrue();
+        void 존재하지_않는_학교로_조회() {
+            assertThat(schoolService.findByName("우테코대학교")).isEmpty();
         }
     }
 }

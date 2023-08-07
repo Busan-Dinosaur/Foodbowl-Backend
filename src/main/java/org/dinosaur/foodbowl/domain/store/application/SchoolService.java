@@ -3,6 +3,7 @@ package org.dinosaur.foodbowl.domain.store.application;
 import static org.dinosaur.foodbowl.domain.store.exception.SchoolExceptionType.*;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.domain.store.persistence.SchoolRepository;
@@ -32,8 +33,7 @@ public class SchoolService {
         return schoolRepository.save(school);
     }
 
-    public boolean checkIfSchoolEmpty(String name) {
-        return schoolRepository.findByName(name)
-                .isEmpty();
+    public Optional<School> findByName(String name) {
+        return schoolRepository.findByName(name);
     }
 }
