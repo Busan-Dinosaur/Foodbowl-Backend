@@ -3,6 +3,7 @@ package org.dinosaur.foodbowl.domain.store.application;
 import static org.dinosaur.foodbowl.domain.store.exception.StoreExceptionType.DUPLICATE_ERROR;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.store.domain.Category;
 import org.dinosaur.foodbowl.domain.store.domain.School;
@@ -30,14 +31,12 @@ public class StoreService {
 
     @Transactional
     public Store create(StoreCreateDto storeCreateDto) {
-        // TODO: 이 과정이 꼭 필요할까?
         storeRepository.findByAddress_AddressName(storeCreateDto.address()).ifPresent(
                 existingStore -> {
                     throw new BadRequestException(DUPLICATE_ERROR);
                 }
         );
         Store store = storeRepository.save(convertToStore(storeCreateDto));
-
         if (storeCreateDto.schoolName() != null) {
             String schoolName = storeCreateDto.schoolName();
             saveSchool(store, schoolName, storeCreateDto.schoolX(), storeCreateDto.schoolY());
@@ -45,10 +44,8 @@ public class StoreService {
         return store;
     }
 
-    // TODO: 리뷰(상위) 서비스에서 체크한 후 호출하는게 적절한가?
-    public boolean checkIfStoreEmpty(String address) {
-        return storeRepository.findByAddress_AddressName(address)
-                .isEmpty();
+    public Optional<Store> findByAddress(String address) {
+        return storeRepository.findByAddress_AddressName(address);
     }
 
     private Store convertToStore(StoreCreateDto storeCreateDto) {
