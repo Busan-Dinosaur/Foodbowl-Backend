@@ -2,9 +2,9 @@ package org.dinosaur.foodbowl.domain.member.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.dinosaur.foodbowl.PersistenceTest;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.domain.vo.SocialType;
+import org.dinosaur.foodbowl.test.PersistenceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

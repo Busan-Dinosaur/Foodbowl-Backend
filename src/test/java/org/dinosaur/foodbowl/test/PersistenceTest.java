@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl;
+package org.dinosaur.foodbowl.test;
 
 import org.dinosaur.foodbowl.global.config.JpaConfig;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -8,9 +8,9 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
-@DataJpaTest
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @Import(JpaConfig.class)
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@DataJpaTest
 public class PersistenceTest {
 }
