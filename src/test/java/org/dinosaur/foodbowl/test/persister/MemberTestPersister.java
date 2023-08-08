@@ -5,11 +5,9 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.domain.vo.SocialType;
 import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
-import org.springframework.stereotype.Component;
 
-@Persister
 @RequiredArgsConstructor
-@Component
+@Persister
 public class MemberTestPersister {
 
     private final MemberRepository memberRepository;
