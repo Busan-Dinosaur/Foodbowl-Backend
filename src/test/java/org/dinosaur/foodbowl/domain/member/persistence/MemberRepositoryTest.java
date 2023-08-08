@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
+import org.dinosaur.foodbowl.domain.member.domain.vo.Nickname;
 import org.dinosaur.foodbowl.domain.member.domain.vo.SocialType;
 import org.dinosaur.foodbowl.test.PersistenceTest;
 import org.junit.jupiter.api.Nested;
@@ -74,14 +75,14 @@ class MemberRepositoryTest extends PersistenceTest {
                     .nickname("hello")
                     .save();
 
-            boolean result = memberRepository.existsByNickname(saveMember.getNickname());
+            boolean result = memberRepository.existsByNickname(new Nickname(saveMember.getNickname()));
 
             assertThat(result).isTrue();
         }
 
         @Test
         void 존재하지_않는_닉네임이라면_false_반환한다() {
-            boolean result = memberRepository.existsByNickname("hello");
+            boolean result = memberRepository.existsByNickname(new Nickname("hello"));
 
             assertThat(result).isFalse();
         }

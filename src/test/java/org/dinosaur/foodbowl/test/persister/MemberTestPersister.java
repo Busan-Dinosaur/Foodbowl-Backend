@@ -1,8 +1,7 @@
 package org.dinosaur.foodbowl.test.persister;
 
-import static org.dinosaur.foodbowl.test.persister.RandomStringGenerator.generateRandomString;
-
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.domain.vo.SocialType;
 import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
@@ -55,10 +54,10 @@ public class MemberTestPersister {
         public Member save() {
             return memberRepository.save(
                     Member.builder()
-                            .socialType(socialType != null ? socialType : SocialType.APPLE)
-                            .socialId(socialId != null ? socialId : generateRandomString(10))
+                            .socialType(socialType == null ? SocialType.APPLE : socialType)
+                            .socialId(socialId == null ? RandomStringUtils.random(10, true, true) : socialId)
                             .email(email)
-                            .nickname(nickname != null ? nickname : generateRandomString(10))
+                            .nickname(nickname == null ? RandomStringUtils.random(10, true, false) : nickname)
                             .introduction(introduction)
                             .build()
             );
