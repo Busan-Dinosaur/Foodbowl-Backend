@@ -55,6 +55,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(ExceptionResponse.from(e.getExceptionType()));
     }
 
+    @ExceptionHandler(InvalidArgumentException.class)
+    public ResponseEntity<ExceptionResponse> handleInvalidArgumentException(InvalidArgumentException e) {
+        log.warn("[" + e.getClass() + "] " + e.getMessage());
+        return ResponseEntity.badRequest()
+                .body(ExceptionResponse.from(e.getExceptionType()));
+    }
+
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ExceptionResponse> handleAuthenticationException(AuthenticationException e) {
         log.warn("[" + e.getClass() + "] " + e.getMessage());
