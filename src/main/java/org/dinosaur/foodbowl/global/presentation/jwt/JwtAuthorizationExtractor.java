@@ -12,6 +12,7 @@ public class JwtAuthorizationExtractor {
     private static final String AUTHENTICATION_TYPE = "Bearer";
     private static final String AUTHENTICATION_DELIMITER = " ";
     private static final int TOKEN_INDEX = 1;
+    private static final int VALID_AUTH_INFO_SIZE = 2;
 
     public Optional<String> extractAccessToken(HttpServletRequest request) {
         Enumeration<String> headers = request.getHeaders(AUTHENTICATION_HEADER_KEY);
@@ -27,6 +28,6 @@ public class JwtAuthorizationExtractor {
 
     private Optional<String> extractToken(String auth) {
         String[] splitAuth = auth.split(AUTHENTICATION_DELIMITER);
-        return splitAuth.length == 2 ? Optional.of(splitAuth[TOKEN_INDEX]) : Optional.empty();
+        return splitAuth.length == VALID_AUTH_INFO_SIZE ? Optional.of(splitAuth[TOKEN_INDEX]) : Optional.empty();
     }
 }
