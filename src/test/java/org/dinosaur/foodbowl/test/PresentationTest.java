@@ -1,12 +1,11 @@
 package org.dinosaur.foodbowl.test;
 
-
-import org.dinosaur.foodbowl.domain.auth.jwt.JwtAuthorizationExtractor;
-import org.dinosaur.foodbowl.domain.auth.jwt.JwtTokenProvider;
+import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
 import org.dinosaur.foodbowl.global.config.SecurityConfig;
-import org.dinosaur.foodbowl.global.config.security.CustomAccessDeniedHandler;
-import org.dinosaur.foodbowl.global.config.security.CustomAuthenticationEntryPoint;
+import org.dinosaur.foodbowl.global.presentation.jwt.JwtAuthorizationExtractor;
+import org.dinosaur.foodbowl.global.presentation.security.CustomAccessDeniedHandler;
+import org.dinosaur.foodbowl.global.presentation.security.CustomAuthenticationEntryPoint;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.springframework.boot.test.mock.mockito.MockBean;

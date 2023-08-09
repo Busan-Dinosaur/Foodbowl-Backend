@@ -11,4 +11,9 @@ public class BaseException extends RuntimeException {
         super((exceptionType.getMessage()));
         this.exceptionType = exceptionType;
     }
+
+    public BaseException(ExceptionType exceptionType, Throwable throwable) {
+        super(exceptionType.getMessage(), throwable);
+        this.exceptionType = exceptionType;
+    }
 }
