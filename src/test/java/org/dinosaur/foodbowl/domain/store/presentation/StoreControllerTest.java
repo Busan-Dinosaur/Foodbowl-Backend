@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import org.dinosaur.foodbowl.domain.auth.jwt.JwtTokenProvider;
+import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
 import org.dinosaur.foodbowl.domain.store.application.StoreService;
 import org.dinosaur.foodbowl.domain.store.dto.response.CategoryResponse;
