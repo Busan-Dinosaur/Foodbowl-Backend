@@ -9,6 +9,7 @@ import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@SuppressWarnings("NonAsciiCharacters")
 class ReviewRepositoryTest extends PersistenceTest {
 
     @Autowired
