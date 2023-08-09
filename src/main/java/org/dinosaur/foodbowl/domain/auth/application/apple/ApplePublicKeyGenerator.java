@@ -10,6 +10,8 @@ import java.util.Base64;
 import java.util.Map;
 import org.dinosaur.foodbowl.domain.auth.application.dto.ApplePublicKey;
 import org.dinosaur.foodbowl.domain.auth.application.dto.ApplePublicKeys;
+import org.dinosaur.foodbowl.global.exception.ServerException;
+import org.dinosaur.foodbowl.global.exception.ServerExceptionType;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -37,7 +39,7 @@ public class ApplePublicKeyGenerator {
             KeyFactory keyFactory = KeyFactory.getInstance(applePublicKey.kty());
             return keyFactory.generatePublic(rsaPublicKeySpec);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException exception) {
-            throw new IllegalStateException("유효하지 않은 애플 키입니다.", exception);
+            throw new ServerException(ServerExceptionType.INVALID_APPLE_KEY, exception);
         }
     }
 }

@@ -3,6 +3,8 @@ package org.dinosaur.foodbowl.global.util;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import org.dinosaur.foodbowl.global.exception.ServerException;
+import org.dinosaur.foodbowl.global.exception.ServerExceptionType;
 
 public class EncryptUtils {
 
@@ -19,7 +21,7 @@ public class EncryptUtils {
             }
             return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("존재하지 않는 알고리즘입니다.", e);
+            throw new ServerException(ServerExceptionType.INVALID_ALGORITHM, e);
         }
     }
 }

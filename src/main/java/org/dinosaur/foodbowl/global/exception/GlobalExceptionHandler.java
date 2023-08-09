@@ -24,11 +24,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(new ExceptionResponse("SERVER-100", "알 수 없는 서버 에러가 발생했습니다."));
     }
 
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<ExceptionResponse> handleIllegalStateException(IllegalStateException e) {
+    @ExceptionHandler(ServerException.class)
+    public ResponseEntity<ExceptionResponse> handleServerException(ServerException e) {
         log.error("[" + e.getClass() + "] " + e.getMessage());
         return ResponseEntity.internalServerError()
-                .body(new ExceptionResponse("SERVER-101", e.getMessage()));
+                .body(ExceptionResponse.from(e.getExceptionType()));
     }
 
     @Override
