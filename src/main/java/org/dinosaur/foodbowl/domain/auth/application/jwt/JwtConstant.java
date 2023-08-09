@@ -1,5 +1,8 @@
-package org.dinosaur.foodbowl.domain.auth.jwt;
+package org.dinosaur.foodbowl.domain.auth.application.jwt;
 
+import lombok.Getter;
+
+@Getter
 public enum JwtConstant {
 
     DELIMITER(","),
@@ -11,9 +14,5 @@ public enum JwtConstant {
 
     JwtConstant(String name) {
         this.name = name;
-    }
-
-    public String getName() {
-        return name;
     }
 }
