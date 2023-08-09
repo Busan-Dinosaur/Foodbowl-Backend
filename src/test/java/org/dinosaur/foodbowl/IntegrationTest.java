@@ -1,5 +1,6 @@
 package org.dinosaur.foodbowl;
 
+import org.dinosaur.foodbowl.test.persister.MemberTestPersister;
 import org.dinosaur.foodbowl.test.persister.ReviewTestPersister;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -14,4 +15,7 @@ public class IntegrationTest {
 
     @Autowired
     protected ReviewTestPersister reviewTestPersister;
+
+    @Autowired
+    protected MemberTestPersister memberTestPersister;
 }

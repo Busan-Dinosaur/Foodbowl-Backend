@@ -1,0 +1,64 @@
+package org.dinosaur.foodbowl.domain.review.application;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.math.BigDecimal;
+import java.util.List;
+import org.dinosaur.foodbowl.IntegrationTest;
+import org.dinosaur.foodbowl.domain.member.domain.Member;
+import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
+
+@SuppressWarnings("NonAsciiCharacters")
+class ReviewServiceTest extends IntegrationTest {
+
+    @Autowired
+    private ReviewService reviewService;
+
+    @Test
+    void 사진_없이_리뷰를_저장한다() {
+        ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest(null);
+        Member member = memberTestPersister.memberBuilder().save();
+
+        Long reviewId = reviewService.create(reviewCreateRequest, member);
+
+        assertThat(reviewId).isNotNull();
+    }
+
+    @Test
+    void 사진을_포함해서_리뷰를_저장한다() {
+        ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest(generateMultipartFiles());
+        Member member = memberTestPersister.memberBuilder().save();
+
+        Long reviewId = reviewService.create(reviewCreateRequest, member);
+
+        assertThat(reviewId).isNotNull();
+    }
+
+    private ReviewCreateRequest generateReviewCreateRequest(List<MultipartFile> images) {
+        return new ReviewCreateRequest(
+            "신천직화집",
+                "서울시 강남구 테헤란로 90, 13층",
+                BigDecimal.valueOf(125.1234),
+                BigDecimal.valueOf(37.24455),
+                "http://store.url",
+                "02-1234-2424",
+                "한식",
+                "맛있습니다.",
+                images,
+                "부산대학교",
+                BigDecimal.valueOf(124.1234),
+                BigDecimal.valueOf(34.545)
+        );
+    }
+
+    private List<MultipartFile> generateMultipartFiles() {
+        MockMultipartFile multipartFile = new MockMultipartFile("bucket", "foodBowl.jpg", MediaType.TEXT_PLAIN_VALUE,
+                "Hello Images".getBytes());
+        return List.of(multipartFile);
+    }
+}
