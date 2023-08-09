@@ -45,15 +45,15 @@ public class AuthService {
     private TokenResponse generateToken(Member member) {
         String accessToken = jwtTokenProvider.createAccessToken(member.getId(), RoleType.ROLE_회원);
         String refreshToken = jwtTokenProvider.createRefreshToken(member.getId());
-        saveToken(accessToken, refreshToken);
+        saveToken(member.getId(), refreshToken);
         return new TokenResponse(accessToken, refreshToken);
     }
 
-    private void saveToken(String accessToken, String refreshToken) {
+    private void saveToken(Long memberId, String refreshToken) {
         redisTemplate.opsForValue()
                 .set(
+                        String.valueOf(memberId),
                         refreshToken,
-                        accessToken,
                         jwtTokenProvider.getValidRefreshMilliSecond(),
                         TimeUnit.MILLISECONDS
                 );

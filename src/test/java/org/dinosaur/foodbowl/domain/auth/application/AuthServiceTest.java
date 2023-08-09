@@ -11,6 +11,7 @@ import org.dinosaur.foodbowl.domain.auth.application.dto.AppleUser;
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.AppleLoginRequest;
 import org.dinosaur.foodbowl.domain.auth.dto.response.TokenResponse;
+import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.domain.vo.SocialType;
 import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
 import org.dinosaur.foodbowl.test.IntegrationTest;
@@ -43,7 +44,7 @@ class AuthServiceTest extends IntegrationTest {
 
         @Test
         void 등록된_회원이라면_토큰_정보를_반환한다() {
-            memberTestPersister.memberBuilder()
+            Member member = memberTestPersister.memberBuilder()
                     .socialType(SocialType.APPLE)
                     .socialId("1234")
                     .email("email@email.com")
@@ -54,8 +55,8 @@ class AuthServiceTest extends IntegrationTest {
             AppleLoginRequest appleLoginRequest = new AppleLoginRequest("token");
             TokenResponse tokenResponse = authService.appleLogin(appleLoginRequest);
 
-            String saveAccessToken = (String) redisTemplate.opsForValue().get(tokenResponse.refreshToken());
-            assertThat(saveAccessToken).isEqualTo(tokenResponse.accessToken());
+            String saveRefreshToken = (String) redisTemplate.opsForValue().get(String.valueOf(member.getId()));
+            assertThat(saveRefreshToken).isEqualTo(tokenResponse.refreshToken());
         }
 
         @Test
@@ -66,12 +67,12 @@ class AuthServiceTest extends IntegrationTest {
             AppleLoginRequest appleLoginRequest = new AppleLoginRequest("token");
             TokenResponse tokenResponse = authService.appleLogin(appleLoginRequest);
 
-            String saveAccessToken = (String) redisTemplate.opsForValue().get(tokenResponse.refreshToken());
-            Claims claims = jwtTokenProvider.extractClaims(saveAccessToken).get();
-            long memberId = Long.parseLong(claims.getSubject());
+            Claims claims = jwtTokenProvider.extractClaims(tokenResponse.accessToken()).get();
+            String memberId = claims.getSubject();
+            String saveRefreshToken = (String) redisTemplate.opsForValue().get(memberId);
             assertSoftly(softly -> {
-                softly.assertThat(saveAccessToken).isEqualTo(tokenResponse.accessToken());
-                softly.assertThat(memberRepository.findById(memberId)).isNotEmpty();
+                softly.assertThat(saveRefreshToken).isEqualTo(tokenResponse.refreshToken());
+                softly.assertThat(memberRepository.findById(Long.valueOf(memberId))).isPresent();
             });
         }
     }
