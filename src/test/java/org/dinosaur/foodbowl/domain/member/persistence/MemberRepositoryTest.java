@@ -53,9 +53,7 @@ class MemberRepositoryTest extends PersistenceTest {
                     .socialId(socialId)
                     .save();
 
-            Optional<Member> findMember = memberRepository.findBySocialTypeAndSocialId(socialType, socialId);
-
-            assertThat(findMember).isNotEmpty();
+            assertThat(memberRepository.findBySocialTypeAndSocialId(socialType, socialId)).isPresent();
         }
 
         @Test

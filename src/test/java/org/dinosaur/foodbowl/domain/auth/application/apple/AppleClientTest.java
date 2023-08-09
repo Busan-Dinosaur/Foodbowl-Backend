@@ -1,7 +1,6 @@
 package org.dinosaur.foodbowl.domain.auth.application.apple;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.Objects;
 import org.dinosaur.foodbowl.domain.auth.application.dto.ApplePublicKey;
@@ -24,10 +23,10 @@ class AppleClientTest extends IntegrationTest {
                 .stream()
                 .allMatch(this::isValidKey);
 
-        assertAll(
-                () -> assertThat(applePublicKeys.keys().size()).isGreaterThan(0),
-                () -> assertThat(result).isTrue()
-        );
+        assertSoftly(softly -> {
+            softly.assertThat(applePublicKeys.keys().size()).isGreaterThan(0);
+            softly.assertThat(result).isTrue();
+        });
     }
 
     private boolean isValidKey(ApplePublicKey applePublicKey) {

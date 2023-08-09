@@ -1,7 +1,7 @@
 package org.dinosaur.foodbowl.domain.auth.application.jwt;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import io.jsonwebtoken.Claims;
 import java.util.Optional;
@@ -26,11 +26,11 @@ class JwtTokenProviderTest {
         String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
 
         Claims claims = jwtTokenProvider.extractClaims(accessToken).get();
-        assertAll(
-                () -> assertThat(claims.getSubject()).isEqualTo("1"),
-                () -> assertThat((String) claims.get(JwtConstant.CLAMS_ROLES.getName()))
-                        .contains(RoleType.ROLE_회원.toString())
-        );
+        assertSoftly(softly -> {
+            softly.assertThat(claims.getSubject()).isEqualTo("1");
+            softly.assertThat((String) claims.get(JwtConstant.CLAMS_ROLES.getName()))
+                    .contains(RoleType.ROLE_회원.toString());
+        });
     }
 
     @Test

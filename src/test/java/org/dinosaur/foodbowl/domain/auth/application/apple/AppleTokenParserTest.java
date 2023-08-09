@@ -2,7 +2,7 @@ package org.dinosaur.foodbowl.domain.auth.application.apple;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
@@ -144,11 +144,11 @@ class AppleTokenParserTest {
 
             Claims claims = appleTokenParser.extractClaims(appleToken, publicKey);
 
-            assertAll(
-                    () -> assertThat(claims).isNotEmpty(),
-                    () -> assertThat(claims.getSubject()).isEqualTo(subject),
-                    () -> assertThat(claims.getAudience()).isEqualTo("aud")
-            );
+            assertSoftly(softly -> {
+                softly.assertThat(claims).isNotEmpty();
+                softly.assertThat(claims.getSubject()).isEqualTo(subject);
+                softly.assertThat(claims.getAudience()).isEqualTo("aud");
+            });
         }
     }
 }

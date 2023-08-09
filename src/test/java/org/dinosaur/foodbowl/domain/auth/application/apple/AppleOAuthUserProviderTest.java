@@ -1,8 +1,7 @@
 package org.dinosaur.foodbowl.domain.auth.application.apple;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
@@ -60,11 +59,11 @@ class AppleOAuthUserProviderTest extends IntegrationTest {
 
             AppleUser result = appleOAuthUserProvider.extractPlatformUser("token");
 
-            assertAll(
-                    () -> assertThat(result.socialType()).isEqualTo(SocialType.APPLE),
-                    () -> assertThat(result.socialId()).isEqualTo("1"),
-                    () -> assertThat(result.email()).isEqualTo("foodbowl@foodbowl.com")
-            );
+            assertSoftly(softly -> {
+                softly.assertThat(result.socialType()).isEqualTo(SocialType.APPLE);
+                softly.assertThat(result.socialId()).isEqualTo("1");
+                softly.assertThat(result.email()).isEqualTo("foodbowl@foodbowl.com");
+            });
         }
     }
 }

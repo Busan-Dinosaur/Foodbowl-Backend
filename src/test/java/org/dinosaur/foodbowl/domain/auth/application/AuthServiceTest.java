@@ -1,7 +1,7 @@
 package org.dinosaur.foodbowl.domain.auth.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
@@ -69,11 +69,10 @@ class AuthServiceTest extends IntegrationTest {
             String saveAccessToken = (String) redisTemplate.opsForValue().get(tokenResponse.refreshToken());
             Claims claims = jwtTokenProvider.extractClaims(saveAccessToken).get();
             long memberId = Long.parseLong(claims.getSubject());
-            assertAll(
-                    () -> assertThat(saveAccessToken).isEqualTo(tokenResponse.accessToken()),
-                    () -> assertThat(memberRepository.findById(memberId)).isNotEmpty()
-            );
-
+            assertSoftly(softly -> {
+                softly.assertThat(saveAccessToken).isEqualTo(tokenResponse.accessToken());
+                softly.assertThat(memberRepository.findById(memberId)).isNotEmpty();
+            });
         }
     }
 }
