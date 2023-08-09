@@ -70,4 +70,8 @@ public class Member extends AuditingEntity {
         this.nickname = nickname;
         this.introduction = introduction;
     }
+
+    public boolean isMe(Member member) {
+        return this == member;
+    }
 }
