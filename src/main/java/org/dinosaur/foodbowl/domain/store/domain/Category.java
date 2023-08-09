@@ -38,4 +38,8 @@ public class Category {
         this.id = id;
         this.categoryType = categoryType;
     }
+
+    public String getName() {
+        return categoryType.name();
+    }
 }
