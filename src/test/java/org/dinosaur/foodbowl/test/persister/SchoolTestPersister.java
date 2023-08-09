@@ -1,13 +1,12 @@
-package org.dinosaur.foodbowl.persister;
+package org.dinosaur.foodbowl.test.persister;
 
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.domain.store.persistence.SchoolRepository;
-import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
-@Component
+@Persister
 public class SchoolTestPersister {
 
     private final SchoolRepository schoolRepository;
@@ -18,7 +17,7 @@ public class SchoolTestPersister {
 
     public class SchoolBuilder {
 
-        public School build() {
+        public School save() {
             return schoolRepository.save(
                     School.builder()
                             .name("부산대학교")

@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.persister;
+package org.dinosaur.foodbowl.test.persister;
 
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
@@ -7,10 +7,9 @@ import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
 import org.dinosaur.foodbowl.domain.store.persistence.CategoryRepository;
 import org.dinosaur.foodbowl.domain.store.persistence.StoreRepository;
-import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
-@Component
+@Persister
 public class StoreTestPersister {
 
     private final StoreRepository storeRepository;
@@ -29,7 +28,7 @@ public class StoreTestPersister {
             return this;
         }
 
-        public Store build() {
+        public Store save() {
             return storeRepository.save(
                     Store.builder()
                             .storeName("비비큐 여의도한강공원점")

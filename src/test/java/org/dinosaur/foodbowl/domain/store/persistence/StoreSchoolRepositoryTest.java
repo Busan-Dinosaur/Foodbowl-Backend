@@ -19,8 +19,8 @@ class StoreSchoolRepositoryTest extends PersistenceTest {
 
     @Test
     void 가게와_학교의_관계를_저장한다() {
-        Store store = storeTestPersister.builder().build();
-        School school = schoolTestPersister.builder().build();
+        Store store = storeTestPersister.builder().save();
+        School school = schoolTestPersister.builder().save();
         StoreSchool storeSchool = StoreSchool.builder()
                 .store(store)
                 .school(school)
@@ -37,8 +37,8 @@ class StoreSchoolRepositoryTest extends PersistenceTest {
 
     @Test
     void 학교와_관련된_가게를_가져온다() {
-        Store store = storeTestPersister.builder().build();
-        School school = schoolTestPersister.builder().build();
+        Store store = storeTestPersister.builder().save();
+        School school = schoolTestPersister.builder().save();
         StoreSchool storeSchool = StoreSchool.builder()
                 .store(store)
                 .school(school)

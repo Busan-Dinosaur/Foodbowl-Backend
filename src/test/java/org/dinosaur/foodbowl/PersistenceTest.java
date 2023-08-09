@@ -1,8 +1,10 @@
 package org.dinosaur.foodbowl;
 
 import org.dinosaur.foodbowl.global.config.JpaConfig;
-import org.dinosaur.foodbowl.persister.SchoolTestPersister;
-import org.dinosaur.foodbowl.persister.StoreTestPersister;
+import org.dinosaur.foodbowl.test.persister.MemberTestPersister;
+import org.dinosaur.foodbowl.test.persister.Persister;
+import org.dinosaur.foodbowl.test.persister.SchoolTestPersister;
+import org.dinosaur.foodbowl.test.persister.StoreTestPersister;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +12,13 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 
-@DataJpaTest
-@Import(JpaConfig.class)
-@ComponentScan(basePackages = "org.dinosaur.foodbowl.persister")
-@AutoConfigureTestDatabase(replace = Replace.NONE)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@Import(JpaConfig.class)
+@AutoConfigureTestDatabase(replace = Replace.NONE)
+@DataJpaTest(includeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = Persister.class))
 public class PersistenceTest {
 
     @Autowired
@@ -24,4 +26,7 @@ public class PersistenceTest {
 
     @Autowired
     protected SchoolTestPersister schoolTestPersister;
+
+    @Autowired
+    protected MemberTestPersister memberTestPersister;
 }
