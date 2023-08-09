@@ -7,7 +7,7 @@ import static org.mockito.BDDMockito.given;
 
 import io.jsonwebtoken.Claims;
 import org.dinosaur.foodbowl.domain.auth.application.apple.AppleOAuthUserProvider;
-import org.dinosaur.foodbowl.domain.auth.application.dto.PlatformUser;
+import org.dinosaur.foodbowl.domain.auth.application.dto.AppleUser;
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.AppleLoginRequest;
 import org.dinosaur.foodbowl.domain.auth.dto.response.TokenResponse;
@@ -48,7 +48,7 @@ class AuthServiceTest extends IntegrationTest {
                     .socialId("1234")
                     .email("email@email.com")
                     .save();
-            PlatformUser platformUser = new PlatformUser(SocialType.APPLE, "1234", "email@email.com");
+            AppleUser platformUser = new AppleUser(SocialType.APPLE, "1234", "email@email.com");
             given(appleOAuthUserProvider.extractPlatformUser(anyString())).willReturn(platformUser);
 
             AppleLoginRequest appleLoginRequest = new AppleLoginRequest("token");
@@ -60,7 +60,7 @@ class AuthServiceTest extends IntegrationTest {
 
         @Test
         void 등록_되어있지_않은_회원이라면_등록_후_토큰_정보를_반환한다() {
-            PlatformUser platformUser = new PlatformUser(SocialType.APPLE, "1234", "email@email.com");
+            AppleUser platformUser = new AppleUser(SocialType.APPLE, "1234", "email@email.com");
             given(appleOAuthUserProvider.extractPlatformUser(anyString())).willReturn(platformUser);
 
             AppleLoginRequest appleLoginRequest = new AppleLoginRequest("token");

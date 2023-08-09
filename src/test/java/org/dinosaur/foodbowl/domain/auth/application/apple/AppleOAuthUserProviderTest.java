@@ -11,7 +11,7 @@ import static org.mockito.Mockito.mock;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import java.security.PublicKey;
-import org.dinosaur.foodbowl.domain.auth.application.dto.PlatformUser;
+import org.dinosaur.foodbowl.domain.auth.application.dto.AppleUser;
 import org.dinosaur.foodbowl.domain.member.domain.vo.SocialType;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.test.IntegrationTest;
@@ -58,7 +58,7 @@ class AppleOAuthUserProviderTest extends IntegrationTest {
             given(appleTokenParser.extractClaims(anyString(), any(PublicKey.class))).willReturn(claims);
             given(appleClaimsValidator.isValid(any(Claims.class))).willReturn(true);
 
-            PlatformUser result = appleOAuthUserProvider.extractPlatformUser("token");
+            AppleUser result = appleOAuthUserProvider.extractPlatformUser("token");
 
             assertAll(
                     () -> assertThat(result.socialType()).isEqualTo(SocialType.APPLE),

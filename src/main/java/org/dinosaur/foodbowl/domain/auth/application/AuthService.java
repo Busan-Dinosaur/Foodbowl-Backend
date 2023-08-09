@@ -3,7 +3,7 @@ package org.dinosaur.foodbowl.domain.auth.application;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.auth.application.apple.AppleOAuthUserProvider;
-import org.dinosaur.foodbowl.domain.auth.application.dto.PlatformUser;
+import org.dinosaur.foodbowl.domain.auth.application.dto.AppleUser;
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.AppleLoginRequest;
 import org.dinosaur.foodbowl.domain.auth.dto.response.TokenResponse;
@@ -26,7 +26,7 @@ public class AuthService {
 
     @Transactional
     public TokenResponse appleLogin(AppleLoginRequest appleLoginRequest) {
-        PlatformUser platformUser = appleOAuthUserProvider.extractPlatformUser(appleLoginRequest.appleToken());
+        AppleUser platformUser = appleOAuthUserProvider.extractPlatformUser(appleLoginRequest.appleToken());
         return memberRepository.findBySocialTypeAndSocialId(platformUser.socialType(), platformUser.socialId())
                 .map(this::generateToken)
                 .orElseGet(() -> {
