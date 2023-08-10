@@ -13,6 +13,9 @@ import org.dinosaur.foodbowl.domain.store.persistence.StoreSchoolRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -67,6 +70,28 @@ class StoreServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> storeService.create(storeCreateDtoWithoutSchool))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("이미 존재하는 가게입니다.");
+        }
+
+        @ParameterizedTest
+        @NullAndEmptySource
+        @ValueSource(strings = {"미국식", "한국식", "학식", "급식"})
+        void 카테고리_타입이_존재하지_않으면_예외_발생(String category) {
+            StoreCreateDto storeCreateDto = new StoreCreateDto(
+                    "농민백암순대",
+                    category,
+                    "서울시 강남구 선릉로 14번길 245",
+                    BigDecimal.valueOf(123.124),
+                    BigDecimal.valueOf(37.4545),
+                    "http://images.foodbowl",
+                    "02-123-4567",
+                    null,
+                    null,
+                    null
+            );
+
+            assertThatThrownBy(() -> storeService.create(storeCreateDto))
+                    .isInstanceOf(BadRequestException.class)
+                    .hasMessage("일치하는 카테고리를 찾을 수 없습니다.");
         }
     }
 
