@@ -27,7 +27,7 @@ public class ReviewService {
     private final PhotoUtils photoUtils;
 
     @Transactional
-    public Long create(ReviewCreateRequest reviewCreateRequest, Member member) {
+    public Long create(ReviewCreateRequest reviewCreateRequest, List<MultipartFile> imageFiles, Member member) {
         StoreCreateDto storeCreateDto = convertStoreCreateDto(reviewCreateRequest);
         Store store = storeService.create(storeCreateDto);
 
@@ -39,7 +39,7 @@ public class ReviewService {
                         .build()
         );
 
-        saveImagesIfExists(reviewCreateRequest.getImages(), store, review);
+        saveImagesIfExists(imageFiles, store, review);
         return review.getId();
     }
 

@@ -20,10 +20,10 @@ class ReviewServiceTest extends IntegrationTest {
 
     @Test
     void 사진_없이_리뷰를_저장한다() {
-        ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest(null);
+        ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
         Member member = memberTestPersister.memberBuilder().save();
 
-        Long reviewId = reviewService.create(reviewCreateRequest, member);
+        Long reviewId = reviewService.create(reviewCreateRequest, null, member);
 
         assertThat(reviewId).isNotNull();
     }
@@ -31,16 +31,16 @@ class ReviewServiceTest extends IntegrationTest {
     @Test
     void 사진을_포함해서_리뷰를_저장한다() {
         List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2);
-        ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest(multipartFiles);
+        ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
         Member member = memberTestPersister.memberBuilder().save();
 
-        Long reviewId = reviewService.create(reviewCreateRequest, member);
+        Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member);
 
         assertThat(reviewId).isNotNull();
         FileTestUtils.cleanUp();
     }
 
-    private ReviewCreateRequest generateReviewCreateRequest(List<MultipartFile> images) {
+    private ReviewCreateRequest generateReviewCreateRequest() {
         return new ReviewCreateRequest(
             "신천직화집",
                 "서울시 강남구 테헤란로 90, 13층",
@@ -50,7 +50,6 @@ class ReviewServiceTest extends IntegrationTest {
                 "02-1234-2424",
                 "한식",
                 "맛있습니다.",
-                images,
                 "부산대학교",
                 BigDecimal.valueOf(124.1234),
                 BigDecimal.valueOf(34.545)

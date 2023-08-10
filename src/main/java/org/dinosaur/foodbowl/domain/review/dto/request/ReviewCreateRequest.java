@@ -2,14 +2,11 @@ package org.dinosaur.foodbowl.domain.review.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @AllArgsConstructor
@@ -38,9 +35,6 @@ public class ReviewCreateRequest {
 
     @NotBlank
     private String reviewContent;
-
-    @Size(max = 4)
-    private List<MultipartFile> images;
 
     private String schoolName;
     private BigDecimal schoolX;
