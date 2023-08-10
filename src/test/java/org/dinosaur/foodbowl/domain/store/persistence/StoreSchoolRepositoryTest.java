@@ -45,7 +45,7 @@ class StoreSchoolRepositoryTest extends PersistenceTest {
                 .build();
         storeSchoolRepository.save(storeSchool);
 
-        List<StoreSchool> storeSchools = storeSchoolRepository.findAllBySchoolName(school.getName());
+        List<StoreSchool> storeSchools = storeSchoolRepository.findAllBySchoolName(school.getName().getName());
         List<Store> stores = storeSchools.stream()
                 .map(StoreSchool::getStore)
                 .toList();

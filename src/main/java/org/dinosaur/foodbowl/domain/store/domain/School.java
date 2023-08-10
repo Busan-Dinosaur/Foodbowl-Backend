@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -16,6 +15,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.dinosaur.foodbowl.domain.store.domain.vo.Coordinate;
+import org.dinosaur.foodbowl.domain.store.domain.vo.SchoolName;
 import org.dinosaur.foodbowl.global.persistence.AuditingEntity;
 
 @Getter
@@ -30,9 +30,9 @@ public class School extends AuditingEntity {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @NotNull
-    @Column(name = "name", unique = true, length = 45)
-    private String name;
+    @Valid
+    @Embedded
+    private SchoolName name;
 
     @Valid
     @Embedded
@@ -40,7 +40,7 @@ public class School extends AuditingEntity {
 
     @Builder
     private School(String name, BigDecimal x, BigDecimal y) {
-        this.name = name;
+        this.name = new SchoolName(name);
         this.coordinate = new Coordinate(x, y);
     }
 }
