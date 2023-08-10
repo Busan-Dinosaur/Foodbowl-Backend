@@ -16,12 +16,20 @@ public class FileTestUtils {
 
         for (int i = 0; i < size; i++) {
             multipartFiles.add(new MockMultipartFile(
-                    "bucket",
+                    "images",
                     "foodBowl.jpg",
                     MediaType.TEXT_PLAIN_VALUE,
                     "Hello Images".getBytes()));
         }
         return multipartFiles;
+    }
+
+    public static MultipartFile generateMockMultiPartFile() {
+        return new MockMultipartFile(
+                "images",
+                "foodBowl.jpg",
+                MediaType.TEXT_PLAIN_VALUE,
+                "Hello Images".getBytes());
     }
 
     public static void cleanUp() {
