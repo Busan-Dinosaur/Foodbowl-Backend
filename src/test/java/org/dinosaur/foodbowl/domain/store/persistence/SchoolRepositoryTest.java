@@ -32,7 +32,7 @@ class SchoolRepositoryTest extends PersistenceTest {
         School school = generateSchool();
         schoolRepository.save(school);
 
-        School findSchool = schoolRepository.findByName(school.getName().getName()).get();
+        School findSchool = schoolRepository.findByName_Name(school.getName().getName()).get();
 
         assertThat(findSchool.getName()).isEqualTo(school.getName());
     }

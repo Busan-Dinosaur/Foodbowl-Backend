@@ -20,7 +20,7 @@ public class SchoolService {
 
     @Transactional
     public School save(String name, BigDecimal x, BigDecimal y) {
-        schoolRepository.findByName(name).ifPresent(
+        schoolRepository.findByName_Name(name).ifPresent(
                 existingSchool -> {
                     throw new BadRequestException(DUPLICATE_ERROR);
                 });
@@ -34,6 +34,6 @@ public class SchoolService {
     }
 
     public Optional<School> findByName(String name) {
-        return schoolRepository.findByName(name);
+        return schoolRepository.findByName_Name(name);
     }
 }

@@ -8,5 +8,5 @@ public interface StoreSchoolRepository extends Repository<StoreSchool, Long> {
 
     StoreSchool save(StoreSchool storeSchool);
 
-    List<StoreSchool> findAllBySchoolName(String name);
+    List<StoreSchool> findAllBySchool_Name_Name(String name);
 }

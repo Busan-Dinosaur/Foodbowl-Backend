@@ -49,7 +49,7 @@ class StoreServiceTest extends IntegrationTest {
                     BigDecimal.valueOf(37.1234));
 
             Store store = storeService.create(storeCreateDtoWithSchool);
-            List<StoreSchool> storeSchools = storeSchoolRepository.findAllBySchoolName("부산대학교");
+            List<StoreSchool> storeSchools = storeSchoolRepository.findAllBySchool_Name_Name("부산대학교");
             List<Store> stores = storeSchools.stream()
                     .map(StoreSchool::getStore)
                     .toList();
@@ -70,6 +70,27 @@ class StoreServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> storeService.create(storeCreateDtoWithoutSchool))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("이미 존재하는 가게입니다.");
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"!부산대학교", "@서울대학교@", "+연세대학교-", "!@#!$"})
+        void 학교_이름이_형식과_다르면_예외_발생(String schoolName) {
+            StoreCreateDto storeCreateDto = new StoreCreateDto(
+                    "농민백암순대",
+                    "한식",
+                    "서울시 강남구 선릉로 14번길 245",
+                    BigDecimal.valueOf(123.124),
+                    BigDecimal.valueOf(37.4545),
+                    "http://images.foodbowl",
+                    "02-123-4567",
+                    schoolName,
+                    null,
+                    null
+            );
+
+            assertThatThrownBy(() -> storeService.create(storeCreateDto))
+                    .isInstanceOf(BadRequestException.class)
+                    .hasMessage("학교 이름 형식이 잘못되었습니다.");
         }
 
         @ParameterizedTest

@@ -6,7 +6,7 @@ import org.springframework.data.repository.Repository;
 
 public interface SchoolRepository extends Repository<School, Long> {
 
-    Optional<School> findByName(String name);
+    Optional<School> findByName_Name(String name);
 
     School save(School school);
 }
