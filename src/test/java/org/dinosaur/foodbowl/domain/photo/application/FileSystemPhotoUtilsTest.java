@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.File;
 import java.util.List;
-import org.dinosaur.foodbowl.IntegrationTest;
 import org.dinosaur.foodbowl.global.exception.FileException;
+import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;

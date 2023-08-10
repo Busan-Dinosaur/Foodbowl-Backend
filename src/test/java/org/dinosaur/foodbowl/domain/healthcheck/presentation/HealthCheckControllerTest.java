@@ -1,6 +1,5 @@
 package org.dinosaur.foodbowl.domain.healthcheck.presentation;
 
-import static org.dinosaur.foodbowl.domain.member.domain.vo.RoleType.ROLE_회원;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -9,13 +8,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Optional;
-import org.dinosaur.foodbowl.PresentationTest;
-import org.dinosaur.foodbowl.domain.auth.jwt.JwtTokenProvider;
+import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.healthcheck.application.HealthCheckService;
 import org.dinosaur.foodbowl.domain.healthcheck.dto.response.HealthCheckResponse;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
+import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
 import org.dinosaur.foodbowl.domain.member.domain.vo.SocialType;
-import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
+import org.dinosaur.foodbowl.test.PresentationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -23,7 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @SuppressWarnings("NonAsciiCharacters")
-@WebMvcTest(controllers = HealthCheckControllerImpl.class)
+@WebMvcTest(controllers = HealthCheckController.class)
 class HealthCheckControllerTest extends PresentationTest {
 
     @Autowired
@@ -31,9 +30,6 @@ class HealthCheckControllerTest extends PresentationTest {
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
-
-    @MockBean
-    private MemberRepository memberRepository;
 
     @MockBean
     private HealthCheckService healthCheckService;
@@ -62,7 +58,7 @@ class HealthCheckControllerTest extends PresentationTest {
                 .willReturn(Optional.of(member));
 
         mockMvc.perform(get("/v1/health-check/auth")
-                        .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(1L, ROLE_회원)))
+                        .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("good: " + member.getNickname()))
                 .andDo(print());

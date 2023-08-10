@@ -1,8 +1,8 @@
 package org.dinosaur.foodbowl.global.presentation;
 
 import lombok.RequiredArgsConstructor;
+import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtUser;
 import org.dinosaur.foodbowl.domain.auth.exception.AuthExceptionType;
-import org.dinosaur.foodbowl.domain.auth.jwt.JwtUser;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.exception.MemberExceptionType;
 import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;

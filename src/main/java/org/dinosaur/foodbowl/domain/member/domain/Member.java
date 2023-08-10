@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.domain.member.domain;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -16,6 +17,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.dinosaur.foodbowl.domain.member.domain.vo.Nickname;
 import org.dinosaur.foodbowl.domain.member.domain.vo.SocialType;
 import org.dinosaur.foodbowl.global.persistence.AuditingEntity;
 
@@ -49,9 +51,8 @@ public class Member extends AuditingEntity {
     @Column(name = "email", length = 255)
     private String email;
 
-    @NotNull
-    @Column(name = "nickname", unique = true, length = 45)
-    private String nickname;
+    @Embedded
+    private Nickname nickname;
 
     @Column(name = "introduction", length = 255)
     private String introduction;
@@ -67,7 +68,11 @@ public class Member extends AuditingEntity {
         this.socialType = socialType;
         this.socialId = socialId;
         this.email = email;
-        this.nickname = nickname;
+        this.nickname = new Nickname(nickname);
         this.introduction = introduction;
+    }
+
+    public String getNickname() {
+        return this.nickname.getValue();
     }
 }

@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import org.dinosaur.foodbowl.PersistenceTest;
 import org.dinosaur.foodbowl.domain.store.domain.School;
+import org.dinosaur.foodbowl.test.PersistenceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

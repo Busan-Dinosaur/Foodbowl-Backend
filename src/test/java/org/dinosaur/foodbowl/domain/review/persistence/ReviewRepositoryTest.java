@@ -2,10 +2,10 @@ package org.dinosaur.foodbowl.domain.review.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.dinosaur.foodbowl.PersistenceTest;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
+import org.dinosaur.foodbowl.test.PersistenceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

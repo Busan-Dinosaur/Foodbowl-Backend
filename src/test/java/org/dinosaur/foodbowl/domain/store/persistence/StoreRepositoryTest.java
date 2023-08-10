@@ -3,9 +3,9 @@ package org.dinosaur.foodbowl.domain.store.persistence;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
-import org.dinosaur.foodbowl.PersistenceTest;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
+import org.dinosaur.foodbowl.test.PersistenceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

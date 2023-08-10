@@ -3,6 +3,7 @@ package org.dinosaur.foodbowl.domain.store.application;
 import static org.dinosaur.foodbowl.domain.store.exception.StoreExceptionType.DUPLICATE_ERROR;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.store.domain.Category;
@@ -12,6 +13,7 @@ import org.dinosaur.foodbowl.domain.store.domain.StoreSchool;
 import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
 import org.dinosaur.foodbowl.domain.store.domain.vo.CategoryType;
 import org.dinosaur.foodbowl.domain.store.dto.StoreCreateDto;
+import org.dinosaur.foodbowl.domain.store.dto.response.CategoryResponses;
 import org.dinosaur.foodbowl.domain.store.persistence.CategoryRepository;
 import org.dinosaur.foodbowl.domain.store.persistence.StoreRepository;
 import org.dinosaur.foodbowl.domain.store.persistence.StoreSchoolRepository;
@@ -28,6 +30,12 @@ public class StoreService {
     private final CategoryRepository categoryRepository;
     private final StoreSchoolRepository storeSchoolRepository;
     private final SchoolService schoolService;
+
+    @Transactional(readOnly = true)
+    public CategoryResponses getCategories() {
+        List<Category> categories = categoryRepository.findAllByOrderById();
+        return CategoryResponses.from(categories);
+    }
 
     @Transactional
     public Store create(StoreCreateDto storeCreateDto) {

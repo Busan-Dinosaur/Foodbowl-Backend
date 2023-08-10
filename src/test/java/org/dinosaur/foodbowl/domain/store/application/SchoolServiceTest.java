@@ -3,9 +3,9 @@ package org.dinosaur.foodbowl.domain.store.application;
 import static org.assertj.core.api.Assertions.*;
 
 import java.math.BigDecimal;
-import org.dinosaur.foodbowl.IntegrationTest;
 import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
+import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

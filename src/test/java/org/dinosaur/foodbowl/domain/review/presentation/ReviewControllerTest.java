@@ -15,14 +15,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
-import org.dinosaur.foodbowl.PresentationTest;
-import org.dinosaur.foodbowl.domain.auth.jwt.JwtTokenProvider;
+import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.domain.vo.SocialType;
-import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
 import org.dinosaur.foodbowl.domain.review.application.ReviewService;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.file.FileTestUtils;
+import org.dinosaur.foodbowl.test.PresentationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -47,9 +46,6 @@ class ReviewControllerTest extends PresentationTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @MockBean
-    private MemberRepository memberRepository;
 
     @MockBean
     private ReviewService reviewService;

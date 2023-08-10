@@ -2,9 +2,9 @@ package org.dinosaur.foodbowl.domain.photo.persistence;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import org.dinosaur.foodbowl.PersistenceTest;
 import org.dinosaur.foodbowl.domain.photo.domain.Photo;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
+import org.dinosaur.foodbowl.test.PersistenceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
