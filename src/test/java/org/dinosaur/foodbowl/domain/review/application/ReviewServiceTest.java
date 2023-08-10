@@ -7,10 +7,9 @@ import java.util.List;
 import org.dinosaur.foodbowl.IntegrationTest;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
+import org.dinosaur.foodbowl.file.FileTestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -31,12 +30,14 @@ class ReviewServiceTest extends IntegrationTest {
 
     @Test
     void 사진을_포함해서_리뷰를_저장한다() {
-        ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest(generateMultipartFiles());
+        List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2);
+        ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest(multipartFiles);
         Member member = memberTestPersister.memberBuilder().save();
 
         Long reviewId = reviewService.create(reviewCreateRequest, member);
 
         assertThat(reviewId).isNotNull();
+        FileTestUtils.cleanUp();
     }
 
     private ReviewCreateRequest generateReviewCreateRequest(List<MultipartFile> images) {
@@ -54,11 +55,5 @@ class ReviewServiceTest extends IntegrationTest {
                 BigDecimal.valueOf(124.1234),
                 BigDecimal.valueOf(34.545)
         );
-    }
-
-    private List<MultipartFile> generateMultipartFiles() {
-        MockMultipartFile multipartFile = new MockMultipartFile("bucket", "foodBowl.jpg", MediaType.TEXT_PLAIN_VALUE,
-                "Hello Images".getBytes());
-        return List.of(multipartFile);
     }
 }
