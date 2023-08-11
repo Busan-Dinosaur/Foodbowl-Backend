@@ -130,7 +130,7 @@ class ReviewControllerTest extends PresentationTest {
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("errorCode").value("SERVER-103"))
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
                     .andExpect(jsonPath("$.message").value("사진의 개수는 최대 4개까지 가능합니다."));
         }
 
@@ -161,7 +161,7 @@ class ReviewControllerTest extends PresentationTest {
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("errorCode").value("SERVER-102"))
+                    .andExpect(jsonPath("errorCode").value("CLIENT-100"))
                     .andExpect(jsonPath("$.message").value("가게 이름은 반드시 포함되어야 합니다."));
         }
 
@@ -192,7 +192,7 @@ class ReviewControllerTest extends PresentationTest {
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("errorCode").value("SERVER-102"))
+                    .andExpect(jsonPath("errorCode").value("CLIENT-100"))
                     .andExpect(jsonPath("$.message").value("가게 주소는 반드시 포함되어야 합니다."));
         }
 
@@ -221,7 +221,7 @@ class ReviewControllerTest extends PresentationTest {
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("errorCode").value("SERVER-102"))
+                    .andExpect(jsonPath("errorCode").value("CLIENT-100"))
                     .andExpect(jsonPath("$.message").value("가게 경도는 반드시 포함되어야 합니다."));
         }
 
@@ -250,7 +250,7 @@ class ReviewControllerTest extends PresentationTest {
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("errorCode").value("SERVER-102"))
+                    .andExpect(jsonPath("errorCode").value("CLIENT-100"))
                     .andExpect(jsonPath("$.message").value("가게 위도는 반드시 포함되어야 합니다."));
         }
 
@@ -281,7 +281,7 @@ class ReviewControllerTest extends PresentationTest {
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("errorCode").value("SERVER-102"))
+                    .andExpect(jsonPath("errorCode").value("CLIENT-100"))
                     .andExpect(jsonPath("$.message").value("카카오 서버의 가게 정보 url 반드시 포함되어야 합니다."));
         }
 
@@ -312,7 +312,7 @@ class ReviewControllerTest extends PresentationTest {
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("errorCode").value("SERVER-102"))
+                    .andExpect(jsonPath("errorCode").value("CLIENT-100"))
                     .andExpect(jsonPath("$.message").value("가게 카테고리는 반드시 포함되어야 합니다."));
         }
 
@@ -343,7 +343,7 @@ class ReviewControllerTest extends PresentationTest {
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("errorCode").value("SERVER-102"))
+                    .andExpect(jsonPath("errorCode").value("CLIENT-100"))
                     .andExpect(jsonPath("$.message").value("가게 리뷰는 반드시 포함되어야 합니다."));
         }
     }

@@ -35,7 +35,7 @@ public class ReviewService {
                 Review.builder()
                         .store(store)
                         .member(member)
-                        .content(reviewCreateRequest.getReviewContent())
+                        .content(reviewCreateRequest.reviewContent())
                         .build()
         );
 
@@ -59,16 +59,16 @@ public class ReviewService {
 
     private StoreCreateDto convertStoreCreateDto(ReviewCreateRequest reviewCreateRequest) {
         return new StoreCreateDto(
-                reviewCreateRequest.getStoreName(),
-                reviewCreateRequest.getCategory(),
-                reviewCreateRequest.getStoreAddress(),
-                reviewCreateRequest.getX(),
-                reviewCreateRequest.getY(),
-                reviewCreateRequest.getStoreUrl(),
-                reviewCreateRequest.getPhone(),
-                reviewCreateRequest.getSchoolName(),
-                reviewCreateRequest.getSchoolX(),
-                reviewCreateRequest.getSchoolY()
+                reviewCreateRequest.storeName(),
+                reviewCreateRequest.category(),
+                reviewCreateRequest.storeAddress(),
+                reviewCreateRequest.x(),
+                reviewCreateRequest.y(),
+                reviewCreateRequest.storeUrl(),
+                reviewCreateRequest.phone(),
+                reviewCreateRequest.schoolName(),
+                reviewCreateRequest.schoolX(),
+                reviewCreateRequest.schoolY()
         );
     }
 }

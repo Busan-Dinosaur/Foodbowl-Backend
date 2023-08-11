@@ -30,6 +30,38 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(new ExceptionResponse("SERVER-100", "알 수 없는 서버 에러가 발생했습니다."));
     }
 
+    @Override
+    public ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request
+    ) {
+        String exceptionMessage = ex.getBindingResult()
+                .getAllErrors()
+                .stream()
+                .map(ObjectError::getDefaultMessage)
+                .collect(Collectors.joining(JOINER_DELIMITER));
+        log.error("[" + ex.getClass() + "] " + exceptionMessage);
+        return ResponseEntity.badRequest()
+                .body(new ExceptionResponse("CLIENT-100", exceptionMessage));
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ExceptionResponse> constraintViolationException(ConstraintViolationException e) {
+        log.error("[" + e.getClass() + "] " + e.getMessage());
+        Iterator<ConstraintViolation<?>> iterator =
+                e.getConstraintViolations().iterator();
+
+        StringJoiner stringJoiner = new StringJoiner(JOINER_DELIMITER);
+        while (iterator.hasNext()) {
+            ConstraintViolation<?> constraintViolation = iterator.next();
+            stringJoiner.add(constraintViolation.getMessage());
+        }
+        return ResponseEntity.badRequest()
+                .body(new ExceptionResponse("CLIENT-101", stringJoiner.toString()));
+    }
+
     @ExceptionHandler(ServerException.class)
     public ResponseEntity<ExceptionResponse> handleServerException(ServerException e) {
         log.error("[" + e.getClass() + "] " + e.getMessage());
@@ -63,37 +95,5 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.warn("[" + e.getClass() + "] " + e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ExceptionResponse.from(e.getExceptionType()));
-    }
-
-    @Override
-    public ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex,
-            HttpHeaders headers,
-            HttpStatusCode status,
-            WebRequest request
-    ) {
-        String exceptionMessage = ex.getBindingResult()
-                .getAllErrors()
-                .stream()
-                .map(ObjectError::getDefaultMessage)
-                .collect(Collectors.joining(JOINER_DELIMITER));
-        log.error("[" + ex.getClass() + "] " + exceptionMessage);
-        return ResponseEntity.badRequest()
-                .body(new ExceptionResponse("SERVER-102", exceptionMessage));
-    }
-
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ExceptionResponse> constraintViolationException(ConstraintViolationException e) {
-        log.error("[" + e.getClass() + "] " + e.getMessage());
-        Iterator<ConstraintViolation<?>> iterator =
-                e.getConstraintViolations().iterator();
-
-        StringJoiner stringJoiner = new StringJoiner(JOINER_DELIMITER);
-        while (iterator.hasNext()) {
-            ConstraintViolation<?> constraintViolation = iterator.next();
-            stringJoiner.add(constraintViolation.getMessage());
-        }
-        return ResponseEntity.badRequest()
-                .body(new ExceptionResponse("SERVER-103", stringJoiner.toString()));
     }
 }

@@ -48,7 +48,7 @@ class AuthControllerTest extends PresentationTest {
                             .content(objectMapper.writeValueAsString(appleLoginRequest)))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.errorCode").value("SERVER-102"))
+                    .andExpect(jsonPath("$.errorCode").value("CLIENT-100"))
                     .andExpect(jsonPath("$.message").value("애플 토큰이 존재하지 않습니다."));
         }
 
