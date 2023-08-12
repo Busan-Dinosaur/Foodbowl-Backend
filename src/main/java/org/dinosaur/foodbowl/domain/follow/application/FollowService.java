@@ -10,6 +10,7 @@ import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -18,6 +19,7 @@ public class FollowService {
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
 
+    @Transactional
     public void follow(Long targetMemberId, Member loginMember) {
         Member targetMember = memberRepository.findById(targetMemberId)
                 .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
