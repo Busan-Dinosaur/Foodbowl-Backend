@@ -1,6 +1,8 @@
 package org.dinosaur.foodbowl.test;
 
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
+import org.dinosaur.foodbowl.domain.member.domain.Member;
+import org.dinosaur.foodbowl.domain.member.domain.vo.SocialType;
 import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
 import org.dinosaur.foodbowl.global.config.SecurityConfig;
 import org.dinosaur.foodbowl.global.presentation.jwt.JwtAuthorizationExtractor;
@@ -20,6 +22,16 @@ import org.springframework.context.annotation.Import;
         CustomAuthenticationEntryPoint.class
 })
 public class PresentationTest {
+
+    protected static final String AUTHORIZATION = "Authorization";
+    protected static final String BEARER = "Bearer ";
+    protected static final Member member = Member.builder()
+            .email("foodBowl@gmail.com")
+            .socialId("foodBowlId")
+            .socialType(SocialType.APPLE)
+            .nickname("foodbowl")
+            .introduction("푸드볼 서비스")
+            .build();
 
     @MockBean
     protected MemberRepository memberRepository;

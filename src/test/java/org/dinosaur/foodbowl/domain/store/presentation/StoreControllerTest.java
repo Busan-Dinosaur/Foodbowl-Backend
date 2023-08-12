@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.domain.store.presentation;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.dinosaur.foodbowl.domain.member.domain.vo.RoleType.ROLE_회원;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -10,7 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
-import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
 import org.dinosaur.foodbowl.domain.store.application.StoreService;
 import org.dinosaur.foodbowl.domain.store.dto.response.CategoryResponse;
 import org.dinosaur.foodbowl.domain.store.dto.response.CategoryResponses;
@@ -48,7 +48,7 @@ class StoreControllerTest extends PresentationTest {
         given(storeService.getCategories()).willReturn(categoryResponses);
 
         MvcResult mvcResult = mockMvc.perform(get("/v1/stores/categories")
-                        .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원)))
+                        .header(AUTHORIZATION, BEARER + jwtTokenProvider.createAccessToken(1L, ROLE_회원)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
