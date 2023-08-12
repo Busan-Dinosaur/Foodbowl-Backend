@@ -32,7 +32,7 @@ public class FollowService {
     }
 
     private void validateFollow(Member targetMember, Member loginMember) {
-        if (loginMember.isMe(targetMember)) {
+        if (loginMember == targetMember) {
             throw new BadRequestException(FollowExceptionType.FOLLOW_ME);
         }
 

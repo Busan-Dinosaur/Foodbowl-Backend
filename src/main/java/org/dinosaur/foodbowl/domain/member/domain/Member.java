@@ -72,10 +72,6 @@ public class Member extends AuditingEntity {
         this.introduction = introduction;
     }
 
-    public boolean isMe(Member member) {
-        return this == member;
-    }
-
     public String getNickname() {
         return this.nickname.getValue();
     }
