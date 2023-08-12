@@ -24,7 +24,7 @@ public interface FollowControllerDocs {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "미등록 회원 ID 팔로우",
+                    description = "등록되지 않은 회원 ID 팔로우",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
