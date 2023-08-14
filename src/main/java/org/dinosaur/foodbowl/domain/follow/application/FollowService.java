@@ -1,5 +1,6 @@
 package org.dinosaur.foodbowl.domain.follow.application;
 
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.follow.domain.Follow;
 import org.dinosaur.foodbowl.domain.follow.exception.FollowExceptionType;
@@ -34,7 +35,7 @@ public class FollowService {
     }
 
     private void validateFollow(Member targetMember, Member loginMember) {
-        if (loginMember == targetMember) {
+        if (Objects.equals(loginMember, targetMember)) {
             throw new BadRequestException(FollowExceptionType.FOLLOW_ME);
         }
 
