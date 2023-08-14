@@ -11,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @Slf4j
@@ -46,6 +47,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("[" + ex.getClass() + "] " + exceptionMessage);
         return ResponseEntity.badRequest()
                 .body(new ExceptionResponse("SERVER-102", exceptionMessage));
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ExceptionResponse> handleMethodArgumentTypeMismatchException(
+            MethodArgumentTypeMismatchException e
+    ) {
+        log.warn("[" + e.getClass() + "] " + e.getMessage());
+        return ResponseEntity.badRequest()
+                .body(new ExceptionResponse("CLIENT-102", "요청 데이터 타입이 일치하지 않습니다."));
     }
 
     @ExceptionHandler(BadRequestException.class)

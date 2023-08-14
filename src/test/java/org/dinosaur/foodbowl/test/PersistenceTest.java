@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.test;
 
 import org.dinosaur.foodbowl.global.config.JpaConfig;
+import org.dinosaur.foodbowl.test.persister.FollowTestPersister;
 import org.dinosaur.foodbowl.test.persister.MemberTestPersister;
 import org.dinosaur.foodbowl.test.persister.Persister;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -21,4 +22,7 @@ public class PersistenceTest {
 
     @Autowired
     protected MemberTestPersister memberTestPersister;
+
+    @Autowired
+    protected FollowTestPersister followTestPersister;
 }

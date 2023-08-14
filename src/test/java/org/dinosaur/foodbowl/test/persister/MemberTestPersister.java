@@ -50,15 +50,14 @@ public class MemberTestPersister {
         }
 
         public Member save() {
-            return memberRepository.save(
-                    Member.builder()
-                            .socialType(socialType == null ? SocialType.APPLE : socialType)
-                            .socialId(socialId == null ? RandomStringUtils.random(10, true, true) : socialId)
-                            .email(email)
-                            .nickname(nickname == null ? RandomStringUtils.random(10, true, false) : nickname)
-                            .introduction(introduction)
-                            .build()
-            );
+            Member member = Member.builder()
+                    .socialType(socialType == null ? SocialType.APPLE : socialType)
+                    .socialId(socialId == null ? RandomStringUtils.random(10, true, true) : socialId)
+                    .email(email)
+                    .nickname(nickname == null ? RandomStringUtils.random(10, true, false) : nickname)
+                    .introduction(introduction)
+                    .build();
+            return memberRepository.save(member);
         }
     }
 }
