@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 @Tag(name = "팔로우", description = "팔로우 API")
 public interface FollowControllerDocs {
 
-    @Operation(summary = "팔로우 요청", description = "다른 회원에게 팔로우를 요청한다.")
+    @Operation(summary = "팔로우", description = "다른 회원에게 팔로우를 요청한다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "팔로우 성공"),
             @ApiResponse(
@@ -28,5 +28,27 @@ public interface FollowControllerDocs {
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
-    ResponseEntity<Void> follow(@Parameter(description = "팔로우 대상 회원 ID") Long targetMemberId, Member loginMember);
+    ResponseEntity<Void> follow(
+            @Parameter(description = "팔로우 회원 ID", example = "1") Long targetMemberId,
+            Member loginMember
+    );
+
+    @Operation(summary = "언팔로우", description = "팔로우 되어있는 회원을 언팔로우한다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "언팔로우 성공"),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "팔로우하지 않은 회원 언팔로우",
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "등록되지 않은 회원 ID 언팔로우",
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            )
+    })
+    ResponseEntity<Void> unfollow(
+            @Parameter(description = "언팔로우 회원 ID", example = "1") Long targetMemberId,
+            Member loginMember
+    );
 }

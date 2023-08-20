@@ -1,5 +1,9 @@
 package org.dinosaur.foodbowl.test;
 
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+
+import java.util.Optional;
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.domain.vo.SocialType;
@@ -35,4 +39,9 @@ public class PresentationTest {
 
     @MockBean
     protected MemberRepository memberRepository;
+
+    protected void mockingAuthMemberInResolver() {
+        given(memberRepository.findById(anyLong()))
+                .willReturn(Optional.of(member));
+    }
 }
