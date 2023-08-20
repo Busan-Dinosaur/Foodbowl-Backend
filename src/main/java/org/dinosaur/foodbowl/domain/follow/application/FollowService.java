@@ -44,4 +44,13 @@ public class FollowService {
                     throw new BadRequestException(FollowExceptionType.DUPLICATE_FOLLOW);
                 });
     }
+
+    public void unfollow(Long targetMemberId, Member loginMember) {
+        Member targetMember = memberRepository.findById(targetMemberId)
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+
+        Follow follow = followRepository.findByFollowingAndFollower(targetMember, loginMember)
+                .orElseThrow(() -> new BadRequestException(FollowExceptionType.UNFOLLOWED));
+        followRepository.delete(follow);
+    }
 }
