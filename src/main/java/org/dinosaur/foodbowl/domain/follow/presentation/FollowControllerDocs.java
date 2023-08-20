@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 @Tag(name = "팔로우", description = "팔로우 API")
 public interface FollowControllerDocs {
 
-    @Operation(summary = "팔로우 요청", description = "다른 회원에게 팔로우를 요청한다.")
+    @Operation(summary = "팔로우", description = "다른 회원에게 팔로우를 요청한다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "팔로우 성공"),
             @ApiResponse(
@@ -24,9 +24,31 @@ public interface FollowControllerDocs {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "등록되지 않은 회원 ID 팔로우",
+                    description = "등록되지 않은 팔로우 대상 회원 ID",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
-    ResponseEntity<Void> follow(@Parameter(description = "팔로우 대상 회원 ID") Long targetMemberId, Member loginMember);
+    ResponseEntity<Void> follow(
+            @Parameter(description = "팔로우 대상 회원 ID", example = "1") Long targetMemberId,
+            Member loginMember
+    );
+
+    @Operation(summary = "팔로워 삭제", description = "나를 팔로워 중인 회원의 팔로우를 삭제한다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "팔로워 삭제 성공"),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "나를 팔로우 하지 않은 회원 삭제",
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "등록되지 않은 팔로워 삭제 회원 ID",
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            )
+    })
+    ResponseEntity<Void> deleteFollower(
+            @Parameter(description = "팔로워 삭제 회원 ID", example = "1") Long targetMemberId,
+            Member loginMember
+    );
 }
