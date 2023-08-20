@@ -24,7 +24,7 @@ class FollowServiceTest extends IntegrationTest {
     private FollowRepository followRepository;
 
     @Nested
-    class 팔로우_등록_시 {
+    class 팔로우_등록 {
 
         @Test
         void 등록되지_않은_회원이라면_예외를_던진다() {
@@ -71,7 +71,7 @@ class FollowServiceTest extends IntegrationTest {
     }
 
     @Nested
-    class 팔로우_취소_시 {
+    class 팔로우_취소 {
 
         @Test
         void 등록되지_않은_회원이라면_에외를_던진다() {
