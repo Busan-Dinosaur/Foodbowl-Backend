@@ -7,6 +7,7 @@ import org.dinosaur.foodbowl.domain.store.domain.Category;
 public record CategoryResponse(
         @Schema(description = "카테고리 ID", example = "1")
         Long id,
+
         @Schema(description = "카테고리명", example = "카페")
         String name
 ) {

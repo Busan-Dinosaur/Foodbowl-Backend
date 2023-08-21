@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record ExceptionResponse(
         @Schema(description = "에러 코드", example = "SERVER-100")
         String errorCode,
+
         @Schema(description = "에러 메시지", example = "알 수 없는 서버 에러가 발생했습니다.")
         String message
 ) {
