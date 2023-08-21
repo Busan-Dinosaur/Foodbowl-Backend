@@ -8,12 +8,29 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+import org.dinosaur.foodbowl.domain.follow.dto.response.FollowResponse;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
+import org.dinosaur.foodbowl.global.common.response.PageResponse;
 import org.dinosaur.foodbowl.global.exception.ExceptionResponse;
 import org.springframework.http.ResponseEntity;
 
 @Tag(name = "팔로우", description = "팔로우 API")
 public interface FollowControllerDocs {
+
+    @Operation(summary = "팔로워 목록 조회", description = "정해진 개수만큼 팔로워 목록을 조회한다.")
+    @ApiResponse(responseCode = "200", description = "팔로워 목록 조회 성공")
+    ResponseEntity<PageResponse<FollowResponse>> getFollowers(
+            @Parameter(description = "페이지", example = "0")
+            @PositiveOrZero(message = "페이지는 0이상만 가능합니다.")
+            int page,
+
+            @Parameter(description = "페이지 크기", example = "15")
+            @PositiveOrZero(message = "페이지 크기는 0이상만 가능합니다.")
+            int size,
+
+            Member loginMember
+    );
 
     @Operation(summary = "팔로우", description = "다른 회원에게 팔로우를 요청한다.")
     @ApiResponses({
@@ -33,6 +50,7 @@ public interface FollowControllerDocs {
             @Parameter(description = "팔로우 대상 회원 ID", example = "1")
             @Positive(message = "ID는 양수만 가능합니다.")
             Long targetMemberId,
+
             Member loginMember
     );
 
@@ -54,6 +72,7 @@ public interface FollowControllerDocs {
             @Parameter(description = "언팔로우 회원 ID", example = "1")
             @Positive(message = "ID는 양수만 가능합니다.")
             Long targetMemberId,
+
             Member loginMember
     );
 
@@ -75,6 +94,7 @@ public interface FollowControllerDocs {
             @Parameter(description = "팔로워 삭제 회원 ID", example = "1")
             @Positive(message = "ID는 양수만 가능합니다.")
             Long targetMemberId,
+
             Member loginMember
     );
 }
