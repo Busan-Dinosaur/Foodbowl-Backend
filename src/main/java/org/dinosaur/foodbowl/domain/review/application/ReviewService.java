@@ -11,7 +11,7 @@ import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
 import org.dinosaur.foodbowl.domain.store.application.StoreService;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
-import org.dinosaur.foodbowl.domain.store.dto.StoreCreateDto;
+import org.dinosaur.foodbowl.domain.store.application.dto.StoreCreateDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;

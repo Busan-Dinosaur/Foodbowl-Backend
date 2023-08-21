@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.StoreSchool;
-import org.dinosaur.foodbowl.domain.store.dto.StoreCreateDto;
+import org.dinosaur.foodbowl.domain.store.application.dto.StoreCreateDto;
 import org.dinosaur.foodbowl.domain.store.persistence.StoreSchoolRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.test.IntegrationTest;
