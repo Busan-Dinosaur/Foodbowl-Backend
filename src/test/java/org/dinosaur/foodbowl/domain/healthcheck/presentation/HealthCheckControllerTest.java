@@ -1,14 +1,12 @@
 package org.dinosaur.foodbowl.domain.healthcheck.presentation;
 
 import static org.dinosaur.foodbowl.domain.member.domain.vo.RoleType.ROLE_회원;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Optional;
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.healthcheck.application.HealthCheckService;
 import org.dinosaur.foodbowl.domain.healthcheck.dto.response.HealthCheckResponse;
@@ -45,8 +43,7 @@ class HealthCheckControllerTest extends PresentationTest {
 
     @Test
     void 사용자_인증이_정상이면_200_반환() throws Exception {
-        given(memberRepository.findById(anyLong()))
-                .willReturn(Optional.of(member));
+        mockingAuthMemberInResolver();
 
         mockMvc.perform(get("/v1/health-check/auth")
                         .header(AUTHORIZATION, BEARER + jwtTokenProvider.createAccessToken(1L, ROLE_회원)))

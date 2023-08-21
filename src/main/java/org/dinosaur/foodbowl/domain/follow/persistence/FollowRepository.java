@@ -7,7 +7,11 @@ import org.springframework.data.repository.Repository;
 
 public interface FollowRepository extends Repository<Follow, Long> {
 
-    Follow save(Follow follow);
+    Optional<Follow> findById(Long id);
 
     Optional<Follow> findByFollowingAndFollower(Member following, Member follower);
+
+    Follow save(Follow follow);
+
+    void delete(Follow follow);
 }
