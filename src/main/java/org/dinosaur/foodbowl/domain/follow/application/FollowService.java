@@ -46,6 +46,16 @@ public class FollowService {
     }
 
     @Transactional
+    public void unfollow(Long targetMemberId, Member loginMember) {
+        Member targetMember = memberRepository.findById(targetMemberId)
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+
+        Follow follow = followRepository.findByFollowingAndFollower(targetMember, loginMember)
+                .orElseThrow(() -> new BadRequestException(FollowExceptionType.UNFOLLOWED));
+        followRepository.delete(follow);
+    }
+
+    @Transactional
     public void deleteFollower(Long targetMemberId, Member loginMember) {
         Member targetMember = memberRepository.findById(targetMemberId)
                 .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));

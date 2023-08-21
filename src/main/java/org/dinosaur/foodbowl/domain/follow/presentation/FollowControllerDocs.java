@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Positive;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.global.exception.ExceptionResponse;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,30 @@ public interface FollowControllerDocs {
             )
     })
     ResponseEntity<Void> follow(
-            @Parameter(description = "팔로우 대상 회원 ID", example = "1") Long targetMemberId,
+            @Parameter(description = "팔로우 대상 회원 ID", example = "1")
+            @Positive(message = "ID는 양수만 가능합니다.")
+            Long targetMemberId,
+            Member loginMember
+    );
+
+    @Operation(summary = "언팔로우", description = "팔로우 되어있는 회원을 언팔로우한다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "언팔로우 성공"),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "팔로우하지 않은 회원 언팔로우",
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "등록되지 않은 언팔로우 회원 ID",
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            )
+    })
+    ResponseEntity<Void> unfollow(
+            @Parameter(description = "언팔로우 회원 ID", example = "1")
+            @Positive(message = "ID는 양수만 가능합니다.")
+            Long targetMemberId,
             Member loginMember
     );
 
@@ -48,7 +72,9 @@ public interface FollowControllerDocs {
             )
     })
     ResponseEntity<Void> deleteFollower(
-            @Parameter(description = "팔로워 삭제 회원 ID", example = "1") Long targetMemberId,
+            @Parameter(description = "팔로워 삭제 회원 ID", example = "1")
+            @Positive(message = "ID는 양수만 가능합니다.")
+            Long targetMemberId,
             Member loginMember
     );
 }

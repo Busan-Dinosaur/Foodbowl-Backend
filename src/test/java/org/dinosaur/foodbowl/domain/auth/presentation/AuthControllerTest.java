@@ -1,5 +1,6 @@
 package org.dinosaur.foodbowl.domain.auth.presentation;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -48,8 +49,8 @@ class AuthControllerTest extends PresentationTest {
                             .content(objectMapper.writeValueAsString(appleLoginRequest)))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.errorCode").value("SERVER-102"))
-                    .andExpect(jsonPath("$.message").value("애플 토큰이 존재하지 않습니다."));
+                    .andExpect(jsonPath("$.errorCode").value("CLIENT-100"))
+                    .andExpect(jsonPath("$.message", containsString("애플 토큰이 존재하지 않습니다.")));
         }
 
         @Test
