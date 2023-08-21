@@ -116,4 +116,44 @@ class FollowControllerTest extends PresentationTest {
                     .andExpect(status().isNoContent());
         }
     }
+
+    @Nested
+    class 팔로워_삭제 {
+
+        @ValueSource(strings = {"가", "a", "A", "@"})
+        @ParameterizedTest
+        void ID타입으로_변환하지_못하는_타입이라면_400_응답을_반환한다(String memberId) throws Exception {
+            mockMvc.perform(delete("/v1/follows/followers/{memberId}", memberId)
+                            .header(AUTHORIZATION, BEARER + jwtTokenProvider.createAccessToken(1L, ROLE_회원)))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errorCode").value("CLIENT-102"))
+                    .andExpect(jsonPath("$.message",
+                            containsString(Long.class.getSimpleName() + " 타입으로 변환할 수 없는 요청입니다.")));
+        }
+
+        @Test
+        void ID가_양수가_아니라면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(delete("/v1/follows/followers/{memberId}", -1L)
+                            .header(AUTHORIZATION, BEARER + jwtTokenProvider.createAccessToken(1L, ROLE_회원)))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message", containsString("ID는 양수만 가능합니다.")));
+        }
+
+        @Test
+        void 팔로워_삭제를_수행하면_204_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            willDoNothing().given(followService)
+                    .follow(anyLong(), any(Member.class));
+
+            mockMvc.perform(delete("/v1/follows/followers/{memberId}", 1L)
+                            .header(AUTHORIZATION, BEARER + jwtTokenProvider.createAccessToken(1L, ROLE_회원)))
+                    .andDo(print())
+                    .andExpect(status().isNoContent());
+        }
+    }
 }

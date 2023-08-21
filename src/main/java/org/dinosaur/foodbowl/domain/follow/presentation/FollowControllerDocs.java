@@ -30,8 +30,9 @@ public interface FollowControllerDocs {
             )
     })
     ResponseEntity<Void> follow(
-            @Parameter(description = "팔로우 회원 ID", example = "1")
-            @Positive(message = "ID는 양수만 가능합니다.") Long targetMemberId,
+            @Parameter(description = "팔로우 대상 회원 ID", example = "1")
+            @Positive(message = "ID는 양수만 가능합니다.")
+            Long targetMemberId,
             Member loginMember
     );
 
@@ -51,7 +52,29 @@ public interface FollowControllerDocs {
     })
     ResponseEntity<Void> unfollow(
             @Parameter(description = "언팔로우 회원 ID", example = "1")
-            @Positive(message = "ID는 양수만 가능합니다.") Long targetMemberId,
+            @Positive(message = "ID는 양수만 가능합니다.")
+            Long targetMemberId,
+            Member loginMember
+    );
+
+    @Operation(summary = "팔로워 삭제", description = "나를 팔로워 중인 회원의 팔로우를 삭제한다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "팔로워 삭제 성공"),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "나를 팔로우 하지 않은 회원 삭제",
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "등록되지 않은 팔로워 삭제 회원 ID",
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            )
+    })
+    ResponseEntity<Void> deleteFollower(
+            @Parameter(description = "팔로워 삭제 회원 ID", example = "1")
+            @Positive(message = "ID는 양수만 가능합니다.")
+            Long targetMemberId,
             Member loginMember
     );
 }

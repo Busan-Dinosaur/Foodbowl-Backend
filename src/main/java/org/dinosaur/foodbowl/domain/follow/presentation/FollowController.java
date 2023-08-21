@@ -38,4 +38,13 @@ public class FollowController implements FollowControllerDocs {
         followService.unfollow(targetMemberId, loginMember);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/followers/{memberId}")
+    public ResponseEntity<Void> deleteFollower(
+            @PathVariable(name = "memberId") @Positive(message = "ID는 양수만 가능합니다.") Long targetMemberId,
+            @Auth Member loginMember
+    ) {
+        followService.deleteFollower(targetMemberId, loginMember);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record TokenResponse(
         @Schema(description = "인증 토큰", example = "a1b2c3d4")
         String accessToken,
+
         @Schema(description = "갱신 토큰", example = "a1b2c3d4")
         String refreshToken
 ) {

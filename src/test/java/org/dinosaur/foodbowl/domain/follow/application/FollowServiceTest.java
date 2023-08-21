@@ -106,4 +106,41 @@ class FollowServiceTest extends IntegrationTest {
             assertThat(followRepository.findById(follow.getId())).isNotPresent();
         }
     }
+
+    @Nested
+    class 팔로워_삭제 {
+
+        @Test
+        void 등록되지_않은_회원이라면_예외를_던진다() {
+            Member loginMember = memberTestPersister.memberBuilder().save();
+
+            assertThatThrownBy(() -> followService.deleteFollower(-1L, loginMember))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
+
+        @Test
+        void 나를_팔로우하지_않은_회원이라면_예외를_던진다() {
+            Member loginMember = memberTestPersister.memberBuilder().save();
+            Member followMember = memberTestPersister.memberBuilder().save();
+
+            assertThatThrownBy(() -> followService.deleteFollower(followMember.getId(), loginMember))
+                    .isInstanceOf(BadRequestException.class)
+                    .hasMessage("나를 팔로우 하지 않은 회원입니다.");
+        }
+
+        @Test
+        void 유효한_상황이라면_팔로워를_삭제한다() {
+            Member loginMember = memberTestPersister.memberBuilder().save();
+            Member followMember = memberTestPersister.memberBuilder().save();
+            Follow follow = followTestPersister.builder()
+                    .following(loginMember)
+                    .follower(followMember)
+                    .save();
+
+            followService.deleteFollower(followMember.getId(), loginMember);
+
+            assertThat(followRepository.findById(follow.getId())).isNotPresent();
+        }
+    }
 }
