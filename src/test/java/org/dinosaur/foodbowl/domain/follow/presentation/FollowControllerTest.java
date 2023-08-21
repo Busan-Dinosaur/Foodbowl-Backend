@@ -128,7 +128,20 @@ class FollowControllerTest extends PresentationTest {
                     .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.errorCode").value("CLIENT-102"))
-                    .andExpect(jsonPath("$.message").value("요청 데이터 타입이 일치하지 않습니다."));
+                    .andExpect(jsonPath("$.message",
+                            containsString(Long.class.getSimpleName() + " 타입으로 변환할 수 없는 요청입니다.")));
+        }
+
+        @Test
+        void ID가_양수가_아니라면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(delete("/v1/follows/followers/{memberId}", -1L)
+                            .header(AUTHORIZATION, BEARER + jwtTokenProvider.createAccessToken(1L, ROLE_회원)))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message", containsString("ID는 양수만 가능합니다.")));
         }
 
         @Test
