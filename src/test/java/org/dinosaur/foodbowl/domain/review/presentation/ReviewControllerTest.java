@@ -69,7 +69,7 @@ class ReviewControllerTest extends PresentationTest {
         private final String accessToken = jwtTokenProvider.createAccessToken(1L, ROLE_회원);
 
         @Test
-        void 사진이_포함된_경우_201_상태코드를_반환한다() throws Exception {
+        void 사진이_포함된_경우_200_상태코드를_반환한다() throws Exception {
             given(reviewService.create(any(ReviewCreateRequest.class), anyList(), any(Member.class)))
                     .willReturn(1L);
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateDto();
@@ -85,8 +85,7 @@ class ReviewControllerTest extends PresentationTest {
                             .header("Authorization", "Bearer " + accessToken)
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andDo(print())
-                    .andExpect(status().isCreated())
-                    .andExpect(redirectedUrl("/v1/reviews/1"));
+                    .andExpect(status().isOk());
         }
 
         @Test

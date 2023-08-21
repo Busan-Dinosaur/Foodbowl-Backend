@@ -2,7 +2,6 @@ package org.dinosaur.foodbowl.domain.review.presentation;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
-import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
@@ -32,7 +31,7 @@ public class ReviewController implements ReviewControllerDocs {
             @Size(max = 4, message = "사진의 개수는 최대 4개까지 가능합니다.") List<MultipartFile> imageFiles,
             @Auth Member member
     ) {
-        Long reviewId = reviewService.create(reviewCreateRequest, imageFiles, member);
-        return ResponseEntity.created(URI.create("/v1/reviews/" + reviewId)).build();
+        reviewService.create(reviewCreateRequest, imageFiles, member);
+        return ResponseEntity.ok().build();
     }
 }
