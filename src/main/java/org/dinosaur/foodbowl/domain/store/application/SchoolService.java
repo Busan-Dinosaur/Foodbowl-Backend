@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
 public class SchoolService {
 
@@ -33,6 +32,7 @@ public class SchoolService {
         return schoolRepository.save(school);
     }
 
+    @Transactional(readOnly = true)
     public Optional<School> findByName(String name) {
         return schoolRepository.findByName_Name(name);
     }

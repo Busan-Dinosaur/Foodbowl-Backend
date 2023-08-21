@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
 public class StoreService {
 
@@ -52,6 +51,7 @@ public class StoreService {
         return store;
     }
 
+    @Transactional(readOnly = true)
     public Optional<Store> findByAddress(String address) {
         return storeRepository.findByAddress_AddressName(address);
     }
