@@ -1,10 +1,8 @@
 package org.dinosaur.foodbowl.domain.photo.exception;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.global.exception.ExceptionType;
 
-@RequiredArgsConstructor
 @Getter
 public enum FileExceptionType implements ExceptionType {
 
@@ -15,4 +13,9 @@ public enum FileExceptionType implements ExceptionType {
 
     private final String errorCode;
     private final String message;
+
+    FileExceptionType(String errorCode, String message) {
+        this.errorCode = errorCode;
+        this.message = message;
+    }
 }

@@ -87,7 +87,7 @@ public class PhotoLocalUploader implements PhotoUploader {
         try {
             file.transferTo(uploadPath);
         } catch (IOException e) {
-            throw new FileException(FILE_TRANSFER_ERROR);
+            throw new FileException(FILE_TRANSFER_ERROR, e);
         }
     }
 }
