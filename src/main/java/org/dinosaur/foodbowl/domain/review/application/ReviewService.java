@@ -28,7 +28,9 @@ public class ReviewService {
     @Transactional
     public Long create(ReviewCreateRequest reviewCreateRequest, List<MultipartFile> imageFiles, Member member) {
         StoreCreateDto storeCreateDto = convertStoreCreateDto(reviewCreateRequest);
-        Store store = storeService.create(storeCreateDto);
+
+        Store store = storeService.findByLocationId(reviewCreateRequest.locationId())
+                .orElseGet(() -> storeService.create(storeCreateDto));
 
         Review review = reviewRepository.save(
                 Review.builder()

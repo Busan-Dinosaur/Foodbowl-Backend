@@ -40,10 +40,23 @@ class ReviewServiceTest extends IntegrationTest {
         FileTestUtils.cleanUp();
     }
 
+    @Test
+    void 이미_생성된_가게인_경우에도_정상적으로_리뷰를_저장한다() {
+        ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
+        Member member = memberTestPersister.memberBuilder().save();
+        reviewService.create(reviewCreateRequest, null, member);
+        ReviewCreateRequest otherReviewCreateRequest = generateReviewCreateRequest();
+        Member otherMember = memberTestPersister.memberBuilder().save();
+
+        Long savedReviewId = reviewService.create(otherReviewCreateRequest, null, otherMember);
+
+        assertThat(savedReviewId).isNotNull();
+    }
+
     private ReviewCreateRequest generateReviewCreateRequest() {
         return new ReviewCreateRequest(
                 "2321515",
-            "신천직화집",
+                "신천직화집",
                 "서울시 강남구 테헤란로 90, 13층",
                 BigDecimal.valueOf(125.1234),
                 BigDecimal.valueOf(37.24455),
