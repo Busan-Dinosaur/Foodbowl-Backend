@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -30,12 +31,14 @@ public class ReviewPhoto extends AuditingEntity {
     @Column(name = "id", updatable = false)
     private Long id;
 
+    @NotNull
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "photo_id")
+    @JoinColumn(name = "photo_id", updatable = false)
     private Photo photo;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "review_id")
+    @JoinColumn(name = "review_id", updatable = false)
     private Review review;
 
     @Builder
