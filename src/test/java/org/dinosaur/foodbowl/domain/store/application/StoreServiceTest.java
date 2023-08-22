@@ -10,6 +10,7 @@ import org.dinosaur.foodbowl.domain.store.domain.StoreSchool;
 import org.dinosaur.foodbowl.domain.store.application.dto.StoreCreateDto;
 import org.dinosaur.foodbowl.domain.store.persistence.StoreSchoolRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
+import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -91,7 +92,7 @@ class StoreServiceTest extends IntegrationTest {
             );
 
             assertThatThrownBy(() -> storeService.create(storeCreateDto))
-                    .isInstanceOf(BadRequestException.class)
+                    .isInstanceOf(InvalidArgumentException.class)
                     .hasMessage("학교 이름 형식이 잘못되었습니다.");
         }
 
@@ -114,7 +115,7 @@ class StoreServiceTest extends IntegrationTest {
             );
 
             assertThatThrownBy(() -> storeService.create(storeCreateDto))
-                    .isInstanceOf(BadRequestException.class)
+                    .isInstanceOf(InvalidArgumentException.class)
                     .hasMessage("일치하는 카테고리를 찾을 수 없습니다.");
         }
     }

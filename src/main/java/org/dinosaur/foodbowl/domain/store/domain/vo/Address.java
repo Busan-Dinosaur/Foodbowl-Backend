@@ -1,6 +1,6 @@
 package org.dinosaur.foodbowl.domain.store.domain.vo;
 
-import static org.dinosaur.foodbowl.domain.store.exception.StoreExceptionType.*;
+import static org.dinosaur.foodbowl.domain.store.exception.StoreExceptionType.INVALID_ADDRESS_ERROR;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -12,7 +12,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.dinosaur.foodbowl.global.exception.BadRequestException;
+import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 
 @Getter
 @Embeddable
@@ -54,7 +54,7 @@ public class Address {
         List<String> addressElements = Arrays.stream(storeAddress.split(DELIMITER)).toList();
 
         if (addressElements.size() < MIN_SIZE) {
-            throw new BadRequestException(INVALID_ADDRESS_ERROR);
+            throw new InvalidArgumentException(INVALID_ADDRESS_ERROR);
         }
         String roadName = String.join(DELIMITER, addressElements.subList(3, addressElements.size()));
         return Address.builder()

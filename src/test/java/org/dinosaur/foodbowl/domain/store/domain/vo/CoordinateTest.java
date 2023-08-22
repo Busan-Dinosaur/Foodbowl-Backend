@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import org.dinosaur.foodbowl.global.exception.BadRequestException;
+import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ class CoordinateTest {
         BigDecimal y = BigDecimal.valueOf(37.1234);
 
         assertThatThrownBy(() -> new Coordinate(new BigDecimal(x), y))
-                .isInstanceOf(BadRequestException.class)
+                .isInstanceOf(InvalidArgumentException.class)
                 .hasMessage("경도 값의 크기가 잘못되었습니다.");
 
     }
@@ -46,7 +46,7 @@ class CoordinateTest {
         BigDecimal x = BigDecimal.valueOf(123.1234);
 
         assertThatThrownBy(() -> new Coordinate(x, new BigDecimal(y)))
-                .isInstanceOf(BadRequestException.class)
+                .isInstanceOf(InvalidArgumentException.class)
                 .hasMessage("위도 값의 크기가 잘못되었습니다.");
     }
 }

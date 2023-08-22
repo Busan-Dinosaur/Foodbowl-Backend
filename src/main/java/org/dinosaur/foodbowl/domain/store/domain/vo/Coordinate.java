@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.dinosaur.foodbowl.global.exception.BadRequestException;
+import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 
 @Getter
 @Embeddable
@@ -39,13 +39,13 @@ public class Coordinate {
 
     private void validateX(BigDecimal x) {
         if (x.compareTo(MIN_X_VALUE) < 0 || x.compareTo(MAX_X_VALUE) > 0) {
-            throw new BadRequestException(INVALID_X_ERROR);
+            throw new InvalidArgumentException(INVALID_X_ERROR);
         }
     }
 
     private void validateY(BigDecimal y) {
         if (y.compareTo(MIN_Y_VALUE) < 0 || y.compareTo(MAX_Y_VALUE) > 0) {
-            throw new BadRequestException(INVALID_Y_ERROR);
+            throw new InvalidArgumentException(INVALID_Y_ERROR);
         }
     }
 

@@ -3,7 +3,7 @@ package org.dinosaur.foodbowl.domain.store.domain.vo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import org.dinosaur.foodbowl.global.exception.BadRequestException;
+import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -22,7 +22,7 @@ class SchoolNameTest {
     @ValueSource(strings = {"!부산대학교", "@서울대학교@", "+연세대학교-", "!@#!$"})
     void 학교_이름에_한글_숫자_영문_이외의_문자가_있으면_예외_발생(String schoolName) {
         assertThatThrownBy(() -> new SchoolName(schoolName))
-                .isInstanceOf(BadRequestException.class)
+                .isInstanceOf(InvalidArgumentException.class)
                 .hasMessage("학교 이름 형식이 잘못되었습니다.");
     }
 }
