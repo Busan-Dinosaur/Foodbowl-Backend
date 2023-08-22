@@ -3,6 +3,7 @@ package org.dinosaur.foodbowl.test;
 import org.dinosaur.foodbowl.global.config.JpaConfig;
 import org.dinosaur.foodbowl.test.persister.MemberTestPersister;
 import org.dinosaur.foodbowl.test.persister.Persister;
+import org.dinosaur.foodbowl.test.persister.PhotoTestPersister;
 import org.dinosaur.foodbowl.test.persister.ReviewTestPersister;
 import org.dinosaur.foodbowl.test.persister.SchoolTestPersister;
 import org.dinosaur.foodbowl.test.persister.StoreTestPersister;
@@ -33,4 +34,7 @@ public class PersistenceTest {
 
     @Autowired
     protected ReviewTestPersister reviewTestPersister;
+
+    @Autowired
+    protected PhotoTestPersister photoTestPersister;
 }
