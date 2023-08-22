@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import org.dinosaur.foodbowl.global.exception.FileException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -19,15 +20,18 @@ import org.springframework.web.multipart.MultipartFile;
 public class PhotoLocalUploader implements PhotoUploader {
 
     private static final Set<String> IMAGE_EXTENSIONS = Set.of("jpeg", "jpg", "png", "webp");
-    private static final String SLASH = "/";
-    private static final String DASH = "-";
+    private static final String SLASH = File.separator;
+    private static final String UNDER_BAR = "_";
     private static final String DOT = ".";
 
-    @Value("${file.dir}")
-    private String rootDirectory;
+    private final String fileDirectory;
+
+    public PhotoLocalUploader(@Value("${file.dir}") String fileDirectory) {
+        this.fileDirectory = fileDirectory;
+    }
 
     public List<String> upload(List<MultipartFile> files, String parentDirectory) {
-        File directory = loadDirectory(rootDirectory + SLASH + parentDirectory);
+        File directory = loadDirectory(System.getProperty("user.dir") + SLASH + fileDirectory + SLASH + parentDirectory);
 
         List<String> filePaths = new ArrayList<>();
         for (MultipartFile multipartFile : files) {
@@ -59,12 +63,12 @@ public class PhotoLocalUploader implements PhotoUploader {
         if (lastIndex < 0) {
             throw new FileException(FILE_FORMAT_ERROR);
         }
-        String fileBaseName = originalFilename.substring(0, lastIndex);
+        String fileBaseName = UUID.randomUUID().toString().substring(0, 7);
         String extension = originalFilename.substring(lastIndex + 1);
         validateFileName(fileBaseName);
         validateExtension(extension);
 
-        return fileBaseName + DASH + System.currentTimeMillis() + DOT + extension;
+        return fileBaseName + UNDER_BAR + System.currentTimeMillis() + DOT + extension;
     }
 
     private void validateFileName(String fileName) {

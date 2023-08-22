@@ -48,7 +48,7 @@ public class ReviewService {
             return;
         }
 
-        List<Photo> photos = photoService.save(images, store.getLocationId());
+        List<Photo> photos = photoService.save(images, store.getId().toString());
 
         reviewPhotoService.save(review, photos);
     }

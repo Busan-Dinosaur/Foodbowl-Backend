@@ -3,8 +3,8 @@ package org.dinosaur.foodbowl.domain.photo.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.io.File;
 import java.util.List;
+import org.dinosaur.foodbowl.file.FileTestUtils;
 import org.dinosaur.foodbowl.global.exception.FileException;
 import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ class PhotoLocalUploaderTest extends IntegrationTest {
         List<String> filePaths = fileSystemPhotoService.upload(multipartFiles, "test");
 
         assertThat(filePaths).isNotEmpty();
-        deleteImageFile(filePaths);
+        FileTestUtils.cleanUp();
     }
 
     @ParameterizedTest
@@ -81,12 +81,5 @@ class PhotoLocalUploaderTest extends IntegrationTest {
         assertThatThrownBy(() -> fileSystemPhotoService.upload(multipartFiles, "test"))
                 .isInstanceOf(FileException.class)
                 .hasMessage("파일에 확장자가 존재하지 않습니다.");
-    }
-
-    private void deleteImageFile(List<String> filePaths) {
-        for (String filePath : filePaths) {
-            File file = new File(filePath);
-            file.delete();
-        }
     }
 }
