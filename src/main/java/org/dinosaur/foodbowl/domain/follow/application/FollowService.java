@@ -3,13 +3,19 @@ package org.dinosaur.foodbowl.domain.follow.application;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.follow.domain.Follow;
+import org.dinosaur.foodbowl.domain.follow.dto.response.FollowResponse;
 import org.dinosaur.foodbowl.domain.follow.exception.FollowExceptionType;
 import org.dinosaur.foodbowl.domain.follow.persistence.FollowRepository;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.exception.MemberExceptionType;
 import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
+import org.dinosaur.foodbowl.global.common.response.PageResponse;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +25,15 @@ public class FollowService {
 
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
+
+    @Transactional(readOnly = true)
+    public PageResponse<FollowResponse> getFollowers(int page, int size, Member loginMember) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Slice<FollowResponse> follows = followRepository.findAllByFollowing(loginMember, pageable)
+                .map(Follow::getFollower)
+                .map(FollowResponse::from);
+        return PageResponse.from(follows);
+    }
 
     @Transactional
     public void follow(Long targetMemberId, Member loginMember) {

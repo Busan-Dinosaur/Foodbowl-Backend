@@ -5,20 +5,28 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.dinosaur.foodbowl.domain.follow.domain.Follow;
 import org.dinosaur.foodbowl.domain.member.domain.vo.Nickname;
 import org.dinosaur.foodbowl.domain.member.domain.vo.SocialType;
+import org.dinosaur.foodbowl.domain.photo.domain.Thumbnail;
 import org.dinosaur.foodbowl.global.persistence.AuditingEntity;
 
 @Getter
@@ -57,6 +65,12 @@ public class Member extends AuditingEntity {
     @Column(name = "introduction", length = 255)
     private String introduction;
 
+    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
+    private MemberThumbnail memberThumbnail;
+
+    @OneToMany(mappedBy = "following")
+    private List<Follow> followers = new ArrayList<>();
+
     @Builder
     private Member(
             SocialType socialType,
@@ -74,5 +88,16 @@ public class Member extends AuditingEntity {
 
     public String getNickname() {
         return this.nickname.getValue();
+    }
+
+    public String getProfileImageUrl() {
+        return Optional.ofNullable(memberThumbnail)
+                .map(MemberThumbnail::getThumbnail)
+                .map(Thumbnail::getPath)
+                .orElse(null);
+    }
+
+    public int getFollowerCount() {
+        return followers.size();
     }
 }
