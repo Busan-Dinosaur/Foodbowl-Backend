@@ -23,6 +23,31 @@ class FollowRepositoryTest extends PersistenceTest {
     private FollowRepository followRepository;
 
     @Test
+    void 팔로잉_목록을_페이징_조회한다() {
+        Member follower = memberTestPersister.memberBuilder().save();
+        Member followingA = memberTestPersister.memberBuilder().save();
+        Member followingB = memberTestPersister.memberBuilder().save();
+
+        Follow followA = followTestPersister.builder().following(followingA).follower(follower).save();
+        Follow followB = followTestPersister.builder().following(followingB).follower(follower).save();
+
+        Pageable pageable = PageRequest.of(0, 1, Sort.by("createdAt").descending());
+        Slice<Follow> result = followRepository.findAllByFollower(follower, pageable);
+
+        assertSoftly(
+                softly -> {
+                    softly.assertThat(result.getContent().size()).isEqualTo(1);
+                    softly.assertThat(result.getContent().get(0)).isEqualTo(followB);
+                    softly.assertThat(result.isFirst()).isTrue();
+                    softly.assertThat(result.isLast()).isFalse();
+                    softly.assertThat(result.hasNext()).isTrue();
+                    softly.assertThat(result.getNumber()).isEqualTo(0);
+                    softly.assertThat(result.getSize()).isEqualTo(1);
+                }
+        );
+    }
+
+    @Test
     void 팔로워_목록을_페이징_조회한다() {
         Member following = memberTestPersister.memberBuilder().save();
         Member followerA = memberTestPersister.memberBuilder().save();
