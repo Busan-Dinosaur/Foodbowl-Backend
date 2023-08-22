@@ -27,64 +27,34 @@ class FollowServiceTest extends IntegrationTest {
     @Autowired
     private FollowRepository followRepository;
 
-    @Nested
-    class 팔로워_목록_조회 {
+    @Test
+    void 팔로워_목록을_페이징_조회한다() {
+        Member following = memberTestPersister.memberBuilder().save();
+        Member followerA = memberTestPersister.memberBuilder().save();
+        Member followerB = memberTestPersister.memberBuilder().save();
 
-        @Test
-        void 프로필_존재하지_않는_팔로워_목록을_조회한다() {
-            Member following = memberTestPersister.memberBuilder().save();
-            Member followerA = memberTestPersister.memberBuilder().save();
-            Member followerB = memberTestPersister.memberBuilder().save();
+        Follow followA = followTestPersister.builder().following(following).follower(followerA).save();
+        Follow followB = followTestPersister.builder().following(following).follower(followerB).save();
 
-            Follow followA = followTestPersister.builder().following(following).follower(followerA).save();
-            Follow followB = followTestPersister.builder().following(following).follower(followerB).save();
+        PageResponse<FollowResponse> response = followService.getFollowers(0, 2, following);
 
-            PageResponse<FollowResponse> response = followService.getFollowers(0, 2, following);
-
-            assertSoftly(
-                    softly -> {
-                        softly.assertThat(response.content())
-                                .usingRecursiveComparison()
-                                .isEqualTo(
-                                        List.of(
-                                                FollowResponse.from(followB.getFollower()),
-                                                FollowResponse.from(followA.getFollower())
-                                        )
-                                );
-                        softly.assertThat(response.isFirst()).isTrue();
-                        softly.assertThat(response.isLast()).isTrue();
-                        softly.assertThat(response.hasNext()).isFalse();
-                        softly.assertThat(response.currentPage()).isEqualTo(0);
-                        softly.assertThat(response.currentSize()).isEqualTo(2);
-                    }
-            );
-        }
-
-        @Test
-        void 프로필_존재하는_팔로워_목록을_조회한다() {
-            Member following = memberTestPersister.memberBuilder().save();
-            Member followerA = memberTestPersister.memberBuilder().save();
-            Member followerB = memberTestPersister.memberBuilder().save();
-
-            memberTestPersister.memberThumbnailBuilder().member(followerA).save();
-            memberTestPersister.memberThumbnailBuilder().member(followerB).save();
-
-            followTestPersister.builder().following(following).follower(followerA).save();
-            followTestPersister.builder().following(following).follower(followerB).save();
-
-            PageResponse<FollowResponse> response = followService.getFollowers(0, 2, following);
-
-            assertSoftly(
-                    softly -> {
-                        softly.assertThat(response.content()).hasSize(2);
-                        softly.assertThat(response.isFirst()).isTrue();
-                        softly.assertThat(response.isLast()).isTrue();
-                        softly.assertThat(response.hasNext()).isFalse();
-                        softly.assertThat(response.currentPage()).isEqualTo(0);
-                        softly.assertThat(response.currentSize()).isEqualTo(2);
-                    }
-            );
-        }
+        assertSoftly(
+                softly -> {
+                    softly.assertThat(response.content())
+                            .usingRecursiveComparison()
+                            .isEqualTo(
+                                    List.of(
+                                            FollowResponse.from(followB.getFollower()),
+                                            FollowResponse.from(followA.getFollower())
+                                    )
+                            );
+                    softly.assertThat(response.isFirst()).isTrue();
+                    softly.assertThat(response.isLast()).isTrue();
+                    softly.assertThat(response.hasNext()).isFalse();
+                    softly.assertThat(response.currentPage()).isEqualTo(0);
+                    softly.assertThat(response.currentSize()).isEqualTo(2);
+                }
+        );
     }
 
     @Nested

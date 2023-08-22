@@ -23,7 +23,7 @@ class FollowRepositoryTest extends PersistenceTest {
     private FollowRepository followRepository;
 
     @Test
-    void 팔로워_목록_페이징_조회() {
+    void 팔로워_목록을_페이징_조회한다() {
         Member following = memberTestPersister.memberBuilder().save();
         Member followerA = memberTestPersister.memberBuilder().save();
         Member followerB = memberTestPersister.memberBuilder().save();
