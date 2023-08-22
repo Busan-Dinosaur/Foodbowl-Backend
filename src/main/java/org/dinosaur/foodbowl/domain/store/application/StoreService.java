@@ -38,7 +38,7 @@ public class StoreService {
 
     @Transactional
     public Store create(StoreCreateDto storeCreateDto) {
-        storeRepository.findByAddress_AddressName(storeCreateDto.address()).ifPresent(
+        storeRepository.findByLocationId(storeCreateDto.locationId()).ifPresent(
                 existingStore -> {
                     throw new BadRequestException(DUPLICATE_ERROR);
                 }
@@ -52,8 +52,8 @@ public class StoreService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Store> findByAddress(String address) {
-        return storeRepository.findByAddress_AddressName(address);
+    public Optional<Store> findByLocationId(String locationId) {
+        return storeRepository.findByLocationId(locationId);
     }
 
     private Store convertToStore(StoreCreateDto storeCreateDto) {

@@ -124,12 +124,14 @@ class StoreServiceTest extends IntegrationTest {
         StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(null, null, null);
         Store store = storeService.create(storeCreateDtoWithoutSchool);
 
-        assertThat(storeService.findByAddress(store.getAddress().getAddressName())).isPresent();
+        assertThat(storeService.findByLocationId(store.getLocationId())).isPresent();
     }
 
     @Test
     void 존재하지_않는_가게_조회() {
-        assertThat(storeService.findByAddress("부산시 금정구 부산대학로 123번길 12")).isEmpty();
+        String locationId = String.valueOf(Long.MAX_VALUE);
+
+        assertThat(storeService.findByLocationId(locationId)).isEmpty();
     }
 
     private StoreCreateDto generateStoreCreateDto(String schoolName, BigDecimal schoolX, BigDecimal schoolY) {

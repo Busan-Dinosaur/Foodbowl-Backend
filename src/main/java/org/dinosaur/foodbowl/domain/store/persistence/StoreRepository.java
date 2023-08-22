@@ -6,7 +6,7 @@ import org.springframework.data.repository.Repository;
 
 public interface StoreRepository extends Repository<Store, Long> {
 
-    Optional<Store> findByAddress_AddressName(String address);
+    Optional<Store> findByLocationId(String locationId);
 
     Store save(Store store);
 }

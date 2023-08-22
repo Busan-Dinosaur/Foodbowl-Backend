@@ -28,11 +28,11 @@ class StoreRepositoryTest extends PersistenceTest {
     }
 
     @Test
-    void 주소로_가게를_조회한다() {
+    void 장소_ID로_가게를_조회한다() {
         Store store = generateStore();
         Store saveStore = storeRepository.save(store);
 
-        Store findStore = storeRepository.findByAddress_AddressName(saveStore.getAddress().getAddressName()).get();
+        Store findStore = storeRepository.findByLocationId(saveStore.getLocationId()).get();
 
         assertThat(findStore).isEqualTo(saveStore);
     }
