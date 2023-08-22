@@ -3,10 +3,11 @@ package org.dinosaur.foodbowl.domain.photo.application;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.util.List;
-import org.dinosaur.foodbowl.domain.photo.domain.Photo;
+import org.dinosaur.foodbowl.file.FileTestUtils;
 import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
 
 @SuppressWarnings("NonAsciiCharacters")
 class PhotoServiceTest extends IntegrationTest {
@@ -16,14 +17,10 @@ class PhotoServiceTest extends IntegrationTest {
 
     @Test
     void 사진을_저장한다() {
-        Photo photo1 = Photo.builder()
-                .path("https://justdoeat.shop/bucket/bbq/image1.jpg")
-                .build();
-        Photo photo2 = Photo.builder()
-                .path("https://justdoeat.shop/bucket/bbq/image2.jpg")
-                .build();
-        List<Photo> photos = List.of(photo1, photo2);
+        List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(3);
 
-        assertDoesNotThrow(() -> photoService.save(photos));
+        assertDoesNotThrow(() -> photoService.save(multipartFiles, "parentDirectory"));
+
+        FileTestUtils.cleanUp();
     }
 }

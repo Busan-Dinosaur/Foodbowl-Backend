@@ -4,14 +4,13 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.photo.application.PhotoService;
-import org.dinosaur.foodbowl.domain.photo.application.PhotoUploader;
 import org.dinosaur.foodbowl.domain.photo.domain.Photo;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
 import org.dinosaur.foodbowl.domain.store.application.StoreService;
-import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.application.dto.StoreCreateDto;
+import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,7 +22,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final StoreService storeService;
     private final PhotoService photoService;
-    private final PhotoUploader photoUploader;
+    private final ReviewPhotoService reviewPhotoService;
 
     @Transactional
     public Long create(ReviewCreateRequest reviewCreateRequest, List<MultipartFile> imageFiles, Member member) {
@@ -45,17 +44,13 @@ public class ReviewService {
     }
 
     private void saveImagesIfExists(List<MultipartFile> images, Store store, Review review) {
-        if (images == null) {
+        if (images == null || images.isEmpty()) {
             return;
         }
-        List<String> imagePaths = photoUploader.upload(images, store.getStoreName());
-        List<Photo> photos = imagePaths.stream()
-                .map(imagePath -> Photo.builder()
-                        .review(review)
-                        .path(imagePath)
-                        .build())
-                .toList();
-        photoService.save(photos);
+
+        List<Photo> photos = photoService.save(images, store.getLocationId());
+
+        reviewPhotoService.save(review, photos);
     }
 
     private StoreCreateDto convertStoreCreateDto(ReviewCreateRequest reviewCreateRequest) {
