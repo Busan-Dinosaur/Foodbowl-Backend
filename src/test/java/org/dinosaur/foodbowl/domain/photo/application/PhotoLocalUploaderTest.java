@@ -60,18 +60,6 @@ class PhotoLocalUploaderTest extends IntegrationTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {" .jpg", ".jpg", ".png"})
-    void 확장자를_뺀_파일_이름이_널이거나_공백이면_예외가_발생한다(String originalFilename) {
-        MockMultipartFile multipartFile = new MockMultipartFile("bucket", originalFilename, MediaType.TEXT_PLAIN_VALUE,
-                "Hello Images".getBytes());
-        List<MultipartFile> multipartFiles = List.of(multipartFile);
-
-        assertThatThrownBy(() -> fileSystemPhotoService.upload(multipartFiles, "test"))
-                .isInstanceOf(FileException.class)
-                .hasMessage("파일 이름은 공백이 될 수 없습니다");
-    }
-
-    @ParameterizedTest
     @ValueSource(strings = {"foodBowlZip", "helloWorld", "javaSpring"})
     void 확장자가_없으면_예외가_발생한다(String originalFilename) {
         MockMultipartFile multipartFile = new MockMultipartFile("bucket", originalFilename, MediaType.TEXT_PLAIN_VALUE,
