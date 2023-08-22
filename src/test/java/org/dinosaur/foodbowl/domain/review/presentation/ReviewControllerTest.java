@@ -32,6 +32,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 @SuppressWarnings("NonAsciiCharacters")
 @WebMvcTest(controllers = ReviewController.class)
@@ -129,6 +130,26 @@ class ReviewControllerTest extends PresentationTest {
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("errorCode").value("CLIENT-101"))
                     .andExpect(jsonPath("$.message").value("사진의 개수는 최대 4개까지 가능합니다."));
+        }
+
+        @Test
+        void 이미지_크기가_서블릿_최대_처리_크기_보다_큰_경우_400_반환() throws Exception {
+            given(reviewService.create(any(ReviewCreateRequest.class), anyList(), any(Member.class)))
+                    .willThrow(new MaxUploadSizeExceededException(5));
+            ReviewCreateRequest reviewCreateRequest = generateReviewCreateDto();
+            MockMultipartFile request = new MockMultipartFile("request", "", "application/json",
+                    objectMapper.writeValueAsBytes(reviewCreateRequest));
+            MockMultipartFile multipartFile = (MockMultipartFile) FileTestUtils.generateMockMultiPartFile();
+
+            mockMvc.perform(multipart("/v1/reviews")
+                            .file(request)
+                            .file(multipartFile)
+                            .header("Authorization", "Bearer " + accessToken)
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-102"))
+                    .andExpect(jsonPath("$.message").value("이미지의 크기는 최대 5MB 까지 가능합니다."));
         }
 
         @ParameterizedTest

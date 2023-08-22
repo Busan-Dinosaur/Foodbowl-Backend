@@ -15,6 +15,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @Slf4j
@@ -62,6 +63,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(new ExceptionResponse("CLIENT-101", stringJoiner.toString()));
     }
 
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ExceptionResponse> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
+        log.warn("[" + e.getClass() + "] " + e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ExceptionResponse("CLIENT-102", "이미지의 크기는 최대 " + e.getMaxUploadSize() + "MB 까지 가능합니다."));
+    }
+
     @ExceptionHandler(ServerException.class)
     public ResponseEntity<ExceptionResponse> handleServerException(ServerException e) {
         log.error("[" + e.getClass() + "] " + e.getMessage());
@@ -94,6 +102,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleNotFoundException(NotFoundException e) {
         log.warn("[" + e.getClass() + "] " + e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ExceptionResponse.from(e.getExceptionType()));
+    }
+
+    @ExceptionHandler(FileException.class)
+    public ResponseEntity<ExceptionResponse> handleFileException(FileException e) {
+        log.warn("[" + e.getClass() + "] " + e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ExceptionResponse.from(e.getExceptionType()));
     }
 }
