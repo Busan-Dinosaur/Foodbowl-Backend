@@ -3,6 +3,7 @@ package org.dinosaur.foodbowl.domain.store.application.dto;
 import java.math.BigDecimal;
 
 public record StoreCreateDto(
+        String locationId,
         String storeName,
         String category,
         String address,

@@ -38,6 +38,7 @@ class StoreServiceTest extends IntegrationTest {
 
             assertAll(
                     () -> assertThat(store.getId()).isNotNull(),
+                    () -> assertThat(store.getLocationId()).isEqualTo(storeCreateDtoWithoutSchool.locationId()),
                     () -> assertThat(store.getStoreName()).isEqualTo(storeCreateDtoWithoutSchool.storeName()),
                     () -> assertThat(store.getCategory().getCategoryType().name()).isEqualTo(storeCreateDtoWithoutSchool.category())
             );
@@ -76,6 +77,7 @@ class StoreServiceTest extends IntegrationTest {
         @ValueSource(strings = {"!부산대학교", "@서울대학교@", "+연세대학교-", "!@#!$"})
         void 학교_이름이_형식과_다르면_예외_발생(String schoolName) {
             StoreCreateDto storeCreateDto = new StoreCreateDto(
+                    "1234567",
                     "농민백암순대",
                     "한식",
                     "서울시 강남구 선릉로 14번길 245",
@@ -98,6 +100,7 @@ class StoreServiceTest extends IntegrationTest {
         @ValueSource(strings = {"미국식", "한국식", "학식", "급식"})
         void 카테고리_타입이_존재하지_않으면_예외_발생(String category) {
             StoreCreateDto storeCreateDto = new StoreCreateDto(
+                    "21415511",
                     "농민백암순대",
                     category,
                     "서울시 강남구 선릉로 14번길 245",
@@ -131,6 +134,7 @@ class StoreServiceTest extends IntegrationTest {
 
     private StoreCreateDto generateStoreCreateDto(String schoolName, BigDecimal schoolX, BigDecimal schoolY) {
         return new StoreCreateDto(
+                "12314535",
                 "농민백암순대",
                 "한식",
                 "서울시 강남구 선릉로 14번길 245",

@@ -42,6 +42,7 @@ class ReviewServiceTest extends IntegrationTest {
 
     private ReviewCreateRequest generateReviewCreateRequest() {
         return new ReviewCreateRequest(
+                "2321515",
             "신천직화집",
                 "서울시 강남구 테헤란로 90, 13층",
                 BigDecimal.valueOf(125.1234),

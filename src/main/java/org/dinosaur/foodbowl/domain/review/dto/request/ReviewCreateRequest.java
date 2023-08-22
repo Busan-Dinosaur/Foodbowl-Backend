@@ -9,6 +9,10 @@ import java.math.BigDecimal;
 
 @Schema(description = "리뷰 작성 요청")
 public record ReviewCreateRequest(
+        @Schema(description = "장소 ID(카카오 반환 값)", example = "23149124", requiredMode = REQUIRED)
+        @NotBlank(message = "장소 ID는 반드시 포함되어야 합니다.")
+        String locationId,
+
         @Schema(description = "가게 이름", example = "맥도날드 강남점", requiredMode = REQUIRED)
         @NotBlank(message = "가게 이름은 반드시 포함되어야 합니다.")
         String storeName,

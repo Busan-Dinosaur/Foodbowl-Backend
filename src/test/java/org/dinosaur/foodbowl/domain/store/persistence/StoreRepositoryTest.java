@@ -39,6 +39,7 @@ class StoreRepositoryTest extends PersistenceTest {
 
     private Store generateStore() {
         return Store.builder()
+                .locationId("1412414")
                 .storeName("비비큐 여의도한강공원점")
                 .category(categoryRepository.findById(1L))
                 .address(Address.of("서울시 영등포구 여의도동 451", BigDecimal.valueOf(123.23), BigDecimal.valueOf(35.52)))

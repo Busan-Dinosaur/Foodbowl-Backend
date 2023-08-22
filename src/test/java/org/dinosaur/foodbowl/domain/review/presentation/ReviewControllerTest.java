@@ -8,7 +8,6 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -89,7 +88,7 @@ class ReviewControllerTest extends PresentationTest {
         }
 
         @Test
-        void 사진이_없는_경우_201_상태코드를_반환한다() throws Exception {
+        void 사진이_없는_경우_200_상태코드를_반환한다() throws Exception {
             given(reviewService.create(any(ReviewCreateRequest.class), any(), any(Member.class)))
                     .willReturn(1L);
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateDto();
@@ -101,8 +100,7 @@ class ReviewControllerTest extends PresentationTest {
                             .header("Authorization", "Bearer " + accessToken)
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andDo(print())
-                    .andExpect(status().isCreated())
-                    .andExpect(redirectedUrl("/v1/reviews/1"));
+                    .andExpect(status().isOk());
         }
 
         @Test
@@ -136,10 +134,43 @@ class ReviewControllerTest extends PresentationTest {
         @ParameterizedTest
         @ValueSource(strings = {" "})
         @NullAndEmptySource
+        void 가게_위치_ID가_없는_경우_400_상태코드를_반환한다(String locationId) throws Exception {
+            given(reviewService.create(any(ReviewCreateRequest.class), any(), any(Member.class)))
+                    .willReturn(1L);
+            ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
+                    locationId,
+                    "신천직화집",
+                    "서울시 송파구 올림픽대로 87, 1층",
+                    BigDecimal.valueOf(126.12345),
+                    BigDecimal.valueOf(35.1241521616),
+                    "https://image.kakao.com",
+                    "02-1234-2424",
+                    "한식",
+                    "가성비가 매우 좋아요",
+                    null,
+                    null,
+                    null);
+            MockMultipartFile request = new MockMultipartFile("request", "", "application/json",
+                    objectMapper.writeValueAsBytes(reviewCreateRequest));
+
+            mockMvc.perform(multipart("/v1/reviews")
+                            .file(request)
+                            .header("Authorization", "Bearer " + accessToken)
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-100"))
+                    .andExpect(jsonPath("$.message").value("장소 ID는 반드시 포함되어야 합니다."));
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {" "})
+        @NullAndEmptySource
         void 가게_이름이_없는_경우_400_상태코드를_반환한다(String storeName) throws Exception {
             given(reviewService.create(any(ReviewCreateRequest.class), any(), any(Member.class)))
                     .willReturn(1L);
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
+                    "12412515",
                     storeName,
                     "서울시 송파구 올림픽대로 87, 1층",
                     BigDecimal.valueOf(126.12345),
@@ -171,6 +202,7 @@ class ReviewControllerTest extends PresentationTest {
             given(reviewService.create(any(ReviewCreateRequest.class), any(), any(Member.class)))
                     .willReturn(1L);
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
+                    "12312414",
                     "국민연금공단",
                     address,
                     BigDecimal.valueOf(126.12345),
@@ -200,6 +232,7 @@ class ReviewControllerTest extends PresentationTest {
             given(reviewService.create(any(ReviewCreateRequest.class), any(), any(Member.class)))
                     .willReturn(1L);
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
+                    "12251521",
                     "국민연금공단",
                     "서울시 송파구 올림픽대로 87, 1층",
                     null,
@@ -229,6 +262,7 @@ class ReviewControllerTest extends PresentationTest {
             given(reviewService.create(any(ReviewCreateRequest.class), any(), any(Member.class)))
                     .willReturn(1L);
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
+                    "134125",
                     "국민연금공단",
                     "서울시 송파구 올림픽대로 87, 1층",
                     BigDecimal.valueOf(135.1241521616),
@@ -260,6 +294,7 @@ class ReviewControllerTest extends PresentationTest {
             given(reviewService.create(any(ReviewCreateRequest.class), any(), any(Member.class)))
                     .willReturn(1L);
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
+                    "3241414",
                     "국민연금공단",
                     "서울시 송파구 올림픽대로 87, 1층",
                     BigDecimal.valueOf(135.1241521616),
@@ -291,6 +326,7 @@ class ReviewControllerTest extends PresentationTest {
             given(reviewService.create(any(ReviewCreateRequest.class), any(), any(Member.class)))
                     .willReturn(1L);
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
+                    "124121524",
                     "국민연금공단",
                     "서울시 송파구 올림픽대로 87, 1층",
                     BigDecimal.valueOf(135.1241521616),
@@ -322,6 +358,7 @@ class ReviewControllerTest extends PresentationTest {
             given(reviewService.create(any(ReviewCreateRequest.class), any(), any(Member.class)))
                     .willReturn(1L);
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
+                    "1234125",
                     "국민연금공단",
                     "서울시 송파구 올림픽대로 87, 1층",
                     BigDecimal.valueOf(135.1241521616),
@@ -349,6 +386,7 @@ class ReviewControllerTest extends PresentationTest {
 
     private ReviewCreateRequest generateReviewCreateDto() {
         return new ReviewCreateRequest(
+                "141241",
                 "국민연금공단",
                 "서울시 송파구 올림픽대로 87, 1층",
                 BigDecimal.valueOf(126.12345),

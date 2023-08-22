@@ -58,6 +58,7 @@ public class ReviewService {
 
     private StoreCreateDto convertStoreCreateDto(ReviewCreateRequest reviewCreateRequest) {
         return new StoreCreateDto(
+                reviewCreateRequest.locationId(),
                 reviewCreateRequest.storeName(),
                 reviewCreateRequest.category(),
                 reviewCreateRequest.storeAddress(),

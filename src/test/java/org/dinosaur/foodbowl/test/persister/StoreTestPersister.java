@@ -31,6 +31,7 @@ public class StoreTestPersister {
         public Store save() {
             return storeRepository.save(
                     Store.builder()
+                            .locationId("123124124")
                             .storeName("비비큐 여의도한강공원점")
                             .category(category == null ? categoryRepository.findById(1L) : category)
                             .address(Address.of("서울시 영등포구 여의도동 451", BigDecimal.valueOf(123.23),

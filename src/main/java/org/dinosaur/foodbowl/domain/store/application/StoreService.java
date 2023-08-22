@@ -62,6 +62,7 @@ public class StoreService {
         Address address = Address.of(storeCreateDto.address(), storeCreateDto.storeX(), storeCreateDto.storeY());
 
         return Store.builder()
+                .locationId(storeCreateDto.locationId())
                 .storeName(storeCreateDto.storeName())
                 .category(category)
                 .address(address)

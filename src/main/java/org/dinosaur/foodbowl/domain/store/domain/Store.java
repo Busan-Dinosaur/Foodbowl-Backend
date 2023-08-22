@@ -33,6 +33,10 @@ public class Store extends AuditingEntity {
     private Long id;
 
     @NotNull
+    @Column(name = "location_id", unique = true, length = 20)
+    private String locationId;
+
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", updatable = false)
     private Category category;
@@ -53,7 +57,9 @@ public class Store extends AuditingEntity {
     private String phone;
 
     @Builder
-    private Store(Category category, String storeName, Address address, String storeUrl, String phone) {
+    private Store(String locationId, Category category, String storeName, Address address, String storeUrl,
+                 String phone) {
+        this.locationId = locationId;
         this.category = category;
         this.storeName = storeName;
         this.address = address;
