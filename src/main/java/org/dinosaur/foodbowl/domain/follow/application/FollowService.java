@@ -3,7 +3,7 @@ package org.dinosaur.foodbowl.domain.follow.application;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.follow.domain.Follow;
-import org.dinosaur.foodbowl.domain.follow.dto.response.FollowResponse;
+import org.dinosaur.foodbowl.domain.follow.dto.response.FollowerResponse;
 import org.dinosaur.foodbowl.domain.follow.exception.FollowExceptionType;
 import org.dinosaur.foodbowl.domain.follow.persistence.FollowRepository;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
@@ -27,11 +27,11 @@ public class FollowService {
     private final FollowRepository followRepository;
 
     @Transactional(readOnly = true)
-    public PageResponse<FollowResponse> getFollowers(int page, int size, Member loginMember) {
+    public PageResponse<FollowerResponse> getFollowers(int page, int size, Member loginMember) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Slice<FollowResponse> follows = followRepository.findAllByFollowing(loginMember, pageable)
+        Slice<FollowerResponse> follows = followRepository.findAllByFollowing(loginMember, pageable)
                 .map(Follow::getFollower)
-                .map(FollowResponse::from);
+                .map(FollowerResponse::from);
         return PageResponse.from(follows);
     }
 

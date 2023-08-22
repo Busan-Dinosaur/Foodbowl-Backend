@@ -7,7 +7,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import java.util.List;
 import java.util.Optional;
 import org.dinosaur.foodbowl.domain.follow.domain.Follow;
-import org.dinosaur.foodbowl.domain.follow.dto.response.FollowResponse;
+import org.dinosaur.foodbowl.domain.follow.dto.response.FollowerResponse;
 import org.dinosaur.foodbowl.domain.follow.persistence.FollowRepository;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.global.common.response.PageResponse;
@@ -36,7 +36,7 @@ class FollowServiceTest extends IntegrationTest {
         Follow followA = followTestPersister.builder().following(following).follower(followerA).save();
         Follow followB = followTestPersister.builder().following(following).follower(followerB).save();
 
-        PageResponse<FollowResponse> response = followService.getFollowers(0, 2, following);
+        PageResponse<FollowerResponse> response = followService.getFollowers(0, 2, following);
 
         assertSoftly(
                 softly -> {
@@ -44,8 +44,8 @@ class FollowServiceTest extends IntegrationTest {
                             .usingRecursiveComparison()
                             .isEqualTo(
                                     List.of(
-                                            FollowResponse.from(followB.getFollower()),
-                                            FollowResponse.from(followA.getFollower())
+                                            FollowerResponse.from(followB.getFollower()),
+                                            FollowerResponse.from(followA.getFollower())
                                     )
                             );
                     softly.assertThat(response.isFirst()).isTrue();

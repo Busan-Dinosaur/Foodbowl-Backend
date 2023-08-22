@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.follow.application.FollowService;
-import org.dinosaur.foodbowl.domain.follow.dto.response.FollowResponse;
+import org.dinosaur.foodbowl.domain.follow.dto.response.FollowerResponse;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.global.common.response.PageResponse;
 import org.dinosaur.foodbowl.test.PresentationTest;
@@ -111,8 +111,8 @@ class FollowControllerTest extends PresentationTest {
         void 팔로우_목록을_조회하면_200_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
 
-            PageResponse<FollowResponse> response = new PageResponse<>(
-                    List.of(new FollowResponse(
+            PageResponse<FollowerResponse> response = new PageResponse<>(
+                    List.of(new FollowerResponse(
                             1L,
                             "http://justdoeat.shop/static/images/profile.png",
                             "coby5502",
@@ -135,9 +135,9 @@ class FollowControllerTest extends PresentationTest {
                     .andReturn();
 
             String jsonResponse = mvcResult.getResponse().getContentAsString();
-            PageResponse<FollowResponse> result = objectMapper.readValue(
+            PageResponse<FollowerResponse> result = objectMapper.readValue(
                     jsonResponse,
-                    new TypeReference<PageResponse<FollowResponse>>() {
+                    new TypeReference<PageResponse<FollowerResponse>>() {
                     }
             );
 

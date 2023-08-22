@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
-import org.dinosaur.foodbowl.domain.follow.dto.response.FollowResponse;
+import org.dinosaur.foodbowl.domain.follow.dto.response.FollowerResponse;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.global.common.response.PageResponse;
 import org.dinosaur.foodbowl.global.exception.ExceptionResponse;
@@ -20,7 +20,7 @@ public interface FollowControllerDocs {
 
     @Operation(summary = "팔로워 목록 조회", description = "정해진 개수만큼 팔로워 목록을 조회한다.")
     @ApiResponse(responseCode = "200", description = "팔로워 목록 조회 성공")
-    ResponseEntity<PageResponse<FollowResponse>> getFollowers(
+    ResponseEntity<PageResponse<FollowerResponse>> getFollowers(
             @Parameter(description = "페이지", example = "0")
             @PositiveOrZero(message = "페이지는 0이상만 가능합니다.")
             int page,
