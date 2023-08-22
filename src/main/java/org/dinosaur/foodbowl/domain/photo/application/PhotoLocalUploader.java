@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 @Component
-public class FileSystemPhotoUtils implements PhotoUtils {
+public class PhotoLocalUploader implements PhotoUploader {
 
     private static final Set<String> IMAGE_EXTENSIONS = Set.of("jpeg", "jpg", "png", "webp");
     private static final String SLASH = "/";

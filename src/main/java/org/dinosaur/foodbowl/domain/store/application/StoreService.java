@@ -45,8 +45,7 @@ public class StoreService {
         );
         Store store = storeRepository.save(convertToStore(storeCreateDto));
         if (storeCreateDto.schoolName() != null) {
-            String schoolName = storeCreateDto.schoolName();
-            saveSchool(store, schoolName, storeCreateDto.schoolX(), storeCreateDto.schoolY());
+            saveSchool(store, storeCreateDto.schoolName(), storeCreateDto.schoolX(), storeCreateDto.schoolY());
         }
         return store;
     }

@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.photo.application.PhotoService;
-import org.dinosaur.foodbowl.domain.photo.application.PhotoUtils;
+import org.dinosaur.foodbowl.domain.photo.application.PhotoUploader;
 import org.dinosaur.foodbowl.domain.photo.domain.Photo;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
@@ -23,7 +23,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final StoreService storeService;
     private final PhotoService photoService;
-    private final PhotoUtils photoUtils;
+    private final PhotoUploader photoUploader;
 
     @Transactional
     public Long create(ReviewCreateRequest reviewCreateRequest, List<MultipartFile> imageFiles, Member member) {
@@ -48,7 +48,7 @@ public class ReviewService {
         if (images == null) {
             return;
         }
-        List<String> imagePaths = photoUtils.upload(images, store.getStoreName());
+        List<String> imagePaths = photoUploader.upload(images, store.getStoreName());
         List<Photo> photos = imagePaths.stream()
                 .map(imagePath -> Photo.builder()
                         .review(review)

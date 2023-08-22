@@ -17,10 +17,10 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 @SuppressWarnings("NonAsciiCharacters")
-class FileSystemPhotoUtilsTest extends IntegrationTest {
+class PhotoLocalUploaderTest extends IntegrationTest {
 
     @Autowired
-    private FileSystemPhotoUtils fileSystemPhotoService;
+    private PhotoLocalUploader fileSystemPhotoService;
 
     @Test
     void 파일을_디렉토리에_저장한다() {
