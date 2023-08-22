@@ -1,13 +1,14 @@
 package org.dinosaur.foodbowl.domain.store.application;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
+import org.dinosaur.foodbowl.domain.store.application.dto.StoreCreateDto;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.StoreSchool;
-import org.dinosaur.foodbowl.domain.store.application.dto.StoreCreateDto;
 import org.dinosaur.foodbowl.domain.store.persistence.StoreSchoolRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
@@ -37,11 +38,14 @@ class StoreServiceTest extends IntegrationTest {
 
             Store store = storeService.create(storeCreateDtoWithoutSchool);
 
-            assertAll(
-                    () -> assertThat(store.getId()).isNotNull(),
-                    () -> assertThat(store.getLocationId()).isEqualTo(storeCreateDtoWithoutSchool.locationId()),
-                    () -> assertThat(store.getStoreName()).isEqualTo(storeCreateDtoWithoutSchool.storeName()),
-                    () -> assertThat(store.getCategory().getCategoryType().name()).isEqualTo(storeCreateDtoWithoutSchool.category())
+            assertSoftly(
+                    softly -> {
+                        softly.assertThat(store.getId()).isNotNull();
+                        softly.assertThat(store.getLocationId()).isEqualTo(storeCreateDtoWithoutSchool.locationId());
+                        softly.assertThat(store.getStoreName()).isEqualTo(storeCreateDtoWithoutSchool.storeName());
+                        softly.assertThat(store.getCategory().getCategoryType().name()).isEqualTo(
+                                storeCreateDtoWithoutSchool.category());
+                    }
             );
         }
 
@@ -56,11 +60,13 @@ class StoreServiceTest extends IntegrationTest {
                     .map(StoreSchool::getStore)
                     .toList();
 
-            assertAll(
-                    () -> assertThat(store.getId()).isNotNull(),
-                    () -> assertThat(store.getStoreName()).isEqualTo(storeCreateDtoWithSchool.storeName()),
-                    () -> assertThat(store.getCategory().getCategoryType().name()).isEqualTo(storeCreateDtoWithSchool.category()),
-                    () -> assertThat(stores).contains(store)
+            assertSoftly(
+                    softly -> {
+                        softly.assertThat(store.getId()).isNotNull();
+                        softly.assertThat(store.getStoreName()).isEqualTo(storeCreateDtoWithSchool.storeName());
+                        softly.assertThat(store.getCategory().getCategoryType().name()).isEqualTo(storeCreateDtoWithSchool.category());
+                        softly.assertThat(stores).contains(store);
+                    }
             );
         }
 

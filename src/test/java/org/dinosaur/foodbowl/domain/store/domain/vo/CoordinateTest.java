@@ -1,8 +1,7 @@
 package org.dinosaur.foodbowl.domain.store.domain.vo;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
@@ -23,9 +22,11 @@ class CoordinateTest {
 
         Coordinate coordinate = new Coordinate(x, y);
 
-        assertAll(
-                () -> assertThat(coordinate.getX()).isEqualTo(x),
-                () -> assertThat(coordinate.getY()).isEqualTo(y)
+        assertSoftly(
+                softly -> {
+                    softly.assertThat(coordinate.getX()).isEqualTo(x);
+                    softly.assertThat(coordinate.getY()).isEqualTo(y);
+                }
         );
     }
 

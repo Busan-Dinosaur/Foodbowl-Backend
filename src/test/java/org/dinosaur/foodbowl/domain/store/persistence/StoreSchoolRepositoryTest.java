@@ -1,7 +1,7 @@
 package org.dinosaur.foodbowl.domain.store.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
 import org.dinosaur.foodbowl.domain.store.domain.School;
@@ -28,10 +28,12 @@ class StoreSchoolRepositoryTest extends PersistenceTest {
 
         StoreSchool saveStoreSchool = storeSchoolRepository.save(storeSchool);
 
-        assertAll(
-                () -> assertThat(saveStoreSchool.getId()).isNotNull(),
-                () -> assertThat(saveStoreSchool.getStore()).isEqualTo(store),
-                () -> assertThat(saveStoreSchool.getSchool()).isEqualTo(school)
+        assertSoftly(
+                softly -> {
+                    softly.assertThat(saveStoreSchool.getId()).isNotNull();
+                    softly.assertThat(saveStoreSchool.getStore()).isEqualTo(store);
+                    softly.assertThat(saveStoreSchool.getSchool()).isEqualTo(school);
+                }
         );
     }
 
