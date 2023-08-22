@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import org.dinosaur.foodbowl.domain.follow.domain.Follow;
 import org.dinosaur.foodbowl.domain.follow.dto.response.FollowerResponse;
+import org.dinosaur.foodbowl.domain.follow.dto.response.FollowingResponse;
 import org.dinosaur.foodbowl.domain.follow.persistence.FollowRepository;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.global.common.response.PageResponse;
@@ -26,6 +27,36 @@ class FollowServiceTest extends IntegrationTest {
 
     @Autowired
     private FollowRepository followRepository;
+
+    @Test
+    void 팔로잉_목록을_페이징_조회한다() {
+        Member follower = memberTestPersister.memberBuilder().save();
+        Member followingA = memberTestPersister.memberBuilder().save();
+        Member followingB = memberTestPersister.memberBuilder().save();
+
+        Follow followA = followTestPersister.builder().following(followingA).follower(follower).save();
+        Follow followB = followTestPersister.builder().following(followingB).follower(follower).save();
+
+        PageResponse<FollowingResponse> response = followService.getFollowings(0, 2, follower);
+
+        assertSoftly(
+                softly -> {
+                    softly.assertThat(response.content())
+                            .usingRecursiveComparison()
+                            .isEqualTo(
+                                    List.of(
+                                            FollowingResponse.from(followB.getFollowing()),
+                                            FollowingResponse.from(followA.getFollowing())
+                                    )
+                            );
+                    softly.assertThat(response.isFirst()).isTrue();
+                    softly.assertThat(response.isLast()).isTrue();
+                    softly.assertThat(response.hasNext()).isFalse();
+                    softly.assertThat(response.currentPage()).isEqualTo(0);
+                    softly.assertThat(response.currentSize()).isEqualTo(2);
+                }
+        );
+    }
 
     @Test
     void 팔로워_목록을_페이징_조회한다() {
