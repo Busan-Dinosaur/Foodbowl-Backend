@@ -4,6 +4,8 @@ import static org.dinosaur.foodbowl.domain.store.exception.StoreExceptionType.IN
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.Embedded;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -42,13 +44,9 @@ public class Address {
     @Column(name = "road_name", length = 100)
     private String roadName;
 
-    @NotNull
-    @Column(name = "x")
-    private BigDecimal x;
-
-    @NotNull
-    @Column(name = "y")
-    private BigDecimal y;
+    @Valid
+    @Embedded
+    private Coordinate coordinate;
 
     public static Address of(String storeAddress, BigDecimal x, BigDecimal y) {
         List<String> addressElements = Arrays.stream(storeAddress.split(DELIMITER)).toList();
@@ -83,7 +81,6 @@ public class Address {
         this.region2depthName = region2depthName;
         this.region3depthName = region3depthName;
         this.roadName = roadName;
-        this.x = x;
-        this.y = y;
+        this.coordinate = new Coordinate(x, y);
     }
 }
