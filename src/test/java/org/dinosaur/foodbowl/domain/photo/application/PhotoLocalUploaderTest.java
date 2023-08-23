@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import org.dinosaur.foodbowl.file.FileTestUtils;
 import org.dinosaur.foodbowl.global.exception.FileException;
 import org.dinosaur.foodbowl.test.IntegrationTest;
+import org.dinosaur.foodbowl.test.file.FileTestUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
@@ -20,17 +20,16 @@ import org.springframework.web.multipart.MultipartFile;
 class PhotoLocalUploaderTest extends IntegrationTest {
 
     @Autowired
-    private PhotoLocalUploader fileSystemPhotoService;
+    private PhotoLocalUploader photoLocalUploader;
 
     private static final byte[] image = FileTestUtils.generateMockImage();
 
     @Test
-    void 파일을_디렉토리에_저장한다() {
-        MockMultipartFile multipartFile = new MockMultipartFile("bucket", "foodBowl.jpg",
-                MediaType.IMAGE_JPEG_VALUE, image);
+    void 이미지_파일을_디렉토리에_저장한다() {
+        MultipartFile multipartFile = FileTestUtils.generateMultiPartFile();
         List<MultipartFile> multipartFiles = List.of(multipartFile);
 
-        List<String> filePaths = fileSystemPhotoService.upload(multipartFiles, "test");
+        List<String> filePaths = photoLocalUploader.upload(multipartFiles, "test");
 
         assertThat(filePaths).isNotEmpty();
         FileTestUtils.cleanUp();
@@ -43,7 +42,7 @@ class PhotoLocalUploaderTest extends IntegrationTest {
                 MediaType.IMAGE_JPEG_VALUE, image);
         List<MultipartFile> multipartFiles = List.of(multipartFile);
 
-        assertThatThrownBy(() -> fileSystemPhotoService.upload(multipartFiles, "test"))
+        assertThatThrownBy(() -> photoLocalUploader.upload(multipartFiles, "test"))
                 .isInstanceOf(FileException.class)
                 .hasMessage("이미지 파일만 업로드 가능합니다.");
     }
@@ -56,7 +55,7 @@ class PhotoLocalUploaderTest extends IntegrationTest {
                 MediaType.IMAGE_JPEG_VALUE, image);
         List<MultipartFile> multipartFiles = List.of(multipartFile);
 
-        assertThatThrownBy(() -> fileSystemPhotoService.upload(multipartFiles, "test"))
+        assertThatThrownBy(() -> photoLocalUploader.upload(multipartFiles, "test"))
                 .isInstanceOf(FileException.class)
                 .hasMessage("파일 이름은 공백이 될 수 없습니다");
     }
@@ -68,7 +67,7 @@ class PhotoLocalUploaderTest extends IntegrationTest {
                 MediaType.IMAGE_JPEG_VALUE, image);
         List<MultipartFile> multipartFiles = List.of(multipartFile);
 
-        assertThatThrownBy(() -> fileSystemPhotoService.upload(multipartFiles, "test"))
+        assertThatThrownBy(() -> photoLocalUploader.upload(multipartFiles, "test"))
                 .isInstanceOf(FileException.class)
                 .hasMessage("파일에 확장자가 존재하지 않습니다.");
     }

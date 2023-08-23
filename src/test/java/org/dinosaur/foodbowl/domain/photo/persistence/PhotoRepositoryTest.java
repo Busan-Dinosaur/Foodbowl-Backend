@@ -21,6 +21,6 @@ class PhotoRepositoryTest extends PersistenceTest {
 
         Photo savePhoto = photoRepository.save(photo);
 
-        assertThat(savePhoto).isNotNull();
+        assertThat(savePhoto.getId()).isNotNull();
     }
 }

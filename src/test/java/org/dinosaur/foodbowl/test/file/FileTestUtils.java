@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.file;
+package org.dinosaur.foodbowl.test.file;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -16,27 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileTestUtils {
 
     private static final String TEST_FILE_UPLOAD_PATH = "src/test/resources/bucket";
-
-    public static List<MultipartFile> generateMultipartFiles(int size) {
-        List<MultipartFile> multipartFiles = new ArrayList<>();
-
-        for (int i = 0; i < size; i++) {
-            multipartFiles.add(new MockMultipartFile(
-                    "images",
-                    "foodBowl.jpg",
-                    MediaType.TEXT_PLAIN_VALUE,
-                    "Hello Images".getBytes()));
-        }
-        return multipartFiles;
-    }
-
-    public static MultipartFile generateMockMultiPartFile() {
-        return new MockMultipartFile(
-                "images",
-                "foodBowl.jpg",
-                MediaType.TEXT_PLAIN_VALUE,
-                "Hello Images".getBytes());
-    }
+    private static final byte[] IMAGE = generateMockImage();
 
     public static byte[] generateMockImage() {
         BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
@@ -47,6 +27,25 @@ public class FileTestUtils {
         } catch (IOException e) {
             throw new FileException(FileExceptionType.FILE_WRITE_ERROR);
         }
+    }
+
+    public static MultipartFile generateMultiPartFile() {
+        return new MockMultipartFile(
+                "images",
+                "foodBowl.jpg",
+                MediaType.IMAGE_JPEG_VALUE,
+                IMAGE
+        );
+    }
+
+    public static List<MultipartFile> generateMultipartFiles(int size) {
+        List<MultipartFile> multipartFiles = new ArrayList<>();
+
+        for (int i = 0; i < size; i++) {
+            MultipartFile file = generateMultiPartFile();
+            multipartFiles.add(file);
+        }
+        return multipartFiles;
     }
 
     public static void cleanUp() {

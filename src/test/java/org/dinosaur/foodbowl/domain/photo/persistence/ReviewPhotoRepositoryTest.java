@@ -8,6 +8,7 @@ import org.dinosaur.foodbowl.test.PersistenceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@SuppressWarnings("NonAsciiCharacters")
 class ReviewPhotoRepositoryTest extends PersistenceTest {
 
     @Autowired

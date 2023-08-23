@@ -17,14 +17,32 @@ public class SchoolTestPersister {
 
     public class SchoolBuilder {
 
+        private String name;
+        private BigDecimal x;
+        private BigDecimal y;
+
+        public SchoolBuilder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public SchoolBuilder x(BigDecimal x) {
+            this.x = x;
+            return this;
+        }
+
+        public SchoolBuilder y(BigDecimal y) {
+            this.y = y;
+            return this;
+        }
+
         public School save() {
-            return schoolRepository.save(
-                    School.builder()
-                            .name("부산대학교")
-                            .x(BigDecimal.valueOf(123.1245))
-                            .y(BigDecimal.valueOf(37.445))
-                            .build()
-            );
+            School school = School.builder()
+                    .name(name == null ? "부산대학교" : name)
+                    .x(x == null ? BigDecimal.valueOf(123.1245) : x)
+                    .y(y == null ? BigDecimal.valueOf(37.445) : y)
+                    .build();
+            return schoolRepository.save(school);
         }
     }
 }

@@ -22,7 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @SuppressWarnings("NonAsciiCharacters")
-@WebMvcTest(controllers = HealthCheckController.class)
+@WebMvcTest(HealthCheckController.class)
 class HealthCheckControllerTest extends PresentationTest {
 
     @Autowired

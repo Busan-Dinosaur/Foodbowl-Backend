@@ -16,7 +16,7 @@ class ReviewPhotoServiceTest extends IntegrationTest {
     private ReviewPhotoService reviewPhotoService;
 
     @Test
-    void 리뷰_사진_매핑_정보_저장() {
+    void 리뷰_사진_매핑_정보를_저장한다() {
         Review review = reviewTestPersister.builder().save();
         Photo photo1 = photoTestPersister.builder().save();
         Photo photo2 = photoTestPersister.builder().save();

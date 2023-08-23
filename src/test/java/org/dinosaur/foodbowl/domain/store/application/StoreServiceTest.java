@@ -34,7 +34,11 @@ class StoreServiceTest extends IntegrationTest {
 
         @Test
         void 학교_없이_생성한다() {
-            StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(null, null, null);
+            StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(
+                    null,
+                    null,
+                    null
+            );
 
             Store store = storeService.create(storeCreateDtoWithoutSchool);
 
@@ -51,8 +55,11 @@ class StoreServiceTest extends IntegrationTest {
 
         @Test
         void 학교와_함께_생성한다() {
-            StoreCreateDto storeCreateDtoWithSchool = generateStoreCreateDto("부산대학교", BigDecimal.valueOf(123.12),
-                    BigDecimal.valueOf(37.1234));
+            StoreCreateDto storeCreateDtoWithSchool = generateStoreCreateDto(
+                    "부산대학교",
+                    BigDecimal.valueOf(123.12),
+                    BigDecimal.valueOf(37.1234)
+            );
 
             Store store = storeService.create(storeCreateDtoWithSchool);
             List<StoreSchool> storeSchools = storeSchoolRepository.findAllBySchool_Name_Name("부산대학교");
@@ -64,7 +71,8 @@ class StoreServiceTest extends IntegrationTest {
                     softly -> {
                         softly.assertThat(store.getId()).isNotNull();
                         softly.assertThat(store.getStoreName()).isEqualTo(storeCreateDtoWithSchool.storeName());
-                        softly.assertThat(store.getCategory().getCategoryType().name()).isEqualTo(storeCreateDtoWithSchool.category());
+                        softly.assertThat(store.getCategory().getCategoryType().name())
+                                .isEqualTo(storeCreateDtoWithSchool.category());
                         softly.assertThat(stores).contains(store);
                     }
             );
@@ -72,8 +80,11 @@ class StoreServiceTest extends IntegrationTest {
 
         @Test
         void 이미_존재하는_학교인_경우도_학교와_함께_생성한다() {
-            StoreCreateDto storeCreateDtoWithSchool = generateStoreCreateDto("부산대학교", BigDecimal.valueOf(123.12),
-                    BigDecimal.valueOf(37.1234));
+            StoreCreateDto storeCreateDtoWithSchool = generateStoreCreateDto(
+                    "부산대학교",
+                    BigDecimal.valueOf(123.12),
+                    BigDecimal.valueOf(37.1234)
+            );
             Store store1 = storeService.create(storeCreateDtoWithSchool);
             StoreCreateDto nextStoreCreateDto = new StoreCreateDto(
                     "9999999",
@@ -103,8 +114,12 @@ class StoreServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 이미_존재하는_가게이면_예외_발생() {
-            StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(null, null, null);
+        void 이미_존재하는_가게이면_예외가_발생한다() {
+            StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(
+                    null,
+                    null,
+                    null
+            );
             storeService.create(storeCreateDtoWithoutSchool);
 
             assertThatThrownBy(() -> storeService.create(storeCreateDtoWithoutSchool))
@@ -114,7 +129,7 @@ class StoreServiceTest extends IntegrationTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"!부산대학교", "@서울대학교@", "+연세대학교-", "!@#!$"})
-        void 학교_이름이_형식과_다르면_예외_발생(String schoolName) {
+        void 학교_이름이_형식과_다르면_예외가_발생한다(String schoolName) {
             StoreCreateDto storeCreateDto = new StoreCreateDto(
                     "1234567",
                     "농민백암순대",
@@ -137,7 +152,7 @@ class StoreServiceTest extends IntegrationTest {
         @ParameterizedTest
         @NullAndEmptySource
         @ValueSource(strings = {"미국식", "한국식", "학식", "급식"})
-        void 카테고리_타입이_존재하지_않으면_예외_발생(String category) {
+        void 카테고리_타입이_존재하지_않으면_예외가_발생한다(String category) {
             StoreCreateDto storeCreateDto = new StoreCreateDto(
                     "21415511",
                     "농민백암순대",
@@ -159,15 +174,19 @@ class StoreServiceTest extends IntegrationTest {
     }
 
     @Test
-    void 이미_존재하는_가게_조회() {
-        StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(null, null, null);
+    void 이미_존재하는_가게를_조회한다() {
+        StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(
+                null,
+                null,
+                null
+        );
         Store store = storeService.create(storeCreateDtoWithoutSchool);
 
         assertThat(storeService.findByLocationId(store.getLocationId())).isPresent();
     }
 
     @Test
-    void 존재하지_않는_가게_조회() {
+    void 존재하지_않는_가게를_조회한다() {
         String locationId = String.valueOf(Long.MAX_VALUE);
 
         assertThat(storeService.findByLocationId(locationId)).isEmpty();

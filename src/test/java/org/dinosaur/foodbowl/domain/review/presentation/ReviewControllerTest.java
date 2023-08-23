@@ -19,7 +19,7 @@ import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.domain.vo.SocialType;
 import org.dinosaur.foodbowl.domain.review.application.ReviewService;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
-import org.dinosaur.foodbowl.file.FileTestUtils;
+import org.dinosaur.foodbowl.test.file.FileTestUtils;
 import org.dinosaur.foodbowl.test.PresentationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -35,7 +35,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 @SuppressWarnings("NonAsciiCharacters")
-@WebMvcTest(controllers = ReviewController.class)
+@WebMvcTest(ReviewController.class)
 class ReviewControllerTest extends PresentationTest {
 
     @Autowired
@@ -70,13 +70,17 @@ class ReviewControllerTest extends PresentationTest {
 
         @Test
         void 사진이_포함된_경우_200_상태코드를_반환한다() throws Exception {
+            ReviewCreateRequest reviewCreateRequest = generateReviewCreateDto();
+            MockMultipartFile request = new MockMultipartFile(
+                    "request",
+                    "",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(reviewCreateRequest)
+            );
+            MockMultipartFile multipartFile1 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
+            MockMultipartFile multipartFile2 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
             given(reviewService.create(any(ReviewCreateRequest.class), anyList(), any(Member.class)))
                     .willReturn(1L);
-            ReviewCreateRequest reviewCreateRequest = generateReviewCreateDto();
-            MockMultipartFile request = new MockMultipartFile("request", "", "application/json",
-                    objectMapper.writeValueAsBytes(reviewCreateRequest));
-            MockMultipartFile multipartFile1 = (MockMultipartFile) FileTestUtils.generateMockMultiPartFile();
-            MockMultipartFile multipartFile2 = (MockMultipartFile) FileTestUtils.generateMockMultiPartFile();
 
             mockMvc.perform(multipart("/v1/reviews")
                             .file(request)
@@ -90,11 +94,15 @@ class ReviewControllerTest extends PresentationTest {
 
         @Test
         void 사진이_없는_경우_200_상태코드를_반환한다() throws Exception {
+            ReviewCreateRequest reviewCreateRequest = generateReviewCreateDto();
+            MockMultipartFile request = new MockMultipartFile(
+                    "request",
+                    "",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(reviewCreateRequest)
+            );
             given(reviewService.create(any(ReviewCreateRequest.class), any(), any(Member.class)))
                     .willReturn(1L);
-            ReviewCreateRequest reviewCreateRequest = generateReviewCreateDto();
-            MockMultipartFile request = new MockMultipartFile("request", "", "application/json",
-                    objectMapper.writeValueAsBytes(reviewCreateRequest));
 
             mockMvc.perform(multipart("/v1/reviews")
                             .file(request)
@@ -106,16 +114,18 @@ class ReviewControllerTest extends PresentationTest {
 
         @Test
         void 사진이_4개_보다_많은_경우_400_상태코드를_반환한다() throws Exception {
-            given(reviewService.create(any(ReviewCreateRequest.class), anyList(), any(Member.class)))
-                    .willReturn(1L);
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateDto();
-            MockMultipartFile request = new MockMultipartFile("request", "", "application/json",
-                    objectMapper.writeValueAsBytes(reviewCreateRequest));
-            MockMultipartFile multipartFile1 = (MockMultipartFile) FileTestUtils.generateMockMultiPartFile();
-            MockMultipartFile multipartFile2 = (MockMultipartFile) FileTestUtils.generateMockMultiPartFile();
-            MockMultipartFile multipartFile3 = (MockMultipartFile) FileTestUtils.generateMockMultiPartFile();
-            MockMultipartFile multipartFile4 = (MockMultipartFile) FileTestUtils.generateMockMultiPartFile();
-            MockMultipartFile multipartFile5 = (MockMultipartFile) FileTestUtils.generateMockMultiPartFile();
+            MockMultipartFile request = new MockMultipartFile(
+                    "request",
+                    "",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(reviewCreateRequest)
+            );
+            MockMultipartFile multipartFile1 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
+            MockMultipartFile multipartFile2 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
+            MockMultipartFile multipartFile3 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
+            MockMultipartFile multipartFile4 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
+            MockMultipartFile multipartFile5 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
 
             mockMvc.perform(multipart("/v1/reviews")
                             .file(request)
@@ -133,13 +143,17 @@ class ReviewControllerTest extends PresentationTest {
         }
 
         @Test
-        void 이미지_크기가_서블릿_최대_처리_크기_보다_큰_경우_400_반환() throws Exception {
+        void 이미지_크기가_서블릿_최대_처리_크기_보다_큰_경우_400_반환한다() throws Exception {
+            ReviewCreateRequest reviewCreateRequest = generateReviewCreateDto();
+            MockMultipartFile request = new MockMultipartFile(
+                    "request",
+                    "",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(reviewCreateRequest)
+            );
+            MockMultipartFile multipartFile = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
             given(reviewService.create(any(ReviewCreateRequest.class), anyList(), any(Member.class)))
                     .willThrow(new MaxUploadSizeExceededException(5));
-            ReviewCreateRequest reviewCreateRequest = generateReviewCreateDto();
-            MockMultipartFile request = new MockMultipartFile("request", "", "application/json",
-                    objectMapper.writeValueAsBytes(reviewCreateRequest));
-            MockMultipartFile multipartFile = (MockMultipartFile) FileTestUtils.generateMockMultiPartFile();
 
             mockMvc.perform(multipart("/v1/reviews")
                             .file(request)
@@ -156,8 +170,6 @@ class ReviewControllerTest extends PresentationTest {
         @ValueSource(strings = {" "})
         @NullAndEmptySource
         void 가게_위치_ID가_없는_경우_400_상태코드를_반환한다(String locationId) throws Exception {
-            given(reviewService.create(any(ReviewCreateRequest.class), any(), any(Member.class)))
-                    .willReturn(1L);
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
                     locationId,
                     "신천직화집",
@@ -171,8 +183,12 @@ class ReviewControllerTest extends PresentationTest {
                     null,
                     null,
                     null);
-            MockMultipartFile request = new MockMultipartFile("request", "", "application/json",
-                    objectMapper.writeValueAsBytes(reviewCreateRequest));
+            MockMultipartFile request = new MockMultipartFile(
+                    "request",
+                    "",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(reviewCreateRequest)
+            );
 
             mockMvc.perform(multipart("/v1/reviews")
                             .file(request)
@@ -188,8 +204,6 @@ class ReviewControllerTest extends PresentationTest {
         @ValueSource(strings = {" "})
         @NullAndEmptySource
         void 가게_이름이_없는_경우_400_상태코드를_반환한다(String storeName) throws Exception {
-            given(reviewService.create(any(ReviewCreateRequest.class), any(), any(Member.class)))
-                    .willReturn(1L);
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
                     "12412515",
                     storeName,
@@ -203,8 +217,12 @@ class ReviewControllerTest extends PresentationTest {
                     null,
                     null,
                     null);
-            MockMultipartFile request = new MockMultipartFile("request", "", "application/json",
-                    objectMapper.writeValueAsBytes(reviewCreateRequest));
+            MockMultipartFile request = new MockMultipartFile(
+                    "request",
+                    "",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(reviewCreateRequest)
+            );
 
             mockMvc.perform(multipart("/v1/reviews")
                             .file(request)
@@ -220,8 +238,6 @@ class ReviewControllerTest extends PresentationTest {
         @ValueSource(strings = {" "})
         @NullAndEmptySource
         void 가게_주소가_없는_경우_400_상태코드를_반환한다(String address) throws Exception {
-            given(reviewService.create(any(ReviewCreateRequest.class), any(), any(Member.class)))
-                    .willReturn(1L);
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
                     "12312414",
                     "국민연금공단",
@@ -235,8 +251,12 @@ class ReviewControllerTest extends PresentationTest {
                     null,
                     null,
                     null);
-            MockMultipartFile request = new MockMultipartFile("request", "", "application/json",
-                    objectMapper.writeValueAsBytes(reviewCreateRequest));
+            MockMultipartFile request = new MockMultipartFile(
+                    "request",
+                    "",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(reviewCreateRequest)
+            );
 
             mockMvc.perform(multipart("/v1/reviews")
                             .file(request)
@@ -250,8 +270,6 @@ class ReviewControllerTest extends PresentationTest {
 
         @Test
         void 가게_경도가_없는_경우_400_상태코드를_반환한다() throws Exception {
-            given(reviewService.create(any(ReviewCreateRequest.class), any(), any(Member.class)))
-                    .willReturn(1L);
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
                     "12251521",
                     "국민연금공단",
@@ -265,8 +283,12 @@ class ReviewControllerTest extends PresentationTest {
                     null,
                     null,
                     null);
-            MockMultipartFile request = new MockMultipartFile("request", "", "application/json",
-                    objectMapper.writeValueAsBytes(reviewCreateRequest));
+            MockMultipartFile request = new MockMultipartFile(
+                    "request",
+                    "",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(reviewCreateRequest)
+            );
 
             mockMvc.perform(multipart("/v1/reviews")
                             .file(request)
@@ -280,8 +302,6 @@ class ReviewControllerTest extends PresentationTest {
 
         @Test
         void 가게_위도가_없는_경우_400_상태코드를_반환한다() throws Exception {
-            given(reviewService.create(any(ReviewCreateRequest.class), any(), any(Member.class)))
-                    .willReturn(1L);
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
                     "134125",
                     "국민연금공단",
@@ -295,8 +315,12 @@ class ReviewControllerTest extends PresentationTest {
                     null,
                     null,
                     null);
-            MockMultipartFile request = new MockMultipartFile("request", "", "application/json",
-                    objectMapper.writeValueAsBytes(reviewCreateRequest));
+            MockMultipartFile request = new MockMultipartFile(
+                    "request",
+                    "",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(reviewCreateRequest)
+            );
 
             mockMvc.perform(multipart("/v1/reviews")
                             .file(request)
@@ -312,8 +336,6 @@ class ReviewControllerTest extends PresentationTest {
         @ValueSource(strings = {" "})
         @NullAndEmptySource
         void 가게_정보_URL_없는_경우_400_상태코드를_반환한다(String storeUrl) throws Exception {
-            given(reviewService.create(any(ReviewCreateRequest.class), any(), any(Member.class)))
-                    .willReturn(1L);
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
                     "3241414",
                     "국민연금공단",
@@ -327,8 +349,12 @@ class ReviewControllerTest extends PresentationTest {
                     null,
                     null,
                     null);
-            MockMultipartFile request = new MockMultipartFile("request", "", "application/json",
-                    objectMapper.writeValueAsBytes(reviewCreateRequest));
+            MockMultipartFile request = new MockMultipartFile(
+                    "request",
+                    "",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(reviewCreateRequest)
+            );
 
             mockMvc.perform(multipart("/v1/reviews")
                             .file(request)
@@ -344,8 +370,6 @@ class ReviewControllerTest extends PresentationTest {
         @ValueSource(strings = {" "})
         @NullAndEmptySource
         void 가게_카테고리_정보가_없는_경우_400_상태코드를_반환한다(String category) throws Exception {
-            given(reviewService.create(any(ReviewCreateRequest.class), any(), any(Member.class)))
-                    .willReturn(1L);
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
                     "124121524",
                     "국민연금공단",
@@ -359,8 +383,12 @@ class ReviewControllerTest extends PresentationTest {
                     null,
                     null,
                     null);
-            MockMultipartFile request = new MockMultipartFile("request", "", "application/json",
-                    objectMapper.writeValueAsBytes(reviewCreateRequest));
+            MockMultipartFile request = new MockMultipartFile(
+                    "request",
+                    "",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(reviewCreateRequest)
+            );
 
             mockMvc.perform(multipart("/v1/reviews")
                             .file(request)
@@ -376,8 +404,6 @@ class ReviewControllerTest extends PresentationTest {
         @ValueSource(strings = {" "})
         @NullAndEmptySource
         void 가게_리뷰_내용이_없는_경우_400_상태코드를_반환한다(String content) throws Exception {
-            given(reviewService.create(any(ReviewCreateRequest.class), any(), any(Member.class)))
-                    .willReturn(1L);
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
                     "1234125",
                     "국민연금공단",
@@ -391,8 +417,12 @@ class ReviewControllerTest extends PresentationTest {
                     null,
                     null,
                     null);
-            MockMultipartFile request = new MockMultipartFile("request", "", "application/json",
-                    objectMapper.writeValueAsBytes(reviewCreateRequest));
+            MockMultipartFile request = new MockMultipartFile(
+                    "request",
+                    "",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(reviewCreateRequest)
+            );
 
             mockMvc.perform(multipart("/v1/reviews")
                             .file(request)

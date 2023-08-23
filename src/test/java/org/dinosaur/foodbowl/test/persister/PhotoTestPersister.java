@@ -24,12 +24,10 @@ public class PhotoTestPersister {
         }
 
         public Photo save() {
-            return photoRepository.save(
-                    Photo.builder()
-                            .path(path == null ? String.valueOf(System.currentTimeMillis()) : path)
-                            .build()
-            );
+            Photo photo = Photo.builder()
+                    .path(path == null ? String.valueOf(System.currentTimeMillis()) : path)
+                    .build();
+            return photoRepository.save(photo);
         }
     }
-
 }

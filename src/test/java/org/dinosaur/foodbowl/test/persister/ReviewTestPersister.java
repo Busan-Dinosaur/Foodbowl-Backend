@@ -22,6 +22,7 @@ public class ReviewTestPersister {
 
         private Member member;
         private Store store;
+        private String content;
 
         public ReviewBuilder member(Member member) {
             this.member = member;
@@ -33,14 +34,18 @@ public class ReviewTestPersister {
             return this;
         }
 
+        public ReviewBuilder content(String content) {
+            this.content = content;
+            return this;
+        }
+
         public Review save() {
-            return reviewRepository.save(
-                    Review.builder()
-                            .member(member == null ? memberTestPersister.memberBuilder().save() : member)
-                            .store(store == null ? storeTestPersister.builder().save() : store)
-                            .content("리뷰 내용입니다.")
-                            .build()
-            );
+            Review review = Review.builder()
+                    .member(member == null ? memberTestPersister.memberBuilder().save() : member)
+                    .store(store == null ? storeTestPersister.builder().save() : store)
+                    .content(content == null ? "리뷰 내용입니다." : content)
+                    .build();
+            return reviewRepository.save(review);
         }
     }
 }

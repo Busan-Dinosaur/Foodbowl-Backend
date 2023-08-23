@@ -12,9 +12,7 @@ import java.util.List;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.global.exception.ExceptionResponse;
-import org.dinosaur.foodbowl.global.presentation.Auth;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "리뷰", description = "리뷰 API")
@@ -39,8 +37,8 @@ public interface ReviewControllerDocs {
             )
     })
     ResponseEntity<Void> create(
-            @RequestPart(name = "request") @Valid ReviewCreateRequest reviewCreateRequest,
-            @RequestPart(name = "images", required = false)
+            @Valid ReviewCreateRequest reviewCreateRequest,
             @Size(max = 4, message = "사진의 개수는 최대 4개까지 가능합니다.") List<MultipartFile> imageFiles,
-            @Auth Member member);
+            Member member
+    );
 }
