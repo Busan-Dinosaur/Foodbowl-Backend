@@ -45,21 +45,21 @@ class JwtTokenProviderTest {
     class 클레임_추출 {
 
         @Test
-        void 유효하지_않은_토큰이라면_빈값을_반환한다() {
-            String token = "invalid token";
-
-            Optional<Claims> result = jwtTokenProvider.extractClaims(token);
-
-            assertThat(result).isEmpty();
-        }
-
-        @Test
         void 유효한_토큰이라면_클레임을_추출해서_반환한다() {
             String token = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
 
             Optional<Claims> result = jwtTokenProvider.extractClaims(token);
 
             assertThat(result).isNotEmpty();
+        }
+
+        @Test
+        void 유효하지_않은_토큰이라면_빈값을_반환한다() {
+            String token = "invalid token";
+
+            Optional<Claims> result = jwtTokenProvider.extractClaims(token);
+
+            assertThat(result).isEmpty();
         }
     }
 }

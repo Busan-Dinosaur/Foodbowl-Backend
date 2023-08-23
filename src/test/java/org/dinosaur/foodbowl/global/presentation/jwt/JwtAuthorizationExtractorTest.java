@@ -21,6 +21,16 @@ class JwtAuthorizationExtractorTest {
     class 인증_토큰_추출 {
 
         @Test
+        void 인증_토큰이_존재하면_토큰을_추출해서_반환한다() {
+            MockHttpServletRequest request = new MockHttpServletRequest();
+            request.addHeader("Authorization", "Bearer Token");
+
+            Optional<String> result = jwtAuthorizationExtractor.extractAccessToken(request);
+
+            assertThat(result).isPresent().contains("Token");
+        }
+
+        @Test
         void 인증_헤더가_존재하지_않으면_빈값을_반환한다() {
             MockHttpServletRequest request = new MockHttpServletRequest();
 
@@ -48,16 +58,6 @@ class JwtAuthorizationExtractorTest {
             Optional<String> result = jwtAuthorizationExtractor.extractAccessToken(request);
 
             assertThat(result).isEmpty();
-        }
-
-        @Test
-        void 인증_토큰이_존재하면_토큰을_추출해서_반환한다() {
-            MockHttpServletRequest request = new MockHttpServletRequest();
-            request.addHeader("Authorization", "Bearer Token");
-
-            Optional<String> result = jwtAuthorizationExtractor.extractAccessToken(request);
-
-            assertThat(result).isPresent().contains("Token");
         }
     }
 }

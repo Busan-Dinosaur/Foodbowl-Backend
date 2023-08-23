@@ -92,6 +92,13 @@ class FollowRepositoryTest extends PersistenceTest {
         }
 
         @Test
+        void 팔로잉_팔로우_회원이_모두_일치하면_팔로우를_반환한다() {
+            Optional<Follow> result = followRepository.findByFollowingAndFollower(following, follower);
+
+            assertThat(result).isPresent();
+        }
+
+        @Test
         void 팔로잉_회원이_일치하지_않으면_빈값을_반환한다() {
             Optional<Follow> result = followRepository.findByFollowingAndFollower(other, follower);
 
@@ -110,13 +117,6 @@ class FollowRepositoryTest extends PersistenceTest {
             Optional<Follow> result = followRepository.findByFollowingAndFollower(other, other);
 
             assertThat(result).isEmpty();
-        }
-
-        @Test
-        void 팔로잉_팔로우_회원이_모두_일치하면_팔로우를_반환한다() {
-            Optional<Follow> result = followRepository.findByFollowingAndFollower(following, follower);
-
-            assertThat(result).isPresent();
         }
     }
 }

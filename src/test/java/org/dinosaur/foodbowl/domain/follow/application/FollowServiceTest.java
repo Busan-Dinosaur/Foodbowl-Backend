@@ -92,6 +92,17 @@ class FollowServiceTest extends IntegrationTest {
     class 팔로우_등록 {
 
         @Test
+        void 유효한_상황이라면_팔로우한다() {
+            Member loginMember = memberTestPersister.memberBuilder().save();
+            Member other = memberTestPersister.memberBuilder().save();
+
+            followService.follow(other.getId(), loginMember);
+
+            Optional<Follow> follow = followRepository.findByFollowingAndFollower(other, loginMember);
+            assertThat(follow).isPresent();
+        }
+
+        @Test
         void 등록되지_않은_회원이라면_예외를_던진다() {
             Member loginMember = memberTestPersister.memberBuilder().save();
 
@@ -122,21 +133,24 @@ class FollowServiceTest extends IntegrationTest {
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("이미 팔로우한 회원입니다.");
         }
-
-        @Test
-        void 유효한_상황이라면_팔로우한다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
-            Member other = memberTestPersister.memberBuilder().save();
-
-            followService.follow(other.getId(), loginMember);
-
-            Optional<Follow> follow = followRepository.findByFollowingAndFollower(other, loginMember);
-            assertThat(follow).isPresent();
-        }
     }
 
     @Nested
     class 팔로우_취소 {
+
+        @Test
+        void 유효한_상황이라면_언팔로우한다() {
+            Member loginMember = memberTestPersister.memberBuilder().save();
+            Member followMember = memberTestPersister.memberBuilder().save();
+            Follow follow = followTestPersister.builder()
+                    .following(followMember)
+                    .follower(loginMember)
+                    .save();
+
+            followService.unfollow(followMember.getId(), loginMember);
+
+            assertThat(followRepository.findById(follow.getId())).isNotPresent();
+        }
 
         @Test
         void 등록되지_않은_회원이라면_에외를_던진다() {
@@ -156,24 +170,24 @@ class FollowServiceTest extends IntegrationTest {
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("팔로우 하지 않은 회원입니다.");
         }
-
-        @Test
-        void 유효한_상황이라면_언팔로우한다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
-            Member followMember = memberTestPersister.memberBuilder().save();
-            Follow follow = followTestPersister.builder()
-                    .following(followMember)
-                    .follower(loginMember)
-                    .save();
-
-            followService.unfollow(followMember.getId(), loginMember);
-
-            assertThat(followRepository.findById(follow.getId())).isNotPresent();
-        }
     }
 
     @Nested
     class 팔로워_삭제 {
+
+        @Test
+        void 유효한_상황이라면_팔로워를_삭제한다() {
+            Member loginMember = memberTestPersister.memberBuilder().save();
+            Member followMember = memberTestPersister.memberBuilder().save();
+            Follow follow = followTestPersister.builder()
+                    .following(loginMember)
+                    .follower(followMember)
+                    .save();
+
+            followService.deleteFollower(followMember.getId(), loginMember);
+
+            assertThat(followRepository.findById(follow.getId())).isNotPresent();
+        }
 
         @Test
         void 등록되지_않은_회원이라면_예외를_던진다() {
@@ -192,20 +206,6 @@ class FollowServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> followService.deleteFollower(followMember.getId(), loginMember))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("나를 팔로우 하지 않은 회원입니다.");
-        }
-
-        @Test
-        void 유효한_상황이라면_팔로워를_삭제한다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
-            Member followMember = memberTestPersister.memberBuilder().save();
-            Follow follow = followTestPersister.builder()
-                    .following(loginMember)
-                    .follower(followMember)
-                    .save();
-
-            followService.deleteFollower(followMember.getId(), loginMember);
-
-            assertThat(followRepository.findById(follow.getId())).isNotPresent();
         }
     }
 }
