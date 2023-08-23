@@ -1,16 +1,20 @@
 package org.dinosaur.foodbowl.domain.photo.application;
 
+import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.*;
 import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_BASE_NAME_ERROR;
 import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_EXTENSION_ERROR;
 import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_FORMAT_ERROR;
 import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_TRANSFER_ERROR;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import javax.imageio.ImageIO;
 import org.dinosaur.foodbowl.global.exception.FileException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -35,9 +39,10 @@ public class PhotoLocalUploader implements PhotoUploader {
 
         List<String> filePaths = new ArrayList<>();
         for (MultipartFile multipartFile : files) {
-            if (multipartFile == null || multipartFile.isEmpty()) {
+            if (isEmptyFileOrNotImage(multipartFile)) {
                 continue;
             }
+
             String originalFilename = multipartFile.getOriginalFilename();
             validateFileName(originalFilename);
             String saveFileName = convertToPathWithName(originalFilename);
@@ -55,6 +60,18 @@ public class PhotoLocalUploader implements PhotoUploader {
             directory.mkdirs();
         }
         return directory;
+    }
+
+    private boolean isEmptyFileOrNotImage(MultipartFile multipartFile) {
+        return multipartFile == null || multipartFile.isEmpty() || isNotImageFile(multipartFile);
+    }
+
+    private boolean isNotImageFile(MultipartFile file) {
+        try (InputStream originalInputStream = new BufferedInputStream(file.getInputStream())) {
+            return ImageIO.read(originalInputStream) == null;
+        } catch (IOException e) {
+            throw new FileException(FILE_READ_ERROR);
+        }
     }
 
     private String convertToPathWithName(String originalFilename) {
