@@ -48,11 +48,6 @@ public class StoreService {
         return store;
     }
 
-    @Transactional(readOnly = true)
-    public Optional<Store> findByLocationId(String locationId) {
-        return storeRepository.findByLocationId(locationId);
-    }
-
     private Store convertToStore(StoreCreateDto storeCreateDto) {
         CategoryType categoryType = CategoryType.of(storeCreateDto.category());
         Category category = categoryRepository.findById(categoryType.getId());
@@ -73,5 +68,10 @@ public class StoreService {
                 .orElseGet(() -> schoolService.save(schoolName, schoolX, schoolY));
 
         storeSchoolService.save(store, school);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Store> findByLocationId(String locationId) {
+        return storeRepository.findByLocationId(locationId);
     }
 }
