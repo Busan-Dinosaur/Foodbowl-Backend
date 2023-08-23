@@ -56,6 +56,7 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    finalizedBy 'jacocoTestReport'
 }
 
 //Start Querydsl
@@ -84,12 +85,90 @@ jacoco {
 }
 
 jacocoTestReport {
+    dependsOn test
+
     reports {
         html.enabled true
         xml.enabled false
         csv.enabled false
+        html.destination(file("build/jacoco/reports"))
     }
 
-    dependsOn test
+    def Qdomains = []
+
+    for (qPattern in "**/QA".."**/QZ") {
+        Qdomains.add(qPattern + "*")
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(
+                files(classDirectories.files.collect {
+                    fileTree(dir: it, excludes: [
+                            '**/*Application*',
+                            '**/*Docs*',
+                            '**/*Request*',
+                            '**/*Response*',
+                            '**/*Responses*',
+                            '**/*Dto*',
+                            '**/*User.class',
+                            '**/AuditingEntity.class',
+                            '**/*Exception*',
+                            '**/*ExceptionType*',
+                            '**/*Config*',
+                            '**/*Filter*',
+                            '**/*ArgumentResolver*',
+                            '**/*Handler*',
+                            '**/*EntryPoint*'
+                    ] + Qdomains)
+                })
+        )
+    }
+
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+
+jacocoTestCoverageVerification {
+    def Qdomains = []
+
+    for (qPattern in '*.QA'..'*.QZ') {
+        Qdomains.add(qPattern + '*')
+    }
+
+    violationRules {
+        rule {
+            enabled = true
+            element = "CLASS"
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+
+            excludes = [
+                    '*.*Application',
+                    '*.*Docs',
+                    '*.*Request',
+                    '*.*Response',
+                    '*.*Responses',
+                    '*.*Dto',
+                    '*.*User',
+                    '*.*AuditingEntity',
+                    '*.*Exception',
+                    '*.*ExceptionType',
+                    '*.*Config',
+                    '*.*Filter',
+                    '*.*ArgumentResolver',
+                    '*.*Handler',
+                    '*.*EntryPoint'
+            ] + Qdomains
+        }
+    }
 }
 //End JaCoCo
