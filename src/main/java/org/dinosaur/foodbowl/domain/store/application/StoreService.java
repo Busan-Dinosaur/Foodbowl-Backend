@@ -71,13 +71,13 @@ public class StoreService {
     }
 
     private void saveSchool(Store store, String schoolName, BigDecimal schoolX, BigDecimal schoolY) {
-        if (schoolService.findByName(schoolName).isEmpty()) {
-            School school = schoolService.save(schoolName, schoolX, schoolY);
-            storeSchoolRepository.save(StoreSchool.builder()
-                    .store(store)
-                    .school(school)
-                    .build()
-            );
-        }
+        School school = schoolService.findByName(schoolName)
+                .orElseGet(() -> schoolService.save(schoolName, schoolX, schoolY));
+
+        storeSchoolRepository.save(StoreSchool.builder()
+                .store(store)
+                .school(school)
+                .build()
+        );
     }
 }

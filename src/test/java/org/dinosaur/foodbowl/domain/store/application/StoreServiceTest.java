@@ -71,6 +71,38 @@ class StoreServiceTest extends IntegrationTest {
         }
 
         @Test
+        void 이미_존재하는_학교인_경우도_학교와_함께_생성한다() {
+            StoreCreateDto storeCreateDtoWithSchool = generateStoreCreateDto("부산대학교", BigDecimal.valueOf(123.12),
+                    BigDecimal.valueOf(37.1234));
+            Store store1 = storeService.create(storeCreateDtoWithSchool);
+            StoreCreateDto nextStoreCreateDto = new StoreCreateDto(
+                    "9999999",
+                    "용용선생 선릉점",
+                    "중식",
+                    "서울시 강남구 선릉로 424번길 2323",
+                    BigDecimal.valueOf(123.1232134),
+                    BigDecimal.valueOf(37.45433545),
+                    "http://images2.foodbowl",
+                    "02-2141-4567",
+                    "부산대학교",
+                    BigDecimal.valueOf(123.12),
+                    BigDecimal.valueOf(37.1234));
+
+            Store store2 = storeService.create(nextStoreCreateDto);
+            List<StoreSchool> storeSchools = storeSchoolRepository.findAllBySchool_Name_Name("부산대학교");
+            List<Store> stores = storeSchools.stream()
+                    .map(StoreSchool::getStore)
+                    .toList();
+
+            assertSoftly(
+                    softly -> {
+                        softly.assertThat(stores).contains(store1, store2);
+                        softly.assertThat(stores).hasSize(2);
+                    }
+            );
+        }
+
+        @Test
         void 이미_존재하는_가게이면_예외_발생() {
             StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(null, null, null);
             storeService.create(storeCreateDtoWithoutSchool);
