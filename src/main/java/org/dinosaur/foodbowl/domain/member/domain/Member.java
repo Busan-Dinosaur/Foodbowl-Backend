@@ -14,6 +14,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +60,7 @@ public class Member extends AuditingEntity {
     @Column(name = "email", length = 255)
     private String email;
 
+    @Valid
     @Embedded
     private Nickname nickname;
 

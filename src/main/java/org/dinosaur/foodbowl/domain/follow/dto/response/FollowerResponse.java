@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 
 @Schema(description = "팔로워 응답")
-public record FollowResponse(
+public record FollowerResponse(
         @Schema(description = "회원 ID", example = "1")
         Long memberId,
 
@@ -18,8 +18,8 @@ public record FollowResponse(
         int followerCount
 ) {
 
-    public static FollowResponse from(Member member) {
-        return new FollowResponse(
+    public static FollowerResponse from(Member member) {
+        return new FollowerResponse(
                 member.getId(),
                 member.getProfileImageUrl(),
                 member.getNickname(),

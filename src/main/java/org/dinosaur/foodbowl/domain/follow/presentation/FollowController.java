@@ -4,7 +4,8 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.follow.application.FollowService;
-import org.dinosaur.foodbowl.domain.follow.dto.response.FollowResponse;
+import org.dinosaur.foodbowl.domain.follow.dto.response.FollowerResponse;
+import org.dinosaur.foodbowl.domain.follow.dto.response.FollowingResponse;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.global.common.response.PageResponse;
 import org.dinosaur.foodbowl.global.presentation.Auth;
@@ -26,13 +27,23 @@ public class FollowController implements FollowControllerDocs {
 
     private final FollowService followService;
 
-    @GetMapping("/followers")
-    public ResponseEntity<PageResponse<FollowResponse>> getFollowers(
+    @GetMapping("/followings")
+    public ResponseEntity<PageResponse<FollowingResponse>> getFollowings(
             @RequestParam(defaultValue = "0") @PositiveOrZero(message = "페이지는 0이상만 가능합니다.") int page,
             @RequestParam(defaultValue = "15") @PositiveOrZero(message = "페이지 크기는 0이상만 가능합니다.") int size,
             @Auth Member loginMember
     ) {
-        PageResponse<FollowResponse> response = followService.getFollowers(page, size, loginMember);
+        PageResponse<FollowingResponse> response = followService.getFollowings(page, size, loginMember);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/followers")
+    public ResponseEntity<PageResponse<FollowerResponse>> getFollowers(
+            @RequestParam(defaultValue = "0") @PositiveOrZero(message = "페이지는 0이상만 가능합니다.") int page,
+            @RequestParam(defaultValue = "15") @PositiveOrZero(message = "페이지 크기는 0이상만 가능합니다.") int size,
+            @Auth Member loginMember
+    ) {
+        PageResponse<FollowerResponse> response = followService.getFollowers(page, size, loginMember);
         return ResponseEntity.ok(response);
     }
 

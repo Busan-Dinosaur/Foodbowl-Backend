@@ -23,6 +23,31 @@ class FollowRepositoryTest extends PersistenceTest {
     private FollowRepository followRepository;
 
     @Test
+    void 팔로잉_목록을_페이징_조회한다() {
+        Member follower = memberTestPersister.memberBuilder().save();
+        Member followingA = memberTestPersister.memberBuilder().save();
+        Member followingB = memberTestPersister.memberBuilder().save();
+
+        Follow followA = followTestPersister.builder().following(followingA).follower(follower).save();
+        Follow followB = followTestPersister.builder().following(followingB).follower(follower).save();
+
+        Pageable pageable = PageRequest.of(0, 1, Sort.by("createdAt").descending());
+        Slice<Follow> result = followRepository.findAllByFollower(follower, pageable);
+
+        assertSoftly(
+                softly -> {
+                    softly.assertThat(result.getContent().size()).isEqualTo(1);
+                    softly.assertThat(result.getContent().get(0)).isEqualTo(followB);
+                    softly.assertThat(result.isFirst()).isTrue();
+                    softly.assertThat(result.isLast()).isFalse();
+                    softly.assertThat(result.hasNext()).isTrue();
+                    softly.assertThat(result.getNumber()).isEqualTo(0);
+                    softly.assertThat(result.getSize()).isEqualTo(1);
+                }
+        );
+    }
+
+    @Test
     void 팔로워_목록을_페이징_조회한다() {
         Member following = memberTestPersister.memberBuilder().save();
         Member followerA = memberTestPersister.memberBuilder().save();
@@ -67,6 +92,13 @@ class FollowRepositoryTest extends PersistenceTest {
         }
 
         @Test
+        void 팔로잉_팔로우_회원이_모두_일치하면_팔로우를_반환한다() {
+            Optional<Follow> result = followRepository.findByFollowingAndFollower(following, follower);
+
+            assertThat(result).isPresent();
+        }
+
+        @Test
         void 팔로잉_회원이_일치하지_않으면_빈값을_반환한다() {
             Optional<Follow> result = followRepository.findByFollowingAndFollower(other, follower);
 
@@ -85,13 +117,6 @@ class FollowRepositoryTest extends PersistenceTest {
             Optional<Follow> result = followRepository.findByFollowingAndFollower(other, other);
 
             assertThat(result).isEmpty();
-        }
-
-        @Test
-        void 팔로잉_팔로우_회원이_모두_일치하면_팔로우를_반환한다() {
-            Optional<Follow> result = followRepository.findByFollowingAndFollower(following, follower);
-
-            assertThat(result).isPresent();
         }
     }
 }
