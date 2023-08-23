@@ -81,6 +81,16 @@ jobs:
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
 
+      - name: 테스트 커버리지 리포트 등록
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.6.1
+        with:
+          title: 🪄 테스트 커버리지 리포트
+          paths: ${{ github.workspace }}/**/build/reports/jacoco/test/jacocoTestReport.xml
+          token: ${{ github.token }}
+          min-coverage-overall: 75
+          min-coverage-changed-files: 75
+
       - name: 테스트 성공 여부 Slack 알림
         if: always()
         uses: 8398a7/action-slack@v3
