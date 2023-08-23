@@ -6,17 +6,15 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.dinosaur.foodbowl.domain.store.application.dto.StoreCreateDto;
 import org.dinosaur.foodbowl.domain.store.domain.Category;
 import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
-import org.dinosaur.foodbowl.domain.store.domain.StoreSchool;
 import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
 import org.dinosaur.foodbowl.domain.store.domain.vo.CategoryType;
-import org.dinosaur.foodbowl.domain.store.application.dto.StoreCreateDto;
 import org.dinosaur.foodbowl.domain.store.dto.response.CategoryResponses;
 import org.dinosaur.foodbowl.domain.store.persistence.CategoryRepository;
 import org.dinosaur.foodbowl.domain.store.persistence.StoreRepository;
-import org.dinosaur.foodbowl.domain.store.persistence.StoreSchoolRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,8 +25,8 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
     private final CategoryRepository categoryRepository;
-    private final StoreSchoolRepository storeSchoolRepository;
     private final SchoolService schoolService;
+    private final StoreSchoolService storeSchoolService;
 
     @Transactional(readOnly = true)
     public CategoryResponses getCategories() {
@@ -74,10 +72,6 @@ public class StoreService {
         School school = schoolService.findByName(schoolName)
                 .orElseGet(() -> schoolService.save(schoolName, schoolX, schoolY));
 
-        storeSchoolRepository.save(StoreSchool.builder()
-                .store(store)
-                .school(school)
-                .build()
-        );
+        storeSchoolService.save(store, school);
     }
 }
