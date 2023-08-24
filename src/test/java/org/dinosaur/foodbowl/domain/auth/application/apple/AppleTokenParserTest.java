@@ -13,6 +13,7 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
@@ -49,6 +50,16 @@ class AppleTokenParserTest {
             Map<String, String> headers = appleTokenParser.extractHeaders(appleToken);
 
             assertThat(headers).containsKeys("alg", "kid");
+        }
+
+        @Test
+        void 유효하지_않은_헤더를_가진_토큰을_파싱하면_예외를_던진다() {
+            String invalidHeader = Base64.getUrlEncoder().encodeToString("invalid json".getBytes());
+            String appleToken = invalidHeader + ".payload.signature";
+
+            assertThatThrownBy(() -> appleTokenParser.extractHeaders(appleToken))
+                    .isInstanceOf(BadRequestException.class)
+                    .hasMessage("헤더가 유효하지 않은 토큰입니다.");
         }
 
         @Test

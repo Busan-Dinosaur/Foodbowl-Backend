@@ -3,9 +3,12 @@ package org.dinosaur.foodbowl.global.util;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.dinosaur.foodbowl.global.exception.ServerException;
 import org.dinosaur.foodbowl.global.exception.ServerExceptionType;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EncryptUtils {
 
     private static final String ENCRYPT_ALGORITHM = "SHA-256";
