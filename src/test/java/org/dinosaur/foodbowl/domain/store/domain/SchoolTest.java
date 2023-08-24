@@ -19,6 +19,6 @@ class SchoolTest {
                 .y(BigDecimal.valueOf(34.545))
                 .build();
 
-        assertThat(school.getName()).isEqualTo("부산대학교");
+        assertThat(school.getName().getName()).isEqualTo("부산대학교");
     }
 }

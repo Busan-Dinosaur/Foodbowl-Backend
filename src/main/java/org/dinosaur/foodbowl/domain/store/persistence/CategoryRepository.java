@@ -7,4 +7,6 @@ import org.springframework.data.repository.Repository;
 public interface CategoryRepository extends Repository<Category, Long> {
 
     List<Category> findAllByOrderById();
+
+    Category findById(Long id);
 }

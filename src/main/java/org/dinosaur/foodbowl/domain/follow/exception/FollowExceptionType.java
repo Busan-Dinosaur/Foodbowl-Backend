@@ -11,8 +11,8 @@ public enum FollowExceptionType implements ExceptionType {
     UNFOLLOWED("FOLLOW-102", "팔로우 하지 않은 회원입니다."),
     UNFOLLOWED_ME("FOLLOW-103", "나를 팔로우 하지 않은 회원입니다.");
 
-    private String errorCode;
-    private String message;
+    private final String errorCode;
+    private final String message;
 
     FollowExceptionType(final String errorCode, final String message) {
         this.errorCode = errorCode;

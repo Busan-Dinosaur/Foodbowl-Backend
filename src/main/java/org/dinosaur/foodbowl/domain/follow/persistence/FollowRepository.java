@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.query.Param;
 
 public interface FollowRepository extends Repository<Follow, Long> {
 
@@ -16,13 +17,13 @@ public interface FollowRepository extends Repository<Follow, Long> {
             + " left join fetch f.follower.memberThumbnail.thumbnail"
             + " where f.follower = :follower"
     )
-    Slice<Follow> findAllByFollower(Member follower, Pageable pageable);
+    Slice<Follow> findAllByFollower(@Param("follower") Member follower, Pageable pageable);
 
     @Query("select f from Follow f"
             + " left join fetch f.follower.memberThumbnail.thumbnail"
             + " where f.following = :following"
     )
-    Slice<Follow> findAllByFollowing(Member following, Pageable pageable);
+    Slice<Follow> findAllByFollowing(@Param("following") Member following, Pageable pageable);
 
     Optional<Follow> findByFollowingAndFollower(Member following, Member follower);
 

@@ -17,13 +17,14 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
+import org.dinosaur.foodbowl.global.persistence.AuditingEntity;
 
 @Getter
 @Entity
 @Table(name = "review_photo")
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ReviewPhoto {
+public class ReviewPhoto extends AuditingEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
