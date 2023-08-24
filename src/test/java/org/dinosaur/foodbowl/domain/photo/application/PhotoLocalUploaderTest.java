@@ -3,6 +3,7 @@ package org.dinosaur.foodbowl.domain.photo.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.io.File;
 import java.util.List;
 import org.dinosaur.foodbowl.global.exception.FileException;
 import org.dinosaur.foodbowl.test.IntegrationTest;
@@ -31,7 +32,9 @@ class PhotoLocalUploaderTest extends IntegrationTest {
 
         List<String> filePaths = photoLocalUploader.upload(multipartFiles, "test");
 
-        assertThat(filePaths).isNotEmpty();
+        String imagePath = filePaths.get(0);
+        File file = new File(imagePath);
+        assertThat(file.exists()).isTrue();
         FileTestUtils.cleanUp();
     }
 
