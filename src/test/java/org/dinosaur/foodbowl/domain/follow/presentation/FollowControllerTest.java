@@ -92,8 +92,8 @@ class FollowControllerTest extends PresentationTest {
             assertThat(result).usingRecursiveComparison().isEqualTo(response);
         }
 
-        @ValueSource(strings = {"가", "a", "A", "@"})
         @ParameterizedTest
+        @ValueSource(strings = {"가", "a", "A", "@"})
         void 페이지가_INT_타입으로_변환하지_못하면_400_응답을_반환한다(String page) throws Exception {
             mockMvc.perform(get("/v1/follows/followings")
                             .header(AUTHORIZATION, BEARER + jwtTokenProvider.createAccessToken(1L, ROLE_회원))
@@ -119,8 +119,8 @@ class FollowControllerTest extends PresentationTest {
                     .andExpect(jsonPath("$.message", containsString("페이지는 0이상만 가능합니다.")));
         }
 
-        @ValueSource(strings = {"가", "a", "A", "@"})
         @ParameterizedTest
+        @ValueSource(strings = {"가", "a", "A", "@"})
         void 페이지_크기가_INT_타입으로_변환하지_못하면_400_응답을_반환한다(String size) throws Exception {
             mockMvc.perform(get("/v1/follows/followings")
                             .header(AUTHORIZATION, BEARER + jwtTokenProvider.createAccessToken(1L, ROLE_회원))
@@ -187,8 +187,8 @@ class FollowControllerTest extends PresentationTest {
             assertThat(result).usingRecursiveComparison().isEqualTo(response);
         }
 
-        @ValueSource(strings = {"가", "a", "A", "@"})
         @ParameterizedTest
+        @ValueSource(strings = {"가", "a", "A", "@"})
         void 페이지가_INT_타입으로_변환하지_못하면_400_응답을_반환한다(String page) throws Exception {
             mockMvc.perform(get("/v1/follows/followers")
                             .header(AUTHORIZATION, BEARER + jwtTokenProvider.createAccessToken(1L, ROLE_회원))
@@ -214,8 +214,8 @@ class FollowControllerTest extends PresentationTest {
                     .andExpect(jsonPath("$.message", containsString("페이지는 0이상만 가능합니다.")));
         }
 
-        @ValueSource(strings = {"가", "a", "A", "@"})
         @ParameterizedTest
+        @ValueSource(strings = {"가", "a", "A", "@"})
         void 페이지_크기가_INT_타입으로_변환하지_못하면_400_응답을_반환한다(String size) throws Exception {
             mockMvc.perform(get("/v1/follows/followers")
                             .header(AUTHORIZATION, BEARER + jwtTokenProvider.createAccessToken(1L, ROLE_회원))
@@ -284,8 +284,8 @@ class FollowControllerTest extends PresentationTest {
             assertThat(result).usingRecursiveComparison().isEqualTo(response);
         }
 
-        @ValueSource(strings = {"가", "a", "A", "@"})
         @ParameterizedTest
+        @ValueSource(strings = {"가", "a", "A", "@"})
         void ID가_Long타입으로_변환하지_못하면_400_응답을_반환한다(String memberId) throws Exception {
             mockMvc.perform(get("/v1/follows/{memberId}/followers", memberId)
                             .header(AUTHORIZATION, BEARER + jwtTokenProvider.createAccessToken(1L, ROLE_회원))
@@ -312,8 +312,8 @@ class FollowControllerTest extends PresentationTest {
                     .andExpect(jsonPath("$.message", containsString("ID는 양수만 가능합니다.")));
         }
 
-        @ValueSource(strings = {"가", "a", "A", "@"})
         @ParameterizedTest
+        @ValueSource(strings = {"가", "a", "A", "@"})
         void 페이지가_INT_타입으로_변환하지_못하면_400_응답을_반환한다(String page) throws Exception {
             mockMvc.perform(get("/v1/follows/{memberId}/followers", 1L)
                             .header(AUTHORIZATION, BEARER + jwtTokenProvider.createAccessToken(1L, ROLE_회원))
@@ -339,8 +339,8 @@ class FollowControllerTest extends PresentationTest {
                     .andExpect(jsonPath("$.message", containsString("페이지는 0이상만 가능합니다.")));
         }
 
-        @ValueSource(strings = {"가", "a", "A", "@"})
         @ParameterizedTest
+        @ValueSource(strings = {"가", "a", "A", "@"})
         void 페이지_크기가_INT_타입으로_변환하지_못하면_400_응답을_반환한다(String size) throws Exception {
             mockMvc.perform(get("/v1/follows/{memberId}/followers", 1L)
                             .header(AUTHORIZATION, BEARER + jwtTokenProvider.createAccessToken(1L, ROLE_회원))
@@ -382,8 +382,8 @@ class FollowControllerTest extends PresentationTest {
                     .andExpect(status().isOk());
         }
 
-        @ValueSource(strings = {"가", "a", "A", "@"})
         @ParameterizedTest
+        @ValueSource(strings = {"가", "a", "A", "@"})
         void ID가_LONG_타입으로_변환하지_못하면_400_응답을_반환한다(String memberId) throws Exception {
             mockMvc.perform(post("/v1/follows/{memberId}/follow", memberId)
                             .header(AUTHORIZATION, BEARER + jwtTokenProvider.createAccessToken(1L, ROLE_회원)))
@@ -422,8 +422,8 @@ class FollowControllerTest extends PresentationTest {
                     .andExpect(status().isNoContent());
         }
 
-        @ValueSource(strings = {"가", "a", "A", "@"})
         @ParameterizedTest
+        @ValueSource(strings = {"가", "a", "A", "@"})
         void ID가_Long타입으로_변환하지_못하면_400_응답을_반환한다(String memberId) throws Exception {
             mockMvc.perform(delete("/v1/follows/{memberId}/unfollow", memberId)
                             .header(AUTHORIZATION, BEARER + jwtTokenProvider.createAccessToken(1L, ROLE_회원)))
@@ -462,8 +462,8 @@ class FollowControllerTest extends PresentationTest {
                     .andExpect(status().isNoContent());
         }
 
-        @ValueSource(strings = {"가", "a", "A", "@"})
         @ParameterizedTest
+        @ValueSource(strings = {"가", "a", "A", "@"})
         void ID가_Long타입으로_변환하지_못하면_400_응답을_반환한다(String memberId) throws Exception {
             mockMvc.perform(delete("/v1/follows/followers/{memberId}", memberId)
                             .header(AUTHORIZATION, BEARER + jwtTokenProvider.createAccessToken(1L, ROLE_회원)))
