@@ -17,14 +17,12 @@ public class HealthCheckController implements HealthCheckControllerDocs {
 
     private final HealthCheckService healthCheckService;
 
-    @Override
     @GetMapping
     public ResponseEntity<HealthCheckResponse> healthcheck() {
         HealthCheckResponse response = healthCheckService.healthCheck();
         return ResponseEntity.ok(response);
     }
 
-    @Override
     @GetMapping("/auth")
     public ResponseEntity<HealthCheckResponse> authCheck(@Auth Member member) {
         return ResponseEntity.ok(new HealthCheckResponse("good: " + member.getNickname()));

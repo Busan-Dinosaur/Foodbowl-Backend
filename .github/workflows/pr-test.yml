@@ -81,12 +81,12 @@ jobs:
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
 
-      - name: 테스트 실패 시 Slack 알림
+      - name: 테스트 성공 여부 Slack 알림
+        if: always()
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          author_name: 백엔드 테스트 실패 알림
+          author_name: 백엔드 테스트 성공 여부 알림
           fields: repo, message, commit, author, action, eventName, ref, workflow, job, took
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TEST_WEBHOOK_URL }}
-        if: failure()

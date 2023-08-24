@@ -31,13 +31,6 @@ class AppleTokenParserTest {
     class 헤더_추출 {
 
         @Test
-        void 유효하지_않은_토큰에서_헤더를_추출하면_예외를_던진다() {
-            assertThatThrownBy(() -> appleTokenParser.extractHeaders("Invalid Token"))
-                    .isInstanceOf(BadRequestException.class)
-                    .hasMessage("Base64로 디코딩할 수 없는 값입니다.");
-        }
-
-        @Test
         void 유효한_토큰에서_헤더를_추출하면_헤더_정보를_반환한다() throws NoSuchAlgorithmException {
             Date now = new Date();
             KeyPair keyPair = KeyPairGenerator.getInstance("RSA")
@@ -57,10 +50,45 @@ class AppleTokenParserTest {
 
             assertThat(headers).containsKeys("alg", "kid");
         }
+
+        @Test
+        void 유효하지_않은_토큰에서_헤더를_추출하면_예외를_던진다() {
+            assertThatThrownBy(() -> appleTokenParser.extractHeaders("Invalid Token"))
+                    .isInstanceOf(BadRequestException.class)
+                    .hasMessage("Base64로 디코딩할 수 없는 값입니다.");
+        }
     }
 
     @Nested
     class 클레임_추출 {
+
+        @Test
+        void 유효한_토큰이라면_클레임을_추출한다() throws NoSuchAlgorithmException {
+            String subject = "9876";
+            Date now = new Date();
+            KeyPair keyPair = KeyPairGenerator.getInstance("RSA")
+                    .generateKeyPair();
+            PrivateKey privateKey = keyPair.getPrivate();
+            PublicKey publicKey = keyPair.getPublic();
+            String appleToken = Jwts.builder()
+                    .setHeaderParam("kid", "W2R4HXF3K")
+                    .claim("id", "1234")
+                    .setIssuer("iss")
+                    .setIssuedAt(now)
+                    .setAudience("aud")
+                    .setSubject(subject)
+                    .setExpiration(new Date(now.getTime() + 1000 * 60 * 60 * 24))
+                    .signWith(privateKey, SignatureAlgorithm.RS256)
+                    .compact();
+
+            Claims claims = appleTokenParser.extractClaims(appleToken, publicKey);
+
+            assertSoftly(softly -> {
+                softly.assertThat(claims).isNotEmpty();
+                softly.assertThat(claims.getSubject()).isEqualTo(subject);
+                softly.assertThat(claims.getAudience()).isEqualTo("aud");
+            });
+        }
 
         @Test
         void 만료기간이_지난_토큰이라면_예외를_던진다() throws NoSuchAlgorithmException {
@@ -121,34 +149,6 @@ class AppleTokenParserTest {
             assertThatThrownBy(() -> appleTokenParser.extractClaims("invalidToken", publicKey))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("손상된 토큰입니다.");
-        }
-
-        @Test
-        void 유효한_토큰이라면_클레임을_추출한다() throws NoSuchAlgorithmException {
-            String subject = "9876";
-            Date now = new Date();
-            KeyPair keyPair = KeyPairGenerator.getInstance("RSA")
-                    .generateKeyPair();
-            PrivateKey privateKey = keyPair.getPrivate();
-            PublicKey publicKey = keyPair.getPublic();
-            String appleToken = Jwts.builder()
-                    .setHeaderParam("kid", "W2R4HXF3K")
-                    .claim("id", "1234")
-                    .setIssuer("iss")
-                    .setIssuedAt(now)
-                    .setAudience("aud")
-                    .setSubject(subject)
-                    .setExpiration(new Date(now.getTime() + 1000 * 60 * 60 * 24))
-                    .signWith(privateKey, SignatureAlgorithm.RS256)
-                    .compact();
-
-            Claims claims = appleTokenParser.extractClaims(appleToken, publicKey);
-
-            assertSoftly(softly -> {
-                softly.assertThat(claims).isNotEmpty();
-                softly.assertThat(claims.getSubject()).isEqualTo(subject);
-                softly.assertThat(claims.getAudience()).isEqualTo("aud");
-            });
         }
     }
 }

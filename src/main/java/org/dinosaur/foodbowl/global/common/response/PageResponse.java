@@ -1,36 +1,38 @@
 package org.dinosaur.foodbowl.global.common.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PageResponse<T> {
+@Schema(description = "페이지 응답")
+public record PageResponse<T>(
+        @Schema(description = "페이지 응답 본문 목록")
+        List<T> content,
 
-    private List<T> content;
-    private boolean first;
-    private boolean last;
-    private boolean hasNext;
-    private int currentPageIndex;
-    private int currentElementSize;
-    private int totalPage;
-    private long totalElementCount;
+        @Schema(description = "첫 페이지 여부", example = "true")
+        boolean isFirst,
 
-    public static <T> PageResponse<T> from(Page<T> page) {
+        @Schema(description = "마지막 페이지 여부", example = "false")
+        boolean isLast,
+
+        @Schema(description = "다음 페이지 존재 여부", example = "true")
+        boolean hasNext,
+
+        @Schema(description = "현재 페이지", example = "0")
+        int currentPage,
+
+        @Schema(description = "현재 페이지 크기", example = "20")
+        int currentSize
+) {
+
+    public static <T> PageResponse<T> from(Slice<T> slice) {
         return new PageResponse<>(
-                page.getContent(),
-                page.isFirst(),
-                page.isLast(),
-                page.hasNext(),
-                page.getNumber(),
-                page.getSize(),
-                page.getTotalPages(),
-                page.getTotalElements()
+                slice.getContent(),
+                slice.isFirst(),
+                slice.isLast(),
+                slice.hasNext(),
+                slice.getNumber(),
+                slice.getSize()
         );
     }
 }

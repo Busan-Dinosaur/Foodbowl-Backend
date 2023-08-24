@@ -1,8 +1,8 @@
 package org.dinosaur.foodbowl.domain.review.presentation;
 
 import static org.dinosaur.foodbowl.domain.member.domain.vo.RoleType.ROLE_회원;
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -13,15 +13,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
-import org.dinosaur.foodbowl.domain.member.domain.vo.SocialType;
 import org.dinosaur.foodbowl.domain.review.application.ReviewService;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.test.PresentationTest;
 import org.dinosaur.foodbowl.test.file.FileTestUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -50,19 +47,6 @@ class ReviewControllerTest extends PresentationTest {
     @MockBean
     private ReviewService reviewService;
 
-    @BeforeEach
-    void setUp() {
-        Member member = Member.builder()
-                .email("foodBowl@gmail.com")
-                .socialId("foodBowlId")
-                .socialType(SocialType.APPLE)
-                .nickname("foodbowl")
-                .introduction("푸드볼 서비스")
-                .build();
-        given(memberRepository.findById(anyLong()))
-                .willReturn(Optional.of(member));
-    }
-
     @Nested
     class 리뷰_작성_시 {
 
@@ -70,6 +54,7 @@ class ReviewControllerTest extends PresentationTest {
 
         @Test
         void 사진이_포함된_경우_200_상태코드를_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateDto();
             MockMultipartFile request = new MockMultipartFile(
                     "request",
@@ -94,6 +79,7 @@ class ReviewControllerTest extends PresentationTest {
 
         @Test
         void 사진이_없는_경우_200_상태코드를_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateDto();
             MockMultipartFile request = new MockMultipartFile(
                     "request",
@@ -114,6 +100,7 @@ class ReviewControllerTest extends PresentationTest {
 
         @Test
         void 사진이_4개_보다_많은_경우_400_상태코드를_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateDto();
             MockMultipartFile request = new MockMultipartFile(
                     "request",
@@ -139,11 +126,12 @@ class ReviewControllerTest extends PresentationTest {
                     .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("errorCode").value("CLIENT-101"))
-                    .andExpect(jsonPath("$.message").value("사진의 개수는 최대 4개까지 가능합니다."));
+                    .andExpect(jsonPath("$.message").value(containsString("사진의 개수는 최대 4개까지 가능합니다.")));
         }
 
         @Test
         void 이미지_크기가_서블릿_최대_처리_크기_보다_큰_경우_400_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateDto();
             MockMultipartFile request = new MockMultipartFile(
                     "request",
@@ -163,7 +151,7 @@ class ReviewControllerTest extends PresentationTest {
                     .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("errorCode").value("CLIENT-102"))
-                    .andExpect(jsonPath("$.message").value("이미지의 크기는 최대 5MB 까지 가능합니다."));
+                    .andExpect(jsonPath("$.message").value(containsString("이미지의 크기는 최대 5MB 까지 가능합니다.")));
         }
 
         @ParameterizedTest
@@ -197,7 +185,7 @@ class ReviewControllerTest extends PresentationTest {
                     .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("errorCode").value("CLIENT-100"))
-                    .andExpect(jsonPath("$.message").value("장소 ID는 반드시 포함되어야 합니다."));
+                    .andExpect(jsonPath("$.message").value(containsString("장소 ID는 반드시 포함되어야 합니다.")));
         }
 
         @ParameterizedTest
@@ -231,7 +219,7 @@ class ReviewControllerTest extends PresentationTest {
                     .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("errorCode").value("CLIENT-100"))
-                    .andExpect(jsonPath("$.message").value("가게 이름은 반드시 포함되어야 합니다."));
+                    .andExpect(jsonPath("$.message").value(containsString("가게 이름은 반드시 포함되어야 합니다.")));
         }
 
         @ParameterizedTest
@@ -265,7 +253,7 @@ class ReviewControllerTest extends PresentationTest {
                     .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("errorCode").value("CLIENT-100"))
-                    .andExpect(jsonPath("$.message").value("가게 주소는 반드시 포함되어야 합니다."));
+                    .andExpect(jsonPath("$.message").value(containsString("가게 주소는 반드시 포함되어야 합니다.")));
         }
 
         @Test
@@ -297,7 +285,7 @@ class ReviewControllerTest extends PresentationTest {
                     .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("errorCode").value("CLIENT-100"))
-                    .andExpect(jsonPath("$.message").value("가게 경도는 반드시 포함되어야 합니다."));
+                    .andExpect(jsonPath("$.message").value(containsString("가게 경도는 반드시 포함되어야 합니다.")));
         }
 
         @Test
@@ -329,7 +317,7 @@ class ReviewControllerTest extends PresentationTest {
                     .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("errorCode").value("CLIENT-100"))
-                    .andExpect(jsonPath("$.message").value("가게 위도는 반드시 포함되어야 합니다."));
+                    .andExpect(jsonPath("$.message").value(containsString("가게 위도는 반드시 포함되어야 합니다.")));
         }
 
         @ParameterizedTest
@@ -363,7 +351,7 @@ class ReviewControllerTest extends PresentationTest {
                     .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("errorCode").value("CLIENT-100"))
-                    .andExpect(jsonPath("$.message").value("카카오 서버의 가게 정보 url 반드시 포함되어야 합니다."));
+                    .andExpect(jsonPath("$.message").value(containsString("카카오 서버의 가게 정보 url 반드시 포함되어야 합니다.")));
         }
 
         @ParameterizedTest
@@ -397,7 +385,7 @@ class ReviewControllerTest extends PresentationTest {
                     .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("errorCode").value("CLIENT-100"))
-                    .andExpect(jsonPath("$.message").value("가게 카테고리는 반드시 포함되어야 합니다."));
+                    .andExpect(jsonPath("$.message").value(containsString("가게 카테고리는 반드시 포함되어야 합니다.")));
         }
 
         @ParameterizedTest
@@ -431,7 +419,7 @@ class ReviewControllerTest extends PresentationTest {
                     .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("errorCode").value("CLIENT-100"))
-                    .andExpect(jsonPath("$.message").value("가게 리뷰는 반드시 포함되어야 합니다."));
+                    .andExpect(jsonPath("$.message").value(containsString("가게 리뷰는 반드시 포함되어야 합니다.")));
         }
     }
 

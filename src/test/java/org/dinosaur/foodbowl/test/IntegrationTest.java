@@ -1,5 +1,6 @@
 package org.dinosaur.foodbowl.test;
 
+import org.dinosaur.foodbowl.test.persister.FollowTestPersister;
 import org.dinosaur.foodbowl.test.persister.MemberTestPersister;
 import org.dinosaur.foodbowl.test.persister.PhotoTestPersister;
 import org.dinosaur.foodbowl.test.persister.ReviewTestPersister;
@@ -30,4 +31,7 @@ public class IntegrationTest {
 
     @Autowired
     protected SchoolTestPersister schoolTestPersister;
+
+    @Autowired
+    protected FollowTestPersister followTestPersister;
 }

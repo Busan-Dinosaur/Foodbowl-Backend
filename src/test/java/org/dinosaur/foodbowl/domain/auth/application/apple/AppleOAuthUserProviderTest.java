@@ -41,15 +41,6 @@ class AppleOAuthUserProviderTest extends IntegrationTest {
     class 유저_정보_추출 {
 
         @Test
-        void 토큰으로부터_추출한_애플_클레임이_유효하지_않으면_예외를_던진다() {
-            given(appleClaimsValidator.isValid(any(Claims.class))).willReturn(false);
-
-            assertThatThrownBy(() -> appleOAuthUserProvider.extractPlatformUser("token"))
-                    .isInstanceOf(BadRequestException.class)
-                    .hasMessage("페이로드가 유효하지 않은 토큰입니다.");
-        }
-
-        @Test
         void 토큰으로부터_추출한_애플_클레임이_유효하다면_유저_정보를_반환한다() {
             Claims claims = Jwts.claims().setSubject("1");
             claims.put("email", "foodbowl@foodbowl.com");
@@ -64,6 +55,15 @@ class AppleOAuthUserProviderTest extends IntegrationTest {
                 softly.assertThat(result.socialId()).isEqualTo("1");
                 softly.assertThat(result.email()).isEqualTo("foodbowl@foodbowl.com");
             });
+        }
+
+        @Test
+        void 토큰으로부터_추출한_애플_클레임이_유효하지_않으면_예외를_던진다() {
+            given(appleClaimsValidator.isValid(any(Claims.class))).willReturn(false);
+
+            assertThatThrownBy(() -> appleOAuthUserProvider.extractPlatformUser("token"))
+                    .isInstanceOf(BadRequestException.class)
+                    .hasMessage("페이로드가 유효하지 않은 토큰입니다.");
         }
     }
 }

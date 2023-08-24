@@ -1,20 +1,17 @@
 package org.dinosaur.foodbowl.global.exception;
 
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import java.util.Iterator;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -22,13 +19,18 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    private static final String JOINER_DELIMITER = ", ";
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> handleException(Exception e) {
         log.error("[" + e.getClass() + "] " + e.getMessage());
         return ResponseEntity.internalServerError()
                 .body(new ExceptionResponse("SERVER-100", "알 수 없는 서버 에러가 발생했습니다."));
+    }
+
+    @ExceptionHandler(ServerException.class)
+    public ResponseEntity<ExceptionResponse> handleServerException(ServerException e) {
+        log.error("[" + e.getClass() + "] " + e.getMessage());
+        return ResponseEntity.internalServerError()
+                .body(ExceptionResponse.from(e.getExceptionType()));
     }
 
     @Override
@@ -38,29 +40,25 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatusCode status,
             WebRequest request
     ) {
-        String exceptionMessage = ex.getBindingResult()
-                .getAllErrors()
+        List<ErrorResponse> errorResponses = ex.getBindingResult()
+                .getFieldErrors()
                 .stream()
-                .map(ObjectError::getDefaultMessage)
-                .collect(Collectors.joining(JOINER_DELIMITER));
-        log.error("[" + ex.getClass() + "] " + exceptionMessage);
+                .map(fieldError -> new ErrorResponse(fieldError.getField(), fieldError.getDefaultMessage()))
+                .toList();
+        log.warn("[" + ex.getClass() + "] " + errorResponses);
         return ResponseEntity.badRequest()
-                .body(new ExceptionResponse("CLIENT-100", exceptionMessage));
+                .body(new ExceptionResponse("CLIENT-100", errorResponses.toString()));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ExceptionResponse> constraintViolationException(ConstraintViolationException e) {
-        log.error("[" + e.getClass() + "] " + e.getMessage());
-        Iterator<ConstraintViolation<?>> iterator =
-                e.getConstraintViolations().iterator();
-
-        StringJoiner stringJoiner = new StringJoiner(JOINER_DELIMITER);
-        while (iterator.hasNext()) {
-            ConstraintViolation<?> constraintViolation = iterator.next();
-            stringJoiner.add(constraintViolation.getMessage());
-        }
+        List<ErrorResponse> errorResponses = e.getConstraintViolations()
+                .stream()
+                .map(error -> new ErrorResponse(error.getPropertyPath().toString(), error.getMessage()))
+                .toList();
+        log.warn("[" + e.getClass() + "] " + errorResponses);
         return ResponseEntity.badRequest()
-                .body(new ExceptionResponse("CLIENT-101", stringJoiner.toString()));
+                .body(new ExceptionResponse("CLIENT-101", errorResponses.toString()));
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
@@ -70,11 +68,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(new ExceptionResponse("CLIENT-102", "이미지의 크기는 최대 " + e.getMaxUploadSize() + "MB 까지 가능합니다."));
     }
 
-    @ExceptionHandler(ServerException.class)
-    public ResponseEntity<ExceptionResponse> handleServerException(ServerException e) {
-        log.error("[" + e.getClass() + "] " + e.getMessage());
-        return ResponseEntity.internalServerError()
-                .body(ExceptionResponse.from(e.getExceptionType()));
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ExceptionResponse> handleMethodArgumentTypeMismatchException(
+            MethodArgumentTypeMismatchException e
+    ) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                e.getName(),
+                e.getRequiredType().getSimpleName() + " 타입으로 변환할 수 없는 요청입니다."
+        );
+        log.warn("[" + e.getClass() + "] " + errorResponse);
+        return ResponseEntity.badRequest()
+                .body(new ExceptionResponse("CLIENT-102", errorResponse.toString()));
     }
 
     @ExceptionHandler(BadRequestException.class)
