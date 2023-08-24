@@ -15,8 +15,8 @@ spring:
 
   servlet:
     multipart:
-      max-file-size: 30MB
-      max-request-size: 30MB
+      max-file-size: 5MB
+      max-request-size: 20MB
 
   data:
     redis:
@@ -47,3 +47,6 @@ oauth:
     iss: https://appleid.apple.com
     client_id: ${OAUTH_APPLE_CLIENT_ID}
     nonce: ${OAUTH_APPLE_NONCE}
+
+file:
+  dir: ${FILE_PATH}
