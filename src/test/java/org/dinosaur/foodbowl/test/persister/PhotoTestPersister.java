@@ -14,7 +14,7 @@ public class PhotoTestPersister {
         return new PhotoBuilder();
     }
 
-    public final class PhotoBuilder  {
+    public final class PhotoBuilder {
 
         private String path;
 

@@ -63,11 +63,13 @@ public class StoreTestPersister {
                     .locationId(locationId == null ? "123124124" : locationId)
                     .storeName(storeName == null ? "비비큐 여의도한강공원점" : storeName)
                     .category(category == null ? categoryRepository.findById(1L) : category)
-                    .address(address == null ? Address.of(
-                            "서울시 영등포구 여의도동 451",
-                            BigDecimal.valueOf(123.23),
-                            BigDecimal.valueOf(35.52)
-                    ) : address)
+                    .address(address == null ?
+                            Address.of(
+                                    "서울시 영등포구 여의도동 451",
+                                    BigDecimal.valueOf(123.23),
+                                    BigDecimal.valueOf(35.52)
+                            ) : address
+                    )
                     .storeUrl(storeUrl == null ? "http://image.bbq.foodbowl" : storeUrl)
                     .phone(phone == null ? "02-123-4567" : phone)
                     .build();

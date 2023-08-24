@@ -57,8 +57,14 @@ public class Store extends AuditingEntity {
     private String phone;
 
     @Builder
-    private Store(String locationId, Category category, String storeName, Address address, String storeUrl,
-                 String phone) {
+    private Store(
+            String locationId,
+            Category category,
+            String storeName,
+            Address address,
+            String storeUrl,
+            String phone
+    ) {
         this.locationId = locationId;
         this.category = category;
         this.storeName = storeName;

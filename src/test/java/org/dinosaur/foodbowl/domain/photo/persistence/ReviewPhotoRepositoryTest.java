@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.domain.photo.persistence;
 
-import org.assertj.core.api.SoftAssertions;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
 import org.dinosaur.foodbowl.domain.photo.domain.Photo;
 import org.dinosaur.foodbowl.domain.photo.domain.ReviewPhoto;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
@@ -25,7 +26,7 @@ class ReviewPhotoRepositoryTest extends PersistenceTest {
 
         ReviewPhoto savedReviewPhoto = reviewPhotoRepository.save(reviewPhoto);
 
-        SoftAssertions.assertSoftly(
+        assertSoftly(
                 softly -> {
                     softly.assertThat(savedReviewPhoto.getId()).isNotNull();
                     softly.assertThat(savedReviewPhoto.getReview()).isEqualTo(review);

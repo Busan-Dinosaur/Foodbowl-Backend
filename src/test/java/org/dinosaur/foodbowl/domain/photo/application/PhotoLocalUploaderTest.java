@@ -38,8 +38,8 @@ class PhotoLocalUploaderTest extends IntegrationTest {
     @ParameterizedTest
     @ValueSource(strings = {"foodBowl.zip", "foodBowl.pdf", "foodBowl.docx", "foodBowl.pptx"})
     void 파일_이름이_이미지_형식이_아니면_예외가_발생한다(String originalFilename) {
-        MockMultipartFile multipartFile = new MockMultipartFile("bucket", originalFilename,
-                MediaType.IMAGE_JPEG_VALUE, image);
+        MockMultipartFile multipartFile =
+                new MockMultipartFile("bucket", originalFilename, MediaType.IMAGE_JPEG_VALUE, image);
         List<MultipartFile> multipartFiles = List.of(multipartFile);
 
         assertThatThrownBy(() -> photoLocalUploader.upload(multipartFiles, "test"))
@@ -51,8 +51,8 @@ class PhotoLocalUploaderTest extends IntegrationTest {
     @NullAndEmptySource
     @ValueSource(strings = {" "})
     void 파일_이름이_없으면_예외가_발생한다(String originalFilename) {
-        MockMultipartFile multipartFile = new MockMultipartFile("bucket", originalFilename,
-                MediaType.IMAGE_JPEG_VALUE, image);
+        MockMultipartFile multipartFile =
+                new MockMultipartFile("bucket", originalFilename, MediaType.IMAGE_JPEG_VALUE, image);
         List<MultipartFile> multipartFiles = List.of(multipartFile);
 
         assertThatThrownBy(() -> photoLocalUploader.upload(multipartFiles, "test"))
@@ -63,8 +63,8 @@ class PhotoLocalUploaderTest extends IntegrationTest {
     @ParameterizedTest
     @ValueSource(strings = {"foodBowlZip", "helloWorld", "javaSpring"})
     void 확장자가_없으면_예외가_발생한다(String originalFilename) {
-        MockMultipartFile multipartFile = new MockMultipartFile("bucket", originalFilename,
-                MediaType.IMAGE_JPEG_VALUE, image);
+        MockMultipartFile multipartFile =
+                new MockMultipartFile("bucket", originalFilename, MediaType.IMAGE_JPEG_VALUE, image);
         List<MultipartFile> multipartFiles = List.of(multipartFile);
 
         assertThatThrownBy(() -> photoLocalUploader.upload(multipartFiles, "test"))

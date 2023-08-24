@@ -18,7 +18,7 @@ public class ReviewTestPersister {
         return new ReviewBuilder();
     }
 
-    public final class ReviewBuilder  {
+    public final class ReviewBuilder {
 
         private Member member;
         private Store store;

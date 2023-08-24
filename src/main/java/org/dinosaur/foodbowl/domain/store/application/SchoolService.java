@@ -1,6 +1,6 @@
 package org.dinosaur.foodbowl.domain.store.application;
 
-import static org.dinosaur.foodbowl.domain.store.exception.SchoolExceptionType.*;
+import static org.dinosaur.foodbowl.domain.store.exception.SchoolExceptionType.DUPLICATE_ERROR;
 
 import java.math.BigDecimal;
 import java.util.Optional;

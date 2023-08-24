@@ -1,9 +1,9 @@
 package org.dinosaur.foodbowl.domain.photo.application;
 
-import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.*;
 import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_BASE_NAME_ERROR;
 import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_EXTENSION_ERROR;
 import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_FORMAT_ERROR;
+import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_READ_ERROR;
 import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_TRANSFER_ERROR;
 
 import java.io.BufferedInputStream;
@@ -35,7 +35,8 @@ public class PhotoLocalUploader implements PhotoUploader {
     }
 
     public List<String> upload(List<MultipartFile> files, String parentDirectory) {
-        File directory = loadDirectory(System.getProperty("user.dir") + SLASH + fileDirectory + SLASH + parentDirectory);
+        File directory = loadDirectory(
+                System.getProperty("user.dir") + SLASH + fileDirectory + SLASH + parentDirectory);
 
         List<String> filePaths = new ArrayList<>();
         for (MultipartFile multipartFile : files) {
