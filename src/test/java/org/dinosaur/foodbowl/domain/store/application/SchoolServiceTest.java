@@ -18,7 +18,7 @@ class SchoolServiceTest extends IntegrationTest {
     private SchoolService schoolService;
 
     @Nested
-    class 학교를_저장_시_ {
+    class 학교를_저장_시 {
 
         @Test
         void 정상적으로_저장한다() {
@@ -45,7 +45,7 @@ class SchoolServiceTest extends IntegrationTest {
     }
 
     @Nested
-    class 학교_조회_시_ {
+    class 학교_조회_시 {
 
         @Test
         void 존재하는_학교로_조회한다() {

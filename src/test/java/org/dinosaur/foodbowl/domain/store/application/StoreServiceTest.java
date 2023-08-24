@@ -30,7 +30,7 @@ class StoreServiceTest extends IntegrationTest {
     private StoreSchoolRepository storeSchoolRepository;
 
     @Nested
-    class 가게를_생성할_때_ {
+    class 가게를_생성할_때 {
 
         @Test
         void 학교_없이_생성한다() {
@@ -173,23 +173,27 @@ class StoreServiceTest extends IntegrationTest {
         }
     }
 
-    @Test
-    void 이미_존재하는_가게를_조회한다() {
-        StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(
-                null,
-                null,
-                null
-        );
-        Store store = storeService.create(storeCreateDtoWithoutSchool);
+    @Nested
+    class 가게를_조회할_때 {
 
-        assertThat(storeService.findByLocationId(store.getLocationId())).isPresent();
-    }
+        @Test
+        void 이미_존재하는_가게를_조회한다() {
+            StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(
+                    null,
+                    null,
+                    null
+            );
+            Store store = storeService.create(storeCreateDtoWithoutSchool);
 
-    @Test
-    void 존재하지_않는_가게를_조회한다() {
-        String locationId = String.valueOf(Long.MAX_VALUE);
+            assertThat(storeService.findByLocationId(store.getLocationId())).isPresent();
+        }
 
-        assertThat(storeService.findByLocationId(locationId)).isEmpty();
+        @Test
+        void 존재하지_않는_가게를_조회한다() {
+            String locationId = String.valueOf(Long.MAX_VALUE);
+
+            assertThat(storeService.findByLocationId(locationId)).isEmpty();
+        }
     }
 
     private StoreCreateDto generateStoreCreateDto(String schoolName, BigDecimal schoolX, BigDecimal schoolY) {

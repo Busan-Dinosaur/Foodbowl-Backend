@@ -64,7 +64,7 @@ class ReviewControllerTest extends PresentationTest {
     }
 
     @Nested
-    class 리뷰_작성_시_ {
+    class 리뷰_작성_시 {
 
         private final String accessToken = jwtTokenProvider.createAccessToken(1L, ROLE_회원);
 
