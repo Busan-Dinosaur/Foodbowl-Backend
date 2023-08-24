@@ -8,6 +8,7 @@ import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.application.ReviewService;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.global.presentation.Auth;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +25,7 @@ public class ReviewController implements ReviewControllerDocs {
 
     private final ReviewService reviewService;
 
-    @PostMapping
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> create(
             @RequestPart(name = "request") @Valid ReviewCreateRequest reviewCreateRequest,
             @RequestPart(name = "images", required = false)

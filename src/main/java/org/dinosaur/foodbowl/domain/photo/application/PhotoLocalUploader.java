@@ -28,15 +28,20 @@ public class PhotoLocalUploader implements PhotoUploader {
     private static final String UNDER_BAR = "_";
     private static final String DOT = ".";
 
+    private final String url;
     private final String fileDirectory;
 
-    public PhotoLocalUploader(@Value("${file.dir}") String fileDirectory) {
+    public PhotoLocalUploader(
+            @Value("${openapi.dev_url}") String url,
+            @Value("${file.dir}") String fileDirectory
+    ) {
+        this.url = url;
         this.fileDirectory = fileDirectory;
     }
 
     public List<String> upload(List<MultipartFile> files, String parentDirectory) {
-        File directory = loadDirectory(
-                System.getProperty("user.dir") + SLASH + fileDirectory + SLASH + parentDirectory);
+        File directory =
+                loadDirectory(System.getProperty("user.dir") + SLASH + fileDirectory + SLASH + parentDirectory);
 
         List<String> filePaths = new ArrayList<>();
         for (MultipartFile multipartFile : files) {
@@ -50,7 +55,7 @@ public class PhotoLocalUploader implements PhotoUploader {
 
             File uploadPath = new File(directory, saveFileName);
             transferFile(multipartFile, uploadPath);
-            filePaths.add(uploadPath.getPath());
+            filePaths.add(getImageFullPath(uploadPath.getPath()));
         }
         return filePaths;
     }
@@ -81,7 +86,7 @@ public class PhotoLocalUploader implements PhotoUploader {
         if (lastIndex < 0) {
             throw new FileException(FILE_FORMAT_ERROR);
         }
-        String fileBaseName = UUID.randomUUID().toString().substring(0, 7);
+        String fileBaseName = UUID.randomUUID().toString().substring(0, 8);
         String extension = originalFilename.substring(lastIndex + 1);
         validateFileName(fileBaseName);
         validateExtension(extension);
@@ -107,5 +112,9 @@ public class PhotoLocalUploader implements PhotoUploader {
         } catch (IOException e) {
             throw new FileException(FILE_TRANSFER_ERROR, e);
         }
+    }
+
+    private String getImageFullPath(String imageLocalPath) {
+        return url + SLASH + imageLocalPath;
     }
 }
