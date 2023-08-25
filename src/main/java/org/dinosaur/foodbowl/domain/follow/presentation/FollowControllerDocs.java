@@ -21,7 +21,19 @@ import org.springframework.http.ResponseEntity;
 public interface FollowControllerDocs {
 
     @Operation(summary = "팔로잉 목록 조회", description = "정해진 개수만큼 팔로잉 목록을 조회한다.")
-    @ApiResponse(responseCode = "200", description = "팔로잉 목록 조회 성공")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "팔로잉 목록 조회 성공"),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = """
+                            1.올바르지 않은 페이지 타입\t
+                            2.음수 페이지\t
+                            3.올바르지 않은 페이지 크기 타입\t
+                            4.음수 페이지 크기\t
+                            """,
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            )
+    })
     ResponseEntity<PageResponse<FollowingResponse>> getFollowings(
             @Parameter(description = "페이지", example = "0")
             @PositiveOrZero(message = "페이지는 0이상만 가능합니다.")
@@ -35,7 +47,19 @@ public interface FollowControllerDocs {
     );
 
     @Operation(summary = "팔로워 목록 조회", description = "정해진 개수만큼 팔로워 목록을 조회한다.")
-    @ApiResponse(responseCode = "200", description = "팔로워 목록 조회 성공")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "팔로워 목록 조회 성공"),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = """
+                            1.올바르지 않은 페이지 타입\t
+                            2.음수 페이지\t
+                            3.올바르지 않은 페이지 크기 타입\t
+                            4.음수 페이지 크기\t
+                            """,
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            )
+    })
     ResponseEntity<PageResponse<FollowerResponse>> getFollowers(
             @Parameter(description = "페이지", example = "0")
             @PositiveOrZero(message = "페이지는 0이상만 가능합니다.")
@@ -51,6 +75,18 @@ public interface FollowControllerDocs {
     @Operation(summary = "다른 회원 팔로워 목록 조회", description = "정해진 개수만큼 다른 회원의 팔로워 목록을 조회한다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "다른 회원 팔로워 목록 조회 성공"),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = """
+                            1.올바르지 않은 멤버 ID 타입\t
+                            2.양수가 아닌 멤버 ID\t
+                            3.올바르지 않은 페이지 타입\t
+                            4.음수 페이지\t
+                            5.올바르지 않은 페이지 크기 타입\t
+                            6.음수 페이지 크기\t
+                            """,
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            ),
             @ApiResponse(
                     responseCode = "404",
                     description = "등록되지 않은 다른 회원 ID",
@@ -78,7 +114,12 @@ public interface FollowControllerDocs {
             @ApiResponse(responseCode = "200", description = "팔로우 성공"),
             @ApiResponse(
                     responseCode = "400",
-                    description = "1.본인 팔로우\t\n2.이미 팔로우 되어있는 회원 팔로우",
+                    description = """
+                            1.올바르지 않은 멤버 ID 타입\t
+                            2.양수가 아닌 멤버 ID\t
+                            3.본인 팔로우\t
+                            4.이미 팔로우 되어있는 회원 팔로우\t
+                            """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             ),
             @ApiResponse(
@@ -100,7 +141,11 @@ public interface FollowControllerDocs {
             @ApiResponse(responseCode = "204", description = "언팔로우 성공"),
             @ApiResponse(
                     responseCode = "400",
-                    description = "팔로우하지 않은 회원 언팔로우",
+                    description = """
+                            1.올바르지 않은 멤버 ID 타입\t
+                            2.양수가 아닌 멤버 ID\t
+                            3.팔로우하지 않은 회원 언팔로우\t
+                            """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             ),
             @ApiResponse(
@@ -122,7 +167,11 @@ public interface FollowControllerDocs {
             @ApiResponse(responseCode = "204", description = "팔로워 삭제 성공"),
             @ApiResponse(
                     responseCode = "400",
-                    description = "나를 팔로우 하지 않은 회원 삭제",
+                    description = """
+                            1.올바르지 않은 멤버 ID 타입\t
+                            2.양수가 아닌 멤버 ID\t
+                            3.나를 팔로우 하지 않은 회원 삭제\t
+                            """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             ),
             @ApiResponse(
