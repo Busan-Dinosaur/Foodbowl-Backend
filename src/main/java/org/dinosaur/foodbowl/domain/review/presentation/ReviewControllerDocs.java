@@ -20,7 +20,7 @@ public interface ReviewControllerDocs {
 
     @Operation(summary = "리뷰 등록", description = "가게에 해당하는 리뷰를 등록합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "리뷰 등록 성공"),
+            @ApiResponse(responseCode = "200", description = "리뷰 등록 성공"),
             @ApiResponse(
                     responseCode = "400",
                     description = """
