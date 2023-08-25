@@ -21,13 +21,13 @@ public record OtherUserFollowerResponse(
         boolean isFollowing
 ) {
 
-    public static OtherUserFollowerResponse of(Member follower, Member searchMember) {
+    public static OtherUserFollowerResponse of(Member follower, boolean isFollowing) {
         return new OtherUserFollowerResponse(
                 follower.getId(),
                 follower.getProfileImageUrl(),
                 follower.getNickname(),
                 follower.getFollowerCount(),
-                searchMember.isFollowing(follower)
+                isFollowing
         );
     }
 }

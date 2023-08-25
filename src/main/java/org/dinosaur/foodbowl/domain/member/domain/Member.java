@@ -18,7 +18,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -71,9 +70,6 @@ public class Member extends AuditingEntity {
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
     private MemberThumbnail memberThumbnail;
 
-    @OneToMany(mappedBy = "follower")
-    private List<Follow> followings = new ArrayList<>();
-
     @OneToMany(mappedBy = "following")
     private List<Follow> followers = new ArrayList<>();
 
@@ -90,13 +86,6 @@ public class Member extends AuditingEntity {
         this.email = email;
         this.nickname = new Nickname(nickname);
         this.introduction = introduction;
-    }
-
-    public boolean isFollowing(Member member) {
-        return followings.stream()
-                .map(Follow::getFollowing)
-                .map(Member::getId)
-                .anyMatch(followingMemberId -> Objects.equals(followingMemberId, member.getId()));
     }
 
     public String getNickname() {

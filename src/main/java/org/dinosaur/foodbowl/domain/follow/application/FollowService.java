@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.domain.follow.application;
 
 import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.follow.domain.Follow;
 import org.dinosaur.foodbowl.domain.follow.dto.response.FollowerResponse;
@@ -59,7 +60,10 @@ public class FollowService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Slice<OtherUserFollowerResponse> followers = followRepository.findAllByFollowing(targetMember, pageable)
                 .map(Follow::getFollower)
-                .map(follower -> OtherUserFollowerResponse.of(follower, loginMember));
+                .map(follower -> {
+                    Optional<Follow> follow = followRepository.findByFollowingAndFollower(follower, loginMember);
+                    return OtherUserFollowerResponse.of(follower, follow.isPresent());
+                });
         return PageResponse.from(followers);
     }
 

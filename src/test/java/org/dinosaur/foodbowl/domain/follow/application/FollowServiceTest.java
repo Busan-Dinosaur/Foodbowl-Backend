@@ -111,12 +111,8 @@ class FollowServiceTest extends IntegrationTest {
             followTestPersister.builder().following(following).follower(followerB).save();
             followTestPersister.builder().following(followerA).follower(member).save();
 
-            em.flush();
-            em.clear();
-
-            Member loginMember = memberRepository.findById(member.getId()).get();
             PageResponse<OtherUserFollowerResponse> response =
-                    followService.getOtherUserFollowers(following.getId(), 0, 2, loginMember);
+                    followService.getOtherUserFollowers(following.getId(), 0, 2, member);
 
             assertSoftly(
                     softly -> {
