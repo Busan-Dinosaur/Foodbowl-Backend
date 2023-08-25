@@ -1,5 +1,6 @@
 package org.dinosaur.foodbowl.domain.member.presentation;
 
+import static org.dinosaur.foodbowl.domain.store.exception.StoreExceptionType.NOT_FOUND_ERROR;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.anyLong;
@@ -13,6 +14,7 @@ import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.member.application.BookmarkService;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
+import org.dinosaur.foodbowl.global.exception.NotFoundException;
 import org.dinosaur.foodbowl.test.PresentationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -82,6 +84,20 @@ class BookmarkControllerTest extends PresentationTest {
                     .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.message").value(containsString("가게 ID는 음수가 될 수 없습니다.")));
+        }
+
+        @Test
+        void 존재하지_않는_가게_ID를_받으면_404_상태코드를_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            given(bookmarkService.save(anyLong(), any(Member.class)))
+                    .willThrow(new NotFoundException(NOT_FOUND_ERROR));
+
+            mockMvc.perform(post("/v1/bookmarks")
+                            .param("storeId", String.valueOf(Long.MAX_VALUE))
+                            .header(AUTHORIZATION, BEARER + accessToken))
+                    .andDo(print())
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$.message").value(containsString("일치하는 가게를 찾을 수 없습니다.")));
         }
     }
 }
