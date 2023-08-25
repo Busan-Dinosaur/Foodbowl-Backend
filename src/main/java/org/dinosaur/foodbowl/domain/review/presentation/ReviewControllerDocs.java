@@ -24,13 +24,20 @@ public interface ReviewControllerDocs {
             @ApiResponse(
                     responseCode = "400",
                     description = """
-                            1.사진이 4개보다 많은 경우\t
-                            2.가게 이름 값이 없는 경우\t
-                            3.가게 주소 필드가 값이 없는 경우\t
-                            4.가게 경도 값이 없는 경우\t
-                            5.가게 위도 값이 없는 경우\t
-                            6.가게 정보 URL이 없는 경우\t
-                            7.카테고리 정보가 없는 경우\t
+                            1.사진이 4개보다 많은 경우
+                            
+                            2.가게 이름 값이 없는 경우
+                            
+                            3.가게 주소 필드가 값이 없는 경우
+                            
+                            4.가게 경도 값이 없는 경우
+                            
+                            5.가게 위도 값이 없는 경우
+                            
+                            6.가게 정보 URL이 없는 경우
+                            
+                            7.카테고리 정보가 없는 경우
+                            
                             8.가게 리뷰 내용이 없는 경우
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
