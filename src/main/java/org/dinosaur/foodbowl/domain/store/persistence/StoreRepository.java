@@ -8,5 +8,7 @@ public interface StoreRepository extends Repository<Store, Long> {
 
     Optional<Store> findByLocationId(String locationId);
 
+    Optional<Store> findById(Long id);
+
     Store save(Store store);
 }

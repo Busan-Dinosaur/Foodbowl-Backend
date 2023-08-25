@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.domain.store.application;
 
 import static org.dinosaur.foodbowl.domain.store.exception.StoreExceptionType.DUPLICATE_ERROR;
+import static org.dinosaur.foodbowl.domain.store.exception.StoreExceptionType.NOT_FOUND_ERROR;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.dinosaur.foodbowl.domain.store.dto.response.CategoryResponses;
 import org.dinosaur.foodbowl.domain.store.persistence.CategoryRepository;
 import org.dinosaur.foodbowl.domain.store.persistence.StoreRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
+import org.dinosaur.foodbowl.global.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,17 @@ public class StoreService {
     private final CategoryRepository categoryRepository;
     private final SchoolService schoolService;
     private final StoreSchoolService storeSchoolService;
+
+    @Transactional(readOnly = true)
+    public Store findById(Long id) {
+        return storeRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_ERROR));
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Store> findByLocationId(String locationId) {
+        return storeRepository.findByLocationId(locationId);
+    }
 
     @Transactional(readOnly = true)
     public CategoryResponses getCategories() {
@@ -68,10 +81,5 @@ public class StoreService {
                 .orElseGet(() -> schoolService.save(schoolName, schoolX, schoolY));
 
         storeSchoolService.save(store, school);
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<Store> findByLocationId(String locationId) {
-        return storeRepository.findByLocationId(locationId);
     }
 }
