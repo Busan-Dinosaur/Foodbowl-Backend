@@ -39,9 +39,9 @@ public class PhotoLocalUploader implements PhotoUploader {
         this.fileDirectory = fileDirectory;
     }
 
-    public List<String> upload(List<MultipartFile> files, String parentDirectory) {
+    public List<String> upload(List<MultipartFile> files, String workingDirectory) {
         File directory =
-                loadDirectory(System.getProperty("user.dir") + SLASH + fileDirectory + SLASH + parentDirectory);
+                loadDirectory(System.getProperty("user.dir") + SLASH + fileDirectory + SLASH + workingDirectory);
 
         List<String> filePaths = new ArrayList<>();
         for (MultipartFile multipartFile : files) {
