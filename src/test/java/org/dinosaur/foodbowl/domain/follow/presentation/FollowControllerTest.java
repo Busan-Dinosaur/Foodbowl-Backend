@@ -85,7 +85,7 @@ class FollowControllerTest extends PresentationTest {
             String jsonResponse = mvcResult.getResponse().getContentAsString();
             PageResponse<FollowingResponse> result = objectMapper.readValue(
                     jsonResponse,
-                    new TypeReference<PageResponse<FollowingResponse>>() {
+                    new TypeReference<>() {
                     }
             );
 
@@ -180,7 +180,7 @@ class FollowControllerTest extends PresentationTest {
             String jsonResponse = mvcResult.getResponse().getContentAsString();
             PageResponse<FollowerResponse> result = objectMapper.readValue(
                     jsonResponse,
-                    new TypeReference<PageResponse<FollowerResponse>>() {
+                    new TypeReference<>() {
                     }
             );
 
@@ -277,7 +277,7 @@ class FollowControllerTest extends PresentationTest {
             String jsonResponse = mvcResult.getResponse().getContentAsString();
             PageResponse<OtherUserFollowerResponse> result = objectMapper.readValue(
                     jsonResponse,
-                    new TypeReference<PageResponse<OtherUserFollowerResponse>>() {
+                    new TypeReference<>() {
                     }
             );
 
