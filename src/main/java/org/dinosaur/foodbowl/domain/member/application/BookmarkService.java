@@ -8,7 +8,7 @@ import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.persistence.BookmarkRepository;
 import org.dinosaur.foodbowl.domain.store.application.StoreService;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
-import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
+import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +25,7 @@ public class BookmarkService {
 
         bookmarkRepository.findByMemberAndStore(member, store).ifPresent(
                 ignore -> {
-                    throw new InvalidArgumentException(DUPLICATE_ERROR);
+                    throw new BadRequestException(DUPLICATE_ERROR);
                 }
         );
 

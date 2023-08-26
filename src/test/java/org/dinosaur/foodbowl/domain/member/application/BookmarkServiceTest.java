@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
-import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
+import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
 import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.junit.jupiter.api.Nested;
@@ -47,7 +47,7 @@ class BookmarkServiceTest extends IntegrationTest {
             bookmarkService.save(store.getId(), member);
 
             assertThatThrownBy(() -> bookmarkService.save(store.getId(), member))
-                    .isInstanceOf(InvalidArgumentException.class)
+                    .isInstanceOf(BadRequestException.class)
                     .hasMessage("이미 북마크에 추가된 가게입니다.");
         }
     }
