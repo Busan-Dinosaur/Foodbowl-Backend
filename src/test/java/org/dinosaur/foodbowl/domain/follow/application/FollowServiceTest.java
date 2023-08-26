@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 import org.dinosaur.foodbowl.domain.follow.domain.Follow;
@@ -13,7 +12,6 @@ import org.dinosaur.foodbowl.domain.follow.dto.response.FollowingResponse;
 import org.dinosaur.foodbowl.domain.follow.dto.response.OtherUserFollowerResponse;
 import org.dinosaur.foodbowl.domain.follow.persistence.FollowRepository;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
-import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
 import org.dinosaur.foodbowl.global.common.response.PageResponse;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
@@ -26,13 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class FollowServiceTest extends IntegrationTest {
 
     @Autowired
-    private EntityManager em;
-
-    @Autowired
     private FollowService followService;
-
-    @Autowired
-    private MemberRepository memberRepository;
 
     @Autowired
     private FollowRepository followRepository;
