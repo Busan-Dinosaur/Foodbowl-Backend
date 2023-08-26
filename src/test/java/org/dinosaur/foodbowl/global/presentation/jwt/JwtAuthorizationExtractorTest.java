@@ -49,8 +49,8 @@ class JwtAuthorizationExtractorTest {
             assertThat(result).isEmpty();
         }
 
-        @ValueSource(strings = {"Bearer", "Bearer "})
         @ParameterizedTest
+        @ValueSource(strings = {"Bearer", "Bearer "})
         void 인증_토큰이_존재하지_않으면_빈값을_반환한다(String auth) {
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.addHeader("Authorization", auth);

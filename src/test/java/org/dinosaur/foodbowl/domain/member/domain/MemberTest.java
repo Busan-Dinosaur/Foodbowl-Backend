@@ -13,8 +13,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class MemberTest {
 
-    @ValueSource(strings = {"", " ", "a@", "안 녕", "hi2", "가나다라마바사아자차카"})
     @ParameterizedTest
+    @ValueSource(strings = {"", " ", "a@", "안 녕", "hi2", "가나다라마바사아자차카"})
     void 한글_영어로_구성된_1글자_이상_10글자_이하의_닉네임이_아니라면_예외를_던진다(String nickname) {
         assertThatThrownBy(
                 () -> Member.builder()
