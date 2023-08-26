@@ -1,8 +1,8 @@
-package org.dinosaur.foodbowl.domain.member.presentation;
+package org.dinosaur.foodbowl.domain.bookmark.presentation;
 
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
-import org.dinosaur.foodbowl.domain.member.application.BookmarkService;
+import org.dinosaur.foodbowl.domain.bookmark.application.BookmarkService;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.global.presentation.Auth;
 import org.springframework.http.ResponseEntity;

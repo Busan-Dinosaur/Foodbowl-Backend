@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.member.presentation;
+package org.dinosaur.foodbowl.domain.bookmark.presentation;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.BDDMockito.any;
@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
-import org.dinosaur.foodbowl.domain.member.application.BookmarkService;
+import org.dinosaur.foodbowl.domain.bookmark.application.BookmarkService;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
 import org.dinosaur.foodbowl.test.PresentationTest;

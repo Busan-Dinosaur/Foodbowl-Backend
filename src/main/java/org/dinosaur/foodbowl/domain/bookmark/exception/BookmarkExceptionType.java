@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.member.exception;
+package org.dinosaur.foodbowl.domain.bookmark.exception;
 
 import lombok.Getter;
 import org.dinosaur.foodbowl.global.exception.ExceptionType;

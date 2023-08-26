@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.member.presentation;
+package org.dinosaur.foodbowl.domain.bookmark.presentation;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

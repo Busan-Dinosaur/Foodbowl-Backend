@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.member.application;
+package org.dinosaur.foodbowl.domain.bookmark.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
