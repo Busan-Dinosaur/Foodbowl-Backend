@@ -27,6 +27,7 @@ public class PhotoLocalUploader implements PhotoUploader {
     private static final String SLASH = File.separator;
     private static final String UNDER_BAR = "_";
     private static final String DOT = ".";
+    private static final String SYSTEM_PATH = System.getProperty("user.dir");
 
     private final String url;
     private final String fileDirectory;
@@ -40,8 +41,7 @@ public class PhotoLocalUploader implements PhotoUploader {
     }
 
     public List<String> upload(List<MultipartFile> files, String workingDirectory) {
-        File directory =
-                loadDirectory(System.getProperty("user.dir") + SLASH + fileDirectory + SLASH + workingDirectory);
+        File directory = loadDirectory(getImageStorePath(workingDirectory));
 
         List<String> filePaths = new ArrayList<>();
         for (MultipartFile multipartFile : files) {
@@ -55,9 +55,17 @@ public class PhotoLocalUploader implements PhotoUploader {
 
             File uploadPath = new File(directory, saveFileName);
             transferFile(multipartFile, uploadPath);
-            filePaths.add(getImageFullPath(uploadPath.getPath()));
+            filePaths.add(getImageFullPath(workingDirectory, saveFileName));
         }
         return filePaths;
+    }
+
+    private String getImageStorePath(String workingDirectory) {
+        return SYSTEM_PATH + SLASH + fileDirectory + SLASH + workingDirectory;
+    }
+
+    private String getImageFullPath(String workingDirectory, String fileName) {
+        return url + SLASH + fileDirectory + SLASH + workingDirectory + SLASH + fileName;
     }
 
     private File loadDirectory(String directoryLocation) {
@@ -112,9 +120,5 @@ public class PhotoLocalUploader implements PhotoUploader {
         } catch (IOException e) {
             throw new FileException(FILE_TRANSFER_ERROR, e);
         }
-    }
-
-    private String getImageFullPath(String imageLocalPath) {
-        return url + SLASH + imageLocalPath;
     }
 }

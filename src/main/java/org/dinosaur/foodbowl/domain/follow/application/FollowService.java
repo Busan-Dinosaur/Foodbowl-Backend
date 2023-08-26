@@ -7,6 +7,7 @@ import org.dinosaur.foodbowl.domain.follow.domain.Follow;
 import org.dinosaur.foodbowl.domain.follow.dto.response.FollowerResponse;
 import org.dinosaur.foodbowl.domain.follow.dto.response.FollowingResponse;
 import org.dinosaur.foodbowl.domain.follow.dto.response.OtherUserFollowerResponse;
+import org.dinosaur.foodbowl.domain.follow.dto.response.OtherUserFollowingResponse;
 import org.dinosaur.foodbowl.domain.follow.exception.FollowExceptionType;
 import org.dinosaur.foodbowl.domain.follow.persistence.FollowRepository;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
@@ -35,6 +36,26 @@ public class FollowService {
         Slice<FollowingResponse> followings = followRepository.findAllByFollower(loginMember, pageable)
                 .map(Follow::getFollowing)
                 .map(FollowingResponse::from);
+        return PageResponse.from(followings);
+    }
+
+    @Transactional(readOnly = true)
+    public PageResponse<OtherUserFollowingResponse> getOtherUserFollowings(
+            Long targetMemberId,
+            int page,
+            int size,
+            Member loginMember
+    ) {
+        Member targetMember = memberRepository.findById(targetMemberId)
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Slice<OtherUserFollowingResponse> followings = followRepository.findAllByFollower(targetMember, pageable)
+                .map(Follow::getFollowing)
+                .map(following -> {
+                    Optional<Follow> follow = followRepository.findByFollowingAndFollower(following, loginMember);
+                    return OtherUserFollowingResponse.of(following, follow.isPresent());
+                });
         return PageResponse.from(followings);
     }
 
