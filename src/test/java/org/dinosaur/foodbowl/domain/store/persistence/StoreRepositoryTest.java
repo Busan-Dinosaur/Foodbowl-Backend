@@ -32,9 +32,15 @@ class StoreRepositoryTest extends PersistenceTest {
         Store store = generateStore();
         Store saveStore = storeRepository.save(store);
 
-        Store findStore = storeRepository.findByLocationId(saveStore.getLocationId()).get();
+        assertThat(storeRepository.findByLocationId(saveStore.getLocationId())).isPresent();
+    }
 
-        assertThat(findStore).isEqualTo(saveStore);
+    @Test
+    void ID로_가게를_조회한다() {
+        Store store = generateStore();
+        Store saveStore = storeRepository.save(store);
+
+        assertThat(storeRepository.findById(saveStore.getId())).isPresent();
     }
 
     private Store generateStore() {

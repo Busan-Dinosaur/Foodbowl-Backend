@@ -25,9 +25,7 @@ public interface FollowControllerDocs {
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = """
-                            1.팔로잉 목록 조회 성공
-                            """
+                    description = "팔로잉 목록 조회 성공"
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -101,9 +99,7 @@ public interface FollowControllerDocs {
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = """
-                            1.팔로워 목록 조회 성공
-                            """
+                    description = "팔로워 목록 조회 성공"
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -135,9 +131,7 @@ public interface FollowControllerDocs {
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = """
-                            1.다른 회원 팔로워 목록 조회 성공
-                            """
+                    description = "다른 회원 팔로워 목록 조회 성공"
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -158,9 +152,7 @@ public interface FollowControllerDocs {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = """
-                            1.등록되지 않은 다른 회원 ID
-                            """,
+                    description = "등록되지 않은 다른 회원 ID",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             ),
     })
@@ -184,9 +176,7 @@ public interface FollowControllerDocs {
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = """
-                            1.팔로우 성공
-                            """
+                    description = "팔로우 성공"
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -203,9 +193,7 @@ public interface FollowControllerDocs {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = """
-                            1.등록되지 않은 팔로우 대상 회원 ID
-                            """,
+                    description = "등록되지 않은 팔로우 대상 회원 ID",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
@@ -221,9 +209,7 @@ public interface FollowControllerDocs {
     @ApiResponses({
             @ApiResponse(
                     responseCode = "204",
-                    description = """
-                            1.언팔로우 성공
-                            """
+                    description = "언팔로우 성공"
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -238,9 +224,7 @@ public interface FollowControllerDocs {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = """
-                            1.등록되지 않은 언팔로우 회원 ID
-                            """,
+                    description = "등록되지 않은 언팔로우 회원 ID",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
@@ -256,9 +240,7 @@ public interface FollowControllerDocs {
     @ApiResponses({
             @ApiResponse(
                     responseCode = "204",
-                    description = """
-                            1.팔로워 삭제 성공
-                            """
+                    description = "팔로워 삭제 성공"
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -273,9 +255,7 @@ public interface FollowControllerDocs {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = """
-                            1.등록되지 않은 팔로워 삭제 회원 ID
-                            """,
+                    description = "등록되지 않은 팔로워 삭제 회원 ID",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
