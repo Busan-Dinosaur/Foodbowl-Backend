@@ -30,14 +30,12 @@ public interface BookmarkControllerDocs {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = """
-                            1.ID에 해당하는 가게가 존재하지 않는 경우
-                            """,
+                    description = "ID에 해당하는 가게가 존재하지 않는 경우",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
     ResponseEntity<Void> create(
-            @Positive(message = "가게 ID는 음수가 될 수 없습니다.") Long storeId,
+            @Positive(message = "가게 ID는 양수만 가능합니다.") Long storeId,
             Member member
     );
 }

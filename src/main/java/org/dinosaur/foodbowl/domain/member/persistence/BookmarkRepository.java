@@ -8,7 +8,7 @@ import org.springframework.data.repository.Repository;
 
 public interface BookmarkRepository extends Repository<Bookmark, Long> {
 
-    Bookmark save(Bookmark bookmark);
-
     Optional<Bookmark> findByMemberAndStore(Member member, Store store);
+
+    Bookmark save(Bookmark bookmark);
 }

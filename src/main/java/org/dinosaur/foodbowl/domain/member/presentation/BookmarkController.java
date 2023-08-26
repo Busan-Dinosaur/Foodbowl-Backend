@@ -22,7 +22,7 @@ public class BookmarkController implements BookmarkControllerDocs {
 
     @PostMapping
     public ResponseEntity<Void> create(
-            @RequestParam @Positive(message = "가게 ID는 음수가 될 수 없습니다.") Long storeId,
+            @RequestParam @Positive(message = "가게 ID는 양수만 가능합니다.") Long storeId,
             @Auth Member member
     ) {
         bookmarkService.save(storeId, member);
