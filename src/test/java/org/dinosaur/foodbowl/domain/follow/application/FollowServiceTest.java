@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.dinosaur.foodbowl.domain.follow.domain.Follow;
 import org.dinosaur.foodbowl.domain.follow.dto.response.FollowerResponse;
 import org.dinosaur.foodbowl.domain.follow.dto.response.FollowingResponse;
+import org.dinosaur.foodbowl.domain.follow.dto.response.OtherUserFollowerResponse;
 import org.dinosaur.foodbowl.domain.follow.persistence.FollowRepository;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.global.common.response.PageResponse;
@@ -29,7 +30,7 @@ class FollowServiceTest extends IntegrationTest {
     private FollowRepository followRepository;
 
     @Test
-    void 팔로잉_목록을_페이징_조회한다() {
+    void 나의_팔로잉_목록을_페이징_조회한다() {
         Member follower = memberTestPersister.memberBuilder().save();
         Member followingA = memberTestPersister.memberBuilder().save();
         Member followingB = memberTestPersister.memberBuilder().save();
@@ -59,7 +60,7 @@ class FollowServiceTest extends IntegrationTest {
     }
 
     @Test
-    void 팔로워_목록을_페이징_조회한다() {
+    void 나의_팔로워_목록을_페이징_조회한다() {
         Member following = memberTestPersister.memberBuilder().save();
         Member followerA = memberTestPersister.memberBuilder().save();
         Member followerB = memberTestPersister.memberBuilder().save();
@@ -86,6 +87,51 @@ class FollowServiceTest extends IntegrationTest {
                     softly.assertThat(response.currentSize()).isEqualTo(2);
                 }
         );
+    }
+
+    @Nested
+    class 다른_회원_팔로워_목록_페이징_조회 {
+
+        @Test
+        void 유효한_상황이라면_팔로워_목록을_조회한다() {
+            Member member = memberTestPersister.memberBuilder().save();
+            Member following = memberTestPersister.memberBuilder().save();
+            Member followerA = memberTestPersister.memberBuilder().save();
+            Member followerB = memberTestPersister.memberBuilder().save();
+
+            followTestPersister.builder().following(following).follower(followerA).save();
+            followTestPersister.builder().following(following).follower(followerB).save();
+            followTestPersister.builder().following(followerA).follower(member).save();
+
+            PageResponse<OtherUserFollowerResponse> response =
+                    followService.getOtherUserFollowers(following.getId(), 0, 2, member);
+
+            assertSoftly(
+                    softly -> {
+                        softly.assertThat(response.content()).hasSize(2);
+                        softly.assertThat(response.content().get(0).memberId()).isEqualTo(followerB.getId());
+                        softly.assertThat(response.content().get(0).nickname()).isEqualTo(followerB.getNickname());
+                        softly.assertThat(response.content().get(0).isFollowing()).isFalse();
+                        softly.assertThat(response.content().get(1).memberId()).isEqualTo(followerA.getId());
+                        softly.assertThat(response.content().get(1).nickname()).isEqualTo(followerA.getNickname());
+                        softly.assertThat(response.content().get(1).isFollowing()).isTrue();
+                        softly.assertThat(response.isFirst()).isTrue();
+                        softly.assertThat(response.isLast()).isTrue();
+                        softly.assertThat(response.hasNext()).isFalse();
+                        softly.assertThat(response.currentPage()).isEqualTo(0);
+                        softly.assertThat(response.currentSize()).isEqualTo(2);
+                    }
+            );
+        }
+
+        @Test
+        void 등록되지_않은_회원이라면_예외를_던진다() {
+            Member loginMember = memberTestPersister.memberBuilder().save();
+
+            assertThatThrownBy(() -> followService.getOtherUserFollowers(-1L, 0, 2, loginMember))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
     }
 
     @Nested

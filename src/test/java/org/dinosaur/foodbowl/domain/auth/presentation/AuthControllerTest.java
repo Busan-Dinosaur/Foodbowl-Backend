@@ -2,6 +2,7 @@ package org.dinosaur.foodbowl.domain.auth.presentation;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -16,7 +17,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -43,7 +43,7 @@ class AuthControllerTest extends PresentationTest {
         void 애플_로그인을_수행하면_토큰과_200_응답을_반환한다() throws Exception {
             AppleLoginRequest appleLoginRequest = new AppleLoginRequest("appleToken");
             TokenResponse tokenResponse = new TokenResponse("accessToken", "refreshToken");
-            BDDMockito.given(authService.appleLogin(any(AppleLoginRequest.class))).willReturn(tokenResponse);
+            given(authService.appleLogin(any(AppleLoginRequest.class))).willReturn(tokenResponse);
 
             mockMvc.perform(post("/v1/auth/login/oauth/apple")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -54,8 +54,8 @@ class AuthControllerTest extends PresentationTest {
                     .andExpect(jsonPath("$.refreshToken").value("refreshToken"));
         }
 
-        @NullAndEmptySource
         @ParameterizedTest
+        @NullAndEmptySource
         void 애플_토큰이_공백이거나_존재하지_않으면_400_응답을_반환한다(String appleToken) throws Exception {
             AppleLoginRequest appleLoginRequest = new AppleLoginRequest(appleToken);
 

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.follow.application.FollowService;
 import org.dinosaur.foodbowl.domain.follow.dto.response.FollowerResponse;
 import org.dinosaur.foodbowl.domain.follow.dto.response.FollowingResponse;
+import org.dinosaur.foodbowl.domain.follow.dto.response.OtherUserFollowerResponse;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.global.common.response.PageResponse;
 import org.dinosaur.foodbowl.global.presentation.Auth;
@@ -44,6 +45,18 @@ public class FollowController implements FollowControllerDocs {
             @Auth Member loginMember
     ) {
         PageResponse<FollowerResponse> response = followService.getFollowers(page, size, loginMember);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{memberId}/followers")
+    public ResponseEntity<PageResponse<OtherUserFollowerResponse>> getOtherUserFollowers(
+            @PathVariable("memberId") @Positive(message = "ID는 양수만 가능합니다.") Long targetMemberId,
+            @RequestParam(defaultValue = "0") @PositiveOrZero(message = "페이지는 0이상만 가능합니다.") int page,
+            @RequestParam(defaultValue = "15") @PositiveOrZero(message = "페이지 크기는 0이상만 가능합니다.") int size,
+            @Auth Member loginMember
+    ) {
+        PageResponse<OtherUserFollowerResponse> response =
+                followService.getOtherUserFollowers(targetMemberId, page, size, loginMember);
         return ResponseEntity.ok(response);
     }
 
