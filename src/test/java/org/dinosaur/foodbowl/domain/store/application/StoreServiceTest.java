@@ -13,6 +13,7 @@ import org.dinosaur.foodbowl.domain.store.dto.response.CategoryResponses;
 import org.dinosaur.foodbowl.domain.store.persistence.StoreSchoolRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
+import org.dinosaur.foodbowl.global.exception.NotFoundException;
 import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -201,6 +202,27 @@ class StoreServiceTest extends IntegrationTest {
             String locationId = String.valueOf(Long.MAX_VALUE);
 
             assertThat(storeService.findByLocationId(locationId)).isEmpty();
+        }
+
+        @Test
+        void ID로_조회한다() {
+            StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(
+                    null,
+                    null,
+                    null
+            );
+            Store store = storeService.create(storeCreateDtoWithoutSchool);
+
+            Store findStore = storeService.findById(store.getId());
+
+            assertThat(findStore).isEqualTo(store);
+        }
+
+        @Test
+        void 존재하지_않는_ID로_조회하면_예외가_발생한다() {
+            assertThatThrownBy(() -> storeService.findById(Long.MAX_VALUE))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("일치하는 가게를 찾을 수 없습니다.");
         }
     }
 

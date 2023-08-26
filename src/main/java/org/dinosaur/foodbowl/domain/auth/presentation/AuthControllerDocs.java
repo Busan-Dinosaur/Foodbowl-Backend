@@ -18,22 +18,16 @@ public interface AuthControllerDocs {
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = """
-                            1.애플 로그인/회원가입 성공
-                            """
+                    description = "애플 로그인/회원가입 성공 "
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = """
-                            1.유효하지 않은 애플 토큰
-                            """,
+                    description = "유효하지 않은 애플 토큰",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             ),
             @ApiResponse(
                     responseCode = "500",
-                    description = """
-                            1.유효하지 않은 애플 키
-                            """,
+                    description = "유효하지 않은 애플 키",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })

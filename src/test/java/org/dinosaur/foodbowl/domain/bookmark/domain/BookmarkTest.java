@@ -1,7 +1,8 @@
-package org.dinosaur.foodbowl.domain.member.domain;
+package org.dinosaur.foodbowl.domain.bookmark.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.domain.vo.SocialType;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.junit.jupiter.api.DisplayNameGeneration;
