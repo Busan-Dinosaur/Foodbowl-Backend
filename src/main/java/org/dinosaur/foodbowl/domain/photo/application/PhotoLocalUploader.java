@@ -55,7 +55,6 @@ public class PhotoLocalUploader implements PhotoUploader {
 
             File uploadPath = new File(directory, saveFileName);
             transferFile(multipartFile, uploadPath);
-            System.out.println(uploadPath.getPath());
             filePaths.add(getImageFullPath(workingDirectory, saveFileName));
         }
         return filePaths;
