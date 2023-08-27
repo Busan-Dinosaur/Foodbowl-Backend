@@ -18,7 +18,7 @@ public interface AuthControllerDocs {
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "애플 로그인/회원가입 성공 "
+                    description = "애플 로그인/회원가입 성공"
             ),
             @ApiResponse(
                     responseCode = "400",

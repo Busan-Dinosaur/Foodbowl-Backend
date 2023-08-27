@@ -16,14 +16,17 @@ public interface BookmarkControllerDocs {
 
     @Operation(summary = "북마크 추가", description = "가게를 사용자의 북마크에 추가합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "북마크 추가 성공"),
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "북마크 추가 성공"
+            ),
             @ApiResponse(
                     responseCode = "400",
                     description = """
                             1.가게 ID가 음수인 경우
-                            
+                                                        
                             2.가게 ID를 숫자로 변환할 수 없는 경우
-                            
+                                                        
                             3.사용자가 이미 해당 가게를 북마크 등록한 경우
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))

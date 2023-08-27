@@ -55,7 +55,10 @@ public interface FollowControllerDocs {
 
     @Operation(summary = "다른 회원 팔로잉 목록 조회", description = "정해진 개수만큼 다른 회원의 팔로잉 목록을 조회한다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "다른 회원 팔로잉 목록 조회 성공"),
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "다른 회원 팔로잉 목록 조회 성공"
+            ),
             @ApiResponse(
                     responseCode = "400",
                     description = """
