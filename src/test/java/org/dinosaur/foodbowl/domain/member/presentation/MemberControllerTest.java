@@ -77,7 +77,7 @@ class MemberControllerTest extends PresentationTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"가", "a", "A", "@"})
-        void ID가_Long타입으로_변환하지_못하면_400_응답을_반환한다(String memberId) throws Exception {
+        void ID를_Long타입으로_변환하지_못하면_400_응답을_반환한다(String memberId) throws Exception {
             mockMvc.perform(get("/v1/members/{id}/profile", memberId)
                             .header(AUTHORIZATION, BEARER + accessToken))
                     .andDo(print())

@@ -23,7 +23,7 @@ class MemberRepositoryTest extends PersistenceTest {
 
         Member findMember = memberRepository.findById(saveMember.getId()).get();
 
-        assertThat(findMember.getId()).isEqualTo(saveMember.getId());
+        assertThat(findMember).isEqualTo(saveMember);
     }
 
     @Test
@@ -31,9 +31,9 @@ class MemberRepositoryTest extends PersistenceTest {
         Member member = memberTestPersister.memberBuilder().save();
         memberTestPersister.memberThumbnailBuilder().member(member).save();
 
-        Optional<Member> findMember = memberRepository.findByIdWithThumbnail(member.getId());
+        Member findMember = memberRepository.findByIdWithThumbnail(member.getId()).get();
 
-        assertThat(findMember.get()).isEqualTo(member);
+        assertThat(findMember).isEqualTo(member);
     }
 
     @Nested

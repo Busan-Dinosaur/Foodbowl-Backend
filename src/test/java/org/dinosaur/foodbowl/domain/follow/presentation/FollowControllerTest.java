@@ -196,7 +196,7 @@ class FollowControllerTest extends PresentationTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"가", "a", "A", "@"})
-        void ID가_Long타입으로_변환하지_못하면_400_응답을_반환한다(String memberId) throws Exception {
+        void ID를_Long타입으로_변환하지_못하면_400_응답을_반환한다(String memberId) throws Exception {
             mockMvc.perform(get("/v1/follows/{memberId}/followings", memberId)
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .param("page", "1")
@@ -420,7 +420,7 @@ class FollowControllerTest extends PresentationTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"가", "a", "A", "@"})
-        void ID가_Long타입으로_변환하지_못하면_400_응답을_반환한다(String memberId) throws Exception {
+        void ID를_Long타입으로_변환하지_못하면_400_응답을_반환한다(String memberId) throws Exception {
             mockMvc.perform(get("/v1/follows/{memberId}/followers", memberId)
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .param("page", "1")
@@ -520,7 +520,7 @@ class FollowControllerTest extends PresentationTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"가", "a", "A", "@"})
-        void ID가_LONG_타입으로_변환하지_못하면_400_응답을_반환한다(String memberId) throws Exception {
+        void ID를_LONG_타입으로_변환하지_못하면_400_응답을_반환한다(String memberId) throws Exception {
             mockMvc.perform(post("/v1/follows/{memberId}/follow", memberId)
                             .header(AUTHORIZATION, BEARER + accessToken))
                     .andDo(print())
@@ -562,7 +562,7 @@ class FollowControllerTest extends PresentationTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"가", "a", "A", "@"})
-        void ID가_Long타입으로_변환하지_못하면_400_응답을_반환한다(String memberId) throws Exception {
+        void ID를_Long타입으로_변환하지_못하면_400_응답을_반환한다(String memberId) throws Exception {
             mockMvc.perform(delete("/v1/follows/{memberId}/unfollow", memberId)
                             .header(AUTHORIZATION, BEARER + accessToken))
                     .andDo(print())
@@ -604,7 +604,7 @@ class FollowControllerTest extends PresentationTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"가", "a", "A", "@"})
-        void ID가_Long타입으로_변환하지_못하면_400_응답을_반환한다(String memberId) throws Exception {
+        void ID를_Long타입으로_변환하지_못하면_400_응답을_반환한다(String memberId) throws Exception {
             mockMvc.perform(delete("/v1/follows/followers/{memberId}", memberId)
                             .header(AUTHORIZATION, BEARER + accessToken))
                     .andDo(print())
