@@ -44,7 +44,7 @@ public record MemberProfileResponse(
                 member.getFollowerCount(),
                 followingCount,
                 isMyProfile,
-                isMyProfile ? false : isFollowing
+                !isMyProfile && isFollowing
         );
     }
 }
