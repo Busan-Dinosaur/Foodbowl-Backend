@@ -27,6 +27,8 @@ public interface FollowRepository extends Repository<Follow, Long> {
 
     Optional<Follow> findByFollowingAndFollower(Member following, Member follower);
 
+    long countByFollower(Member follower);
+
     Follow save(Follow follow);
 
     void delete(Follow follow);

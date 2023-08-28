@@ -12,9 +12,7 @@ public interface StoreControllerDocs {
     @Operation(summary = "카테고리 목록 조회", description = "카테고리 목록을 조회한다.")
     @ApiResponse(
             responseCode = "200",
-            description = """
-                    1.카테고리 목록 조회 성공
-                    """
+            description = "카테고리 목록 조회 성공"
     )
     ResponseEntity<CategoryResponses> getCategories();
 }

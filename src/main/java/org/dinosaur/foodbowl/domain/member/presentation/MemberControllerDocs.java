@@ -1,44 +1,47 @@
-package org.dinosaur.foodbowl.domain.bookmark.presentation;
+package org.dinosaur.foodbowl.domain.member.presentation;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
+import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
 import org.dinosaur.foodbowl.global.exception.ExceptionResponse;
 import org.springframework.http.ResponseEntity;
 
-@Tag(name = "북마크", description = "북마크 API")
-public interface BookmarkControllerDocs {
+@Tag(name = "회원", description = "회원 API")
+public interface MemberControllerDocs {
 
-    @Operation(summary = "북마크 추가", description = "가게를 사용자의 북마크에 추가합니다.")
+    @Operation(summary = "회원 프로필 조회", description = "회원 프로필을 조회한다.")
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "북마크 추가 성공"
+                    description = "회원 프로필 조회 성공"
             ),
             @ApiResponse(
                     responseCode = "400",
                     description = """
-                            1.가게 ID가 음수인 경우
+                            1.올바르지 않은 회원 ID 타입
                                                         
-                            2.가게 ID를 숫자로 변환할 수 없는 경우
-                                                        
-                            3.사용자가 이미 해당 가게를 북마크 등록한 경우
+                            2.양수가 아닌 회원 ID
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "ID에 해당하는 가게가 존재하지 않는 경우",
+                    description = "등록되지 않은 회원 ID",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
-    ResponseEntity<Void> create(
-            @Positive(message = "가게 ID는 양수만 가능합니다.") Long storeId,
-            Member member
+    ResponseEntity<MemberProfileResponse> getProfile(
+            @Parameter(description = "회원 ID", example = "1")
+            @PositiveOrZero(message = "회원 ID는 양수만 가능합니다.")
+            Long memberId,
+
+            Member loginMember
     );
 }

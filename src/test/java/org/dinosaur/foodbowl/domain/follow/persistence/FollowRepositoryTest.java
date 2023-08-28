@@ -119,4 +119,18 @@ class FollowRepositoryTest extends PersistenceTest {
             assertThat(result).isEmpty();
         }
     }
+
+    @Test
+    void 팔로잉_수를_조회한다() {
+        Member follower = memberTestPersister.memberBuilder().save();
+        Member followingA = memberTestPersister.memberBuilder().save();
+        Member followingB = memberTestPersister.memberBuilder().save();
+
+        followTestPersister.builder().following(followingA).follower(follower).save();
+        followTestPersister.builder().following(followingB).follower(follower).save();
+
+        long result = followRepository.countByFollower(follower);
+
+        assertThat(result).isEqualTo(2);
+    }
 }
