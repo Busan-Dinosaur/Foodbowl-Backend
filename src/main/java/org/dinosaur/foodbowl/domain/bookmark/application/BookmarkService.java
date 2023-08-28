@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.domain.bookmark.application;
 
 import static org.dinosaur.foodbowl.domain.bookmark.exception.BookmarkExceptionType.DUPLICATE_ERROR;
+import static org.dinosaur.foodbowl.domain.bookmark.exception.BookmarkExceptionType.NOT_FOUND_ERROR;
 
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.bookmark.domain.Bookmark;
@@ -34,5 +35,15 @@ public class BookmarkService {
                 .member(member)
                 .build();
         return bookmarkRepository.save(bookmark).getId();
+    }
+
+    @Transactional
+    public void delete(Long storeId, Member member) {
+        Store store = storeService.findById(storeId);
+
+        Bookmark bookmark = bookmarkRepository.findByMemberAndStore(member, store)
+                .orElseThrow(() -> new BadRequestException(NOT_FOUND_ERROR));
+
+        bookmarkRepository.delete(bookmark);
     }
 }
