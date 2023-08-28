@@ -16,6 +16,7 @@ import java.util.Optional;
 import javax.crypto.SecretKey;
 import org.dinosaur.foodbowl.domain.auth.exception.AuthExceptionType;
 import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
+import org.dinosaur.foodbowl.global.exception.AuthenticationException;
 import org.dinosaur.foodbowl.global.exception.ExceptionType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -71,6 +72,17 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    public String extractSubject(String token) {
+        JwtTokenValid jwtTokenValid = validateToken(token);
+        if (!jwtTokenValid.isValid()) {
+            throw new AuthenticationException(jwtTokenValid.exceptionType());
+        }
+
+        return jwtParser.parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+
     public Optional<Claims> extractClaims(String token) {
         JwtTokenValid jwtTokenValid = validateToken(token);
 
@@ -81,11 +93,11 @@ public class JwtTokenProvider {
         return Optional.empty();
     }
 
-    private JwtTokenValid validateToken(String token) {
+    public JwtTokenValid validateToken(String token) {
         ExceptionType exceptionType;
         try {
             jwtParser.parseClaimsJws(token).getBody();
-            return new JwtTokenValid(true, "", "");
+            return new JwtTokenValid(true, null);
         } catch (ExpiredJwtException e) {
             exceptionType = AuthExceptionType.EXPIRED_JWT;
         } catch (MalformedJwtException e) {
@@ -97,7 +109,7 @@ public class JwtTokenProvider {
         } catch (Exception e) {
             exceptionType = AuthExceptionType.UNKNOWN_JWT;
         }
-        return new JwtTokenValid(false, exceptionType.getErrorCode(), exceptionType.getMessage());
+        return new JwtTokenValid(false, exceptionType);
     }
 
     public long getValidRefreshMilliSecond() {

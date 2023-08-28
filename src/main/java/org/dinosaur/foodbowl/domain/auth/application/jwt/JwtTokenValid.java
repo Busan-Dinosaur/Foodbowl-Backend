@@ -1,4 +1,6 @@
 package org.dinosaur.foodbowl.domain.auth.application.jwt;
 
-public record JwtTokenValid(boolean isValid, String errorCode, String message) {
+import org.dinosaur.foodbowl.global.exception.ExceptionType;
+
+public record JwtTokenValid(boolean isValid, ExceptionType exceptionType) {
 }
