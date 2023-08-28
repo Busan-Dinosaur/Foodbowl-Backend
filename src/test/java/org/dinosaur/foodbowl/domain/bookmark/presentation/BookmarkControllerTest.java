@@ -4,6 +4,8 @@ import static org.hamcrest.Matchers.containsString;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -58,8 +60,6 @@ class BookmarkControllerTest extends PresentationTest {
         @ValueSource(strings = {"hello", "@#!"})
         void 가게_ID가_숫자가_아니면_400_상태코드를_반환한다(String storeId) throws Exception {
             mockingAuthMemberInResolver();
-            given(bookmarkService.save(anyLong(), any(Member.class)))
-                    .willReturn(1L);
 
             mockMvc.perform(post("/v1/bookmarks")
                             .param("storeId", storeId)
@@ -72,10 +72,51 @@ class BookmarkControllerTest extends PresentationTest {
         @Test
         void 가게_ID가_음수면_400_상태코드를_반환한다() throws Exception {
             mockingAuthMemberInResolver();
-            given(bookmarkService.save(anyLong(), any(Member.class)))
-                    .willReturn(1L);
 
             mockMvc.perform(post("/v1/bookmarks")
+                            .param("storeId", "-1")
+                            .header(AUTHORIZATION, BEARER + accessToken))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value(containsString("가게 ID는 양수만 가능합니다.")));
+        }
+    }
+
+    @Nested
+    class 북마크_삭제_시 {
+
+        private final String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
+
+        @Test
+        void 정상적으로_삭제되면_204_상태코드를_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            willDoNothing().given(bookmarkService).delete(anyLong(), any(Member.class));
+
+            mockMvc.perform(delete("/v1/bookmarks")
+                            .param("storeId", "1")
+                            .header(AUTHORIZATION, BEARER + accessToken))
+                    .andDo(print())
+                    .andExpect(status().isNoContent());
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"hello", "@#!"})
+        void 가게_ID가_숫자가_아니면_400_상태코드를_반환한다(String storeId) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(delete("/v1/bookmarks")
+                            .param("storeId", storeId)
+                            .header(AUTHORIZATION, BEARER + accessToken))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value(containsString("Long 타입으로 변환할 수 없는 요청입니다.")));
+        }
+
+        @Test
+        void 가게_ID가_음수면_400_상태코드를_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(delete("/v1/bookmarks")
                             .param("storeId", "-1")
                             .header(AUTHORIZATION, BEARER + accessToken))
                     .andDo(print())
