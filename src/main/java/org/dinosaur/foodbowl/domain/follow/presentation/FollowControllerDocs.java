@@ -62,9 +62,9 @@ public interface FollowControllerDocs {
             @ApiResponse(
                     responseCode = "400",
                     description = """
-                            1.올바르지 않은 멤버 ID 타입
+                            1.올바르지 않은 회원 ID 타입
                                                         
-                            2.양수가 아닌 멤버 ID
+                            2.양수가 아닌 회원 ID
                                                         
                             3.올바르지 않은 페이지 타입
                                                         
@@ -139,9 +139,9 @@ public interface FollowControllerDocs {
             @ApiResponse(
                     responseCode = "400",
                     description = """
-                            1.올바르지 않은 멤버 ID 타입
+                            1.올바르지 않은 회원 ID 타입
                                                         
-                            2.양수가 아닌 멤버 ID
+                            2.양수가 아닌 회원 ID
                                                         
                             3.올바르지 않은 페이지 타입
                                                         
@@ -184,9 +184,9 @@ public interface FollowControllerDocs {
             @ApiResponse(
                     responseCode = "400",
                     description = """
-                            1.올바르지 않은 멤버 ID 타입
+                            1.올바르지 않은 회원 ID 타입
                                                         
-                            2.양수가 아닌 멤버 ID
+                            2.양수가 아닌 회원 ID
                                                         
                             3.본인 팔로우
                                                         
@@ -217,9 +217,9 @@ public interface FollowControllerDocs {
             @ApiResponse(
                     responseCode = "400",
                     description = """
-                            1.올바르지 않은 멤버 ID 타입
+                            1.올바르지 않은 회원 ID 타입
                                                         
-                            2.양수가 아닌 멤버 ID
+                            2.양수가 아닌 회원 ID
                                                         
                             3.팔로우하지 않은 회원 언팔로우
                             """,
@@ -248,9 +248,9 @@ public interface FollowControllerDocs {
             @ApiResponse(
                     responseCode = "400",
                     description = """
-                            1.올바르지 않은 멤버 ID 타입
+                            1.올바르지 않은 회원 ID 타입
                                                         
-                            2.양수가 아닌 멤버 ID
+                            2.양수가 아닌 회원 ID
                                                         
                             3.나를 팔로우 하지 않은 회원 삭제
                             """,

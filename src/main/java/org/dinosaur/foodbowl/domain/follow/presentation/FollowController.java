@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequiredArgsConstructor
 @Validated
+@RequiredArgsConstructor
 @RequestMapping("/v1/follows")
 @RestController
 public class FollowController implements FollowControllerDocs {
