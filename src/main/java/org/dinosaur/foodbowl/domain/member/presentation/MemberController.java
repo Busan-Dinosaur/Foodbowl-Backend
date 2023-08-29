@@ -35,7 +35,7 @@ public class MemberController implements MemberControllerDocs {
 
     @GetMapping("/nickname/exist")
     public ResponseEntity<NicknameExistResponse> checkNicknameExist(
-            @RequestParam @NotBlank(message = "닉네임이 존재하지 않습니다.") String nickname
+            @RequestParam @NotBlank(message = "닉네임 파라미터 값이 존재하지 않습니다.") String nickname
     ) {
         NicknameExistResponse response = memberService.checkNicknameExist(nickname);
         return ResponseEntity.ok(response);

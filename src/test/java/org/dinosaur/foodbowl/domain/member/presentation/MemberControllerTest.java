@@ -147,7 +147,7 @@ class MemberControllerTest extends PresentationTest {
                     .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.errorCode").value("CLIENT-101"))
-                    .andExpect(jsonPath("$.message", containsString("닉네임이 존재하지 않습니다.")));
+                    .andExpect(jsonPath("$.message", containsString("닉네임 파라미터 값이 존재하지 않습니다.")));
         }
     }
 }

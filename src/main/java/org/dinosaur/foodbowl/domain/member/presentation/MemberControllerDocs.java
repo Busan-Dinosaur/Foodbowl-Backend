@@ -65,7 +65,7 @@ public interface MemberControllerDocs {
     })
     ResponseEntity<NicknameExistResponse> checkNicknameExist(
             @Parameter(description = "닉네임", example = "coby5502")
-            @NotBlank(message = "닉네임이 존재하지 않습니다.")
+            @NotBlank(message = "닉네임 파라미터 값이 존재하지 않습니다.")
             String nickname
     );
 }
