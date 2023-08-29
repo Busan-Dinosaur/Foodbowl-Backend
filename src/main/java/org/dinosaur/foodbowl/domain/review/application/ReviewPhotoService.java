@@ -15,6 +15,13 @@ public class ReviewPhotoService {
 
     private final ReviewPhotoRepository reviewPhotoRepository;
 
+    @Transactional(readOnly = true)
+    public List<Photo> findPhotos(Review review) {
+        return reviewPhotoRepository.findAllByReview(review).stream()
+                .map(ReviewPhoto::getPhoto)
+                .toList();
+    }
+
     @Transactional
     public void save(Review review, List<Photo> photos) {
         for (Photo photo : photos) {
@@ -24,5 +31,10 @@ public class ReviewPhotoService {
                     .build();
             reviewPhotoRepository.save(reviewPhoto);
         }
+    }
+
+    @Transactional
+    public void delete(Review review) {
+        reviewPhotoRepository.deleteAllByReview(review);
     }
 }
