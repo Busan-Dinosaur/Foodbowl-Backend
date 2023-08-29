@@ -1,10 +1,12 @@
 package org.dinosaur.foodbowl.domain.member.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
+import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
 import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.junit.jupiter.api.Nested;
@@ -81,6 +83,26 @@ class MemberServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> memberService.getProfile(-1L, loginMember))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("등록되지 않은 회원입니다.");
+        }
+    }
+
+    @Nested
+    class 닉네임_존재_여부_확인 {
+
+        @Test
+        void 존재하는_닉네임이라면_true_응답한다() {
+            memberTestPersister.memberBuilder().nickname("hello").save();
+
+            NicknameExistResponse response = memberService.checkNicknameExist("hello");
+
+            assertThat(response.isExist()).isTrue();
+        }
+
+        @Test
+        void 존재하지_않는_닉네임이라면_false_응답한다() {
+            NicknameExistResponse response = memberService.checkNicknameExist("hello");
+
+            assertThat(response.isExist()).isFalse();
         }
     }
 }
