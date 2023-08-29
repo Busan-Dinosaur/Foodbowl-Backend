@@ -73,6 +73,7 @@ public class AuthService {
         return nickname;
     }
 
+    @Transactional
     public RenewTokenResponse renewToken(RenewTokenRequest renewTokenRequest) {
         String memberId = jwtTokenProvider.extractSubject(renewTokenRequest.accessToken());
         String savedRefreshToken = (String) redisTemplate.opsForValue().get(memberId);
