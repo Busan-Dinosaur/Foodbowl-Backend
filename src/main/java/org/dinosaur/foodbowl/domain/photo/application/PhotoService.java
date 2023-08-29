@@ -13,11 +13,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class PhotoService {
 
     private final PhotoRepository photoRepository;
-    private final PhotoUploader photoUploader;
+    private final PhotoManager photoManager;
 
     @Transactional
-    public List<Photo> save(List<MultipartFile> images, String parentDirectory) {
-        List<String> imagePaths = photoUploader.upload(images, parentDirectory);
+    public List<Photo> save(List<MultipartFile> images, String workingDirectory) {
+        List<String> imagePaths = photoManager.upload(images, workingDirectory);
         List<Photo> photos = imagePaths.stream()
                 .map(this::convertToPhoto)
                 .toList();
@@ -32,5 +32,14 @@ public class PhotoService {
         return Photo.builder()
                 .path(imagePath)
                 .build();
+    }
+
+    @Transactional
+    public void delete(List<Photo> photos) {
+        List<String> photoPaths = photos.stream()
+                .map(Photo::getPath)
+                .toList();
+        photoRepository.deleteAllByPhoto(photos);
+        photoManager.delete(photoPaths);
     }
 }
