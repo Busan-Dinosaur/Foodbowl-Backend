@@ -6,7 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.follow.domain.Follow;
 import org.dinosaur.foodbowl.domain.follow.persistence.FollowRepository;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
+import org.dinosaur.foodbowl.domain.member.domain.vo.Nickname;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
+import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
 import org.dinosaur.foodbowl.domain.member.exception.MemberExceptionType;
 import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
@@ -32,5 +34,11 @@ public class MemberService {
 
         Optional<Follow> follow = followRepository.findByFollowingAndFollower(member, loginMember);
         return MemberProfileResponse.of(member, (int) followingCount, false, follow.isPresent());
+    }
+
+    @Transactional(readOnly = true)
+    public NicknameExistResponse checkNicknameExist(String nickname) {
+        boolean isExist = memberRepository.existsByNickname(new Nickname(nickname));
+        return new NicknameExistResponse(isExist);
     }
 }

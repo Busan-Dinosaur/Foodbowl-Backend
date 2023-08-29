@@ -2,7 +2,7 @@ package org.dinosaur.foodbowl.domain.store.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.dinosaur.foodbowl.global.exception.ExceptionType;
+import org.dinosaur.foodbowl.global.exception.type.ExceptionType;
 
 @Getter
 @RequiredArgsConstructor

@@ -1,6 +1,7 @@
-package org.dinosaur.foodbowl.global.exception;
+package org.dinosaur.foodbowl.global.exception.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.dinosaur.foodbowl.global.exception.type.ExceptionType;
 
 @Schema(description = "예외 응답")
 public record ExceptionResponse(
