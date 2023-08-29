@@ -16,7 +16,7 @@ import java.util.Optional;
 import javax.crypto.SecretKey;
 import org.dinosaur.foodbowl.domain.auth.exception.AuthExceptionType;
 import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
-import org.dinosaur.foodbowl.global.exception.ExceptionType;
+import org.dinosaur.foodbowl.global.exception.type.ExceptionType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

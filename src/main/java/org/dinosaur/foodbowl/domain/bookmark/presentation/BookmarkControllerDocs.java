@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Positive;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
-import org.dinosaur.foodbowl.global.exception.ExceptionResponse;
+import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
 import org.springframework.http.ResponseEntity;
 
 @Tag(name = "북마크", description = "북마크 API")

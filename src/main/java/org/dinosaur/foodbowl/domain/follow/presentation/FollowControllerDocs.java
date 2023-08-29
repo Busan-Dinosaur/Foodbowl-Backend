@@ -15,7 +15,7 @@ import org.dinosaur.foodbowl.domain.follow.dto.response.OtherUserFollowerRespons
 import org.dinosaur.foodbowl.domain.follow.dto.response.OtherUserFollowingResponse;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.global.common.response.PageResponse;
-import org.dinosaur.foodbowl.global.exception.ExceptionResponse;
+import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
 import org.springframework.http.ResponseEntity;
 
 @Tag(name = "팔로우", description = "팔로우 API")

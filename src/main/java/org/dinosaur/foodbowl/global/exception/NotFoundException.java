@@ -1,5 +1,7 @@
 package org.dinosaur.foodbowl.global.exception;
 
+import org.dinosaur.foodbowl.global.exception.type.ExceptionType;
+
 public class NotFoundException extends BaseException {
 
     public NotFoundException(ExceptionType exceptionType) {

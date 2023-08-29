@@ -7,10 +7,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
-import org.dinosaur.foodbowl.global.exception.ExceptionResponse;
+import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
+import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
 import org.springframework.http.ResponseEntity;
 
 @Tag(name = "회원", description = "회원 API")
@@ -44,4 +46,21 @@ public interface MemberControllerDocs {
 
             Member loginMember
     );
+
+    @Operation(summary = "닉네임 존재 여부 확인", description = "닉네임이 존재하는지 여부를 확인한다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "닉네임 존재 여부 확인 성공"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = """
+                            1.존재하지 않는 닉네임 파라미터
+                                                        
+                            2.공백 닉네임 파라미터
+                            """
+            )
+    })
+    ResponseEntity<NicknameExistResponse> checkNicknameExist(@NotBlank(message = "닉네임이 존재하지 않습니다.") String nickname);
 }
