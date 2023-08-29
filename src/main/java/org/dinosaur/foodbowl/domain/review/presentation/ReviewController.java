@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.domain.review.presentation;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,8 @@ import org.dinosaur.foodbowl.global.presentation.Auth;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -34,5 +37,14 @@ public class ReviewController implements ReviewControllerDocs {
     ) {
         reviewService.create(reviewCreateRequest, imageFiles, member);
         return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(
+            @PathVariable @Positive(message = "ID는 양수만 가능합니다.") Long id,
+            @Auth Member member
+    ) {
+        reviewService.delete(id, member);
+        return ResponseEntity.noContent().build();
     }
 }

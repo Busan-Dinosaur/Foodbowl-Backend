@@ -3,8 +3,11 @@ package org.dinosaur.foodbowl.domain.review.presentation;
 import static org.dinosaur.foodbowl.domain.member.domain.vo.RoleType.ROLE_회원;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -420,6 +423,47 @@ class ReviewControllerTest extends PresentationTest {
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("errorCode").value("CLIENT-100"))
                     .andExpect(jsonPath("$.message").value(containsString("가게 리뷰는 반드시 포함되어야 합니다.")));
+        }
+    }
+
+    @Nested
+    class 리뷰_삭제_시 {
+
+        private final String accessToken = jwtTokenProvider.createAccessToken(1L, ROLE_회원);
+
+        @Test
+        void 정상적으로_삭제되면_204_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            willDoNothing().given(reviewService).delete(anyLong(), any(Member.class));
+
+            mockMvc.perform(delete("/v1/reviews/{id}", 1L)
+                            .header(AUTHORIZATION, BEARER + accessToken))
+                    .andDo(print())
+                    .andExpect(status().isNoContent());
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"가", "a", "A", "@"})
+        void ID를_Long_타입으로_변환하지_못하면_400_응답을_반환한다(String reviewId) throws Exception {
+            mockMvc.perform(delete("/v1/reviews/{id}", reviewId)
+                            .header(AUTHORIZATION, BEARER + accessToken))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errorCode").value("CLIENT-102"))
+                    .andExpect(jsonPath("$.message",
+                            containsString(Long.class.getSimpleName() + " 타입으로 변환할 수 없는 요청입니다.")));
+        }
+
+        @Test
+        void ID가_양수가_아니면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(delete("/v1/reviews/{id}", -1L)
+                            .header(AUTHORIZATION, BEARER + accessToken))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message", containsString("ID는 양수만 가능합니다.")));
         }
     }
 
