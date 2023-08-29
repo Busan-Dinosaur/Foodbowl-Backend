@@ -46,7 +46,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers(SWAGGER_URL).permitAll()
                 .requestMatchers("/v1/health-check").permitAll()
-                .requestMatchers("/v1/auth/login/oauth/apple").permitAll()
+                .requestMatchers("/v1/auth/login/oauth/apple", "/v1/auth/token/renew").permitAll()
                 .anyRequest().hasRole("회원")
                 .and()
                 .httpBasic().disable()
