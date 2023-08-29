@@ -1,5 +1,8 @@
 package org.dinosaur.foodbowl.domain.review.application;
 
+import static org.dinosaur.foodbowl.domain.review.exception.ReviewExceptionType.NOT_FOUND_ERROR;
+import static org.dinosaur.foodbowl.domain.review.exception.ReviewExceptionType.NOT_OWNER_ERROR;
+
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
@@ -11,6 +14,7 @@ import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
 import org.dinosaur.foodbowl.domain.store.application.StoreService;
 import org.dinosaur.foodbowl.domain.store.application.dto.StoreCreateDto;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
+import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -67,5 +71,21 @@ public class ReviewService {
                 reviewCreateRequest.schoolX(),
                 reviewCreateRequest.schoolY()
         );
+    }
+
+    @Transactional
+    public void delete(Long id, Member member) {
+        Review review = reviewRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException(NOT_FOUND_ERROR));
+
+        if (review.isNotOwnerOf(member)) {
+            throw new BadRequestException(NOT_OWNER_ERROR);
+        }
+
+        List<Photo> photos = reviewPhotoService.findPhotos(review);
+
+        reviewPhotoService.delete(review);
+        photoService.delete(photos);
+        reviewRepository.delete(review);
     }
 }
