@@ -21,7 +21,7 @@ public class BookmarkService {
     private final StoreService storeService;
 
     @Transactional
-    public Long save(Long storeId, Member member) {
+    public void save(Long storeId, Member member) {
         Store store = storeService.findById(storeId);
 
         bookmarkRepository.findByMemberAndStore(member, store).ifPresent(
@@ -34,7 +34,7 @@ public class BookmarkService {
                 .store(store)
                 .member(member)
                 .build();
-        return bookmarkRepository.save(bookmark).getId();
+        bookmarkRepository.save(bookmark);
     }
 
     @Transactional

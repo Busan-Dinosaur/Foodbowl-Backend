@@ -3,7 +3,6 @@ package org.dinosaur.foodbowl.domain.bookmark.presentation;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.anyLong;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -46,8 +45,7 @@ class BookmarkControllerTest extends PresentationTest {
         @Test
         void 정상적으로_추가되면_200_상태코드를_반환한다() throws Exception {
             mockingAuthMemberInResolver();
-            given(bookmarkService.save(anyLong(), any(Member.class)))
-                    .willReturn(1L);
+            willDoNothing().given(bookmarkService).save(anyLong(), any(Member.class));
 
             mockMvc.perform(post("/v1/bookmarks")
                             .param("storeId", "1")

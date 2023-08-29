@@ -2,8 +2,8 @@ package org.dinosaur.foodbowl.domain.bookmark.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import org.dinosaur.foodbowl.domain.bookmark.persistence.BookmarkRepository;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
@@ -19,6 +19,9 @@ class BookmarkServiceTest extends IntegrationTest {
     @Autowired
     private BookmarkService bookmarkService;
 
+    @Autowired
+    private BookmarkRepository bookmarkRepository;
+
     @Nested
     class 북마크를_추가할_때 {
 
@@ -27,9 +30,9 @@ class BookmarkServiceTest extends IntegrationTest {
             Store store = storeTestPersister.builder().save();
             Member member = memberTestPersister.memberBuilder().save();
 
-            Long saveId = bookmarkService.save(store.getId(), member);
+            bookmarkService.save(store.getId(), member);
 
-            assertThat(saveId).isPositive();
+            assertThat(bookmarkRepository.findByMemberAndStore(member, store)).isPresent();
         }
 
         @Test
@@ -62,7 +65,9 @@ class BookmarkServiceTest extends IntegrationTest {
             Member member = memberTestPersister.memberBuilder().save();
             bookmarkService.save(store.getId(), member);
 
-            assertDoesNotThrow(() -> bookmarkService.delete(store.getId(), member));
+            bookmarkService.delete(store.getId(), member);
+
+            assertThat(bookmarkRepository.findByMemberAndStore(member, store)).isEmpty();
         }
 
         @Test
