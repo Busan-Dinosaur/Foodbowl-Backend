@@ -74,4 +74,18 @@ class PhotoLocalUploaderTest extends IntegrationTest {
                 .isInstanceOf(FileException.class)
                 .hasMessage("파일에 확장자가 존재하지 않습니다.");
     }
+
+    @Test
+    void 이미지_파일을_삭제한다() {
+        MultipartFile multipartFile = FileTestUtils.generateMultiPartFile();
+        List<MultipartFile> multipartFiles = List.of(multipartFile);
+        List<String> filePaths = photoLocalUploader.upload(multipartFiles, "test");
+
+        photoLocalUploader.delete(filePaths);
+
+        String imagePath = filePaths.get(0);
+        File file = new File(imagePath);
+        assertThat(file.exists()).isFalse();
+        FileTestUtils.cleanUp();
+    }
 }

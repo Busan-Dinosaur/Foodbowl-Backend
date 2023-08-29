@@ -121,4 +121,17 @@ public class PhotoLocalUploader implements PhotoUploader {
             throw new FileException(FILE_TRANSFER_ERROR, e);
         }
     }
+
+    public void delete(List<String> paths) {
+        for (String path : paths) {
+            File file = new File(path);
+            deleteFile(file);
+        }
+    }
+
+    private void deleteFile(File file) {
+        if (file.exists()) {
+            file.delete();
+        }
+    }
 }

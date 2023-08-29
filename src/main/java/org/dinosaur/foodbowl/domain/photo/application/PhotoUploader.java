@@ -6,4 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 public interface PhotoUploader {
 
     List<String> upload(List<MultipartFile> images, String parentDirectory);
+
+    void delete(List<String> paths);
 }
