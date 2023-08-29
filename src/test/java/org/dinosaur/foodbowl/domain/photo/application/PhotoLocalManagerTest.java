@@ -18,10 +18,10 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 @SuppressWarnings("NonAsciiCharacters")
-class PhotoLocalUploaderTest extends IntegrationTest {
+class PhotoLocalManagerTest extends IntegrationTest {
 
     @Autowired
-    private PhotoLocalUploader photoLocalUploader;
+    private PhotoLocalManager photoLocalUploader;
 
     private static final byte[] image = FileTestUtils.generateMockImage();
 
