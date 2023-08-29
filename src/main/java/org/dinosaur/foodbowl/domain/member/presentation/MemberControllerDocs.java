@@ -63,5 +63,9 @@ public interface MemberControllerDocs {
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
-    ResponseEntity<NicknameExistResponse> checkNicknameExist(@NotBlank(message = "닉네임이 존재하지 않습니다.") String nickname);
+    ResponseEntity<NicknameExistResponse> checkNicknameExist(
+            @Parameter(description = "닉네임", example = "coby5502")
+            @NotBlank(message = "닉네임이 존재하지 않습니다.")
+            String nickname
+    );
 }
