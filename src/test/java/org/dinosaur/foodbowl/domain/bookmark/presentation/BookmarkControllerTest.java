@@ -66,6 +66,7 @@ class BookmarkControllerTest extends PresentationTest {
                             .header(AUTHORIZATION, BEARER + accessToken))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errorCode").value("CLIENT-102"))
                     .andExpect(jsonPath("$.message").value(containsString("Long 타입으로 변환할 수 없는 요청입니다.")));
         }
 
@@ -78,6 +79,7 @@ class BookmarkControllerTest extends PresentationTest {
                             .header(AUTHORIZATION, BEARER + accessToken))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errorCode").value("CLIENT-101"))
                     .andExpect(jsonPath("$.message").value(containsString("가게 ID는 양수만 가능합니다.")));
         }
     }
@@ -109,6 +111,7 @@ class BookmarkControllerTest extends PresentationTest {
                             .header(AUTHORIZATION, BEARER + accessToken))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errorCode").value("CLIENT-102"))
                     .andExpect(jsonPath("$.message").value(containsString("Long 타입으로 변환할 수 없는 요청입니다.")));
         }
 
@@ -121,6 +124,7 @@ class BookmarkControllerTest extends PresentationTest {
                             .header(AUTHORIZATION, BEARER + accessToken))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errorCode").value("CLIENT-101"))
                     .andExpect(jsonPath("$.message").value(containsString("가게 ID는 양수만 가능합니다.")));
         }
     }
