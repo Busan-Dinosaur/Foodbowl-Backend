@@ -26,15 +26,13 @@ class MemberServiceTest extends IntegrationTest {
 
             MemberProfileResponse response = memberService.getProfile(loginMember.getId(), loginMember);
 
-            assertSoftly(
-                    softly -> {
-                        softly.assertThat(response.id()).isEqualTo(loginMember.getId());
-                        softly.assertThat(response.nickname()).isEqualTo(loginMember.getNickname());
-                        softly.assertThat(response.introduction()).isEqualTo(loginMember.getIntroduction());
-                        softly.assertThat(response.isMyProfile()).isTrue();
-                        softly.assertThat(response.isFollowing()).isFalse();
-                    }
-            );
+            assertSoftly(softly -> {
+                softly.assertThat(response.id()).isEqualTo(loginMember.getId());
+                softly.assertThat(response.nickname()).isEqualTo(loginMember.getNickname());
+                softly.assertThat(response.introduction()).isEqualTo(loginMember.getIntroduction());
+                softly.assertThat(response.isMyProfile()).isTrue();
+                softly.assertThat(response.isFollowing()).isFalse();
+            });
         }
 
         @Test
@@ -45,15 +43,13 @@ class MemberServiceTest extends IntegrationTest {
 
             MemberProfileResponse response = memberService.getProfile(profileTargetMember.getId(), loginMember);
 
-            assertSoftly(
-                    softly -> {
-                        softly.assertThat(response.id()).isEqualTo(profileTargetMember.getId());
-                        softly.assertThat(response.nickname()).isEqualTo(profileTargetMember.getNickname());
-                        softly.assertThat(response.introduction()).isEqualTo(profileTargetMember.getIntroduction());
-                        softly.assertThat(response.isMyProfile()).isFalse();
-                        softly.assertThat(response.isFollowing()).isTrue();
-                    }
-            );
+            assertSoftly(softly -> {
+                softly.assertThat(response.id()).isEqualTo(profileTargetMember.getId());
+                softly.assertThat(response.nickname()).isEqualTo(profileTargetMember.getNickname());
+                softly.assertThat(response.introduction()).isEqualTo(profileTargetMember.getIntroduction());
+                softly.assertThat(response.isMyProfile()).isFalse();
+                softly.assertThat(response.isFollowing()).isTrue();
+            });
         }
 
         @Test
@@ -63,15 +59,13 @@ class MemberServiceTest extends IntegrationTest {
 
             MemberProfileResponse response = memberService.getProfile(profileTargetMember.getId(), loginMember);
 
-            assertSoftly(
-                    softly -> {
-                        softly.assertThat(response.id()).isEqualTo(profileTargetMember.getId());
-                        softly.assertThat(response.nickname()).isEqualTo(profileTargetMember.getNickname());
-                        softly.assertThat(response.introduction()).isEqualTo(profileTargetMember.getIntroduction());
-                        softly.assertThat(response.isMyProfile()).isFalse();
-                        softly.assertThat(response.isFollowing()).isFalse();
-                    }
-            );
+            assertSoftly(softly -> {
+                softly.assertThat(response.id()).isEqualTo(profileTargetMember.getId());
+                softly.assertThat(response.nickname()).isEqualTo(profileTargetMember.getNickname());
+                softly.assertThat(response.introduction()).isEqualTo(profileTargetMember.getIntroduction());
+                softly.assertThat(response.isMyProfile()).isFalse();
+                softly.assertThat(response.isFollowing()).isFalse();
+            });
         }
 
         @Test

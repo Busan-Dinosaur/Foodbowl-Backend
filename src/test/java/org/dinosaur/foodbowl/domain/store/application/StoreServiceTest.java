@@ -51,15 +51,13 @@ class StoreServiceTest extends IntegrationTest {
 
             Store store = storeService.create(storeCreateDtoWithoutSchool);
 
-            assertSoftly(
-                    softly -> {
-                        softly.assertThat(store.getId()).isNotNull();
-                        softly.assertThat(store.getLocationId()).isEqualTo(storeCreateDtoWithoutSchool.locationId());
-                        softly.assertThat(store.getStoreName()).isEqualTo(storeCreateDtoWithoutSchool.storeName());
-                        softly.assertThat(store.getCategory().getCategoryType().name()).isEqualTo(
-                                storeCreateDtoWithoutSchool.category());
-                    }
-            );
+            assertSoftly(softly -> {
+                softly.assertThat(store.getId()).isNotNull();
+                softly.assertThat(store.getLocationId()).isEqualTo(storeCreateDtoWithoutSchool.locationId());
+                softly.assertThat(store.getStoreName()).isEqualTo(storeCreateDtoWithoutSchool.storeName());
+                softly.assertThat(store.getCategory().getCategoryType().name())
+                        .isEqualTo(storeCreateDtoWithoutSchool.category());
+            });
         }
 
         @Test
@@ -76,15 +74,13 @@ class StoreServiceTest extends IntegrationTest {
                     .map(StoreSchool::getStore)
                     .toList();
 
-            assertSoftly(
-                    softly -> {
-                        softly.assertThat(store.getId()).isNotNull();
-                        softly.assertThat(store.getStoreName()).isEqualTo(storeCreateDtoWithSchool.storeName());
-                        softly.assertThat(store.getCategory().getCategoryType().name())
-                                .isEqualTo(storeCreateDtoWithSchool.category());
-                        softly.assertThat(stores).contains(store);
-                    }
-            );
+            assertSoftly(softly -> {
+                softly.assertThat(store.getId()).isNotNull();
+                softly.assertThat(store.getStoreName()).isEqualTo(storeCreateDtoWithSchool.storeName());
+                softly.assertThat(store.getCategory().getCategoryType().name())
+                        .isEqualTo(storeCreateDtoWithSchool.category());
+                softly.assertThat(stores).contains(store);
+            });
         }
 
         @Test
@@ -114,12 +110,10 @@ class StoreServiceTest extends IntegrationTest {
                     .map(StoreSchool::getStore)
                     .toList();
 
-            assertSoftly(
-                    softly -> {
-                        softly.assertThat(stores).contains(store1, store2);
-                        softly.assertThat(stores).hasSize(2);
-                    }
-            );
+            assertSoftly(softly -> {
+                softly.assertThat(stores).contains(store1, store2);
+                softly.assertThat(stores).hasSize(2);
+            });
         }
 
         @Test

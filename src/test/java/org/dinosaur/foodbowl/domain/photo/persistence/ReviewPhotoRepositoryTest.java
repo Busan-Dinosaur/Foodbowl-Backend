@@ -26,12 +26,10 @@ class ReviewPhotoRepositoryTest extends PersistenceTest {
 
         ReviewPhoto savedReviewPhoto = reviewPhotoRepository.save(reviewPhoto);
 
-        assertSoftly(
-                softly -> {
-                    softly.assertThat(savedReviewPhoto.getId()).isNotNull();
-                    softly.assertThat(savedReviewPhoto.getReview()).isEqualTo(review);
-                    softly.assertThat(savedReviewPhoto.getPhoto()).isEqualTo(photo);
-                }
-        );
+        assertSoftly(softly -> {
+            softly.assertThat(savedReviewPhoto.getId()).isNotNull();
+            softly.assertThat(savedReviewPhoto.getReview()).isEqualTo(review);
+            softly.assertThat(savedReviewPhoto.getPhoto()).isEqualTo(photo);
+        });
     }
 }

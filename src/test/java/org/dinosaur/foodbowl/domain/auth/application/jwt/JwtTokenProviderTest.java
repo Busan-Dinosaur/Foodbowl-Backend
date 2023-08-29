@@ -102,12 +102,10 @@ class JwtTokenProviderTest {
 
             JwtTokenValid result = jwtTokenProvider.validateToken(token);
 
-            assertSoftly(
-                    softly -> {
-                        softly.assertThat(result.isValid()).isTrue();
-                        softly.assertThat(result.exceptionType()).isNull();
-                    }
-            );
+            assertSoftly(softly -> {
+                softly.assertThat(result.isValid()).isTrue();
+                softly.assertThat(result.exceptionType()).isNull();
+            });
         }
 
         @Test
@@ -125,12 +123,10 @@ class JwtTokenProviderTest {
 
             JwtTokenValid result = jwtTokenProvider.validateToken(token);
 
-            assertSoftly(
-                    softly -> {
-                        softly.assertThat(result.isValid()).isFalse();
-                        softly.assertThat(result.exceptionType()).isEqualTo(AuthExceptionType.EXPIRED_JWT);
-                    }
-            );
+            assertSoftly(softly -> {
+                softly.assertThat(result.isValid()).isFalse();
+                softly.assertThat(result.exceptionType()).isEqualTo(AuthExceptionType.EXPIRED_JWT);
+            });
         }
 
         @Test
@@ -139,12 +135,10 @@ class JwtTokenProviderTest {
 
             JwtTokenValid result = jwtTokenProvider.validateToken(token);
 
-            assertSoftly(
-                    softly -> {
-                        softly.assertThat(result.isValid()).isFalse();
-                        softly.assertThat(result.exceptionType()).isEqualTo(AuthExceptionType.MALFORMED_JWT);
-                    }
-            );
+            assertSoftly(softly -> {
+                softly.assertThat(result.isValid()).isFalse();
+                softly.assertThat(result.exceptionType()).isEqualTo(AuthExceptionType.MALFORMED_JWT);
+            });
         }
 
         @Test
@@ -155,12 +149,10 @@ class JwtTokenProviderTest {
 
             JwtTokenValid result = jwtTokenProvider.validateToken(token);
 
-            assertSoftly(
-                    softly -> {
-                        softly.assertThat(result.isValid()).isFalse();
-                        softly.assertThat(result.exceptionType()).isEqualTo(AuthExceptionType.UNSUPPORTED_JWT);
-                    }
-            );
+            assertSoftly(softly -> {
+                softly.assertThat(result.isValid()).isFalse();
+                softly.assertThat(result.exceptionType()).isEqualTo(AuthExceptionType.UNSUPPORTED_JWT);
+            });
         }
 
         @Test
@@ -179,12 +171,10 @@ class JwtTokenProviderTest {
 
             JwtTokenValid result = jwtTokenProvider.validateToken(token);
 
-            assertSoftly(
-                    softly -> {
-                        softly.assertThat(result.isValid()).isFalse();
-                        softly.assertThat(result.exceptionType()).isEqualTo(AuthExceptionType.SIGNATURE_JWT);
-                    }
-            );
+            assertSoftly(softly -> {
+                softly.assertThat(result.isValid()).isFalse();
+                softly.assertThat(result.exceptionType()).isEqualTo(AuthExceptionType.SIGNATURE_JWT);
+            });
         }
     }
 }
