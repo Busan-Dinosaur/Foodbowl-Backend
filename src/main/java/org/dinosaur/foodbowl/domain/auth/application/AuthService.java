@@ -1,16 +1,22 @@
 package org.dinosaur.foodbowl.domain.auth.application;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.auth.application.apple.AppleOAuthUserProvider;
 import org.dinosaur.foodbowl.domain.auth.application.dto.AppleUser;
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
+import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenValid;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.AppleLoginRequest;
+import org.dinosaur.foodbowl.domain.auth.dto.reqeust.RenewTokenRequest;
+import org.dinosaur.foodbowl.domain.auth.dto.response.RenewTokenResponse;
 import org.dinosaur.foodbowl.domain.auth.dto.response.TokenResponse;
+import org.dinosaur.foodbowl.domain.auth.exception.AuthExceptionType;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.domain.vo.Nickname;
 import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
 import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
+import org.dinosaur.foodbowl.global.exception.AuthenticationException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,5 +71,24 @@ public class AuthService {
             nickname = NicknameGenerator.generate();
         } while (memberRepository.existsByNickname(new Nickname(nickname)));
         return nickname;
+    }
+
+    public RenewTokenResponse renewToken(RenewTokenRequest renewTokenRequest) {
+        String memberId = jwtTokenProvider.extractSubject(renewTokenRequest.accessToken());
+        String savedRefreshToken = (String) redisTemplate.opsForValue().get(memberId);
+        validateRefreshToken(savedRefreshToken, renewTokenRequest.refreshToken());
+
+        String accessToken = jwtTokenProvider.createAccessToken(Long.valueOf(memberId), RoleType.ROLE_회원);
+        return new RenewTokenResponse(accessToken);
+    }
+
+    private void validateRefreshToken(String savedRefreshToken, String refreshToken) {
+        JwtTokenValid refreshTokenValid = jwtTokenProvider.validateToken(refreshToken);
+        if (!refreshTokenValid.isValid()) {
+            throw new AuthenticationException(refreshTokenValid.exceptionType());
+        }
+        if (!Objects.equals(savedRefreshToken, refreshToken)) {
+            throw new AuthenticationException(AuthExceptionType.NOT_MATCH_REFRESH_TOKEN);
+        }
     }
 }

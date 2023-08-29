@@ -74,13 +74,15 @@ public class JwtTokenProvider {
 
     public String extractSubject(String token) {
         JwtTokenValid jwtTokenValid = validateToken(token);
-        if (!jwtTokenValid.isValid()) {
+        if (!jwtTokenValid.isValid() && jwtTokenValid.exceptionType() != AuthExceptionType.EXPIRED_JWT) {
             throw new AuthenticationException(jwtTokenValid.exceptionType());
         }
 
-        return jwtParser.parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+        try {
+            return jwtParser.parseClaimsJws(token).getBody().getSubject();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims().getSubject();
+        }
     }
 
     public Optional<Claims> extractClaims(String token) {
