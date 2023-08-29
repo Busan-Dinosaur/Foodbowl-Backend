@@ -86,7 +86,7 @@ class MemberControllerTest extends PresentationTest {
                             .header(AUTHORIZATION, BEARER + accessToken))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.errorCode").value("CLIENT-102"))
+                    .andExpect(jsonPath("$.errorCode").value("CLIENT-103"))
                     .andExpect(jsonPath("$.message",
                             containsString(Long.class.getSimpleName() + " 타입으로 변환할 수 없는 요청입니다.")));
         }
