@@ -18,27 +18,22 @@ class MemberRepositoryTest extends PersistenceTest {
     private MemberRepository memberRepository;
 
     @Test
-    void 회원_저장() {
-        Member member = Member.builder()
-                .email("foodBowl@gmail.com")
-                .socialId("foodBowlId")
-                .socialType(SocialType.APPLE)
-                .nickname("foodbowl")
-                .introduction("안녕하세요")
-                .build();
-
-        Member saveMember = memberRepository.save(member);
-
-        assertThat(saveMember.getId()).isNotNull();
-    }
-
-    @Test
     void 아이디와_일치하는_회원_조회() {
         Member saveMember = memberTestPersister.memberBuilder().save();
 
         Member findMember = memberRepository.findById(saveMember.getId()).get();
 
-        assertThat(findMember.getId()).isEqualTo(saveMember.getId());
+        assertThat(findMember).isEqualTo(saveMember);
+    }
+
+    @Test
+    void 썸네일과_함께_회원_조회() {
+        Member member = memberTestPersister.memberBuilder().save();
+        memberTestPersister.memberThumbnailBuilder().member(member).save();
+
+        Member findMember = memberRepository.findByIdWithThumbnail(member.getId()).get();
+
+        assertThat(findMember).isEqualTo(member);
     }
 
     @Nested
@@ -84,5 +79,20 @@ class MemberRepositoryTest extends PersistenceTest {
 
             assertThat(result).isFalse();
         }
+    }
+
+    @Test
+    void 회원_저장() {
+        Member member = Member.builder()
+                .email("foodBowl@gmail.com")
+                .socialId("foodBowlId")
+                .socialType(SocialType.APPLE)
+                .nickname("foodbowl")
+                .introduction("안녕하세요")
+                .build();
+
+        Member saveMember = memberRepository.save(member);
+
+        assertThat(saveMember.getId()).isNotNull();
     }
 }
