@@ -42,7 +42,7 @@ class BookmarkControllerTest extends PresentationTest {
         private final String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
 
         @Test
-        void 정상적으로_추가되면_200_상태코드를_반환한다() throws Exception {
+        void 정상적으로_추가되면_200_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
             given(bookmarkService.save(anyLong(), any(Member.class)))
                     .willReturn(1L);
@@ -56,7 +56,7 @@ class BookmarkControllerTest extends PresentationTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"hello", "@#!"})
-        void 가게_ID가_숫자가_아니면_400_상태코드를_반환한다(String storeId) throws Exception {
+        void 가게_ID가_숫자가_아니면_400_응답을_반환한다(String storeId) throws Exception {
             mockingAuthMemberInResolver();
             given(bookmarkService.save(anyLong(), any(Member.class)))
                     .willReturn(1L);
@@ -70,7 +70,7 @@ class BookmarkControllerTest extends PresentationTest {
         }
 
         @Test
-        void 가게_ID가_음수면_400_상태코드를_반환한다() throws Exception {
+        void 가게_ID가_음수면_400_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
             given(bookmarkService.save(anyLong(), any(Member.class)))
                     .willReturn(1L);
