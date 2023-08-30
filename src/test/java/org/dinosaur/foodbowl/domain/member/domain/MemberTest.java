@@ -18,8 +18,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 class MemberTest {
 
     @ParameterizedTest
-    @ValueSource(strings = {"", " ", "a@", "안 녕", "hi2", "가나다라마바사아자차카"})
-    void 한글_영어로_구성된_1글자_이상_10글자_이하의_닉네임이_아니라면_예외를_던진다(String nickname) {
+    @ValueSource(strings = {"", " ", "a@", "안 녕", " 안녕", "안녕 ", "가나다라마바사아자차카"})
+    void 한글_영어_숫자로_구성된_1글자_이상_10글자_이하의_닉네임이_아니라면_예외를_던진다(String nickname) {
         assertThatThrownBy(
                 () -> Member.builder()
                         .socialType(SocialType.APPLE)
@@ -30,12 +30,12 @@ class MemberTest {
                         .build()
         )
                 .isInstanceOf(InvalidArgumentException.class)
-                .hasMessage("한글, 영어로 구성된 1글자 이상, 10글자 이하의 닉네임이 아닙니다.");
+                .hasMessage("한글, 영어, 숫자로 구성된 1글자 이상, 10글자 이하의 닉네임이 아닙니다.");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"", " ", "a@", "안 녕", "hi2"})
-    void 한글_영어로_구성된_한_줄_소개가_아니라면_예외를_던진다(String introduction) {
+    @ValueSource(strings = {" ", "  ", "   "})
+    void 공백만으로_이루어진_한_줄_소개라면_예외를_던진다(String introduction) {
         assertThatThrownBy(
                 () -> Member.builder()
                         .socialType(SocialType.APPLE)
@@ -46,11 +46,11 @@ class MemberTest {
                         .build()
         )
                 .isInstanceOf(InvalidArgumentException.class)
-                .hasMessage("한글, 영어로 구성된 1글자 이상, 100글자 이하의 한 줄 소개가 아닙니다.");
+                .hasMessage("공백만으로 이루어지지 않은 1글자 이상, 100글자 이하의 한 줄 소개가 아닙니다.");
     }
 
     @Test
-    void 한글_영어로_구성된_100글자_이하의_한_줄_소개가_아니라면_예외를_던진다() {
+    void 총_길이가_100글자_초과의_한_줄_소개라면_예외를_던진다() {
         String introduction = "가".repeat(101);
 
         assertThatThrownBy(
@@ -63,7 +63,7 @@ class MemberTest {
                         .build()
         )
                 .isInstanceOf(InvalidArgumentException.class)
-                .hasMessage("한글, 영어로 구성된 1글자 이상, 100글자 이하의 한 줄 소개가 아닙니다.");
+                .hasMessage("공백만으로 이루어지지 않은 1글자 이상, 100글자 이하의 한 줄 소개가 아닙니다.");
     }
 
     @Test

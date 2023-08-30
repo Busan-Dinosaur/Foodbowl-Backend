@@ -2,8 +2,6 @@ package org.dinosaur.foodbowl.domain.member.domain.vo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +13,7 @@ import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 @Embeddable
 public class Introduction {
 
-    private static final Pattern INTRODUCTION_PATTERN = Pattern.compile("^[가-힣a-zA-Z]{1,100}$");
+    private static final int MAXIMUM_LENGTH = 100;
 
     @Column(name = "introduction", length = 255)
     private String value;
@@ -26,9 +24,15 @@ public class Introduction {
     }
 
     private void validate(String value) {
-        Matcher matcher = INTRODUCTION_PATTERN.matcher(value);
-        if (!matcher.matches()) {
+        if (isNullOrEmpty(value)) {
+            return;
+        }
+        if (value.isBlank() || value.length() > MAXIMUM_LENGTH) {
             throw new InvalidArgumentException(MemberExceptionType.INVALID_INTRODUCTION);
         }
+    }
+
+    private boolean isNullOrEmpty(String value) {
+        return value == null || value.isEmpty();
     }
 }

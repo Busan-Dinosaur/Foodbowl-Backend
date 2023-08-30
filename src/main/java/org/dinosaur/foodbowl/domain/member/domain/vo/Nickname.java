@@ -16,7 +16,7 @@ import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 @Embeddable
 public class Nickname {
 
-    private static final Pattern NICKNAME_PATTERN = Pattern.compile("^[가-힣a-zA-Z]{1,10}$");
+    private static final Pattern NICKNAME_PATTERN = Pattern.compile("^[가-힣a-zA-Z0-9]{1,10}$");
 
     @NotNull
     @Column(name = "nickname", unique = true, length = 45)
