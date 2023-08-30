@@ -7,9 +7,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
+import org.dinosaur.foodbowl.domain.member.dto.request.UpdateProfileRequest;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
 import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
@@ -68,4 +70,28 @@ public interface MemberControllerDocs {
             @NotBlank(message = "닉네임 파라미터 값이 존재하지 않습니다.")
             String nickname
     );
+
+    @Operation(summary = "프로필 정보 수정", description = "닉네임, 한 줄 소개를 수정한다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "프로필 정보 수정 성공"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = """
+                            1.공백이거나 존재하지 않는 닉네임 요청
+                                                        
+                            2.공백이거나 존재하지 않는 한 줄 소개 요청
+                                                        
+                            3.제약사항에 맞지 않는 닉네임
+                                                        
+                            4.제약사항에 맞지 않는 한 줄 소개
+                                                        
+                            5.이미 존재하는 닉네임
+                            """,
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            )
+    })
+    ResponseEntity<Void> updateProfile(@Valid UpdateProfileRequest updateProfileRequest, Member loginMember);
 }
