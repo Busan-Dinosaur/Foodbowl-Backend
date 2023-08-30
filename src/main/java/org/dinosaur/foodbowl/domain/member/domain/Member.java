@@ -21,6 +21,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.dinosaur.foodbowl.domain.member.domain.vo.Introduction;
 import org.dinosaur.foodbowl.domain.member.domain.vo.Nickname;
 import org.dinosaur.foodbowl.domain.member.domain.vo.SocialType;
 import org.dinosaur.foodbowl.domain.photo.domain.Thumbnail;
@@ -61,8 +62,8 @@ public class Member extends AuditingEntity {
     @Embedded
     private Nickname nickname;
 
-    @Column(name = "introduction", length = 255)
-    private String introduction;
+    @Embedded
+    private Introduction introduction;
 
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
     private MemberThumbnail memberThumbnail;
@@ -82,11 +83,20 @@ public class Member extends AuditingEntity {
         this.socialId = socialId;
         this.email = email;
         this.nickname = new Nickname(nickname);
+        this.introduction = new Introduction(introduction);
+    }
+
+    public void updateProfile(Nickname nickname, Introduction introduction) {
+        this.nickname = nickname;
         this.introduction = introduction;
     }
 
     public String getNickname() {
         return this.nickname.getValue();
+    }
+
+    public String getIntroduction() {
+        return this.introduction.getValue();
     }
 
     public String getProfileImageUrl() {
