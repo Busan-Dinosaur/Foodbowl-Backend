@@ -18,6 +18,24 @@ class StoreSchoolRepositoryTest extends PersistenceTest {
     private StoreSchoolRepository storeSchoolRepository;
 
     @Test
+    void 학교와_관련된_가게를_조회한다() {
+        Store store = storeTestPersister.builder().save();
+        School school = schoolTestPersister.builder().save();
+        StoreSchool storeSchool = StoreSchool.builder()
+                .store(store)
+                .school(school)
+                .build();
+        storeSchoolRepository.save(storeSchool);
+
+        List<StoreSchool> storeSchools = storeSchoolRepository.findAllBySchool_Name_Name(school.getName().getName());
+        List<Store> stores = storeSchools.stream()
+                .map(StoreSchool::getStore)
+                .toList();
+
+        assertThat(stores).contains(store);
+    }
+
+    @Test
     void 가게와_학교의_관계를_저장한다() {
         Store store = storeTestPersister.builder().save();
         School school = schoolTestPersister.builder().save();
@@ -35,23 +53,5 @@ class StoreSchoolRepositoryTest extends PersistenceTest {
                     softly.assertThat(saveStoreSchool.getSchool()).isEqualTo(school);
                 }
         );
-    }
-
-    @Test
-    void 학교와_관련된_가게를_가져온다() {
-        Store store = storeTestPersister.builder().save();
-        School school = schoolTestPersister.builder().save();
-        StoreSchool storeSchool = StoreSchool.builder()
-                .store(store)
-                .school(school)
-                .build();
-        storeSchoolRepository.save(storeSchool);
-
-        List<StoreSchool> storeSchools = storeSchoolRepository.findAllBySchool_Name_Name(school.getName().getName());
-        List<Store> stores = storeSchools.stream()
-                .map(StoreSchool::getStore)
-                .toList();
-
-        assertThat(stores).contains(store);
     }
 }

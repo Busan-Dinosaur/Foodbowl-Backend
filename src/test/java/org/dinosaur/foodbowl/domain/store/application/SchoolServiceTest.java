@@ -18,6 +18,25 @@ class SchoolServiceTest extends IntegrationTest {
     private SchoolService schoolService;
 
     @Nested
+    class 학교_조회_시 {
+
+        @Test
+        void 존재하는_학교로_조회한다() {
+            String name = "부산대학교";
+            BigDecimal x = BigDecimal.valueOf(123.1234);
+            BigDecimal y = BigDecimal.valueOf(37.12421);
+            schoolService.save(name, x, y);
+
+            assertThat(schoolService.findByName(name)).isPresent();
+        }
+
+        @Test
+        void 존재하지_않는_학교로_조회한다() {
+            assertThat(schoolService.findByName("우테코대학교")).isEmpty();
+        }
+    }
+
+    @Nested
     class 학교를_저장_시 {
 
         @Test
@@ -41,25 +60,6 @@ class SchoolServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> schoolService.save(name, x, y))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("이미 존재하는 학교입니다.");
-        }
-    }
-
-    @Nested
-    class 학교_조회_시 {
-
-        @Test
-        void 존재하는_학교로_조회한다() {
-            String name = "부산대학교";
-            BigDecimal x = BigDecimal.valueOf(123.1234);
-            BigDecimal y = BigDecimal.valueOf(37.12421);
-            schoolService.save(name, x, y);
-
-            assertThat(schoolService.findByName(name)).isPresent();
-        }
-
-        @Test
-        void 존재하지_않는_학교로_조회한다() {
-            assertThat(schoolService.findByName("우테코대학교")).isEmpty();
         }
     }
 }

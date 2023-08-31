@@ -19,15 +19,6 @@ class StoreRepositoryTest extends PersistenceTest {
     private CategoryRepository categoryRepository;
 
     @Test
-    void 가게를_저장한다() {
-        Store store = generateStore();
-
-        Store saveStore = storeRepository.save(store);
-
-        assertThat(saveStore.getId()).isNotNull();
-    }
-
-    @Test
     void 장소_ID로_가게를_조회한다() {
         Store store = generateStore();
         Store saveStore = storeRepository.save(store);
@@ -41,6 +32,15 @@ class StoreRepositoryTest extends PersistenceTest {
         Store saveStore = storeRepository.save(store);
 
         assertThat(storeRepository.findById(saveStore.getId())).isPresent();
+    }
+
+    @Test
+    void 가게를_저장한다() {
+        Store store = generateStore();
+
+        Store saveStore = storeRepository.save(store);
+
+        assertThat(saveStore.getId()).isNotNull();
     }
 
     private Store generateStore() {
