@@ -15,6 +15,7 @@ import org.dinosaur.foodbowl.domain.store.application.StoreService;
 import org.dinosaur.foodbowl.domain.store.application.dto.StoreCreateDto;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
+import org.dinosaur.foodbowl.global.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -76,7 +77,7 @@ public class ReviewService {
     @Transactional
     public void delete(Long id, Member member) {
         Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new BadRequestException(NOT_FOUND_ERROR));
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_ERROR));
 
         if (review.isNotOwnerOf(member)) {
             throw new BadRequestException(NOT_OWNER_ERROR);

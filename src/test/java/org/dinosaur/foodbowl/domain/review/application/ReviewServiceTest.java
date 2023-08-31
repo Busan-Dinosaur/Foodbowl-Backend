@@ -9,6 +9,7 @@ import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
+import org.dinosaur.foodbowl.global.exception.NotFoundException;
 import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.dinosaur.foodbowl.test.file.FileTestUtils;
 import org.junit.jupiter.api.Nested;
@@ -84,7 +85,7 @@ class ReviewServiceTest extends IntegrationTest {
             Member member = memberTestPersister.memberBuilder().save();
 
             assertThatThrownBy(() -> reviewService.delete(-1L, member))
-                    .isInstanceOf(BadRequestException.class)
+                    .isInstanceOf(NotFoundException.class)
                     .hasMessage("일치하는 리뷰를 찾을 수 없습니다.");
         }
 
