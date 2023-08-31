@@ -1,6 +1,6 @@
 package org.dinosaur.foodbowl.domain.store.application;
 
-import static org.dinosaur.foodbowl.domain.store.exception.SchoolExceptionType.DUPLICATE_ERROR;
+import static org.dinosaur.foodbowl.domain.store.exception.SchoolExceptionType.DUPLICATE_SCHOOL;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -21,7 +21,7 @@ public class SchoolService {
     public School save(String name, BigDecimal x, BigDecimal y) {
         schoolRepository.findByName_Name(name).ifPresent(
                 existingSchool -> {
-                    throw new BadRequestException(DUPLICATE_ERROR);
+                    throw new BadRequestException(DUPLICATE_SCHOOL);
                 });
 
         School school = School.builder()

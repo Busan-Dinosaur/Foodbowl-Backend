@@ -1,6 +1,6 @@
 package org.dinosaur.foodbowl.domain.store.domain.vo;
 
-import static org.dinosaur.foodbowl.domain.store.exception.SchoolExceptionType.INVALID_SCHOOL_NAME_ERROR;
+import static org.dinosaur.foodbowl.domain.store.exception.SchoolExceptionType.INVALID_SCHOOL_NAME;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -17,7 +17,7 @@ import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 @Embeddable
 public class SchoolName {
 
-    private static final Pattern SCHOOL_NAME_PATTERN = Pattern.compile("^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9| ]+$");
+    private static final Pattern SCHOOL_NAME_PATTERN = Pattern.compile("^[가-힣a-zA-Z0-9]+$");
 
     @NotNull
     @Column(name = "name", length = 100)
@@ -31,7 +31,7 @@ public class SchoolName {
     private void validate(String name) {
         Matcher matcher = SCHOOL_NAME_PATTERN.matcher(name);
         if (!matcher.matches()) {
-            throw new InvalidArgumentException(INVALID_SCHOOL_NAME_ERROR);
+            throw new InvalidArgumentException(INVALID_SCHOOL_NAME);
         }
     }
 }

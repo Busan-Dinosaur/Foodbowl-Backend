@@ -1,7 +1,7 @@
 package org.dinosaur.foodbowl.domain.store.application;
 
-import static org.dinosaur.foodbowl.domain.store.exception.StoreExceptionType.DUPLICATE_ERROR;
-import static org.dinosaur.foodbowl.domain.store.exception.StoreExceptionType.NOT_FOUND_ERROR;
+import static org.dinosaur.foodbowl.domain.store.exception.StoreExceptionType.DUPLICATE;
+import static org.dinosaur.foodbowl.domain.store.exception.StoreExceptionType.NOT_FOUND;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -33,7 +33,7 @@ public class StoreService {
     @Transactional(readOnly = true)
     public Store findById(Long id) {
         return storeRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(NOT_FOUND_ERROR));
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
@@ -51,7 +51,7 @@ public class StoreService {
     public Store create(StoreCreateDto storeCreateDto) {
         storeRepository.findByLocationId(storeCreateDto.locationId()).ifPresent(
                 existingStore -> {
-                    throw new BadRequestException(DUPLICATE_ERROR);
+                    throw new BadRequestException(DUPLICATE);
                 }
         );
         Store store = storeRepository.save(convertToStore(storeCreateDto));

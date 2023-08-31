@@ -1,7 +1,7 @@
 package org.dinosaur.foodbowl.domain.review.application;
 
-import static org.dinosaur.foodbowl.domain.review.exception.ReviewExceptionType.NOT_FOUND_ERROR;
-import static org.dinosaur.foodbowl.domain.review.exception.ReviewExceptionType.NOT_OWNER_ERROR;
+import static org.dinosaur.foodbowl.domain.review.exception.ReviewExceptionType.NOT_FOUND;
+import static org.dinosaur.foodbowl.domain.review.exception.ReviewExceptionType.NOT_OWNER;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -77,10 +77,10 @@ public class ReviewService {
     @Transactional
     public void delete(Long id, Member member) {
         Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(NOT_FOUND_ERROR));
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND));
 
         if (review.isNotOwnerOf(member)) {
-            throw new BadRequestException(NOT_OWNER_ERROR);
+            throw new BadRequestException(NOT_OWNER);
         }
 
         List<Photo> photos = reviewPhotoService.findPhotos(review);
