@@ -20,7 +20,7 @@ public class Introduction {
 
     public Introduction(String value) {
         validate(value);
-        this.value = value;
+        this.value = convertWhenEmpty(value);
     }
 
     private void validate(String value) {
@@ -34,5 +34,12 @@ public class Introduction {
 
     private boolean isNullOrEmpty(String value) {
         return value == null || value.isEmpty();
+    }
+
+    private String convertWhenEmpty(String value) {
+        if (isNullOrEmpty(value)) {
+            return null;
+        }
+        return value;
     }
 }

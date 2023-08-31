@@ -10,7 +10,6 @@ public record UpdateProfileRequest(
         String nickname,
 
         @Schema(description = "한 줄 소개", example = "동네 맛집 탐험을 좋아하는 아저씨에요.")
-        @NotBlank(message = "한 줄 소개가 공백이거나 존재하지 않습니다.")
         String introduction
 ) {
 }

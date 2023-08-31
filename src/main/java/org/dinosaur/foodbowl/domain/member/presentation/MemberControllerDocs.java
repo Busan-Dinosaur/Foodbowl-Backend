@@ -82,13 +82,11 @@ public interface MemberControllerDocs {
                     description = """
                             1.공백이거나 존재하지 않는 닉네임 요청
                                                         
-                            2.공백이거나 존재하지 않는 한 줄 소개 요청
+                            2.제약사항에 맞지 않는 닉네임
                                                         
-                            3.제약사항에 맞지 않는 닉네임
+                            3.제약사항에 맞지 않는 한 줄 소개
                                                         
-                            4.제약사항에 맞지 않는 한 줄 소개
-                                                        
-                            5.이미 존재하는 닉네임
+                            4.이미 존재하는 닉네임
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )

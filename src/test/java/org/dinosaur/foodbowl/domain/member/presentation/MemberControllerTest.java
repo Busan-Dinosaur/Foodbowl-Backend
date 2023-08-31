@@ -188,19 +188,5 @@ class MemberControllerTest extends PresentationTest {
                     .andExpect(jsonPath("$.errorCode").value("CLIENT-100"))
                     .andExpect(jsonPath("$.message", containsString("닉네임이 공백이거나 존재하지 않습니다.")));
         }
-
-        @ParameterizedTest
-        @NullAndEmptySource
-        void 한_줄_소개가_공백이거나_존재하지_않으면_400_응답을_반환한다(String introduction) throws Exception {
-            UpdateProfileRequest request = new UpdateProfileRequest("coby5502", introduction);
-
-            mockMvc.perform(patch("/v1/members/profile")
-                            .header(AUTHORIZATION, BEARER + accessToken)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
-                    .andDo(print())
-                    .andExpect(jsonPath("$.errorCode").value("CLIENT-100"))
-                    .andExpect(jsonPath("$.message", containsString("한 줄 소개가 공백이거나 존재하지 않습니다.")));
-        }
     }
 }
