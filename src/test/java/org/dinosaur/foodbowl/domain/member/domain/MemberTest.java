@@ -1,5 +1,6 @@
 package org.dinosaur.foodbowl.domain.member.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -9,6 +10,7 @@ import org.dinosaur.foodbowl.domain.member.domain.vo.SocialType;
 import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -84,5 +86,41 @@ class MemberTest {
             softly.assertThat(member.getNickname()).isEqualTo("NewName");
             softly.assertThat(member.getIntroduction()).isEqualTo("NewIntroduction");
         });
+    }
+
+    @Nested
+    class 현재_닉네임_확인 {
+
+        @Test
+        void 닉네임이_현재_닉네임이라면_true_반환한다() {
+            Member member = Member.builder()
+                    .socialType(SocialType.APPLE)
+                    .socialId("A1B2C3D4")
+                    .email("email@email.com")
+                    .nickname("nickname")
+                    .introduction("introduction")
+                    .build();
+            Nickname nickname = new Nickname("nickname");
+
+            boolean result = member.hasNickname(nickname);
+
+            assertThat(result).isTrue();
+        }
+
+        @Test
+        void 닉네임이_현재_닉네임이_아니라면_false_반환한다() {
+            Member member = Member.builder()
+                    .socialType(SocialType.APPLE)
+                    .socialId("A1B2C3D4")
+                    .email("email@email.com")
+                    .nickname("nickname")
+                    .introduction("introduction")
+                    .build();
+            Nickname nickname = new Nickname("hello");
+
+            boolean result = member.hasNickname(nickname);
+
+            assertThat(result).isFalse();
+        }
     }
 }

@@ -50,11 +50,16 @@ public class MemberService {
         Nickname nickname = new Nickname(updateProfileRequest.nickname());
         Introduction introduction = new Introduction(updateProfileRequest.introduction());
 
+        if (!loginMember.hasNickname(nickname)) {
+            validateExistNickname(nickname);
+        }
+        loginMember.updateProfile(nickname, introduction);
+    }
+
+    private void validateExistNickname(Nickname nickname) {
         boolean nicknameExist = memberRepository.existsByNickname(nickname);
         if (nicknameExist) {
             throw new BadRequestException(MemberExceptionType.DUPLICATE_NICKNAME);
         }
-
-        loginMember.updateProfile(nickname, introduction);
     }
 }

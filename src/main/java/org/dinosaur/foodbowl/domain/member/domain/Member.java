@@ -15,6 +15,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -89,6 +90,10 @@ public class Member extends AuditingEntity {
     public void updateProfile(Nickname nickname, Introduction introduction) {
         this.nickname = nickname;
         this.introduction = introduction;
+    }
+
+    public boolean hasNickname(Nickname nickname) {
+        return Objects.equals(this.nickname, nickname);
     }
 
     public String getNickname() {

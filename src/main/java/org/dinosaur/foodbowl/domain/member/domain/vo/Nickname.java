@@ -6,12 +6,14 @@ import jakarta.validation.constraints.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.exception.MemberExceptionType;
 import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 
 @Getter
+@EqualsAndHashCode(of = {"value"})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Embeddable
 public class Nickname {

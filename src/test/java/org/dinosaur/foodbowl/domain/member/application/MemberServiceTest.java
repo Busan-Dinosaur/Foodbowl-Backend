@@ -126,6 +126,19 @@ class MemberServiceTest extends IntegrationTest {
         }
 
         @Test
+        void 변경_닉네임이_현재_닉네임이라면_프로필_정보를_수정한다() {
+            Member member = memberTestPersister.memberBuilder().nickname("hello").save();
+            UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest("hello", "friend");
+
+            memberService.updateProfile(updateProfileRequest, member);
+
+            assertSoftly(softly -> {
+                softly.assertThat(member.getNickname()).isEqualTo("hello");
+                softly.assertThat(member.getIntroduction()).isEqualTo("friend");
+            });
+        }
+
+        @Test
         void 유효하지_않은_닉네임이라면_예외를_던진다() {
             Member member = memberTestPersister.memberBuilder().save();
             UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest("하 이", "friend");
@@ -146,7 +159,7 @@ class MemberServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 존재하는_닉네임이라면_예외를_던진다() {
+        void 변경_닉네임이_현재_닉네임이_아니고_존재하는_닉네임이라면_예외를_던진다() {
             memberTestPersister.memberBuilder().nickname("hello").save();
             Member member = memberTestPersister.memberBuilder().save();
             UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest("hello", "friend");
