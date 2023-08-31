@@ -17,7 +17,7 @@ import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 @Embeddable
 public class SchoolName {
 
-    private static final Pattern SCHOOL_NAME_PATTERN = Pattern.compile("^[가-힣a-zA-Z0-9]+$");
+    private static final Pattern SCHOOL_NAME_PATTERN = Pattern.compile("^[가-힣a-zA-Z0-9\\s]+$");
 
     @NotNull
     @Column(name = "name", length = 100)
