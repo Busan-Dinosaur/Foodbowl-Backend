@@ -5,8 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import org.dinosaur.foodbowl.domain.member.domain.Member;
+import org.dinosaur.foodbowl.domain.member.dto.request.UpdateProfileRequest;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
+import org.dinosaur.foodbowl.global.exception.BadRequestException;
+import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
 import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.junit.jupiter.api.Nested;
@@ -103,6 +106,67 @@ class MemberServiceTest extends IntegrationTest {
             NicknameExistResponse response = memberService.checkNicknameExist("hello");
 
             assertThat(response.isExist()).isFalse();
+        }
+    }
+
+    @Nested
+    class 프로필_정보_수정 {
+
+        @Test
+        void 유효한_요청이라면_프로필_정보를_수정한다() {
+            Member member = memberTestPersister.memberBuilder().save();
+            UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest("hello", "friend");
+
+            memberService.updateProfile(updateProfileRequest, member);
+
+            assertSoftly(softly -> {
+                softly.assertThat(member.getNickname()).isEqualTo("hello");
+                softly.assertThat(member.getIntroduction()).isEqualTo("friend");
+            });
+        }
+
+        @Test
+        void 변경_닉네임이_현재_닉네임이라면_프로필_정보를_수정한다() {
+            Member member = memberTestPersister.memberBuilder().nickname("hello").save();
+            UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest("hello", "friend");
+
+            memberService.updateProfile(updateProfileRequest, member);
+
+            assertSoftly(softly -> {
+                softly.assertThat(member.getNickname()).isEqualTo("hello");
+                softly.assertThat(member.getIntroduction()).isEqualTo("friend");
+            });
+        }
+
+        @Test
+        void 유효하지_않은_닉네임이라면_예외를_던진다() {
+            Member member = memberTestPersister.memberBuilder().save();
+            UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest("하 이", "friend");
+
+            assertThatThrownBy(() -> memberService.updateProfile(updateProfileRequest, member))
+                    .isInstanceOf(InvalidArgumentException.class)
+                    .hasMessage("한글, 영어, 숫자로 구성된 1글자 이상, 10글자 이하의 닉네임이 아닙니다.");
+        }
+
+        @Test
+        void 유효하지_않은_한_줄_소개라면_예외를_던진다() {
+            Member member = memberTestPersister.memberBuilder().save();
+            UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest("hello", "  ");
+
+            assertThatThrownBy(() -> memberService.updateProfile(updateProfileRequest, member))
+                    .isInstanceOf(InvalidArgumentException.class)
+                    .hasMessage("공백만으로 이루어지지 않은 1글자 이상, 100글자 이하의 한 줄 소개가 아닙니다.");
+        }
+
+        @Test
+        void 변경_닉네임이_현재_닉네임이_아니고_존재하는_닉네임이라면_예외를_던진다() {
+            memberTestPersister.memberBuilder().nickname("hello").save();
+            Member member = memberTestPersister.memberBuilder().save();
+            UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest("hello", "friend");
+
+            assertThatThrownBy(() -> memberService.updateProfile(updateProfileRequest, member))
+                    .isInstanceOf(BadRequestException.class)
+                    .hasMessage("이미 존재하는 닉네임입니다.");
         }
     }
 }
