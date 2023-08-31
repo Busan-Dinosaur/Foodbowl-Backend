@@ -162,7 +162,7 @@ class MemberControllerTest extends PresentationTest {
         private final String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
 
         @Test
-        void 프로필_정보를_수정하면_200_응답을_반환한다() throws Exception {
+        void 프로필_정보를_수정하면_204_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
             UpdateProfileRequest request = new UpdateProfileRequest("coby5502", "동네 맛집 탐험을 좋아하는 아저씨에요.");
             willDoNothing().given(memberService).updateProfile(any(UpdateProfileRequest.class), any(Member.class));
@@ -172,7 +172,7 @@ class MemberControllerTest extends PresentationTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andDo(print())
-                    .andExpect(status().isOk());
+                    .andExpect(status().isNoContent());
         }
 
         @ParameterizedTest

@@ -51,6 +51,6 @@ public class MemberController implements MemberControllerDocs {
             @Auth Member loginMember
     ) {
         memberService.updateProfile(updateProfileRequest, loginMember);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }
