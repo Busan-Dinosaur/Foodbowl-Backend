@@ -8,7 +8,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -167,7 +167,7 @@ class MemberControllerTest extends PresentationTest {
             UpdateProfileRequest request = new UpdateProfileRequest("coby5502", "동네 맛집 탐험을 좋아하는 아저씨에요.");
             willDoNothing().given(memberService).updateProfile(any(UpdateProfileRequest.class), any(Member.class));
 
-            mockMvc.perform(put("/v1/members/profile")
+            mockMvc.perform(patch("/v1/members/profile")
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
@@ -180,7 +180,7 @@ class MemberControllerTest extends PresentationTest {
         void 닉네임이_공백이거나_존재하지_않으면_400_응답을_반환한다(String nickname) throws Exception {
             UpdateProfileRequest request = new UpdateProfileRequest(nickname, "동네 맛집 탐험을 좋아하는 아저씨에요.");
 
-            mockMvc.perform(put("/v1/members/profile")
+            mockMvc.perform(patch("/v1/members/profile")
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
@@ -194,7 +194,7 @@ class MemberControllerTest extends PresentationTest {
         void 한_줄_소개가_공백이거나_존재하지_않으면_400_응답을_반환한다(String introduction) throws Exception {
             UpdateProfileRequest request = new UpdateProfileRequest("coby5502", introduction);
 
-            mockMvc.perform(put("/v1/members/profile")
+            mockMvc.perform(patch("/v1/members/profile")
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
