@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.photo.persistence;
+package org.dinosaur.foodbowl.domain.review.persistence;
 
 import java.util.List;
 import org.dinosaur.foodbowl.domain.photo.domain.ReviewPhoto;
@@ -8,8 +8,8 @@ import org.springframework.data.repository.Repository;
 
 public interface ReviewPhotoRepository extends Repository<ReviewPhoto, Long>, ReviewPhotoCustomRepository {
 
-    ReviewPhoto save(ReviewPhoto reviewPhoto);
-
     @EntityGraph(attributePaths = {"photo"})
     List<ReviewPhoto> findAllByReview(Review review);
+
+    ReviewPhoto save(ReviewPhoto reviewPhoto);
 }

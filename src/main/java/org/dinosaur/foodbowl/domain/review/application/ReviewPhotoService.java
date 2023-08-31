@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.photo.domain.Photo;
 import org.dinosaur.foodbowl.domain.photo.domain.ReviewPhoto;
-import org.dinosaur.foodbowl.domain.photo.persistence.ReviewPhotoRepository;
+import org.dinosaur.foodbowl.domain.review.persistence.ReviewPhotoRepository;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

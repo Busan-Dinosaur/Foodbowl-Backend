@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.photo.persistence;
+package org.dinosaur.foodbowl.domain.review.persistence;
 
 import static org.dinosaur.foodbowl.domain.photo.domain.QReviewPhoto.reviewPhoto;
 
