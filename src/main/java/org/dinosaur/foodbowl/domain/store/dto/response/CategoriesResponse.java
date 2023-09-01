@@ -5,7 +5,7 @@ import java.util.List;
 import org.dinosaur.foodbowl.domain.store.domain.Category;
 
 @Schema(description = "카테고리 목록 응답")
-public record CategoryResponses(
+public record CategoriesResponse(
         @Schema(
                 description = "카테고리 응답 목록",
                 example = "[{\"id\": 1, \"name\": \"카페\"}, {\"id\": 2, \"name\": \"술집\"}]"
@@ -13,8 +13,8 @@ public record CategoryResponses(
         List<CategoryResponse> categories
 ) {
 
-    public static CategoryResponses from(List<Category> categories) {
-        return new CategoryResponses(listOf(categories));
+    public static CategoriesResponse from(List<Category> categories) {
+        return new CategoriesResponse(listOf(categories));
     }
 
     private static List<CategoryResponse> listOf(List<Category> categories) {

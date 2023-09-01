@@ -9,7 +9,7 @@ import java.util.List;
 import org.dinosaur.foodbowl.domain.store.application.dto.StoreCreateDto;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.StoreSchool;
-import org.dinosaur.foodbowl.domain.store.dto.response.CategoryResponses;
+import org.dinosaur.foodbowl.domain.store.dto.response.CategoriesResponse;
 import org.dinosaur.foodbowl.domain.store.persistence.StoreSchoolRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
@@ -33,7 +33,7 @@ class StoreServiceTest extends IntegrationTest {
 
     @Test
     void 카테고리_목록을_조회한다() {
-        CategoryResponses response = storeService.getCategories();
+        CategoriesResponse response = storeService.getCategories();
 
         assertThat(response.categories()).hasSize(11);
     }

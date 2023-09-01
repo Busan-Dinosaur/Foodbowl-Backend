@@ -13,7 +13,7 @@ import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
 import org.dinosaur.foodbowl.domain.store.domain.vo.CategoryType;
-import org.dinosaur.foodbowl.domain.store.dto.response.CategoryResponses;
+import org.dinosaur.foodbowl.domain.store.dto.response.CategoriesResponse;
 import org.dinosaur.foodbowl.domain.store.persistence.CategoryRepository;
 import org.dinosaur.foodbowl.domain.store.persistence.StoreRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
@@ -42,9 +42,9 @@ public class StoreService {
     }
 
     @Transactional(readOnly = true)
-    public CategoryResponses getCategories() {
+    public CategoriesResponse getCategories() {
         List<Category> categories = categoryRepository.findAllByOrderById();
-        return CategoryResponses.from(categories);
+        return CategoriesResponse.from(categories);
     }
 
     @Transactional
