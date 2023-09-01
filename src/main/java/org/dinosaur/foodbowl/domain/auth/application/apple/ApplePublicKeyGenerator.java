@@ -11,7 +11,7 @@ import java.util.Map;
 import org.dinosaur.foodbowl.domain.auth.application.dto.ApplePublicKey;
 import org.dinosaur.foodbowl.domain.auth.application.dto.ApplePublicKeys;
 import org.dinosaur.foodbowl.global.exception.ServerException;
-import org.dinosaur.foodbowl.global.exception.ServerExceptionType;
+import org.dinosaur.foodbowl.global.exception.type.ServerExceptionType;
 import org.springframework.stereotype.Component;
 
 @Component

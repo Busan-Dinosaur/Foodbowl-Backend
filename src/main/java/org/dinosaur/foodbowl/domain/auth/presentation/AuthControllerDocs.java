@@ -10,7 +10,7 @@ import org.dinosaur.foodbowl.domain.auth.dto.reqeust.AppleLoginRequest;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.RenewTokenRequest;
 import org.dinosaur.foodbowl.domain.auth.dto.response.RenewTokenResponse;
 import org.dinosaur.foodbowl.domain.auth.dto.response.TokenResponse;
-import org.dinosaur.foodbowl.global.exception.ExceptionResponse;
+import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
 import org.springframework.http.ResponseEntity;
 
 @Tag(name = "인증", description = "인증 API")

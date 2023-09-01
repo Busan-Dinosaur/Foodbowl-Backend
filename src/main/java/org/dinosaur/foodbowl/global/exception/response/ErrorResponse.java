@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.global.exception;
+package org.dinosaur.foodbowl.global.exception.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
