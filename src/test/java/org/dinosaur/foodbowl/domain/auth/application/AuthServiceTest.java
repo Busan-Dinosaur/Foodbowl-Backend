@@ -21,6 +21,7 @@ import org.dinosaur.foodbowl.domain.member.domain.vo.SocialType;
 import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
 import org.dinosaur.foodbowl.global.exception.AuthenticationException;
 import org.dinosaur.foodbowl.test.IntegrationTest;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,11 @@ class AuthServiceTest extends IntegrationTest {
 
     @MockBean
     private AppleOAuthUserProvider appleOAuthUserProvider;
+
+    @AfterEach
+    void tearDown() {
+        redisTemplate.getConnectionFactory().getConnection().flushDb();
+    }
 
     @Nested
     class 애플_로그인 {
@@ -115,6 +121,17 @@ class AuthServiceTest extends IntegrationTest {
                 softly.assertThat(response.accessToken()).isNotNull();
                 softly.assertThat(jwtTokenProvider.extractSubject(response.accessToken())).isEqualTo("1");
             });
+        }
+
+        @Test
+        void 저장소에_리프레쉬_토큰이_존재하지_않으면_예외를_던진다() {
+            String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
+            String refreshToken = jwtTokenProvider.createRefreshToken(1L);
+            RenewTokenRequest renewTokenRequest = new RenewTokenRequest(accessToken, refreshToken);
+
+            assertThatThrownBy(() -> authService.renewToken(renewTokenRequest))
+                    .isInstanceOf(AuthenticationException.class)
+                    .hasMessage("리프레쉬 토큰 저장이 만료되었습니다.");
         }
 
         @Test

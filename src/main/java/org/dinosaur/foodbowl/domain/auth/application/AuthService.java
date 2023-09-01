@@ -84,6 +84,9 @@ public class AuthService {
 
     private void validateRefreshToken(String savedRefreshToken, String refreshToken) {
         jwtTokenProvider.extractValidClaims(refreshToken);
+        if (savedRefreshToken == null) {
+            throw new AuthenticationException(AuthExceptionType.EXPIRED_REFRESH_TONE);
+        }
         if (!Objects.equals(savedRefreshToken, refreshToken)) {
             throw new AuthenticationException(AuthExceptionType.NOT_MATCH_REFRESH_TOKEN);
         }
