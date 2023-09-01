@@ -22,10 +22,10 @@ class ReviewPhotoServiceTest extends IntegrationTest {
     @Test
     void 리뷰_사진_매핑_정보를_저장한다() {
         Review review = reviewTestPersister.builder().save();
-        Photo photo1 = photoTestPersister.builder().save();
-        Photo photo2 = photoTestPersister.builder().save();
+        Photo photoA = photoTestPersister.builder().save();
+        Photo photoB = photoTestPersister.builder().save();
 
-        reviewPhotoService.save(review, List.of(photo1, photo2));
+        reviewPhotoService.save(review, List.of(photoA, photoB));
 
         assertThat(reviewPhotoRepository.findAllByReview(review)).hasSize(2);
     }
@@ -33,9 +33,9 @@ class ReviewPhotoServiceTest extends IntegrationTest {
     @Test
     void 리뷰_사진_매핑_정보를_삭제한다() {
         Review review = reviewTestPersister.builder().save();
-        Photo photo1 = photoTestPersister.builder().save();
-        Photo photo2 = photoTestPersister.builder().save();
-        reviewPhotoService.save(review, List.of(photo1, photo2));
+        Photo photoA = photoTestPersister.builder().save();
+        Photo photoB = photoTestPersister.builder().save();
+        reviewPhotoService.save(review, List.of(photoA, photoB));
 
         reviewPhotoService.delete(review);
 

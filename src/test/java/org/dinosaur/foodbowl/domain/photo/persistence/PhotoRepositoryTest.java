@@ -27,15 +27,15 @@ class PhotoRepositoryTest extends PersistenceTest {
 
     @Test
     void 사진을_삭제한다() {
-        Photo photo1 = Photo.builder()
+        Photo photoA = Photo.builder()
                 .path("http://justdoeat.shop/store1/image.jpg?")
                 .build();
-        Photo photo2 = Photo.builder()
+        Photo photoB = Photo.builder()
                 .path("http://justdoeat.shop/store2/image.jpg?")
                 .build();
-        Photo savePhoto1 = photoRepository.save(photo1);
-        Photo savePhoto2 = photoRepository.save(photo2);
-        List<Photo> photos = List.of(savePhoto1, savePhoto2);
+        Photo savePhotoA = photoRepository.save(photoA);
+        Photo savePhotoB = photoRepository.save(photoB);
+        List<Photo> photos = List.of(savePhotoA, savePhotoB);
 
         long deleteCount = photoRepository.deleteAllByPhoto(photos);
 

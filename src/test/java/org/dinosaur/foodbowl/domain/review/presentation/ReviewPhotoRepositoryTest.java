@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.photo.persistence;
+package org.dinosaur.foodbowl.domain.review.presentation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -19,7 +19,7 @@ class ReviewPhotoRepositoryTest extends PersistenceTest {
     private ReviewPhotoRepository reviewPhotoRepository;
 
     @Test
-    void 리뷰에_해당하는_리뷰_사진_데이터를_조회한다() {
+    void 리뷰에_해당하는_리뷰_사진_엔티티를_조회한다() {
         Review review = reviewTestPersister.builder().save();
         Photo photo1 = photoTestPersister.builder().save();
         Photo photo2 = photoTestPersister.builder().save();
