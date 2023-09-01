@@ -41,23 +41,21 @@ class FollowServiceTest extends IntegrationTest {
 
         PageResponse<FollowingResponse> response = followService.getFollowings(0, 2, follower);
 
-        assertSoftly(
-                softly -> {
-                    softly.assertThat(response.content())
-                            .usingRecursiveComparison()
-                            .isEqualTo(
-                                    List.of(
-                                            FollowingResponse.from(followB.getFollowing()),
-                                            FollowingResponse.from(followA.getFollowing())
-                                    )
-                            );
-                    softly.assertThat(response.isFirst()).isTrue();
-                    softly.assertThat(response.isLast()).isTrue();
-                    softly.assertThat(response.hasNext()).isFalse();
-                    softly.assertThat(response.currentPage()).isEqualTo(0);
-                    softly.assertThat(response.currentSize()).isEqualTo(2);
-                }
-        );
+        assertSoftly(softly -> {
+            softly.assertThat(response.content())
+                    .usingRecursiveComparison()
+                    .isEqualTo(
+                            List.of(
+                                    FollowingResponse.from(followB.getFollowing()),
+                                    FollowingResponse.from(followA.getFollowing())
+                            )
+                    );
+            softly.assertThat(response.isFirst()).isTrue();
+            softly.assertThat(response.isLast()).isTrue();
+            softly.assertThat(response.hasNext()).isFalse();
+            softly.assertThat(response.currentPage()).isEqualTo(0);
+            softly.assertThat(response.currentSize()).isEqualTo(2);
+        });
     }
 
     @Nested
@@ -77,22 +75,20 @@ class FollowServiceTest extends IntegrationTest {
             PageResponse<OtherUserFollowingResponse> response =
                     followService.getOtherUserFollowings(follower.getId(), 0, 2, member);
 
-            assertSoftly(
-                    softly -> {
-                        softly.assertThat(response.content()).hasSize(2);
-                        softly.assertThat(response.content().get(0).memberId()).isEqualTo(followingB.getId());
-                        softly.assertThat(response.content().get(0).nickname()).isEqualTo(followingB.getNickname());
-                        softly.assertThat(response.content().get(0).isFollowing()).isFalse();
-                        softly.assertThat(response.content().get(1).memberId()).isEqualTo(followingA.getId());
-                        softly.assertThat(response.content().get(1).nickname()).isEqualTo(followingA.getNickname());
-                        softly.assertThat(response.content().get(1).isFollowing()).isTrue();
-                        softly.assertThat(response.isFirst()).isTrue();
-                        softly.assertThat(response.isLast()).isTrue();
-                        softly.assertThat(response.hasNext()).isFalse();
-                        softly.assertThat(response.currentPage()).isEqualTo(0);
-                        softly.assertThat(response.currentSize()).isEqualTo(2);
-                    }
-            );
+            assertSoftly(softly -> {
+                softly.assertThat(response.content()).hasSize(2);
+                softly.assertThat(response.content().get(0).memberId()).isEqualTo(followingB.getId());
+                softly.assertThat(response.content().get(0).nickname()).isEqualTo(followingB.getNickname());
+                softly.assertThat(response.content().get(0).isFollowing()).isFalse();
+                softly.assertThat(response.content().get(1).memberId()).isEqualTo(followingA.getId());
+                softly.assertThat(response.content().get(1).nickname()).isEqualTo(followingA.getNickname());
+                softly.assertThat(response.content().get(1).isFollowing()).isTrue();
+                softly.assertThat(response.isFirst()).isTrue();
+                softly.assertThat(response.isLast()).isTrue();
+                softly.assertThat(response.hasNext()).isFalse();
+                softly.assertThat(response.currentPage()).isEqualTo(0);
+                softly.assertThat(response.currentSize()).isEqualTo(2);
+            });
         }
 
         @Test
@@ -116,23 +112,21 @@ class FollowServiceTest extends IntegrationTest {
 
         PageResponse<FollowerResponse> response = followService.getFollowers(0, 2, following);
 
-        assertSoftly(
-                softly -> {
-                    softly.assertThat(response.content())
-                            .usingRecursiveComparison()
-                            .isEqualTo(
-                                    List.of(
-                                            FollowerResponse.from(followB.getFollower()),
-                                            FollowerResponse.from(followA.getFollower())
-                                    )
-                            );
-                    softly.assertThat(response.isFirst()).isTrue();
-                    softly.assertThat(response.isLast()).isTrue();
-                    softly.assertThat(response.hasNext()).isFalse();
-                    softly.assertThat(response.currentPage()).isEqualTo(0);
-                    softly.assertThat(response.currentSize()).isEqualTo(2);
-                }
-        );
+        assertSoftly(softly -> {
+            softly.assertThat(response.content())
+                    .usingRecursiveComparison()
+                    .isEqualTo(
+                            List.of(
+                                    FollowerResponse.from(followB.getFollower()),
+                                    FollowerResponse.from(followA.getFollower())
+                            )
+                    );
+            softly.assertThat(response.isFirst()).isTrue();
+            softly.assertThat(response.isLast()).isTrue();
+            softly.assertThat(response.hasNext()).isFalse();
+            softly.assertThat(response.currentPage()).isEqualTo(0);
+            softly.assertThat(response.currentSize()).isEqualTo(2);
+        });
     }
 
     @Nested
@@ -152,22 +146,20 @@ class FollowServiceTest extends IntegrationTest {
             PageResponse<OtherUserFollowerResponse> response =
                     followService.getOtherUserFollowers(following.getId(), 0, 2, member);
 
-            assertSoftly(
-                    softly -> {
-                        softly.assertThat(response.content()).hasSize(2);
-                        softly.assertThat(response.content().get(0).memberId()).isEqualTo(followerB.getId());
-                        softly.assertThat(response.content().get(0).nickname()).isEqualTo(followerB.getNickname());
-                        softly.assertThat(response.content().get(0).isFollowing()).isFalse();
-                        softly.assertThat(response.content().get(1).memberId()).isEqualTo(followerA.getId());
-                        softly.assertThat(response.content().get(1).nickname()).isEqualTo(followerA.getNickname());
-                        softly.assertThat(response.content().get(1).isFollowing()).isTrue();
-                        softly.assertThat(response.isFirst()).isTrue();
-                        softly.assertThat(response.isLast()).isTrue();
-                        softly.assertThat(response.hasNext()).isFalse();
-                        softly.assertThat(response.currentPage()).isEqualTo(0);
-                        softly.assertThat(response.currentSize()).isEqualTo(2);
-                    }
-            );
+            assertSoftly(softly -> {
+                softly.assertThat(response.content()).hasSize(2);
+                softly.assertThat(response.content().get(0).memberId()).isEqualTo(followerB.getId());
+                softly.assertThat(response.content().get(0).nickname()).isEqualTo(followerB.getNickname());
+                softly.assertThat(response.content().get(0).isFollowing()).isFalse();
+                softly.assertThat(response.content().get(1).memberId()).isEqualTo(followerA.getId());
+                softly.assertThat(response.content().get(1).nickname()).isEqualTo(followerA.getNickname());
+                softly.assertThat(response.content().get(1).isFollowing()).isTrue();
+                softly.assertThat(response.isFirst()).isTrue();
+                softly.assertThat(response.isLast()).isTrue();
+                softly.assertThat(response.hasNext()).isFalse();
+                softly.assertThat(response.currentPage()).isEqualTo(0);
+                softly.assertThat(response.currentSize()).isEqualTo(2);
+            });
         }
 
         @Test

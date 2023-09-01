@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.AppleLoginRequest;
+import org.dinosaur.foodbowl.domain.auth.dto.reqeust.RenewTokenRequest;
+import org.dinosaur.foodbowl.domain.auth.dto.response.RenewTokenResponse;
 import org.dinosaur.foodbowl.domain.auth.dto.response.TokenResponse;
 import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
 import org.springframework.http.ResponseEntity;
@@ -32,4 +34,33 @@ public interface AuthControllerDocs {
             )
     })
     ResponseEntity<TokenResponse> appleLogin(AppleLoginRequest appleLoginRequest);
+
+    @Operation(summary = "인증 토큰 갱신", description = "리프레쉬 토큰을 통해 인증 토큰을 갱신한다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "인증 토큰 갱신 성공"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = """
+                            1.존재하지 않거나 공백의 인증 토큰 요청
+                                                        
+                            2.존재하지 않거나 공백의 리프레쉬 토큰 요청
+                            """,
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = """
+                            1.유효하지 않은 인증 토큰
+                                                        
+                            2.유효하지 않은 리프레쉬 토큰
+                                                        
+                            3.인증 토큰에 맞지 않은 리프레쉬 토큰
+                            """,
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            )
+    })
+    ResponseEntity<RenewTokenResponse> renewToken(RenewTokenRequest renewTokenRequest);
 }
