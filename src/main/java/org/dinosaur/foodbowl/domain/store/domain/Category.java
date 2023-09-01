@@ -40,6 +40,6 @@ public class Category {
     }
 
     public String getName() {
-        return categoryType.name();
+        return this.categoryType.name();
     }
 }

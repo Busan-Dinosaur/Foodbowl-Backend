@@ -21,15 +21,15 @@ public class SchoolName {
 
     @NotNull
     @Column(name = "name", length = 100)
-    private String name;
+    private String value;
 
-    public SchoolName(String name) {
-        validate(name);
-        this.name = name;
+    public SchoolName(String value) {
+        validate(value);
+        this.value = value;
     }
 
-    private void validate(String name) {
-        Matcher matcher = SCHOOL_NAME_PATTERN.matcher(name);
+    private void validate(String value) {
+        Matcher matcher = SCHOOL_NAME_PATTERN.matcher(value);
         if (!matcher.matches()) {
             throw new InvalidArgumentException(INVALID_SCHOOL_NAME_ERROR);
         }

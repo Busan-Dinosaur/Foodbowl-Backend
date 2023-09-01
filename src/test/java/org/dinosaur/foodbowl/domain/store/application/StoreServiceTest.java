@@ -9,6 +9,7 @@ import java.util.List;
 import org.dinosaur.foodbowl.domain.store.application.dto.StoreCreateDto;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.StoreSchool;
+import org.dinosaur.foodbowl.domain.store.domain.vo.SchoolName;
 import org.dinosaur.foodbowl.domain.store.dto.response.CategoriesResponse;
 import org.dinosaur.foodbowl.domain.store.persistence.StoreSchoolRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
@@ -69,7 +70,7 @@ class StoreServiceTest extends IntegrationTest {
             );
 
             Store store = storeService.create(storeCreateDtoWithSchool);
-            List<StoreSchool> storeSchools = storeSchoolRepository.findAllBySchool_Name_Name("부산대학교");
+            List<StoreSchool> storeSchools = storeSchoolRepository.findAllBySchool_Name(new SchoolName("부산대학교"));
             List<Store> stores = storeSchools.stream()
                     .map(StoreSchool::getStore)
                     .toList();
@@ -105,7 +106,7 @@ class StoreServiceTest extends IntegrationTest {
                     BigDecimal.valueOf(37.1234));
 
             Store store2 = storeService.create(nextStoreCreateDto);
-            List<StoreSchool> storeSchools = storeSchoolRepository.findAllBySchool_Name_Name("부산대학교");
+            List<StoreSchool> storeSchools = storeSchoolRepository.findAllBySchool_Name(new SchoolName("부산대학교"));
             List<Store> stores = storeSchools.stream()
                     .map(StoreSchool::getStore)
                     .toList();

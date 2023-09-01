@@ -18,7 +18,7 @@ class SchoolNameTest {
     void 학교_이름_객체를_생성한다(String name) {
         SchoolName schoolName = new SchoolName(name);
 
-        assertThat(schoolName.getName()).isEqualTo(name);
+        assertThat(schoolName.getValue()).isEqualTo(name);
     }
 
     @ParameterizedTest
