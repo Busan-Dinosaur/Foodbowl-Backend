@@ -17,7 +17,6 @@ import javax.crypto.SecretKey;
 import org.dinosaur.foodbowl.domain.auth.exception.AuthExceptionType;
 import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
 import org.dinosaur.foodbowl.global.exception.AuthenticationException;
-import org.dinosaur.foodbowl.global.exception.ExceptionType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -73,45 +72,44 @@ public class JwtTokenProvider {
     }
 
     public String extractSubject(String token) {
-        JwtTokenValid jwtTokenValid = validateToken(token);
-        if (!jwtTokenValid.isValid() && jwtTokenValid.exceptionType() != AuthExceptionType.EXPIRED_JWT) {
-            throw new AuthenticationException(jwtTokenValid.exceptionType());
-        }
-
         try {
             return jwtParser.parseClaimsJws(token).getBody().getSubject();
         } catch (ExpiredJwtException e) {
             return e.getClaims().getSubject();
+        } catch (MalformedJwtException e) {
+            throw new AuthenticationException(AuthExceptionType.MALFORMED_JWT);
+        } catch (UnsupportedJwtException e) {
+            throw new AuthenticationException(AuthExceptionType.UNSUPPORTED_JWT);
+        } catch (SignatureException e) {
+            throw new AuthenticationException(AuthExceptionType.SIGNATURE_JWT);
+        } catch (Exception e) {
+            throw new AuthenticationException(AuthExceptionType.UNKNOWN_JWT);
         }
     }
 
     public Optional<Claims> extractClaims(String token) {
-        JwtTokenValid jwtTokenValid = validateToken(token);
-
-        if (jwtTokenValid.isValid()) {
-            Claims claims = jwtParser.parseClaimsJws(token).getBody();
+        try {
+            Claims claims = extractValidClaims(token);
             return Optional.of(claims);
+        } catch (AuthenticationException e) {
+            return Optional.empty();
         }
-        return Optional.empty();
     }
 
-    public JwtTokenValid validateToken(String token) {
-        ExceptionType exceptionType;
+    public Claims extractValidClaims(String token) {
         try {
-            jwtParser.parseClaimsJws(token).getBody();
-            return new JwtTokenValid(true, null);
+            return jwtParser.parseClaimsJws(token).getBody();
         } catch (ExpiredJwtException e) {
-            exceptionType = AuthExceptionType.EXPIRED_JWT;
+            throw new AuthenticationException(AuthExceptionType.EXPIRED_JWT);
         } catch (MalformedJwtException e) {
-            exceptionType = AuthExceptionType.MALFORMED_JWT;
+            throw new AuthenticationException(AuthExceptionType.MALFORMED_JWT);
         } catch (UnsupportedJwtException e) {
-            exceptionType = AuthExceptionType.UNSUPPORTED_JWT;
+            throw new AuthenticationException(AuthExceptionType.UNSUPPORTED_JWT);
         } catch (SignatureException e) {
-            exceptionType = AuthExceptionType.SIGNATURE_JWT;
+            throw new AuthenticationException(AuthExceptionType.SIGNATURE_JWT);
         } catch (Exception e) {
-            exceptionType = AuthExceptionType.UNKNOWN_JWT;
+            throw new AuthenticationException(AuthExceptionType.UNKNOWN_JWT);
         }
-        return new JwtTokenValid(false, exceptionType);
     }
 
     public long getValidRefreshMilliSecond() {

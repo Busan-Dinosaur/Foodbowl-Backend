@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.auth.application.apple.AppleOAuthUserProvider;
 import org.dinosaur.foodbowl.domain.auth.application.dto.AppleUser;
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
-import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenValid;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.AppleLoginRequest;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.RenewTokenRequest;
 import org.dinosaur.foodbowl.domain.auth.dto.response.RenewTokenResponse;
@@ -84,10 +83,7 @@ public class AuthService {
     }
 
     private void validateRefreshToken(String savedRefreshToken, String refreshToken) {
-        JwtTokenValid refreshTokenValid = jwtTokenProvider.validateToken(refreshToken);
-        if (!refreshTokenValid.isValid()) {
-            throw new AuthenticationException(refreshTokenValid.exceptionType());
-        }
+        jwtTokenProvider.extractValidClaims(refreshToken);
         if (!Objects.equals(savedRefreshToken, refreshToken)) {
             throw new AuthenticationException(AuthExceptionType.NOT_MATCH_REFRESH_TOKEN);
         }
