@@ -2,6 +2,7 @@ package org.dinosaur.foodbowl.domain.photo.vo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.dinosaur.foodbowl.domain.photo.domain.vo.PhotoName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.photo.vo;
+package org.dinosaur.foodbowl.domain.photo.domain.vo;
 
 import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_BASE_NAME_ERROR;
 import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_EXTENSION_ERROR;

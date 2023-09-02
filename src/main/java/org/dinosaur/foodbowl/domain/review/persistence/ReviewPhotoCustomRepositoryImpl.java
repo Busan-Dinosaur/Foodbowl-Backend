@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.domain.review.persistence;
 
-import static org.dinosaur.foodbowl.domain.photo.domain.QReviewPhoto.reviewPhoto;
+
+import static org.dinosaur.foodbowl.domain.review.domain.QReviewPhoto.reviewPhoto;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
