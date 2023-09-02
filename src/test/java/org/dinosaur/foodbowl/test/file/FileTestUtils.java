@@ -1,5 +1,7 @@
 package org.dinosaur.foodbowl.test.file;
 
+import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_WRITE;
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -7,7 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
-import org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType;
 import org.dinosaur.foodbowl.global.exception.FileException;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -25,7 +26,7 @@ public class FileTestUtils {
             ImageIO.write(image, "jpg", byteArrayOutputStream);
             return byteArrayOutputStream.toByteArray();
         } catch (IOException e) {
-            throw new FileException(FileExceptionType.FILE_WRITE_ERROR);
+            throw new FileException(FILE_WRITE);
         }
     }
 

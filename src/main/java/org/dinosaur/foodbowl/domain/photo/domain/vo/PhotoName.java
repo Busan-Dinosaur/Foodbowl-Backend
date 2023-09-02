@@ -1,8 +1,8 @@
 package org.dinosaur.foodbowl.domain.photo.domain.vo;
 
-import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_BASE_NAME_ERROR;
-import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_EXTENSION_ERROR;
-import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_FORMAT_ERROR;
+import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_BASE_NAME;
+import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_EXTENSION;
+import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_FORMAT;
 
 import java.util.Set;
 import java.util.UUID;
@@ -24,7 +24,7 @@ public class PhotoName {
         String extension = StringUtils.getFilenameExtension(originalFilename);
 
         if (extension == null) {
-            throw new FileException(FILE_FORMAT_ERROR);
+            throw new FileException(FILE_FORMAT);
         }
         String fileBaseName = UUID.randomUUID().toString().substring(0, 8);
         validateFileName(fileBaseName);
@@ -35,13 +35,13 @@ public class PhotoName {
 
     private static void validateFileName(String fileName) {
         if (fileName == null || fileName.isBlank()) {
-            throw new FileException(FILE_BASE_NAME_ERROR);
+            throw new FileException(FILE_BASE_NAME);
         }
     }
 
     private static void validateExtension(String extension) {
         if (!IMAGE_EXTENSIONS.contains(extension.toLowerCase())) {
-            throw new FileException(FILE_EXTENSION_ERROR);
+            throw new FileException(FILE_EXTENSION);
         }
     }
 }
