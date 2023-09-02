@@ -1,7 +1,7 @@
 package org.dinosaur.foodbowl.domain.review.exception;
 
 import lombok.Getter;
-import org.dinosaur.foodbowl.global.exception.ExceptionType;
+import org.dinosaur.foodbowl.global.exception.type.ExceptionType;
 
 @Getter
 public enum ReviewExceptionType implements ExceptionType {
