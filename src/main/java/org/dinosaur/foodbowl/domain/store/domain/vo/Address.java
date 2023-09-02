@@ -1,5 +1,6 @@
 package org.dinosaur.foodbowl.domain.store.domain.vo;
 
+import static org.dinosaur.foodbowl.domain.store.exception.StoreExceptionType.ADDRESS_NOT_FOUND;
 import static org.dinosaur.foodbowl.domain.store.exception.StoreExceptionType.INVALID_ADDRESS;
 
 import jakarta.persistence.Column;
@@ -49,8 +50,11 @@ public class Address {
     private Coordinate coordinate;
 
     public static Address of(String storeAddress, BigDecimal x, BigDecimal y) {
-        List<String> addressElements = Arrays.stream(storeAddress.split(DELIMITER)).toList();
+        if (storeAddress == null) {
+            throw new InvalidArgumentException(ADDRESS_NOT_FOUND);
+        }
 
+        List<String> addressElements = Arrays.stream(storeAddress.split(DELIMITER)).toList();
         if (addressElements.size() < MIN_SIZE) {
             throw new InvalidArgumentException(INVALID_ADDRESS);
         }
