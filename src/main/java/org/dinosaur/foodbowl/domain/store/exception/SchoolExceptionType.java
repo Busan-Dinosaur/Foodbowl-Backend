@@ -1,7 +1,7 @@
 package org.dinosaur.foodbowl.domain.store.exception;
 
 import lombok.Getter;
-import org.dinosaur.foodbowl.global.exception.ExceptionType;
+import org.dinosaur.foodbowl.global.exception.type.ExceptionType;
 
 @Getter
 public enum SchoolExceptionType implements ExceptionType {
