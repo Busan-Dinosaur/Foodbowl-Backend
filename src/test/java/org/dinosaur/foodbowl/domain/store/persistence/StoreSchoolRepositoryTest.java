@@ -46,12 +46,10 @@ class StoreSchoolRepositoryTest extends PersistenceTest {
 
         StoreSchool saveStoreSchool = storeSchoolRepository.save(storeSchool);
 
-        assertSoftly(
-                softly -> {
-                    softly.assertThat(saveStoreSchool.getId()).isNotNull();
-                    softly.assertThat(saveStoreSchool.getStore()).isEqualTo(store);
-                    softly.assertThat(saveStoreSchool.getSchool()).isEqualTo(school);
-                }
-        );
+        assertSoftly(softly -> {
+            softly.assertThat(saveStoreSchool.getId()).isNotNull();
+            softly.assertThat(saveStoreSchool.getStore()).isEqualTo(store);
+            softly.assertThat(saveStoreSchool.getSchool()).isEqualTo(school);
+        });
     }
 }

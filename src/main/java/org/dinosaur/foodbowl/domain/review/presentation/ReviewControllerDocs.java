@@ -13,7 +13,7 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
-import org.dinosaur.foodbowl.global.exception.ExceptionResponse;
+import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 

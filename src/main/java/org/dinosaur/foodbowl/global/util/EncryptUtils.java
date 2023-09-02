@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.dinosaur.foodbowl.global.exception.ServerException;
-import org.dinosaur.foodbowl.global.exception.ServerExceptionType;
+import org.dinosaur.foodbowl.global.exception.type.ServerExceptionType;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EncryptUtils {

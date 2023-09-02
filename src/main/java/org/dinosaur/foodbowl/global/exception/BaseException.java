@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.global.exception;
 
 import lombok.Getter;
+import org.dinosaur.foodbowl.global.exception.type.ExceptionType;
 
 @Getter
 public class BaseException extends RuntimeException {

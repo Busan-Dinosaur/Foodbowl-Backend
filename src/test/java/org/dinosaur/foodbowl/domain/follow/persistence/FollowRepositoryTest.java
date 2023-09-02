@@ -34,17 +34,15 @@ class FollowRepositoryTest extends PersistenceTest {
         Pageable pageable = PageRequest.of(0, 1, Sort.by("createdAt").descending());
         Slice<Follow> result = followRepository.findAllByFollower(follower, pageable);
 
-        assertSoftly(
-                softly -> {
-                    softly.assertThat(result.getContent().size()).isEqualTo(1);
-                    softly.assertThat(result.getContent().get(0)).isEqualTo(followB);
-                    softly.assertThat(result.isFirst()).isTrue();
-                    softly.assertThat(result.isLast()).isFalse();
-                    softly.assertThat(result.hasNext()).isTrue();
-                    softly.assertThat(result.getNumber()).isEqualTo(0);
-                    softly.assertThat(result.getSize()).isEqualTo(1);
-                }
-        );
+        assertSoftly(softly -> {
+            softly.assertThat(result.getContent().size()).isEqualTo(1);
+            softly.assertThat(result.getContent().get(0)).isEqualTo(followB);
+            softly.assertThat(result.isFirst()).isTrue();
+            softly.assertThat(result.isLast()).isFalse();
+            softly.assertThat(result.hasNext()).isTrue();
+            softly.assertThat(result.getNumber()).isEqualTo(0);
+            softly.assertThat(result.getSize()).isEqualTo(1);
+        });
     }
 
     @Test
@@ -59,17 +57,15 @@ class FollowRepositoryTest extends PersistenceTest {
         Pageable pageable = PageRequest.of(0, 1, Sort.by("createdAt").descending());
         Slice<Follow> result = followRepository.findAllByFollowing(following, pageable);
 
-        assertSoftly(
-                softly -> {
-                    softly.assertThat(result.getContent().size()).isEqualTo(1);
-                    softly.assertThat(result.getContent().get(0)).isEqualTo(followB);
-                    softly.assertThat(result.isFirst()).isTrue();
-                    softly.assertThat(result.isLast()).isFalse();
-                    softly.assertThat(result.hasNext()).isTrue();
-                    softly.assertThat(result.getNumber()).isEqualTo(0);
-                    softly.assertThat(result.getSize()).isEqualTo(1);
-                }
-        );
+        assertSoftly(softly -> {
+            softly.assertThat(result.getContent().size()).isEqualTo(1);
+            softly.assertThat(result.getContent().get(0)).isEqualTo(followB);
+            softly.assertThat(result.isFirst()).isTrue();
+            softly.assertThat(result.isLast()).isFalse();
+            softly.assertThat(result.hasNext()).isTrue();
+            softly.assertThat(result.getNumber()).isEqualTo(0);
+            softly.assertThat(result.getSize()).isEqualTo(1);
+        });
     }
 
     @Nested

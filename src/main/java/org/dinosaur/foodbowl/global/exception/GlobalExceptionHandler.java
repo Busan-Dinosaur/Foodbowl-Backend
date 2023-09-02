@@ -3,11 +3,15 @@ package org.dinosaur.foodbowl.global.exception;
 import jakarta.validation.ConstraintViolationException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.dinosaur.foodbowl.global.exception.response.ErrorResponse;
+import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
+import org.dinosaur.foodbowl.global.exception.type.ServerExceptionType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -23,7 +27,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleException(Exception e) {
         log.error("[" + e.getClass() + "] " + e.getMessage());
         return ResponseEntity.internalServerError()
-                .body(new ExceptionResponse("SERVER-100", "알 수 없는 서버 에러가 발생했습니다."));
+                .body(ExceptionResponse.from(ServerExceptionType.SERVER_ERROR));
     }
 
     @ExceptionHandler(ServerException.class)
@@ -78,7 +82,23 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         );
         log.warn("[" + e.getClass() + "] " + errorResponse);
         return ResponseEntity.badRequest()
-                .body(new ExceptionResponse("CLIENT-102", errorResponse.toString()));
+                .body(new ExceptionResponse("CLIENT-103", errorResponse.toString()));
+    }
+
+    @Override
+    public ResponseEntity<Object> handleMissingServletRequestParameter(
+            MissingServletRequestParameterException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request
+    ) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                ex.getParameterName(),
+                "파라미터가 필요합니다."
+        );
+        log.warn("[" + ex.getClass() + "] " + errorResponse);
+        return ResponseEntity.badRequest()
+                .body(new ExceptionResponse("CLIENT-104", errorResponse.toString()));
     }
 
     @ExceptionHandler(BadRequestException.class)

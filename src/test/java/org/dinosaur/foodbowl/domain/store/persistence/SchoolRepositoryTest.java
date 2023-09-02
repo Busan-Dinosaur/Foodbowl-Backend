@@ -31,12 +31,10 @@ class SchoolRepositoryTest extends PersistenceTest {
 
         School saveSchool = schoolRepository.save(school);
 
-        assertSoftly(
-                softly -> {
-                    softly.assertThat(saveSchool.getId()).isNotNull();
-                    softly.assertThat(saveSchool.getName()).isEqualTo(school.getName());
-                }
-        );
+        assertSoftly(softly -> {
+            softly.assertThat(saveSchool.getId()).isNotNull();
+            softly.assertThat(saveSchool.getName()).isEqualTo(school.getName());
+        });
     }
 
     private School generateSchool() {

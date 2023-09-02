@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.domain.bookmark.presentation;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -8,7 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Positive;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
-import org.dinosaur.foodbowl.global.exception.ExceptionResponse;
+import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
 import org.springframework.http.ResponseEntity;
 
 @Tag(name = "북마크", description = "북마크 API")
@@ -38,7 +39,10 @@ public interface BookmarkControllerDocs {
             )
     })
     ResponseEntity<Void> create(
-            @Positive(message = "가게 ID는 양수만 가능합니다.") Long storeId,
+            @Parameter(description = "가게 ID", example = "1")
+            @Positive(message = "가게 ID는 양수만 가능합니다.")
+            Long storeId,
+
             Member member
     );
 
@@ -66,7 +70,10 @@ public interface BookmarkControllerDocs {
             )
     })
     ResponseEntity<Void> delete(
-            @Positive(message = "가게 ID는 양수만 가능합니다.") Long storeId,
+            @Parameter(description = "가게 ID", example = "1")
+            @Positive(message = "가게 ID는 양수만 가능합니다.")
+            Long storeId,
+
             Member member
     );
 }

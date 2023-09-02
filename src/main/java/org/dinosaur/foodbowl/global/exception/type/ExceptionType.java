@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.global.exception;
+package org.dinosaur.foodbowl.global.exception.type;
 
 public interface ExceptionType {
 

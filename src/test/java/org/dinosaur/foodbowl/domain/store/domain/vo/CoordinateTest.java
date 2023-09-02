@@ -22,12 +22,10 @@ class CoordinateTest {
 
         Coordinate coordinate = new Coordinate(x, y);
 
-        assertSoftly(
-                softly -> {
-                    softly.assertThat(coordinate.getX()).isEqualTo(x);
-                    softly.assertThat(coordinate.getY()).isEqualTo(y);
-                }
-        );
+        assertSoftly(softly -> {
+            softly.assertThat(coordinate.getX()).isEqualTo(x);
+            softly.assertThat(coordinate.getY()).isEqualTo(y);
+        });
     }
 
     @ParameterizedTest
