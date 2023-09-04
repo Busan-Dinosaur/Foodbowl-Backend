@@ -2,6 +2,7 @@ package org.dinosaur.foodbowl.test.persister;
 
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.domain.store.persistence.SchoolRepository;
 
@@ -38,7 +39,7 @@ public class SchoolTestPersister {
 
         public School save() {
             School school = School.builder()
-                    .name(name == null ? "부산대학교" : name)
+                    .name(name == null ? RandomStringUtils.random(2, true, false) + "대학교" : name)
                     .x(x == null ? BigDecimal.valueOf(123.1245) : x)
                     .y(y == null ? BigDecimal.valueOf(37.445) : y)
                     .build();

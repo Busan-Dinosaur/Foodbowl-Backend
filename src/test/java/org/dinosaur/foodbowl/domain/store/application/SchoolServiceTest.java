@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import java.util.List;
 import org.dinosaur.foodbowl.domain.store.domain.School;
+import org.dinosaur.foodbowl.domain.store.dto.response.SchoolsResponse;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.junit.jupiter.api.Nested;
@@ -34,6 +36,16 @@ class SchoolServiceTest extends IntegrationTest {
         void 존재하지_않는_학교로_조회한다() {
             assertThat(schoolService.findByName("우테코대학교")).isEmpty();
         }
+    }
+
+    @Test
+    void 모든_학교_목록을_이름순으로_조회한다() {
+        School schoolA = schoolTestPersister.builder().name("부산대학교").save();
+        School schoolB = schoolTestPersister.builder().name("강남대학교").save();
+
+        SchoolsResponse response = schoolService.getSchools();
+
+        assertThat(response).usingRecursiveComparison().isEqualTo(SchoolsResponse.from(List.of(schoolB, schoolA)));
     }
 
     @Nested

@@ -8,12 +8,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
+import org.dinosaur.foodbowl.domain.store.application.SchoolService;
 import org.dinosaur.foodbowl.domain.store.application.StoreService;
+import org.dinosaur.foodbowl.domain.store.dto.response.CategoriesResponse;
 import org.dinosaur.foodbowl.domain.store.dto.response.CategoryResponse;
-import org.dinosaur.foodbowl.domain.store.dto.response.CategoryResponses;
+import org.dinosaur.foodbowl.domain.store.dto.response.SchoolResponse;
+import org.dinosaur.foodbowl.domain.store.dto.response.SchoolsResponse;
 import org.dinosaur.foodbowl.test.PresentationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,14 +42,17 @@ class StoreControllerTest extends PresentationTest {
     @MockBean
     private StoreService storeService;
 
+    @MockBean
+    private SchoolService schoolService;
+
     @Test
     void 가게_카테고리_목록_조회시_카테고리_목록과_200_응답을_반환한다() throws Exception {
-        CategoryResponses categoryResponses = new CategoryResponses(
+        CategoriesResponse categoriesResponse = new CategoriesResponse(
                 List.of(
                         new CategoryResponse(1L, "카페"),
                         new CategoryResponse(2L, "술집"))
         );
-        given(storeService.getCategories()).willReturn(categoryResponses);
+        given(storeService.getCategories()).willReturn(categoriesResponse);
 
         MvcResult mvcResult = mockMvc.perform(get("/v1/stores/categories")
                         .header(AUTHORIZATION, BEARER + jwtTokenProvider.createAccessToken(1L, ROLE_회원)))
@@ -53,8 +60,29 @@ class StoreControllerTest extends PresentationTest {
                 .andExpect(status().isOk())
                 .andReturn();
         String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
-        CategoryResponses result = objectMapper.readValue(jsonResponse, CategoryResponses.class);
+        CategoriesResponse result = objectMapper.readValue(jsonResponse, CategoriesResponse.class);
 
-        assertThat(result).usingRecursiveComparison().isEqualTo(categoryResponses);
+        assertThat(result).usingRecursiveComparison().isEqualTo(categoriesResponse);
+    }
+
+    @Test
+    void 학교_목록_조회시_학교_목록과_200_응답을_반환한다() throws Exception {
+        SchoolsResponse schoolsResponse = new SchoolsResponse(
+                List.of(
+                        new SchoolResponse(1L, "강남대학교", BigDecimal.valueOf(127.125), BigDecimal.valueOf(35.12)),
+                        new SchoolResponse(1L, "부산대학교", BigDecimal.valueOf(127.350), BigDecimal.valueOf(35.78))
+                )
+        );
+        given(schoolService.getSchools()).willReturn(schoolsResponse);
+
+        MvcResult mvcResult = mockMvc.perform(get("/v1/stores/schools")
+                        .header(AUTHORIZATION, BEARER + jwtTokenProvider.createAccessToken(1L, ROLE_회원)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        SchoolsResponse result = objectMapper.readValue(jsonResponse, SchoolsResponse.class);
+
+        assertThat(result).usingRecursiveComparison().isEqualTo(schoolsResponse);
     }
 }

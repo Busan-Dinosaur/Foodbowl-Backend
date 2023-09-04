@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import org.dinosaur.foodbowl.domain.photo.domain.Photo;
-import org.dinosaur.foodbowl.domain.review.persistence.ReviewPhotoRepository;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
+import org.dinosaur.foodbowl.domain.review.persistence.ReviewPhotoRepository;
 import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

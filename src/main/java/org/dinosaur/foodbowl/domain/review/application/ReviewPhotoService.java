@@ -3,9 +3,9 @@ package org.dinosaur.foodbowl.domain.review.application;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.photo.domain.Photo;
+import org.dinosaur.foodbowl.domain.review.domain.Review;
 import org.dinosaur.foodbowl.domain.review.domain.ReviewPhoto;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewPhotoRepository;
-import org.dinosaur.foodbowl.domain.review.domain.Review;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

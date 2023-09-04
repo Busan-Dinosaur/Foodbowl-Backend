@@ -2,6 +2,7 @@ package org.dinosaur.foodbowl.test.persister;
 
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.dinosaur.foodbowl.domain.store.domain.Category;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
@@ -60,7 +61,7 @@ public class StoreTestPersister {
 
         public Store save() {
             Store store = Store.builder()
-                    .locationId(locationId == null ? "123124124" : locationId)
+                    .locationId(locationId == null ? RandomStringUtils.random(10, false, true) : locationId)
                     .storeName(storeName == null ? "비비큐 여의도한강공원점" : storeName)
                     .category(category == null ? categoryRepository.findById(1L) : category)
                     .address(address == null ?

@@ -43,4 +43,16 @@ public class School extends AuditingEntity {
         this.name = new SchoolName(name);
         this.coordinate = new Coordinate(x, y);
     }
+
+    public String getName() {
+        return this.name.getValue();
+    }
+
+    public BigDecimal getX() {
+        return this.coordinate.getX();
+    }
+
+    public BigDecimal getY() {
+        return this.coordinate.getY();
+    }
 }
