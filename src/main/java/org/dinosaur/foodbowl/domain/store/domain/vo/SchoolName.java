@@ -1,7 +1,5 @@
 package org.dinosaur.foodbowl.domain.store.domain.vo;
 
-import static org.dinosaur.foodbowl.domain.store.exception.SchoolExceptionType.INVALID_SCHOOL_NAME;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
@@ -10,6 +8,7 @@ import java.util.regex.Pattern;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.dinosaur.foodbowl.domain.store.exception.SchoolExceptionType;
 import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 
 @Getter
@@ -31,7 +30,7 @@ public class SchoolName {
     private void validate(String name) {
         Matcher matcher = SCHOOL_NAME_PATTERN.matcher(name);
         if (!matcher.matches()) {
-            throw new InvalidArgumentException(INVALID_SCHOOL_NAME);
+            throw new InvalidArgumentException(SchoolExceptionType.INVALID_SCHOOL_NAME);
         }
     }
 }

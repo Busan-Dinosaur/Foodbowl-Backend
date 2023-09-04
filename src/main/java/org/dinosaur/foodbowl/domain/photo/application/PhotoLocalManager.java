@@ -1,9 +1,5 @@
 package org.dinosaur.foodbowl.domain.photo.application;
 
-import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_NAME;
-import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_READ;
-import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_TRANSFER;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import org.dinosaur.foodbowl.domain.photo.domain.vo.PhotoName;
+import org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType;
 import org.dinosaur.foodbowl.global.exception.FileException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -75,7 +72,7 @@ public class PhotoLocalManager implements PhotoManager {
         try (InputStream originalInputStream = new BufferedInputStream(file.getInputStream())) {
             return ImageIO.read(originalInputStream) == null;
         } catch (IOException e) {
-            throw new FileException(FILE_READ);
+            throw new FileException(FileExceptionType.FILE_READ);
         }
     }
 
@@ -83,7 +80,7 @@ public class PhotoLocalManager implements PhotoManager {
         try {
             file.transferTo(uploadPath);
         } catch (IOException e) {
-            throw new FileException(FILE_TRANSFER, e);
+            throw new FileException(FileExceptionType.FILE_TRANSFER, e);
         }
     }
 
@@ -99,7 +96,7 @@ public class PhotoLocalManager implements PhotoManager {
         int urlIndex = fullPath.lastIndexOf(url);
 
         if (urlIndex == -1) {
-            throw new FileException(FILE_NAME);
+            throw new FileException(FileExceptionType.FILE_NAME);
         }
         int urlNextIndex = urlIndex + url.length();
         return SYSTEM_PATH + fullPath.substring(urlNextIndex);
