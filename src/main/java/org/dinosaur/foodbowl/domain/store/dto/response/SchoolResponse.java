@@ -13,10 +13,10 @@ public record SchoolResponse(
         String name,
 
         @Schema(description = "경도", example = "127.521")
-        BigDecimal longitude,
+        BigDecimal x,
 
         @Schema(description = "위도", example = "35.77")
-        BigDecimal latitude
+        BigDecimal y
 ) {
 
     public static SchoolResponse from(School school) {
