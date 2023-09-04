@@ -1,13 +1,18 @@
 package org.dinosaur.foodbowl.domain.review.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
+import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
+import org.dinosaur.foodbowl.global.exception.BadRequestException;
+import org.dinosaur.foodbowl.global.exception.NotFoundException;
 import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.dinosaur.foodbowl.test.file.FileTestUtils;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,39 +23,84 @@ class ReviewServiceTest extends IntegrationTest {
     @Autowired
     private ReviewService reviewService;
 
-    @Test
-    void 사진_없이_리뷰를_저장한다() {
-        ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
-        Member member = memberTestPersister.memberBuilder().save();
+    @Autowired
+    private ReviewRepository reviewRepository;
 
-        Long reviewId = reviewService.create(reviewCreateRequest, null, member);
+    @Nested
+    class 리뷰_저장_시 {
 
-        assertThat(reviewId).isNotNull();
+        @Test
+        void 사진_없이_저장한다() {
+            ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
+            Member member = memberTestPersister.memberBuilder().save();
+
+            Long reviewId = reviewService.create(reviewCreateRequest, null, member);
+
+            assertThat(reviewId).isNotNull();
+        }
+
+        @Test
+        void 사진을_포함해서_저장한다() {
+            List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2);
+            ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
+            Member member = memberTestPersister.memberBuilder().save();
+
+            Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member);
+
+            assertThat(reviewId).isNotNull();
+            FileTestUtils.cleanUp();
+        }
+
+        @Test
+        void 이미_생성된_가게인_경우에도_정상적으로_저장한다() {
+            ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
+            Member member = memberTestPersister.memberBuilder().save();
+            reviewService.create(reviewCreateRequest, null, member);
+            ReviewCreateRequest otherReviewCreateRequest = generateReviewCreateRequest();
+            Member otherMember = memberTestPersister.memberBuilder().save();
+
+            Long savedReviewId = reviewService.create(otherReviewCreateRequest, null, otherMember);
+
+            assertThat(savedReviewId).isNotNull();
+        }
     }
 
-    @Test
-    void 사진을_포함해서_리뷰를_저장한다() {
-        List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2);
-        ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
-        Member member = memberTestPersister.memberBuilder().save();
+    @Nested
+    class 리뷰_삭제_시 {
 
-        Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member);
+        @Test
+        void 정상적으로_삭제한다() {
+            List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2);
+            ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
+            Member member = memberTestPersister.memberBuilder().save();
+            Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member);
 
-        assertThat(reviewId).isNotNull();
-        FileTestUtils.cleanUp();
-    }
+            reviewService.delete(reviewId, member);
 
-    @Test
-    void 이미_생성된_가게인_경우에도_정상적으로_리뷰를_저장한다() {
-        ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
-        Member member = memberTestPersister.memberBuilder().save();
-        reviewService.create(reviewCreateRequest, null, member);
-        ReviewCreateRequest otherReviewCreateRequest = generateReviewCreateRequest();
-        Member otherMember = memberTestPersister.memberBuilder().save();
+            assertThat(reviewRepository.findById(reviewId)).isEmpty();
+        }
 
-        Long savedReviewId = reviewService.create(otherReviewCreateRequest, null, otherMember);
+        @Test
+        void 존재하는_리뷰가_아니면_예외가_발생한다() {
+            Member member = memberTestPersister.memberBuilder().save();
 
-        assertThat(savedReviewId).isNotNull();
+            assertThatThrownBy(() -> reviewService.delete(-1L, member))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("일치하는 리뷰를 찾을 수 없습니다.");
+        }
+
+        @Test
+        void 작성자가_아니면_예외가_발생한다() {
+            List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2);
+            ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
+            Member member = memberTestPersister.memberBuilder().save();
+            Member otherMember = memberTestPersister.memberBuilder().save();
+            Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member);
+
+            assertThatThrownBy(() -> reviewService.delete(reviewId, otherMember))
+                    .isInstanceOf(BadRequestException.class)
+                    .hasMessage("본인이 작성한 리뷰만 삭제할 수 있습니다.");
+        }
     }
 
     private ReviewCreateRequest generateReviewCreateRequest() {

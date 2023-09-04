@@ -1,38 +1,29 @@
 package org.dinosaur.foodbowl.domain.photo.application;
 
-import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_BASE_NAME_ERROR;
-import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_EXTENSION_ERROR;
-import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_FORMAT_ERROR;
-import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_READ_ERROR;
-import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_TRANSFER_ERROR;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 import javax.imageio.ImageIO;
+import org.dinosaur.foodbowl.domain.photo.domain.vo.PhotoName;
+import org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType;
 import org.dinosaur.foodbowl.global.exception.FileException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 @Component
-public class PhotoLocalUploader implements PhotoUploader {
+public class PhotoLocalManager implements PhotoManager {
 
-    private static final Set<String> IMAGE_EXTENSIONS = Set.of("jpeg", "jpg", "png", "webp");
     private static final String SLASH = File.separator;
-    private static final String UNDER_BAR = "_";
-    private static final String DOT = ".";
     private static final String SYSTEM_PATH = System.getProperty("user.dir");
 
     private final String url;
     private final String fileDirectory;
 
-    public PhotoLocalUploader(
+    public PhotoLocalManager(
             @Value("${openapi.dev_url}") String url,
             @Value("${file.dir}") String fileDirectory
     ) {
@@ -49,10 +40,7 @@ public class PhotoLocalUploader implements PhotoUploader {
                 continue;
             }
 
-            String originalFilename = multipartFile.getOriginalFilename();
-            validateFileName(originalFilename);
-            String saveFileName = convertToPathWithName(originalFilename);
-
+            String saveFileName = PhotoName.of(multipartFile.getOriginalFilename());
             File uploadPath = new File(directory, saveFileName);
             transferFile(multipartFile, uploadPath);
             filePaths.add(getImageFullPath(workingDirectory, saveFileName));
@@ -84,33 +72,7 @@ public class PhotoLocalUploader implements PhotoUploader {
         try (InputStream originalInputStream = new BufferedInputStream(file.getInputStream())) {
             return ImageIO.read(originalInputStream) == null;
         } catch (IOException e) {
-            throw new FileException(FILE_READ_ERROR);
-        }
-    }
-
-    private String convertToPathWithName(String originalFilename) {
-        int lastIndex = originalFilename.lastIndexOf(DOT);
-
-        if (lastIndex < 0) {
-            throw new FileException(FILE_FORMAT_ERROR);
-        }
-        String fileBaseName = UUID.randomUUID().toString().substring(0, 8);
-        String extension = originalFilename.substring(lastIndex + 1);
-        validateFileName(fileBaseName);
-        validateExtension(extension);
-
-        return fileBaseName + UNDER_BAR + System.currentTimeMillis() + DOT + extension;
-    }
-
-    private void validateFileName(String fileName) {
-        if (fileName == null || fileName.isBlank()) {
-            throw new FileException(FILE_BASE_NAME_ERROR);
-        }
-    }
-
-    private void validateExtension(String extension) {
-        if (!IMAGE_EXTENSIONS.contains(extension.toLowerCase())) {
-            throw new FileException(FILE_EXTENSION_ERROR);
+            throw new FileException(FileExceptionType.FILE_READ);
         }
     }
 
@@ -118,7 +80,31 @@ public class PhotoLocalUploader implements PhotoUploader {
         try {
             file.transferTo(uploadPath);
         } catch (IOException e) {
-            throw new FileException(FILE_TRANSFER_ERROR, e);
+            throw new FileException(FileExceptionType.FILE_TRANSFER, e);
+        }
+    }
+
+    public void delete(List<String> paths) {
+        for (String path : paths) {
+            String deletePath = getImageLocalPath(path);
+            File file = new File(deletePath);
+            deleteFile(file);
+        }
+    }
+
+    private String getImageLocalPath(String fullPath) {
+        int urlIndex = fullPath.lastIndexOf(url);
+
+        if (urlIndex == -1) {
+            throw new FileException(FileExceptionType.FILE_NAME);
+        }
+        int urlNextIndex = urlIndex + url.length();
+        return SYSTEM_PATH + fullPath.substring(urlNextIndex);
+    }
+
+    private void deleteFile(File file) {
+        if (file.exists()) {
+            file.delete();
         }
     }
 }

@@ -1,8 +1,5 @@
 package org.dinosaur.foodbowl.domain.store.domain.vo;
 
-import static org.dinosaur.foodbowl.domain.store.exception.CoordinateExceptionType.INVALID_X_ERROR;
-import static org.dinosaur.foodbowl.domain.store.exception.CoordinateExceptionType.INVALID_Y_ERROR;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
@@ -10,6 +7,7 @@ import java.math.BigDecimal;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.dinosaur.foodbowl.domain.store.exception.CoordinateExceptionType;
 import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 
 @Getter
@@ -39,13 +37,13 @@ public class Coordinate {
 
     private void validateX(BigDecimal x) {
         if (x.compareTo(MIN_X_VALUE) < 0 || x.compareTo(MAX_X_VALUE) > 0) {
-            throw new InvalidArgumentException(INVALID_X_ERROR);
+            throw new InvalidArgumentException(CoordinateExceptionType.INVALID_X);
         }
     }
 
     private void validateY(BigDecimal y) {
         if (y.compareTo(MIN_Y_VALUE) < 0 || y.compareTo(MAX_Y_VALUE) > 0) {
-            throw new InvalidArgumentException(INVALID_Y_ERROR);
+            throw new InvalidArgumentException(CoordinateExceptionType.INVALID_Y);
         }
     }
 

@@ -16,6 +16,16 @@ class SchoolRepositoryTest extends PersistenceTest {
     private SchoolRepository schoolRepository;
 
     @Test
+    void 이름으로_학교를_조회한다() {
+        School school = generateSchool();
+        schoolRepository.save(school);
+
+        School findSchool = schoolRepository.findByName_Name(school.getName().getName()).get();
+
+        assertThat(findSchool.getName()).isEqualTo(school.getName());
+    }
+
+    @Test
     void 학교를_저장한다() {
         School school = generateSchool();
 
@@ -25,16 +35,6 @@ class SchoolRepositoryTest extends PersistenceTest {
             softly.assertThat(saveSchool.getId()).isNotNull();
             softly.assertThat(saveSchool.getName()).isEqualTo(school.getName());
         });
-    }
-
-    @Test
-    void 이름으로_학교를_조회한다() {
-        School school = generateSchool();
-        schoolRepository.save(school);
-
-        School findSchool = schoolRepository.findByName_Name(school.getName().getName()).get();
-
-        assertThat(findSchool.getName()).isEqualTo(school.getName());
     }
 
     private School generateSchool() {

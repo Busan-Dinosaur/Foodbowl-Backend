@@ -22,7 +22,7 @@ class SchoolNameTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"!부산대학교", "@서울대학교@", "+연세대학교-", "!@#!$"})
+    @ValueSource(strings = {"!부산대학교", "@서울123대ㄱ학교@", "+연세대학교-", "!@#!$"})
     void 학교_이름에_한글_숫자_영문_이외의_문자가_있으면_예외가_발생한다(String schoolName) {
         assertThatThrownBy(() -> new SchoolName(schoolName))
                 .isInstanceOf(InvalidArgumentException.class)

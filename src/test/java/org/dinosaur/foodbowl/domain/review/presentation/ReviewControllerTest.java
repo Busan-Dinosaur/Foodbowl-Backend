@@ -3,8 +3,11 @@ package org.dinosaur.foodbowl.domain.review.presentation;
 import static org.dinosaur.foodbowl.domain.member.domain.vo.RoleType.ROLE_회원;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -53,7 +56,7 @@ class ReviewControllerTest extends PresentationTest {
         private final String accessToken = jwtTokenProvider.createAccessToken(1L, ROLE_회원);
 
         @Test
-        void 사진이_포함된_경우_200_상태코드를_반환한다() throws Exception {
+        void 사진이_포함된_경우_200_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateDto();
             MockMultipartFile request = new MockMultipartFile(
@@ -78,7 +81,7 @@ class ReviewControllerTest extends PresentationTest {
         }
 
         @Test
-        void 사진이_없는_경우_200_상태코드를_반환한다() throws Exception {
+        void 사진이_없는_경우_200_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateDto();
             MockMultipartFile request = new MockMultipartFile(
@@ -99,7 +102,7 @@ class ReviewControllerTest extends PresentationTest {
         }
 
         @Test
-        void 사진이_4개_보다_많은_경우_400_상태코드를_반환한다() throws Exception {
+        void 사진이_4개_보다_많은_경우_400_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateDto();
             MockMultipartFile request = new MockMultipartFile(
@@ -157,7 +160,7 @@ class ReviewControllerTest extends PresentationTest {
         @ParameterizedTest
         @ValueSource(strings = {" "})
         @NullAndEmptySource
-        void 가게_위치_ID가_없는_경우_400_상태코드를_반환한다(String locationId) throws Exception {
+        void 가게_위치_ID가_없는_경우_400_응답을_반환한다(String locationId) throws Exception {
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
                     locationId,
                     "신천직화집",
@@ -191,7 +194,7 @@ class ReviewControllerTest extends PresentationTest {
         @ParameterizedTest
         @ValueSource(strings = {" "})
         @NullAndEmptySource
-        void 가게_이름이_없는_경우_400_상태코드를_반환한다(String storeName) throws Exception {
+        void 가게_이름이_없는_경우_400_응답을_반환한다(String storeName) throws Exception {
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
                     "12412515",
                     storeName,
@@ -225,7 +228,7 @@ class ReviewControllerTest extends PresentationTest {
         @ParameterizedTest
         @ValueSource(strings = {" "})
         @NullAndEmptySource
-        void 가게_주소가_없는_경우_400_상태코드를_반환한다(String address) throws Exception {
+        void 가게_주소가_없는_경우_400_응답을_반환한다(String address) throws Exception {
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
                     "12312414",
                     "국민연금공단",
@@ -257,7 +260,7 @@ class ReviewControllerTest extends PresentationTest {
         }
 
         @Test
-        void 가게_경도가_없는_경우_400_상태코드를_반환한다() throws Exception {
+        void 가게_경도가_없는_경우_400_응답을_반환한다() throws Exception {
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
                     "12251521",
                     "국민연금공단",
@@ -289,7 +292,7 @@ class ReviewControllerTest extends PresentationTest {
         }
 
         @Test
-        void 가게_위도가_없는_경우_400_상태코드를_반환한다() throws Exception {
+        void 가게_위도가_없는_경우_400_응답을_반환한다() throws Exception {
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
                     "134125",
                     "국민연금공단",
@@ -323,7 +326,7 @@ class ReviewControllerTest extends PresentationTest {
         @ParameterizedTest
         @ValueSource(strings = {" "})
         @NullAndEmptySource
-        void 가게_정보_URL_없는_경우_400_상태코드를_반환한다(String storeUrl) throws Exception {
+        void 가게_정보_URL_없는_경우_400_응답을_반환한다(String storeUrl) throws Exception {
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
                     "3241414",
                     "국민연금공단",
@@ -357,7 +360,7 @@ class ReviewControllerTest extends PresentationTest {
         @ParameterizedTest
         @ValueSource(strings = {" "})
         @NullAndEmptySource
-        void 가게_카테고리_정보가_없는_경우_400_상태코드를_반환한다(String category) throws Exception {
+        void 가게_카테고리_정보가_없는_경우_400_응답을_반환한다(String category) throws Exception {
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
                     "124121524",
                     "국민연금공단",
@@ -391,7 +394,7 @@ class ReviewControllerTest extends PresentationTest {
         @ParameterizedTest
         @ValueSource(strings = {" "})
         @NullAndEmptySource
-        void 가게_리뷰_내용이_없는_경우_400_상태코드를_반환한다(String content) throws Exception {
+        void 가게_리뷰_내용이_없는_경우_400_응답을_반환한다(String content) throws Exception {
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
                     "1234125",
                     "국민연금공단",
@@ -420,6 +423,47 @@ class ReviewControllerTest extends PresentationTest {
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("errorCode").value("CLIENT-100"))
                     .andExpect(jsonPath("$.message").value(containsString("가게 리뷰는 반드시 포함되어야 합니다.")));
+        }
+    }
+
+    @Nested
+    class 리뷰_삭제_시 {
+
+        private final String accessToken = jwtTokenProvider.createAccessToken(1L, ROLE_회원);
+
+        @Test
+        void 정상적으로_삭제되면_204_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            willDoNothing().given(reviewService).delete(anyLong(), any(Member.class));
+
+            mockMvc.perform(delete("/v1/reviews/{id}", 1L)
+                            .header(AUTHORIZATION, BEARER + accessToken))
+                    .andDo(print())
+                    .andExpect(status().isNoContent());
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"가", "a", "A", "@"})
+        void ID를_Long_타입으로_변환하지_못하면_400_응답을_반환한다(String reviewId) throws Exception {
+            mockMvc.perform(delete("/v1/reviews/{id}", reviewId)
+                            .header(AUTHORIZATION, BEARER + accessToken))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errorCode").value("CLIENT-103"))
+                    .andExpect(jsonPath("$.message",
+                            containsString(Long.class.getSimpleName() + " 타입으로 변환할 수 없는 요청입니다.")));
+        }
+
+        @Test
+        void ID가_양수가_아니면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(delete("/v1/reviews/{id}", -1L)
+                            .header(AUTHORIZATION, BEARER + accessToken))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message", containsString("ID는 양수만 가능합니다.")));
         }
     }
 
