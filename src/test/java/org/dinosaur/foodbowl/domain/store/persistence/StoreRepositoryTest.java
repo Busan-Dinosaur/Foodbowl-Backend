@@ -19,6 +19,20 @@ class StoreRepositoryTest extends PersistenceTest {
     private CategoryRepository categoryRepository;
 
     @Test
+    void 장소_ID로_가게를_조회한다() {
+        Store store = storeTestPersister.builder().save();
+
+        assertThat(storeRepository.findByLocationId(store.getLocationId())).isPresent();
+    }
+
+    @Test
+    void ID로_가게를_조회한다() {
+        Store store = storeTestPersister.builder().save();
+
+        assertThat(storeRepository.findById(store.getId())).isPresent();
+    }
+
+    @Test
     void 가게를_저장한다() {
         Store store = Store.builder()
                 .locationId("1412414")
@@ -36,19 +50,5 @@ class StoreRepositoryTest extends PersistenceTest {
         Store saveStore = storeRepository.save(store);
 
         assertThat(saveStore.getId()).isNotNull();
-    }
-
-    @Test
-    void 장소_ID로_가게를_조회한다() {
-        Store store = storeTestPersister.builder().save();
-
-        assertThat(storeRepository.findByLocationId(store.getLocationId())).isPresent();
-    }
-
-    @Test
-    void ID로_가게를_조회한다() {
-        Store store = storeTestPersister.builder().save();
-
-        assertThat(storeRepository.findById(store.getId())).isPresent();
     }
 }

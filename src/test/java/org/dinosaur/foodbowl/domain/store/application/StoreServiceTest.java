@@ -40,6 +40,50 @@ class StoreServiceTest extends IntegrationTest {
     }
 
     @Nested
+    class 가게를_조회할_때 {
+
+        @Test
+        void 이미_존재하는_가게를_조회한다() {
+            StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(
+                    null,
+                    null,
+                    null
+            );
+            Store store = storeService.create(storeCreateDtoWithoutSchool);
+
+            assertThat(storeService.findByLocationId(store.getLocationId())).isPresent();
+        }
+
+        @Test
+        void 존재하지_않는_가게를_조회한다() {
+            String locationId = String.valueOf(Long.MAX_VALUE);
+
+            assertThat(storeService.findByLocationId(locationId)).isEmpty();
+        }
+
+        @Test
+        void ID로_조회한다() {
+            StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(
+                    null,
+                    null,
+                    null
+            );
+            Store store = storeService.create(storeCreateDtoWithoutSchool);
+
+            Store findStore = storeService.findById(store.getId());
+
+            assertThat(findStore).isEqualTo(store);
+        }
+
+        @Test
+        void 존재하지_않는_ID로_조회하면_예외가_발생한다() {
+            assertThatThrownBy(() -> storeService.findById(Long.MAX_VALUE))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("일치하는 가게를 찾을 수 없습니다.");
+        }
+    }
+
+    @Nested
     class 가게를_생성할_때 {
 
         @Test
@@ -174,50 +218,6 @@ class StoreServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> storeService.create(storeCreateDto))
                     .isInstanceOf(InvalidArgumentException.class)
                     .hasMessage("일치하는 카테고리를 찾을 수 없습니다.");
-        }
-    }
-
-    @Nested
-    class 가게를_조회할_때 {
-
-        @Test
-        void 이미_존재하는_가게를_조회한다() {
-            StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(
-                    null,
-                    null,
-                    null
-            );
-            Store store = storeService.create(storeCreateDtoWithoutSchool);
-
-            assertThat(storeService.findByLocationId(store.getLocationId())).isPresent();
-        }
-
-        @Test
-        void 존재하지_않는_가게를_조회한다() {
-            String locationId = String.valueOf(Long.MAX_VALUE);
-
-            assertThat(storeService.findByLocationId(locationId)).isEmpty();
-        }
-
-        @Test
-        void ID로_조회한다() {
-            StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(
-                    null,
-                    null,
-                    null
-            );
-            Store store = storeService.create(storeCreateDtoWithoutSchool);
-
-            Store findStore = storeService.findById(store.getId());
-
-            assertThat(findStore).isEqualTo(store);
-        }
-
-        @Test
-        void 존재하지_않는_ID로_조회하면_예외가_발생한다() {
-            assertThatThrownBy(() -> storeService.findById(Long.MAX_VALUE))
-                    .isInstanceOf(NotFoundException.class)
-                    .hasMessage("일치하는 가게를 찾을 수 없습니다.");
         }
     }
 

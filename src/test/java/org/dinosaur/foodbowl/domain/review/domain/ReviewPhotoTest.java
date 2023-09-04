@@ -1,8 +1,8 @@
-package org.dinosaur.foodbowl.domain.photo.domain;
+package org.dinosaur.foodbowl.domain.review.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.dinosaur.foodbowl.domain.review.domain.Review;
+import org.dinosaur.foodbowl.domain.photo.domain.Photo;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;

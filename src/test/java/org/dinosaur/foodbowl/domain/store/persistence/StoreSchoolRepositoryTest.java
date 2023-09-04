@@ -19,24 +19,6 @@ class StoreSchoolRepositoryTest extends PersistenceTest {
     private StoreSchoolRepository storeSchoolRepository;
 
     @Test
-    void 가게와_학교의_관계를_저장한다() {
-        Store store = storeTestPersister.builder().save();
-        School school = schoolTestPersister.builder().save();
-        StoreSchool storeSchool = StoreSchool.builder()
-                .store(store)
-                .school(school)
-                .build();
-
-        StoreSchool saveStoreSchool = storeSchoolRepository.save(storeSchool);
-
-        assertSoftly(softly -> {
-            softly.assertThat(saveStoreSchool.getId()).isNotNull();
-            softly.assertThat(saveStoreSchool.getStore()).isEqualTo(store);
-            softly.assertThat(saveStoreSchool.getSchool()).isEqualTo(school);
-        });
-    }
-
-    @Test
     void 학교와_관련된_가게를_가져온다() {
         Store store = storeTestPersister.builder().save();
         School school = schoolTestPersister.builder().save();
@@ -52,5 +34,23 @@ class StoreSchoolRepositoryTest extends PersistenceTest {
                 .toList();
 
         assertThat(stores).contains(store);
+    }
+
+    @Test
+    void 가게와_학교의_관계를_저장한다() {
+        Store store = storeTestPersister.builder().save();
+        School school = schoolTestPersister.builder().save();
+        StoreSchool storeSchool = StoreSchool.builder()
+                .store(store)
+                .school(school)
+                .build();
+
+        StoreSchool saveStoreSchool = storeSchoolRepository.save(storeSchool);
+
+        assertSoftly(softly -> {
+            softly.assertThat(saveStoreSchool.getId()).isNotNull();
+            softly.assertThat(saveStoreSchool.getStore()).isEqualTo(store);
+            softly.assertThat(saveStoreSchool.getSchool()).isEqualTo(school);
+        });
     }
 }

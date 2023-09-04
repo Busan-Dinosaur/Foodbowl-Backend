@@ -7,7 +7,7 @@ import org.springframework.data.repository.Repository;
 
 public interface StoreSchoolRepository extends Repository<StoreSchool, Long> {
 
-    StoreSchool save(StoreSchool storeSchool);
-
     List<StoreSchool> findAllBySchool_Name(SchoolName name);
+
+    StoreSchool save(StoreSchool storeSchool);
 }

@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -50,5 +51,9 @@ public class Review extends AuditingEntity {
         this.member = member;
         this.store = store;
         this.content = content;
+    }
+
+    public boolean isNotOwnerOf(Member member) {
+        return !Objects.equals(this.member, member);
     }
 }

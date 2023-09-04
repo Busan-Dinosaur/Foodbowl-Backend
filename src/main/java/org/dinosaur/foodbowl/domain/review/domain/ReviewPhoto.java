@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.photo.domain;
+package org.dinosaur.foodbowl.domain.review.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,7 +16,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.dinosaur.foodbowl.domain.review.domain.Review;
+import org.dinosaur.foodbowl.domain.photo.domain.Photo;
 import org.dinosaur.foodbowl.global.persistence.AuditingEntity;
 
 @Getter
