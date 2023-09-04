@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.domain.review.domain;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -9,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.Objects;
 import lombok.AccessLevel;
@@ -17,6 +19,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
+import org.dinosaur.foodbowl.domain.review.domain.vo.Content;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.global.persistence.AuditingEntity;
 
@@ -42,18 +45,26 @@ public class Review extends AuditingEntity {
     @JoinColumn(name = "store_id", updatable = false)
     private Store store;
 
-    @NotNull
-    @Column(name = "content", length = 255)
-    private String content;
+    @Valid
+    @Embedded
+    private Content content;
 
     @Builder
     private Review(Member member, Store store, String content) {
         this.member = member;
         this.store = store;
-        this.content = content;
+        this.content = new Content(content);
     }
 
     public boolean isNotOwnerOf(Member member) {
         return !Objects.equals(this.member, member);
+    }
+
+    public void updateContent(String content) {
+        this.content = new Content(content);
+    }
+
+    public String getContent() {
+        return content.getValue();
     }
 }
