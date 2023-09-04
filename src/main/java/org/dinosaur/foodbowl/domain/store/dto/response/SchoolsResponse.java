@@ -11,10 +11,10 @@ public record SchoolsResponse(
 ) {
 
     public static SchoolsResponse from(List<School> schools) {
-        return new SchoolsResponse(listOf(schools));
+        return new SchoolsResponse(convertToResponse(schools));
     }
 
-    private static List<SchoolResponse> listOf(List<School> schools) {
+    private static List<SchoolResponse> convertToResponse(List<School> schools) {
         return schools.stream()
                 .map(SchoolResponse::from)
                 .toList();

@@ -14,10 +14,10 @@ public record CategoriesResponse(
 ) {
 
     public static CategoriesResponse from(List<Category> categories) {
-        return new CategoriesResponse(listOf(categories));
+        return new CategoriesResponse(convertToResponses(categories));
     }
 
-    private static List<CategoryResponse> listOf(List<Category> categories) {
+    private static List<CategoryResponse> convertToResponses(List<Category> categories) {
         return categories.stream()
                 .map(CategoryResponse::from)
                 .toList();
