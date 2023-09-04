@@ -6,7 +6,7 @@ import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.photo.application.PhotoService;
 import org.dinosaur.foodbowl.domain.photo.domain.Photo;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
-import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
+import org.dinosaur.foodbowl.domain.review.application.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.exception.ReviewExceptionType;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
 import org.dinosaur.foodbowl.domain.store.application.StoreService;

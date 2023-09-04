@@ -7,7 +7,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.application.ReviewService;
-import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
+import org.dinosaur.foodbowl.domain.review.application.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.global.presentation.Auth;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
