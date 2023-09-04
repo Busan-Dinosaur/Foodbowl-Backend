@@ -7,6 +7,7 @@ import java.util.List;
 import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.StoreSchool;
+import org.dinosaur.foodbowl.domain.store.domain.vo.SchoolName;
 import org.dinosaur.foodbowl.test.PersistenceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ class StoreSchoolRepositoryTest extends PersistenceTest {
     private StoreSchoolRepository storeSchoolRepository;
 
     @Test
-    void 학교와_관련된_가게를_조회한다() {
+    void 학교와_관련된_가게를_가져온다() {
         Store store = storeTestPersister.builder().save();
         School school = schoolTestPersister.builder().save();
         StoreSchool storeSchool = StoreSchool.builder()
@@ -27,7 +28,7 @@ class StoreSchoolRepositoryTest extends PersistenceTest {
                 .build();
         storeSchoolRepository.save(storeSchool);
 
-        List<StoreSchool> storeSchools = storeSchoolRepository.findAllBySchool_Name_Name(school.getName().getName());
+        List<StoreSchool> storeSchools = storeSchoolRepository.findAllBySchool_Name(new SchoolName(school.getName()));
         List<Store> stores = storeSchools.stream()
                 .map(StoreSchool::getStore)
                 .toList();
