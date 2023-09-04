@@ -6,10 +6,7 @@ import org.dinosaur.foodbowl.domain.store.domain.Category;
 
 @Schema(description = "카테고리 목록 응답")
 public record CategoriesResponse(
-        @Schema(
-                description = "카테고리 응답 목록",
-                example = "[{\"id\": 1, \"name\": \"카페\"}, {\"id\": 2, \"name\": \"술집\"}]"
-        )
+        @Schema(description = "카테고리 응답 목록")
         List<CategoryResponse> categories
 ) {
 

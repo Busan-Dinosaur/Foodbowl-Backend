@@ -66,7 +66,7 @@ public interface ReviewControllerDocs {
                             1.올바르지 않은 리뷰 ID 타입
                                                         
                             2.양수가 아닌 리뷰 ID
-                            
+                                                        
                             3. 리뷰 작성자와 요청을 보낸 사용자가 다른 경우
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
