@@ -6,9 +6,9 @@ import org.springframework.data.repository.Repository;
 
 public interface ReviewRepository extends Repository<Review, Long> {
 
-    Review save(Review review);
-
     Optional<Review> findById(Long id);
+
+    Review save(Review review);
 
     void delete(Review review);
 }
