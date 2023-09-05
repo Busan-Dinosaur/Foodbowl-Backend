@@ -83,6 +83,25 @@ class MemberServiceTest extends IntegrationTest {
         }
     }
 
+    @Test
+    void 나의_프로필을_조회한다() {
+        Member loginMember = memberTestPersister.memberBuilder().save();
+        Member otherMember = memberTestPersister.memberBuilder().save();
+        followTestPersister.builder().following(otherMember).follower(loginMember).save();
+
+        MemberProfileResponse response = memberService.getMyProfile(loginMember);
+
+        assertSoftly(softly -> {
+            softly.assertThat(response.id()).isEqualTo(loginMember.getId());
+            softly.assertThat(response.nickname()).isEqualTo(loginMember.getNickname());
+            softly.assertThat(response.introduction()).isEqualTo(loginMember.getIntroduction());
+            softly.assertThat(response.followerCount()).isEqualTo(0);
+            softly.assertThat(response.followingCount()).isEqualTo(1);
+            softly.assertThat(response.isMyProfile()).isTrue();
+            softly.assertThat(response.isFollowing()).isFalse();
+        });
+    }
+
     @Nested
     class 닉네임_존재_여부_확인_시 {
 
