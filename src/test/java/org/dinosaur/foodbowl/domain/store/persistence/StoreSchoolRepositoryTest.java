@@ -19,7 +19,7 @@ class StoreSchoolRepositoryTest extends PersistenceTest {
     private StoreSchoolRepository storeSchoolRepository;
 
     @Test
-    void 학교와_관련된_가게를_가져온다() {
+    void 학교_관련_가게를_조회한다() {
         Store store = storeTestPersister.builder().save();
         School school = schoolTestPersister.builder().save();
         StoreSchool storeSchool = StoreSchool.builder()

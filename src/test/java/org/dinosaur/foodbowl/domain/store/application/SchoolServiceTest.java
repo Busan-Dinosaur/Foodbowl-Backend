@@ -23,7 +23,7 @@ class SchoolServiceTest extends IntegrationTest {
     class 학교_조회_시 {
 
         @Test
-        void 존재하는_학교로_조회한다() {
+        void 등록된_학교라면_학교를_조회한다() {
             String name = "부산대학교";
             BigDecimal x = BigDecimal.valueOf(123.1234);
             BigDecimal y = BigDecimal.valueOf(37.12421);
@@ -33,7 +33,7 @@ class SchoolServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 존재하지_않는_학교로_조회한다() {
+        void 등록되지_않은_학교라면_학교가_조회되지_않는다() {
             assertThat(schoolService.findByName("우테코대학교")).isEmpty();
         }
     }
@@ -49,10 +49,10 @@ class SchoolServiceTest extends IntegrationTest {
     }
 
     @Nested
-    class 학교를_저장_시 {
+    class 학교_저장_시 {
 
         @Test
-        void 정상적으로_저장한다() {
+        void 정상적인_요청이라면_학교를_저장한다() {
             School school = schoolService.save(
                     "부산대학교",
                     BigDecimal.valueOf(123.1234),
@@ -63,7 +63,7 @@ class SchoolServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 이미_학교가_존재하면_예외가_발생한다() {
+        void 이미_등록된_학교라면_예외를_던진다() {
             String name = "부산대학교";
             BigDecimal x = BigDecimal.valueOf(123.1234);
             BigDecimal y = BigDecimal.valueOf(37.12421);

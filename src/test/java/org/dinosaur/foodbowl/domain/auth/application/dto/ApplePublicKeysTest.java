@@ -19,7 +19,7 @@ class ApplePublicKeysTest {
     private static ApplePublicKeys applePublicKeys = new ApplePublicKeys(List.of(applePublicKeyA, applePublicKeyB));
 
     @Nested
-    class 알맞은_키찾기 {
+    class 애플_퍼블릭_키_매칭_시 {
 
         @Test
         void 알고리즘과_키아이디가_일치하는_애플_퍼블릭키가_존재하면_해당_키를_반환한다() {

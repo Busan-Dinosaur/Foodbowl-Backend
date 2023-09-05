@@ -14,7 +14,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 class IntroductionTest {
 
     @Nested
-    class 빈값_변환 {
+    class 한_줄_소개_생성_시 {
 
         @ParameterizedTest
         @NullAndEmptySource

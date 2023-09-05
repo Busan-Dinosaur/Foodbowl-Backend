@@ -33,17 +33,17 @@ class StoreServiceTest extends IntegrationTest {
     private StoreSchoolRepository storeSchoolRepository;
 
     @Test
-    void 카테고리_목록을_조회한다() {
+    void 등록된_모든_카테고리_목록을_조회한다() {
         CategoriesResponse response = storeService.getCategories();
 
         assertThat(response.categories()).hasSize(11);
     }
 
     @Nested
-    class 가게를_조회할_때 {
+    class 장소_ID로_조회_시 {
 
         @Test
-        void 이미_존재하는_가게를_조회한다() {
+        void 등록된_가게라면_가게를_조회한다() {
             StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(
                     null,
                     null,
@@ -55,14 +55,18 @@ class StoreServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 존재하지_않는_가게를_조회한다() {
+        void 등록되지_않은_가게라면_가게가_조회되지_않는다() {
             String locationId = String.valueOf(Long.MAX_VALUE);
 
             assertThat(storeService.findByLocationId(locationId)).isEmpty();
         }
+    }
+
+    @Nested
+    class 가게_ID로_조회_시 {
 
         @Test
-        void ID로_조회한다() {
+        void 등록된_가게라면_가게를_조회한다() {
             StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(
                     null,
                     null,
@@ -76,7 +80,7 @@ class StoreServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 존재하지_않는_ID로_조회하면_예외가_발생한다() {
+        void 등록되지_않은_가게라면_예외를_던진다() {
             assertThatThrownBy(() -> storeService.findById(Long.MAX_VALUE))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("일치하는 가게를 찾을 수 없습니다.");
@@ -84,7 +88,7 @@ class StoreServiceTest extends IntegrationTest {
     }
 
     @Nested
-    class 가게를_생성할_때 {
+    class 가게_생성_시 {
 
         @Test
         void 학교_없이_생성한다() {
@@ -162,7 +166,7 @@ class StoreServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 이미_존재하는_가게이면_예외가_발생한다() {
+        void 이미_등록된_가게라면_예외를_던진다() {
             StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(
                     null,
                     null,
@@ -177,7 +181,7 @@ class StoreServiceTest extends IntegrationTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"!부산대학교", "@서울대학교@", "+연세대학교-", "!@#!$"})
-        void 학교_이름이_형식과_다르면_예외가_발생한다(String schoolName) {
+        void 학교_이름이_정상적이지_않으면_예외를_던진다(String schoolName) {
             StoreCreateDto storeCreateDto = new StoreCreateDto(
                     "1234567",
                     "농민백암순대",

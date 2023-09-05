@@ -38,10 +38,10 @@ class AppleOAuthUserProviderTest extends IntegrationTest {
     private AppleClaimsValidator appleClaimsValidator;
 
     @Nested
-    class 유저_정보_추출 {
+    class 애플_유저_정보_추출_시 {
 
         @Test
-        void 토큰으로부터_추출한_애플_클레임이_유효하다면_유저_정보를_반환한다() {
+        void 애플_토큰으로부터_추출한_애플_클레임이_유효하다면_애플_유저_정보를_추출한다() {
             Claims claims = Jwts.claims().setSubject("1");
             claims.put("email", "foodbowl@foodbowl.com");
             given(applePublicKeyGenerator.generate(any(), any())).willReturn(mock(PublicKey.class));
@@ -58,7 +58,7 @@ class AppleOAuthUserProviderTest extends IntegrationTest {
         }
 
         @Test
-        void 토큰으로부터_추출한_애플_클레임이_유효하지_않으면_예외를_던진다() {
+        void 애플_토큰으로부터_추출한_애플_클레임이_유효하지_않으면_예외를_던진다() {
             given(appleClaimsValidator.isValid(any(Claims.class))).willReturn(false);
 
             assertThatThrownBy(() -> appleOAuthUserProvider.extractPlatformUser("token"))

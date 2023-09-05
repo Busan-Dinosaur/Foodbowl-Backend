@@ -14,7 +14,7 @@ class HealthCheckServiceTest extends IntegrationTest {
     private HealthCheckService healthCheckService;
 
     @Test
-    void 헬스_체크를_수행한다() {
+    void 헬스_체크를_확인한다() {
         HealthCheckResponse response = healthCheckService.healthCheck();
 
         assertThat(response.status()).isEqualTo("good");

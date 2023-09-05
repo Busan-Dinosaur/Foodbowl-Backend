@@ -23,7 +23,7 @@ class MemberServiceTest extends IntegrationTest {
     private MemberService memberService;
 
     @Nested
-    class 프로필_조회 {
+    class 프로필_조회_시 {
 
         @Test
         void 나의_프로필이라면_나의_프로필_여부는_true_팔로잉_여부는_false_이다() {
@@ -84,7 +84,7 @@ class MemberServiceTest extends IntegrationTest {
     }
 
     @Nested
-    class 닉네임_존재_여부_확인 {
+    class 닉네임_존재_여부_확인_시 {
 
         @Test
         void 존재하는_닉네임이라면_true_응답한다() {
@@ -104,10 +104,10 @@ class MemberServiceTest extends IntegrationTest {
     }
 
     @Nested
-    class 프로필_정보_수정 {
+    class 프로필_정보_수정_시 {
 
         @Test
-        void 유효한_요청이라면_프로필_정보를_수정한다() {
+        void 정상적인_요청이라면_프로필_정보를_수정한다() {
             Member member = memberTestPersister.memberBuilder().save();
             UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest("hello", "friend");
 
@@ -133,7 +133,7 @@ class MemberServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 유효하지_않은_닉네임이라면_예외를_던진다() {
+        void 정상적이지_않은_닉네임이라면_예외를_던진다() {
             Member member = memberTestPersister.memberBuilder().save();
             UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest("하 이", "friend");
 
@@ -143,7 +143,7 @@ class MemberServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 유효하지_않은_한_줄_소개라면_예외를_던진다() {
+        void 정상적이지_않은_한_줄_소개라면_예외를_던진다() {
             Member member = memberTestPersister.memberBuilder().save();
             UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest("hello", "  ");
 

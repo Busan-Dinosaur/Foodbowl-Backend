@@ -30,7 +30,7 @@ class CoordinateTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"-180.0123", "180.0123"})
-    void 경도_범위를_벗어나면_예외가_발생한다(String x) {
+    void 경도_범위를_벗어나면_예외를_던진다(String x) {
         BigDecimal y = BigDecimal.valueOf(37.1234);
 
         assertThatThrownBy(() -> new Coordinate(new BigDecimal(x), y))
@@ -41,7 +41,7 @@ class CoordinateTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"-90.0123", "90.0123"})
-    void 위도_좌표_범위를_벗어나면_예외가_발생한다(String y) {
+    void 위도_범위를_벗어나면_예외를_던진다(String y) {
         BigDecimal x = BigDecimal.valueOf(123.1234);
 
         assertThatThrownBy(() -> new Coordinate(x, new BigDecimal(y)))
