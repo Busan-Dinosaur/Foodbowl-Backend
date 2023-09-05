@@ -49,6 +49,13 @@ public interface MemberControllerDocs {
             Member loginMember
     );
 
+    @Operation(summary = "나의 프로필 조회", description = "나의 프로필을 조회한다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "나의 프로필 조회 성공"
+    )
+    ResponseEntity<MemberProfileResponse> getMyProfile(Member loginMember);
+
     @Operation(summary = "닉네임 존재 여부 확인", description = "닉네임이 존재하는지 여부를 확인한다.")
     @ApiResponses({
             @ApiResponse(

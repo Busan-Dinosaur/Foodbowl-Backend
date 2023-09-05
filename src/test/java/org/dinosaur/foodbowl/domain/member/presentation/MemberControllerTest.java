@@ -109,6 +109,32 @@ class MemberControllerTest extends PresentationTest {
         }
     }
 
+    @Test
+    void 내_프로필_조회에_성공하면_200_응답을_반환한다() throws Exception {
+        mockingAuthMemberInResolver();
+        MemberProfileResponse response = new MemberProfileResponse(
+                1L,
+                "https://justdoeat.shop/static/images/thumbnail/profile/image.png",
+                "coby5502",
+                "반갑습니다!",
+                100,
+                1000,
+                true,
+                false
+        );
+        given(memberService.getMyProfile(any(Member.class))).willReturn(response);
+
+        MvcResult mvcResult = mockMvc.perform(get("/v1/members/me/profile")
+                        .header(AUTHORIZATION, BEARER + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        MemberProfileResponse result = objectMapper.readValue(jsonResponse, MemberProfileResponse.class);
+
+        assertThat(result).usingRecursiveComparison().isEqualTo(response);
+    }
+
     @Nested
     class 닉네임_존재_여부_확인_시 {
 
@@ -125,7 +151,7 @@ class MemberControllerTest extends PresentationTest {
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andReturn();
-            String jsonResponse = mvcResult.getResponse().getContentAsString();
+            String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
             NicknameExistResponse result = objectMapper.readValue(jsonResponse, NicknameExistResponse.class);
 
             assertThat(result).usingRecursiveComparison().isEqualTo(response);
