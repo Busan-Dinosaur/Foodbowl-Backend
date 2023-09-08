@@ -89,7 +89,7 @@ class MemberTest {
     }
 
     @Nested
-    class 현재_닉네임_확인 {
+    class 현재_닉네임_확인_시 {
 
         @Test
         void 닉네임이_현재_닉네임이라면_true_반환한다() {

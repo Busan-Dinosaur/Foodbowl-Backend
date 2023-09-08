@@ -51,10 +51,10 @@ class JwtTokenProviderTest {
     }
 
     @Nested
-    class 클레임_주제_추출 {
+    class 클레임_주체_추출_시 {
 
         @Test
-        void 유효한_토큰이라면_클레임_주제를_추출해서_반환한다() {
+        void 정상적인_토큰이라면_클레임_주체를_추출한다() {
             String token = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
 
             String result = jwtTokenProvider.extractSubject(token);
@@ -63,7 +63,7 @@ class JwtTokenProviderTest {
         }
 
         @Test
-        void 유효시간이_지난_토큰이라면_클레임_주제를_추출해서_반환한다() {
+        void 유효시간이_지난_토큰이라면_클레임_주체를_추출한다() {
             SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
             Claims claims = Jwts.claims().setSubject(String.valueOf(1L));
             Date now = new Date();
@@ -121,10 +121,10 @@ class JwtTokenProviderTest {
     }
 
     @Nested
-    class 클레임_추출 {
+    class 클레임_추출_시 {
 
         @Test
-        void 유효한_토큰이라면_클레임을_추출해서_반환한다() {
+        void 정상적인_토큰이라면_클레임을_추출한다() {
             String token = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
 
             Optional<Claims> result = jwtTokenProvider.extractClaims(token);
@@ -133,7 +133,7 @@ class JwtTokenProviderTest {
         }
 
         @Test
-        void 유효하지_않은_토큰이라면_빈값을_반환한다() {
+        void 정상적이지_않은_토큰이라면_빈값을_반환한다() {
             String token = "invalid token";
 
             Optional<Claims> result = jwtTokenProvider.extractClaims(token);
@@ -143,10 +143,10 @@ class JwtTokenProviderTest {
     }
 
     @Nested
-    class 유효한_클레임_추출 {
+    class 정상적인_클레임_추출_시 {
 
         @Test
-        void 유효한_토큰이라면_클레임_주제는_회원ID이다() {
+        void 정상적인_토큰이라면_클레임_주체는_회원ID이다() {
             String token = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
 
             Claims claims = jwtTokenProvider.extractValidClaims(token);

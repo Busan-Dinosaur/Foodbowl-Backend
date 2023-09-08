@@ -15,7 +15,7 @@ class SchoolNameTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"부산대학교", "서울대학교", "연세대학교 송도캠퍼스", "고려대학교 조치원 캠퍼스", "서울사이버 대학교"})
-    void 학교_이름_객체를_생성한다(String name) {
+    void 학교_이름을_생성한다(String name) {
         SchoolName schoolName = new SchoolName(name);
 
         assertThat(schoolName.getValue()).isEqualTo(name);
@@ -23,7 +23,7 @@ class SchoolNameTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"!부산대학교", "@서울123대ㄱ학교@", "+연세대학교-", "!@#!$"})
-    void 학교_이름에_한글_숫자_영문_이외의_문자가_있으면_예외가_발생한다(String schoolName) {
+    void 학교_이름에_한글_숫자_영문_이외의_문자가_있으면_예외를_던진다(String schoolName) {
         assertThatThrownBy(() -> new SchoolName(schoolName))
                 .isInstanceOf(InvalidArgumentException.class)
                 .hasMessage("학교 이름 형식이 잘못되었습니다.");

@@ -23,10 +23,10 @@ class BookmarkServiceTest extends IntegrationTest {
     private BookmarkRepository bookmarkRepository;
 
     @Nested
-    class 북마크를_추가할_때 {
+    class 북마크_추가_시 {
 
         @Test
-        void 정상적으로_추가한다() {
+        void 북마크_추가에_성공하면_북마크가_등록된다() {
             Store store = storeTestPersister.builder().save();
             Member member = memberTestPersister.memberBuilder().save();
 
@@ -36,7 +36,7 @@ class BookmarkServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 존재하지_않는_가게인_경우_예외가_발생한다() {
+        void 가게가_존재하지_않으면_예외가_발생한다() {
             Member member = memberTestPersister.memberBuilder().save();
 
             assertThatThrownBy(() -> bookmarkService.save(-1L, member))
@@ -45,7 +45,7 @@ class BookmarkServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 이미_북마크에_추가된_가게인_경우_예외가_발생한다() {
+        void 이미_북마크에_추가된_가게라면_예외가_발생한다() {
             Store store = storeTestPersister.builder().save();
             Member member = memberTestPersister.memberBuilder().save();
             bookmarkService.save(store.getId(), member);
@@ -57,10 +57,10 @@ class BookmarkServiceTest extends IntegrationTest {
     }
 
     @Nested
-    class 북마크를_삭제할_때 {
+    class 북마크_삭제_시 {
 
         @Test
-        void 정상적으로_삭제한다() {
+        void 북마크_삭제에_성공하면_북마크가_삭제된다() {
             Store store = storeTestPersister.builder().save();
             Member member = memberTestPersister.memberBuilder().save();
             bookmarkService.save(store.getId(), member);
@@ -71,7 +71,7 @@ class BookmarkServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 존재하지_않는_가게인_경우_예외가_발생한다() {
+        void 가게가_존재하지_않으면_예외가_발생한다() {
             Member member = memberTestPersister.memberBuilder().save();
 
             assertThatThrownBy(() -> bookmarkService.delete(-1L, member))
@@ -80,7 +80,7 @@ class BookmarkServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 가게_사용자_데이터로_추가된_북마크가_없으면_예외가_발생한다() {
+        void 북마크에_등록하지_않은_가게라면_예외가_발생한다() {
             Store store = storeTestPersister.builder().save();
             Member member = memberTestPersister.memberBuilder().save();
 

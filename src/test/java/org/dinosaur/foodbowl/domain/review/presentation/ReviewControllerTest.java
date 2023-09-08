@@ -133,7 +133,7 @@ class ReviewControllerTest extends PresentationTest {
         }
 
         @Test
-        void 이미지_크기가_서블릿_최대_처리_크기_보다_큰_경우_400_반환한다() throws Exception {
+        void 이미지_크기가_서블릿_최대_처리_크기_보다_큰_경우_400_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateDto();
             MockMultipartFile request = new MockMultipartFile(
@@ -326,7 +326,7 @@ class ReviewControllerTest extends PresentationTest {
         @ParameterizedTest
         @ValueSource(strings = {" "})
         @NullAndEmptySource
-        void 가게_정보_URL_없는_경우_400_응답을_반환한다(String storeUrl) throws Exception {
+        void 가게_정보_URL이_없는_경우_400_응답을_반환한다(String storeUrl) throws Exception {
             ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
                     "3241414",
                     "국민연금공단",
@@ -444,7 +444,7 @@ class ReviewControllerTest extends PresentationTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"가", "a", "A", "@"})
-        void ID를_Long_타입으로_변환하지_못하면_400_응답을_반환한다(String reviewId) throws Exception {
+        void 리뷰_ID가_Long_타입이_아니라면_400_응답을_반환한다(String reviewId) throws Exception {
             mockMvc.perform(delete("/v1/reviews/{id}", reviewId)
                             .header(AUTHORIZATION, BEARER + accessToken))
                     .andDo(print())
@@ -455,7 +455,7 @@ class ReviewControllerTest extends PresentationTest {
         }
 
         @Test
-        void ID가_양수가_아니면_400_응답을_반환한다() throws Exception {
+        void 리뷰_ID가_양수가_아니면_400_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
 
             mockMvc.perform(delete("/v1/reviews/{id}", -1L)

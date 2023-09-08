@@ -18,7 +18,7 @@ class MemberRepositoryTest extends PersistenceTest {
     private MemberRepository memberRepository;
 
     @Test
-    void 아이디와_일치하는_회원_조회() {
+    void ID에_일치하는_회원을_조회한다() {
         Member saveMember = memberTestPersister.memberBuilder().save();
 
         Member findMember = memberRepository.findById(saveMember.getId()).get();
@@ -27,7 +27,7 @@ class MemberRepositoryTest extends PersistenceTest {
     }
 
     @Test
-    void 썸네일과_함께_회원_조회() {
+    void ID에_일치하는_회원을_썸네일과_함께_조회한다() {
         Member member = memberTestPersister.memberBuilder().save();
         memberTestPersister.memberThumbnailBuilder().member(member).save();
 
@@ -37,7 +37,7 @@ class MemberRepositoryTest extends PersistenceTest {
     }
 
     @Nested
-    class 소셜아이디와_소셜타입으로_조회 {
+    class 소셜_아이디와_소셜_타입으로_조회_시 {
 
         @Test
         void 일치하는_회원이_존재하면_회원을_조회한다() {
@@ -60,7 +60,7 @@ class MemberRepositoryTest extends PersistenceTest {
     }
 
     @Nested
-    class 닉네임_존재_여부_확인 {
+    class 닉네임_존재_여부_조회_시 {
 
         @Test
         void 존재하는_닉네임이라면_true_반환한다() {
@@ -82,7 +82,7 @@ class MemberRepositoryTest extends PersistenceTest {
     }
 
     @Test
-    void 회원_저장() {
+    void 회원을_저장한다() {
         Member member = Member.builder()
                 .email("foodBowl@gmail.com")
                 .socialId("foodBowlId")

@@ -26,7 +26,7 @@ class StoreRepositoryTest extends PersistenceTest {
     }
 
     @Test
-    void ID로_가게를_조회한다() {
+    void 가게_ID로_가게를_조회한다() {
         Store store = storeTestPersister.builder().save();
 
         assertThat(storeRepository.findById(store.getId())).isPresent();

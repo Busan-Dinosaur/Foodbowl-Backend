@@ -16,7 +16,7 @@ class CategoryRepositoryTest extends PersistenceTest {
     private CategoryRepository categoryRepository;
 
     @Test
-    void 카테고리_목록을_ID를_기준으로_오름차순으로_정렬하여_조회한다() {
+    void ID를_기준으로_카테고리_목록을_오름차순으로_정렬하여_조회한다() {
         List<Category> categories = categoryRepository.findAllByOrderById();
         CategoryType[] categoryTypes = categories.stream()
                 .map(Category::getCategoryType)

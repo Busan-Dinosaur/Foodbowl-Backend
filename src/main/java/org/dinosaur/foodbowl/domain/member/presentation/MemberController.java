@@ -37,6 +37,12 @@ public class MemberController implements MemberControllerDocs {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/me/profile")
+    public ResponseEntity<MemberProfileResponse> getMyProfile(@Auth Member loginMember) {
+        MemberProfileResponse response = memberService.getMyProfile(loginMember);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/nickname/exist")
     public ResponseEntity<NicknameExistResponse> checkNicknameExist(
             @RequestParam @NotBlank(message = "닉네임 파라미터 값이 존재하지 않습니다.") String nickname

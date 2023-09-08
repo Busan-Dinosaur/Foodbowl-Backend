@@ -18,10 +18,10 @@ class JwtAuthorizationExtractorTest {
     private static final JwtAuthorizationExtractor jwtAuthorizationExtractor = new JwtAuthorizationExtractor();
 
     @Nested
-    class 인증_토큰_추출 {
+    class 인증_토큰_추출_시 {
 
         @Test
-        void 인증_토큰이_존재하면_토큰을_추출해서_반환한다() {
+        void 인증_헤더가_존재하면_인증_토큰을_반환한다() {
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.addHeader("Authorization", "Bearer Token");
 

@@ -20,7 +20,7 @@ class AddressTest {
     class 주소_생성_시 {
 
         @Test
-        void 정상적으로_생성한다() {
+        void 정상적인_요청이라면_주소를_생성한다() {
             String storeAddress = "서울시 강남구 테헤란로 17 강남빌딩 1201호";
             BigDecimal x = BigDecimal.valueOf(123.1234);
             BigDecimal y = BigDecimal.valueOf(36.12431);
@@ -32,7 +32,7 @@ class AddressTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"부산시 동구", "서울시 강남구 삼성동", "", " "})
-        void 올바르지_않는_주소이면_예외가_발생한다(String storeAddress) {
+        void 정상적이지_않는_주소라면_예외를_던진다(String storeAddress) {
             BigDecimal x = BigDecimal.valueOf(123.1234);
             BigDecimal y = BigDecimal.valueOf(36.12431);
 
@@ -42,7 +42,7 @@ class AddressTest {
         }
 
         @Test
-        void 가게_주소가_없으면_예외가_발생한다() {
+        void 주소가_없으면_예외를_던진다() {
             BigDecimal x = BigDecimal.valueOf(123.1234);
             BigDecimal y = BigDecimal.valueOf(36.12431);
 

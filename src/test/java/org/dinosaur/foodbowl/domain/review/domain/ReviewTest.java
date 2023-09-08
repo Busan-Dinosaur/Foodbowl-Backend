@@ -39,10 +39,10 @@ class ReviewTest {
     }
 
     @Nested
-    class 리뷰_작성자_확인_메서드는 {
+    class 리뷰_작성자_확인_시 {
 
         @Test
-        void 작성자가_아니면_true_반환한다() {
+        void 리뷰_작성자가_아니면_true_반환한다() {
             Member member = Member.builder()
                     .socialType(SocialType.APPLE)
                     .socialId("1")
@@ -74,7 +74,7 @@ class ReviewTest {
         }
 
         @Test
-        void 작성자와_동일하면_false_반환한다() {
+        void 리뷰_작성자라면_false_반환한다() {
             Member member = Member.builder()
                     .socialType(SocialType.APPLE)
                     .socialId("1")

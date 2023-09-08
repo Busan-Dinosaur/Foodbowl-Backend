@@ -52,10 +52,10 @@ class AuthServiceTest extends IntegrationTest {
     }
 
     @Nested
-    class 애플_로그인 {
+    class 애플_로그인_시 {
 
         @Test
-        void 등록된_회원이라면_토큰_정보를_반환한다() {
+        void 등록된_회원이라면_토큰을_반환한다() {
             Member member = memberTestPersister.memberBuilder()
                     .socialType(SocialType.APPLE)
                     .socialId("1234")
@@ -72,7 +72,7 @@ class AuthServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 등록_되어있지_않은_회원이라면_등록_후_토큰_정보를_반환한다() {
+        void 등록_되어있지_않은_회원이라면_등록_후_토큰을_반환한다() {
             AppleUser platformUser = new AppleUser(SocialType.APPLE, "1234", "email@email.com");
             given(appleOAuthUserProvider.extractPlatformUser(anyString())).willReturn(platformUser);
 
@@ -90,10 +90,10 @@ class AuthServiceTest extends IntegrationTest {
     }
 
     @Nested
-    class 토큰_갱신 {
+    class 인증_토큰_갱신_시 {
 
         @Test
-        void 유효한_인증_리프레쉬_토큰이라면_새로운_인증_토큰을_반환한다() {
+        void 정상적인_인증_토큰과_리프레쉬_토큰이라면_새로운_인증_토큰을_반환한다() {
             String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
             String refreshToken = jwtTokenProvider.createRefreshToken(1L);
             redisTemplate.opsForValue().set("1", refreshToken, 10000, TimeUnit.MILLISECONDS);
@@ -124,7 +124,7 @@ class AuthServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 저장소에_리프레쉬_토큰이_존재하지_않으면_예외를_던진다() {
+        void 토큰_저장소에_리프레쉬_토큰이_존재하지_않으면_예외를_던진다() {
             String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
             String refreshToken = jwtTokenProvider.createRefreshToken(1L);
             RenewTokenRequest renewTokenRequest = new RenewTokenRequest(accessToken, refreshToken);
@@ -157,7 +157,7 @@ class AuthServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 인증_토큰에_맞지_않은_리프레쉬_토큰이라면_예외를_던진다() {
+        void 인증_토큰의_리프레쉬_토큰과_일치하지_않는_리프레쉬_토큰이라면_예외를_던진다() {
             String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
             String refreshToken = jwtTokenProvider.createRefreshToken(1L);
             String otherRefreshToken = jwtTokenProvider.createRefreshToken(2L);

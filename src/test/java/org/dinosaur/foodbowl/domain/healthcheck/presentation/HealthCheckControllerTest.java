@@ -31,7 +31,7 @@ class HealthCheckControllerTest extends PresentationTest {
     private HealthCheckService healthCheckService;
 
     @Test
-    void 서버_상태가_정상이면_200_반환() throws Exception {
+    void 헬스_체크가_정상이면_200_응답을_반환한다() throws Exception {
         given(healthCheckService.healthCheck())
                 .willReturn(new HealthCheckResponse("good"));
 
@@ -42,7 +42,7 @@ class HealthCheckControllerTest extends PresentationTest {
     }
 
     @Test
-    void 사용자_인증이_정상이면_200_반환() throws Exception {
+    void 사용자_인증이_정상이면_200_응답을_반환한다() throws Exception {
         mockingAuthMemberInResolver();
 
         mockMvc.perform(get("/v1/health-check/auth")
