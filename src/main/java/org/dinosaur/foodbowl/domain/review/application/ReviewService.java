@@ -1,10 +1,15 @@
 package org.dinosaur.foodbowl.domain.review.application;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.photo.application.PhotoService;
 import org.dinosaur.foodbowl.domain.photo.domain.Photo;
+import org.dinosaur.foodbowl.domain.review.application.dto.request.ReviewUpdateRequest;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
 import org.dinosaur.foodbowl.domain.review.application.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.exception.ReviewExceptionType;
@@ -22,13 +27,14 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class ReviewService {
 
+    private static final int REVIEW_PHOTO_MAX_SIZE = 4;
     private final ReviewRepository reviewRepository;
     private final StoreService storeService;
     private final PhotoService photoService;
     private final ReviewPhotoService reviewPhotoService;
 
     @Transactional
-    public Long create(ReviewCreateRequest reviewCreateRequest, List<MultipartFile> imageFiles, Member member) {
+    public Review create(ReviewCreateRequest reviewCreateRequest, List<MultipartFile> imageFiles, Member member) {
         StoreCreateDto storeCreateDto = convertStoreCreateDto(reviewCreateRequest);
 
         Store store = storeService.findByLocationId(reviewCreateRequest.locationId())
@@ -43,7 +49,7 @@ public class ReviewService {
         );
 
         saveImagesIfExists(imageFiles, store, review);
-        return review.getId();
+        return review;
     }
 
     private void saveImagesIfExists(List<MultipartFile> images, Store store, Review review) {
@@ -51,8 +57,11 @@ public class ReviewService {
             return;
         }
 
-        List<Photo> photos = photoService.save(images, store.getId().toString());
+        if (images.size() > REVIEW_PHOTO_MAX_SIZE) {
+            throw new BadRequestException(ReviewExceptionType.PHOTO_COUNT);
+        }
 
+        List<Photo> photos = photoService.save(images, store.getId().toString());
         reviewPhotoService.save(review, photos);
     }
 
@@ -73,18 +82,79 @@ public class ReviewService {
     }
 
     @Transactional
+    public void update(ReviewUpdateRequest reviewUpdateRequest, List<MultipartFile> imageFiles, Member member) {
+        Long id = reviewUpdateRequest.reviewId();
+        Review review = reviewRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(ReviewExceptionType.NOT_FOUND));
+        validateReviewOwner(member, review);
+
+        List<Photo> currentPhotos = reviewPhotoService.findPhotos(review);
+        List<Long> deletePhotoIds = reviewUpdateRequest.deletePhotoIds();
+        validatePhotoSize(imageFiles, currentPhotos, deletePhotoIds);
+
+        List<Photo> deletePhotos = extractPhotosForDelete(currentPhotos, deletePhotoIds);
+        reviewPhotoService.deleteByReviewAndPhoto(review, deletePhotos);
+        photoService.delete(deletePhotos);
+
+        saveImagesIfExists(imageFiles, review.getStore(), review);
+        review.updateContent(reviewUpdateRequest.reviewContent());
+    }
+
+    private void validatePhotoSize(
+            List<MultipartFile> images,
+            List<Photo> currentPhotos,
+            List<Long> deletePhotoIds
+    ) {
+        if (images == null || images.isEmpty()) {
+            return;
+        }
+        int insertReviewPhotoSize = images.size();
+        int currentReviewPhotoSize = currentPhotos.size();
+        int deleteReviewPhotoSize = deletePhotoIds.size();
+
+        int updateReviewPhotoSize = currentReviewPhotoSize - deleteReviewPhotoSize + insertReviewPhotoSize;
+        if (updateReviewPhotoSize > REVIEW_PHOTO_MAX_SIZE) {
+            throw new BadRequestException(ReviewExceptionType.PHOTO_COUNT);
+        }
+    }
+
+    private List<Photo> extractPhotosForDelete(List<Photo> currentPhotos, List<Long> deletePhotoIds) {
+        Set<Photo> deletePhotos = new HashSet<>();
+        for (Long deletePhotoId : deletePhotoIds) {
+            Photo deletePhoto = extractDeletePhoto(currentPhotos, deletePhotoId);
+            deletePhotos.add(deletePhoto);
+        }
+        return new ArrayList<>(deletePhotos);
+    }
+
+    private Photo extractDeletePhoto(List<Photo> currentPhotos, Long deletePhotoId) {
+        return currentPhotos.stream()
+                .filter(photo -> isSamePhoto(deletePhotoId, photo))
+                .findAny()
+                .orElseThrow(() -> new BadRequestException(ReviewExceptionType.INVALID_PHOTO));
+    }
+
+    private boolean isSamePhoto(Long deletePhotoId, Photo photo) {
+        return Objects.equals(photo.getId(), deletePhotoId);
+    }
+
+    @Transactional
     public void delete(Long id, Member member) {
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ReviewExceptionType.NOT_FOUND));
 
-        if (review.isNotOwnerOf(member)) {
-            throw new BadRequestException(ReviewExceptionType.NOT_OWNER);
-        }
+        validateReviewOwner(member, review);
 
         List<Photo> photos = reviewPhotoService.findPhotos(review);
 
         reviewPhotoService.delete(review);
         photoService.delete(photos);
         reviewRepository.delete(review);
+    }
+
+    private void validateReviewOwner(Member member, Review review) {
+        if (review.isNotOwnerOf(member)) {
+            throw new BadRequestException(ReviewExceptionType.NOT_OWNER);
+        }
     }
 }
