@@ -79,4 +79,36 @@ class ReviewPhotoRepositoryTest extends PersistenceTest {
 
         assertThat(deleteCount).isEqualTo(2);
     }
+
+    @Test
+    void 리뷰에_해당하는_사진_엔티티들을_삭제한다() {
+        Review review = reviewTestPersister.builder().save();
+        Photo deleteTargetPhoto1 = photoTestPersister.builder().save();
+        Photo deleteTargetPhoto2 = photoTestPersister.builder().save();
+        Photo photo = photoTestPersister.builder().save();
+        ReviewPhoto deleteReviewPhoto1 = ReviewPhoto.builder()
+                .review(review)
+                .photo(deleteTargetPhoto1)
+                .build();
+        ReviewPhoto deleteReviewPhoto2 = ReviewPhoto.builder()
+                .review(review)
+                .photo(deleteTargetPhoto2)
+                .build();
+        ReviewPhoto reviewPhoto = ReviewPhoto.builder()
+                .review(review)
+                .photo(photo)
+                .build();
+        reviewPhotoRepository.save(deleteReviewPhoto1);
+        reviewPhotoRepository.save(deleteReviewPhoto2);
+        reviewPhotoRepository.save(reviewPhoto);
+
+        List<Photo> deleteTargetPhotos = List.of(deleteTargetPhoto1, deleteTargetPhoto2);
+        long deleteCount = reviewPhotoRepository.deleteByReviewAndPhotos(review, deleteTargetPhotos);
+
+        assertSoftly(softly -> {
+            softly.assertThat(deleteCount).isEqualTo(deleteTargetPhotos.size());
+            softly.assertThat(reviewPhotoRepository.findAllByReview(review)).contains(reviewPhoto);
+            softly.assertThat(reviewPhotoRepository.findAllByReview(review)).doesNotContain(deleteReviewPhoto1, deleteReviewPhoto2);
+        });
+    }
 }
