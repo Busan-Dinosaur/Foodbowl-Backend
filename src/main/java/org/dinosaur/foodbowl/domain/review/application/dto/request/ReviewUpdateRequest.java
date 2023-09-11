@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
+import org.dinosaur.foodbowl.domain.review.presentation.PositiveList;
 
 @Schema(description = "리뷰 수정 요청")
 public record ReviewUpdateRequest(
@@ -24,7 +25,8 @@ public record ReviewUpdateRequest(
                 example = "[1,2,3] or []",
                 requiredMode = NOT_REQUIRED
         )
-        @NotNull
+        @NotNull(message = "삭제하는 사진 배열은 반드시 포함되어야 합니다.")
+        @PositiveList(message = "삭제하는 사진 ID는 양수만 가능합니다.")
         List<Long> deletePhotoIds
 ) {
 }
