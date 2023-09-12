@@ -16,10 +16,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.List;
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.application.ReviewService;
 import org.dinosaur.foodbowl.domain.review.application.dto.request.ReviewCreateRequest;
+import org.dinosaur.foodbowl.domain.review.application.dto.request.ReviewUpdateRequest;
+import org.dinosaur.foodbowl.domain.review.domain.Review;
 import org.dinosaur.foodbowl.test.PresentationTest;
 import org.dinosaur.foodbowl.test.file.FileTestUtils;
 import org.junit.jupiter.api.Nested;
@@ -30,6 +34,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
@@ -58,7 +63,7 @@ class ReviewControllerTest extends PresentationTest {
         @Test
         void 사진이_포함된_경우_200_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
-            ReviewCreateRequest reviewCreateRequest = generateReviewCreateDto();
+            ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
             MockMultipartFile request = new MockMultipartFile(
                     "request",
                     "",
@@ -68,9 +73,9 @@ class ReviewControllerTest extends PresentationTest {
             MockMultipartFile multipartFile1 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
             MockMultipartFile multipartFile2 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
             given(reviewService.create(any(ReviewCreateRequest.class), anyList(), any(Member.class)))
-                    .willReturn(1L);
+                    .willReturn(Review.builder().content(reviewCreateRequest.reviewContent()).build());
 
-            mockMvc.perform(multipart("/v1/reviews")
+            mockMvc.perform(multipart(HttpMethod.POST, "/v1/reviews")
                             .file(request)
                             .file(multipartFile1)
                             .file(multipartFile2)
@@ -83,7 +88,7 @@ class ReviewControllerTest extends PresentationTest {
         @Test
         void 사진이_없는_경우_200_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
-            ReviewCreateRequest reviewCreateRequest = generateReviewCreateDto();
+            ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
             MockMultipartFile request = new MockMultipartFile(
                     "request",
                     "",
@@ -91,7 +96,7 @@ class ReviewControllerTest extends PresentationTest {
                     objectMapper.writeValueAsBytes(reviewCreateRequest)
             );
             given(reviewService.create(any(ReviewCreateRequest.class), any(), any(Member.class)))
-                    .willReturn(1L);
+                    .willReturn(Review.builder().content(reviewCreateRequest.reviewContent()).build());
 
             mockMvc.perform(multipart("/v1/reviews")
                             .file(request)
@@ -104,7 +109,7 @@ class ReviewControllerTest extends PresentationTest {
         @Test
         void 사진이_4개_보다_많은_경우_400_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
-            ReviewCreateRequest reviewCreateRequest = generateReviewCreateDto();
+            ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
             MockMultipartFile request = new MockMultipartFile(
                     "request",
                     "",
@@ -135,7 +140,7 @@ class ReviewControllerTest extends PresentationTest {
         @Test
         void 이미지_크기가_서블릿_최대_처리_크기_보다_큰_경우_400_반환한다() throws Exception {
             mockingAuthMemberInResolver();
-            ReviewCreateRequest reviewCreateRequest = generateReviewCreateDto();
+            ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
             MockMultipartFile request = new MockMultipartFile(
                     "request",
                     "",
@@ -427,6 +432,176 @@ class ReviewControllerTest extends PresentationTest {
     }
 
     @Nested
+    class 리뷰_수정_시 {
+        private final String accessToken = jwtTokenProvider.createAccessToken(1L, ROLE_회원);
+
+        @Test
+        void 이미지_변경_없이_정상적으로_수정되면_204_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(1L, "리뷰 수정 내용",
+                    Collections.emptyList());
+            MockMultipartFile request = new MockMultipartFile(
+                    "request",
+                    "",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(reviewUpdateRequest)
+            );
+            willDoNothing().given(reviewService)
+                    .update(any(ReviewUpdateRequest.class), anyList(), any(Member.class));
+
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews")
+                            .file(request)
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andDo(print())
+                    .andExpect(status().isNoContent());
+        }
+
+        @Test
+        void 이미지를_변경하고_정상적으로_수정되면_204_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(1L, "리뷰 수정 내용",
+                    Collections.emptyList());
+            MockMultipartFile request = new MockMultipartFile(
+                    "request",
+                    "",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(reviewUpdateRequest)
+            );
+            willDoNothing().given(reviewService)
+                    .update(any(ReviewUpdateRequest.class), anyList(), any(Member.class));
+
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews")
+                            .file(request)
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andDo(print())
+                    .andExpect(status().isNoContent());
+        }
+
+        @Test
+        void ID가_양수가_아니면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(-1L, "리뷰 수정 내용",
+                    Collections.emptyList()
+            );
+            MockMultipartFile request = new MockMultipartFile(
+                    "request",
+                    "",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(reviewUpdateRequest)
+            );
+
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews")
+                            .file(request)
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errorCode").value("CLIENT-100"))
+                    .andExpect(jsonPath("$.message", containsString("리뷰 ID는 양수만 가능합니다.")));
+        }
+
+        @ParameterizedTest
+        @NullAndEmptySource
+        @ValueSource(strings = " ")
+        void 수정하는_내용이_없으면_400_응답을_반환한다(String content) throws Exception {
+            mockingAuthMemberInResolver();
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(1L, content,
+                    Collections.emptyList()
+            );
+            MockMultipartFile request = new MockMultipartFile(
+                    "request",
+                    "",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(reviewUpdateRequest)
+            );
+
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews")
+                            .file(request)
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errorCode").value("CLIENT-100"))
+                    .andExpect(jsonPath("$.message", containsString("수정할 리뷰 내용은 반드시 포함되어야 합니다.")));
+        }
+
+        @Test
+        void 삭제하는_사진_필드가_없으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(1L, "맛있어요", null);
+            MockMultipartFile request = new MockMultipartFile(
+                    "request",
+                    "",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(reviewUpdateRequest)
+            );
+
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews")
+                            .file(request)
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errorCode").value("CLIENT-100"))
+                    .andExpect(jsonPath("$.message", containsString("삭제하는 사진 배열은 반드시 포함되어야 합니다.")));
+        }
+
+        @Test
+        void 삭제하는_사진_ID가_음수이면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(1L, "맛있어요", List.of(-1L, -2L));
+            MockMultipartFile request = new MockMultipartFile(
+                    "request",
+                    "",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(reviewUpdateRequest)
+            );
+
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews")
+                            .file(request)
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errorCode").value("CLIENT-100"))
+                    .andExpect(jsonPath("$.message", containsString("삭제하는 사진 ID는 양수만 가능합니다.")));
+        }
+
+        @Test
+        void 추가_사진이_4개_보다_많은_경우_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(1L, "리뷰", Collections.emptyList());
+            MockMultipartFile request = new MockMultipartFile(
+                    "request",
+                    "",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(reviewUpdateRequest)
+            );
+            MockMultipartFile multipartFile1 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
+            MockMultipartFile multipartFile2 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
+            MockMultipartFile multipartFile3 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
+            MockMultipartFile multipartFile4 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
+            MockMultipartFile multipartFile5 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
+
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews")
+                            .file(request)
+                            .file(multipartFile1)
+                            .file(multipartFile2)
+                            .file(multipartFile3)
+                            .file(multipartFile4)
+                            .file(multipartFile5)
+                            .header("Authorization", "Bearer " + accessToken)
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("사진의 개수는 최대 4개까지 가능합니다.")));
+        }
+    }
+
+    @Nested
     class 리뷰_삭제_시 {
 
         private final String accessToken = jwtTokenProvider.createAccessToken(1L, ROLE_회원);
@@ -467,7 +642,7 @@ class ReviewControllerTest extends PresentationTest {
         }
     }
 
-    private ReviewCreateRequest generateReviewCreateDto() {
+    private ReviewCreateRequest generateReviewCreateRequest() {
         return new ReviewCreateRequest(
                 "141241",
                 "국민연금공단",
@@ -481,6 +656,18 @@ class ReviewControllerTest extends PresentationTest {
                 null,
                 null,
                 null
+        );
+    }
+
+    private ReviewUpdateRequest generateReviewUpdateRequest(
+            Long reviewId,
+            String content,
+            List<Long> deletePhotoIds
+    ) {
+        return new ReviewUpdateRequest(
+                reviewId,
+                content,
+                deletePhotoIds
         );
     }
 }
