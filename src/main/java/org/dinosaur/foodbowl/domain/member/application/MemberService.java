@@ -40,6 +40,12 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
+    public MemberProfileResponse getMyProfile(Member loginMember) {
+        long followingCount = followRepository.countByFollower(loginMember);
+        return MemberProfileResponse.of(loginMember, (int) followingCount, true, false);
+    }
+
+    @Transactional(readOnly = true)
     public NicknameExistResponse checkNicknameExist(String nickname) {
         boolean isExist = memberRepository.existsByNickname(new Nickname(nickname));
         return new NicknameExistResponse(isExist);

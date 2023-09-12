@@ -215,7 +215,7 @@ class ReviewServiceTest extends IntegrationTest {
     class 리뷰_삭제_시 {
 
         @Test
-        void 정상적으로_삭제한다() {
+        void 정상적인_요청이라면_리뷰를_삭제한다() {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2);
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
             Member member = memberTestPersister.memberBuilder().save();
@@ -227,7 +227,7 @@ class ReviewServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 존재하는_리뷰가_아니면_예외가_발생한다() {
+        void 등록된_리뷰가_아니면_예외를_던진다() {
             Member member = memberTestPersister.memberBuilder().save();
 
             assertThatThrownBy(() -> reviewService.delete(-1L, member))
@@ -236,7 +236,7 @@ class ReviewServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 작성자가_아니면_예외가_발생한다() {
+        void 리뷰_작성자가_아니면_예외를_던진다() {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2);
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
             Member member = memberTestPersister.memberBuilder().save();

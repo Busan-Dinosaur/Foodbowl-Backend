@@ -21,7 +21,7 @@ class ApplePublicKeyTest {
     );
 
     @Nested
-    class 알고리즘_검증 {
+    class 애플_키_알고리즘_검증_시 {
 
         @Test
         void 알고리즘이_같다면_true_반환한다() {
@@ -43,7 +43,7 @@ class ApplePublicKeyTest {
     }
 
     @Nested
-    class 키아이디_검증 {
+    class 애플_키아이디_검증_시 {
 
         @Test
         void 키아이디가_같다면_true_반환한다() {

@@ -17,10 +17,10 @@ class AppleClaimsValidatorTest {
             new AppleClaimsValidator("iss", "clientId", "nonce");
 
     @Nested
-    class 클레임_검증 {
+    class 애플_클레임_검증_시 {
 
         @Test
-        void 이슈_클라이언트_아이디_암호화값이_일치하면_유효한_클레임이다() {
+        void 이슈와_클라이언트_아이디와_암호화값이_일치하면_유효한_클레임이다() {
             Claims claims = Jwts.claims()
                     .setIssuer("iss")
                     .setAudience("clientId");

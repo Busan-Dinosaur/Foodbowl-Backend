@@ -18,7 +18,7 @@ class SchoolRepositoryTest extends PersistenceTest {
     private SchoolRepository schoolRepository;
 
     @Test
-    void 이름으로_학교를_조회한다() {
+    void 학교_이름으로_학교를_조회한다() {
         School school = schoolTestPersister.builder().save();
 
         School findSchool = schoolRepository.findByName(new SchoolName(school.getName())).get();
@@ -27,7 +27,7 @@ class SchoolRepositoryTest extends PersistenceTest {
     }
 
     @Test
-    void 모든_학교_목록을_조회한다() {
+    void 모든_학교_목록을_이름순으로_정렬하여_조회한다() {
         School schoolA = schoolTestPersister.builder().name("부산대학교").save();
         School schoolB = schoolTestPersister.builder().name("강남대학교").save();
 

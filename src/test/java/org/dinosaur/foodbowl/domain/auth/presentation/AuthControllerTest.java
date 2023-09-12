@@ -41,10 +41,10 @@ class AuthControllerTest extends PresentationTest {
     private AuthService authService;
 
     @Nested
-    class 애플_로그인 {
+    class 애플_로그인_시 {
 
         @Test
-        void 애플_로그인을_수행하면_토큰과_200_응답을_반환한다() throws Exception {
+        void 애플_로그인을_성공하면_토큰과_200_응답을_반환한다() throws Exception {
             AppleLoginRequest appleLoginRequest = new AppleLoginRequest("appleToken");
             TokenResponse tokenResponse = new TokenResponse("accessToken", "refreshToken");
             given(authService.appleLogin(any(AppleLoginRequest.class))).willReturn(tokenResponse);
@@ -74,7 +74,7 @@ class AuthControllerTest extends PresentationTest {
     }
 
     @Nested
-    class 인증_토큰_갱신 {
+    class 인증_토큰_갱신_시 {
 
         @Test
         void 인증_토큰_갱신에_성공하면_인증_토큰과_200_응답을_반환한다() throws Exception {

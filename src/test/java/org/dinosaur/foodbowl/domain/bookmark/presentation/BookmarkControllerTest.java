@@ -56,7 +56,7 @@ class BookmarkControllerTest extends PresentationTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"hello", "@#!"})
-        void 가게_ID가_숫자가_아니면_400_응답을_반환한다(String storeId) throws Exception {
+        void 가게_ID가_Long_타입이_아니라면_400_응답을_반환한다(String storeId) throws Exception {
             mockingAuthMemberInResolver();
 
             mockMvc.perform(post("/v1/bookmarks")
@@ -69,7 +69,7 @@ class BookmarkControllerTest extends PresentationTest {
         }
 
         @Test
-        void 가게_ID가_음수면_400_응답을_반환한다() throws Exception {
+        void 가게_ID가_음수라면_400_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
 
             mockMvc.perform(post("/v1/bookmarks")
@@ -88,7 +88,7 @@ class BookmarkControllerTest extends PresentationTest {
         private final String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
 
         @Test
-        void 정상적으로_삭제되면_204_상태코드를_반환한다() throws Exception {
+        void 정상적으로_삭제되면_204_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
             willDoNothing().given(bookmarkService).delete(anyLong(), any(Member.class));
 
@@ -101,7 +101,7 @@ class BookmarkControllerTest extends PresentationTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"hello", "@#!"})
-        void 가게_ID가_숫자가_아니면_400_상태코드를_반환한다(String storeId) throws Exception {
+        void 가게_ID가_Long_타입이_아니라면_400_응답을_반환한다(String storeId) throws Exception {
             mockingAuthMemberInResolver();
 
             mockMvc.perform(delete("/v1/bookmarks")
@@ -114,7 +114,7 @@ class BookmarkControllerTest extends PresentationTest {
         }
 
         @Test
-        void 가게_ID가_음수면_400_상태코드를_반환한다() throws Exception {
+        void 가게_ID가_음수면_400_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
 
             mockMvc.perform(delete("/v1/bookmarks")

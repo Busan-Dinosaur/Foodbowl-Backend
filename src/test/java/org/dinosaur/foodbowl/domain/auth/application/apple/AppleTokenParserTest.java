@@ -29,10 +29,10 @@ class AppleTokenParserTest {
     private static final AppleTokenParser appleTokenParser = new AppleTokenParser(new ObjectMapper());
 
     @Nested
-    class 헤더_추출 {
+    class 애플_토큰_헤더_추출_시 {
 
         @Test
-        void 유효한_토큰에서_헤더를_추출하면_헤더_정보를_반환한다() throws NoSuchAlgorithmException {
+        void 정상적인_애플_토큰을_파싱하여_헤더_정보를_추출한다() throws NoSuchAlgorithmException {
             Date now = new Date();
             KeyPair keyPair = KeyPairGenerator.getInstance("RSA")
                     .generateKeyPair();
@@ -53,7 +53,7 @@ class AppleTokenParserTest {
         }
 
         @Test
-        void 유효하지_않은_헤더를_가진_토큰을_파싱하면_예외를_던진다() {
+        void 정상적이지_않은_헤더를_가진_애플_토큰을_파싱하면_예외를_던진다() {
             String invalidHeader = Base64.getUrlEncoder().encodeToString("invalid json".getBytes());
             String appleToken = invalidHeader + ".payload.signature";
 
@@ -63,7 +63,7 @@ class AppleTokenParserTest {
         }
 
         @Test
-        void 유효하지_않은_토큰에서_헤더를_추출하면_예외를_던진다() {
+        void 정상적이지_않은_애플_토큰을_파싱하면_예외를_던진다() {
             assertThatThrownBy(() -> appleTokenParser.extractHeaders("Invalid Token"))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("Base64로 디코딩할 수 없는 값입니다.");
@@ -71,10 +71,10 @@ class AppleTokenParserTest {
     }
 
     @Nested
-    class 클레임_추출 {
+    class 애플_클레임_추출_시 {
 
         @Test
-        void 유효한_토큰이라면_클레임을_추출한다() throws NoSuchAlgorithmException {
+        void 정상적인_애플_토큰이라면_클레임을_추출한다() throws NoSuchAlgorithmException {
             String subject = "9876";
             Date now = new Date();
             KeyPair keyPair = KeyPairGenerator.getInstance("RSA")
@@ -102,7 +102,7 @@ class AppleTokenParserTest {
         }
 
         @Test
-        void 만료기간이_지난_토큰이라면_예외를_던진다() throws NoSuchAlgorithmException {
+        void 만료기간이_지난_애플_토큰이라면_예외를_던진다() throws NoSuchAlgorithmException {
             String subject = "9876";
             Date now = new Date();
             KeyPair keyPair = KeyPairGenerator.getInstance("RSA")
@@ -126,7 +126,7 @@ class AppleTokenParserTest {
         }
 
         @Test
-        void 지원하지_않는_토큰이라면_예외를_던진다() throws NoSuchAlgorithmException {
+        void 지원하지_않는_애플_토큰이라면_예외를_던진다() throws NoSuchAlgorithmException {
             String subject = "9876";
             Date now = new Date();
             KeyPair keyPair = KeyPairGenerator.getInstance("RSA")
@@ -152,7 +152,7 @@ class AppleTokenParserTest {
         }
 
         @Test
-        void 손상된_토큰이라면_예외를_던진다() throws NoSuchAlgorithmException {
+        void 손상된_애플_토큰이라면_예외를_던진다() throws NoSuchAlgorithmException {
             KeyPair keyPair = KeyPairGenerator.getInstance("RSA")
                     .generateKeyPair();
             PublicKey publicKey = keyPair.getPublic();

@@ -30,7 +30,7 @@ class PhotoLocalManagerTest extends IntegrationTest {
     class 이미지_파일_저장_시 {
 
         @Test
-        void 디렉토리에_저장한다() {
+        void 정상적인_요청이라면_이미지_파일을_디렉토리에_저장한다() {
             MultipartFile multipartFile = FileTestUtils.generateMultiPartFile();
             List<MultipartFile> multipartFiles = List.of(multipartFile);
 
@@ -38,13 +38,13 @@ class PhotoLocalManagerTest extends IntegrationTest {
 
             String imagePath = filePaths.get(0);
             File file = new File(imagePath);
-            assertThat(file.exists()).isTrue();
+            assertThat(file).exists();
             FileTestUtils.cleanUp();
         }
 
         @ParameterizedTest
         @ValueSource(strings = {"foodBowl.zip", "foodBowl.pdf", "foodBowl.docx", "foodBowl.pptx"})
-        void 파일_이름이_이미지_형식이_아니면_예외가_발생한다(String originalFilename) {
+        void 파일_이름이_이미지_형식이_아니면_예외를_던진다(String originalFilename) {
             MockMultipartFile multipartFile =
                     new MockMultipartFile("bucket", originalFilename, MediaType.IMAGE_JPEG_VALUE, image);
             List<MultipartFile> multipartFiles = List.of(multipartFile);
@@ -57,7 +57,7 @@ class PhotoLocalManagerTest extends IntegrationTest {
         @ParameterizedTest
         @NullAndEmptySource
         @ValueSource(strings = {" "})
-        void 파일_이름이_없으면_예외가_발생한다(String originalFilename) {
+        void 파일_이름이_없으면_예외를_던진다(String originalFilename) {
             MockMultipartFile multipartFile =
                     new MockMultipartFile("bucket", originalFilename, MediaType.IMAGE_JPEG_VALUE, image);
             List<MultipartFile> multipartFiles = List.of(multipartFile);
@@ -69,7 +69,7 @@ class PhotoLocalManagerTest extends IntegrationTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"foodBowlZip", "helloWorld", "javaSpring"})
-        void 확장자가_없으면_예외가_발생한다(String originalFilename) {
+        void 확장자가_없으면_예외를_던진다(String originalFilename) {
             MockMultipartFile multipartFile =
                     new MockMultipartFile("bucket", originalFilename, MediaType.IMAGE_JPEG_VALUE, image);
             List<MultipartFile> multipartFiles = List.of(multipartFile);
@@ -84,7 +84,7 @@ class PhotoLocalManagerTest extends IntegrationTest {
     class 이미지_파일_삭제_시 {
 
         @Test
-        void 정상적으로_삭제한다() {
+        void 정상적인_요청이라면_이미지_파일을_삭제한다() {
             MultipartFile multipartFile = FileTestUtils.generateMultiPartFile();
             List<MultipartFile> multipartFiles = List.of(multipartFile);
             List<String> filePaths = photoLocalUploader.upload(multipartFiles, "test");
@@ -93,12 +93,12 @@ class PhotoLocalManagerTest extends IntegrationTest {
 
             String imagePath = filePaths.get(0);
             File file = new File(imagePath);
-            assertThat(file.exists()).isFalse();
+            assertThat(file).doesNotExist();
             FileTestUtils.cleanUp();
         }
 
         @Test
-        void 파일_이름에_URL_정보가_없으면_예외가_발생한다() {
+        void 파일_이름에_URL_정보가_없으면_예외를_던진다() {
             String fullPath = "https://image.url";
 
             assertThatThrownBy(() -> photoLocalUploader.delete(List.of(fullPath)))

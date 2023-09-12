@@ -68,7 +68,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<ExceptionResponse> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
         log.warn("[" + e.getClass() + "] " + e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.badRequest()
                 .body(new ExceptionResponse("CLIENT-102", "이미지의 크기는 최대 " + e.getMaxUploadSize() + "MB 까지 가능합니다."));
     }
 
@@ -115,6 +115,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(ExceptionResponse.from(e.getExceptionType()));
     }
 
+    @ExceptionHandler(FileException.class)
+    public ResponseEntity<ExceptionResponse> handleFileException(FileException e) {
+        log.warn("[" + e.getClass() + "] " + e.getMessage());
+        return ResponseEntity.badRequest()
+                .body(ExceptionResponse.from(e.getExceptionType()));
+    }
+
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ExceptionResponse> handleAuthenticationException(AuthenticationException e) {
         log.warn("[" + e.getClass() + "] " + e.getMessage());
@@ -126,13 +133,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleNotFoundException(NotFoundException e) {
         log.warn("[" + e.getClass() + "] " + e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ExceptionResponse.from(e.getExceptionType()));
-    }
-
-    @ExceptionHandler(FileException.class)
-    public ResponseEntity<ExceptionResponse> handleFileException(FileException e) {
-        log.warn("[" + e.getClass() + "] " + e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ExceptionResponse.from(e.getExceptionType()));
     }
 }
