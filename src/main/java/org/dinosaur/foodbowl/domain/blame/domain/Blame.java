@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.domain.blame.domain;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -13,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -20,6 +22,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.dinosaur.foodbowl.domain.blame.domain.vo.BlameTarget;
+import org.dinosaur.foodbowl.domain.blame.domain.vo.Description;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.global.persistence.AuditingEntity;
 
@@ -58,10 +61,15 @@ public class Blame extends AuditingEntity {
     @Column(name = "target_type", updatable = false)
     private BlameTarget blameTarget;
 
+    @Valid
+    @Embedded
+    private Description description;
+
     @Builder
-    private Blame(Member member, Long targetId, BlameTarget blameTarget) {
+    private Blame(Member member, Long targetId, BlameTarget blameTarget, String description) {
         this.member = member;
         this.targetId = targetId;
         this.blameTarget = blameTarget;
+        this.description = new Description(description);
     }
 }
