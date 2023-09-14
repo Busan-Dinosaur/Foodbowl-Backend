@@ -10,14 +10,11 @@ import org.dinosaur.foodbowl.domain.review.domain.Review;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
 import org.dinosaur.foodbowl.test.IntegrationTest;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class BlameServiceTest extends IntegrationTest {
 
     @Autowired

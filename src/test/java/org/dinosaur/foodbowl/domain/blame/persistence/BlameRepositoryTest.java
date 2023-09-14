@@ -7,14 +7,11 @@ import org.dinosaur.foodbowl.domain.blame.domain.Blame;
 import org.dinosaur.foodbowl.domain.blame.domain.vo.BlameTarget;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.test.PersistenceTest;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class BlameRepositoryTest extends PersistenceTest {
 
     @Autowired
