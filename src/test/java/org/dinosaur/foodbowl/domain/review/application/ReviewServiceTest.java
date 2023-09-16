@@ -169,6 +169,16 @@ class ReviewServiceTest extends IntegrationTest {
         }
 
         @Test
+        void 존재하지_않는_리뷰이면_예외가_발생한다() {
+            Member member = memberTestPersister.memberBuilder().save();
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(Collections.emptyList());
+
+            assertThatThrownBy(() -> reviewService.update(-1L, reviewUpdateRequest, null, member))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("일치하는 리뷰를 찾을 수 없습니다.");
+        }
+
+        @Test
         void 작성자가_아니면_예외가_발생한다() {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2);
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
