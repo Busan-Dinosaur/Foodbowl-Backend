@@ -1,17 +1,15 @@
 package org.dinosaur.foodbowl.domain.review.application;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.photo.application.PhotoService;
 import org.dinosaur.foodbowl.domain.photo.domain.Photo;
+import org.dinosaur.foodbowl.domain.review.application.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.application.dto.request.ReviewUpdateRequest;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
-import org.dinosaur.foodbowl.domain.review.application.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.exception.ReviewExceptionType;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
 import org.dinosaur.foodbowl.domain.store.application.StoreService;
@@ -118,23 +116,10 @@ public class ReviewService {
     }
 
     private List<Photo> extractPhotosForDelete(List<Photo> currentPhotos, List<Long> deletePhotoIds) {
-        Set<Photo> deletePhotos = new HashSet<>();
-        for (Long deletePhotoId : deletePhotoIds) {
-            Photo deletePhoto = extractDeletePhoto(currentPhotos, deletePhotoId);
-            deletePhotos.add(deletePhoto);
-        }
-        return new ArrayList<>(deletePhotos);
-    }
-
-    private Photo extractDeletePhoto(List<Photo> currentPhotos, Long deletePhotoId) {
+        Set<Long> deleteCandidateIds = new HashSet<>(deletePhotoIds);
         return currentPhotos.stream()
-                .filter(photo -> isSamePhoto(deletePhotoId, photo))
-                .findAny()
-                .orElseThrow(() -> new BadRequestException(ReviewExceptionType.INVALID_PHOTO));
-    }
-
-    private boolean isSamePhoto(Long deletePhotoId, Photo photo) {
-        return Objects.equals(photo.getId(), deletePhotoId);
+                .filter(photo -> deleteCandidateIds.contains(photo.getId()))
+                .toList();
     }
 
     @Transactional
@@ -146,8 +131,7 @@ public class ReviewService {
 
         List<Photo> photos = reviewPhotoService.findPhotos(review);
 
-        reviewPhotoService.delete(review);
-        photoService.delete(photos);
+        reviewPhotoService.deleteByReviewAndPhoto(review, photos);
         reviewRepository.delete(review);
     }
 
