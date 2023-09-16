@@ -7,6 +7,7 @@ import java.util.List;
 import org.dinosaur.foodbowl.global.presentation.PositiveListValidator;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -20,21 +21,25 @@ class PositiveListValidatorTest {
     @Mock
     private ConstraintValidatorContext context;
 
-    @Test
-    void 리스트_원소가_모두_양수인_경우_true_반환한다() {
-        List<Long> numbers = List.of(1L, 2L, 3L);
+    @Nested
+    class Is_Valid_메서드는 {
 
-        PositiveListValidator positiveListValidator = new PositiveListValidator();
+        @Test
+        void 리스트_원소가_모두_양수인_경우_true_반환한다() {
+            List<Long> numbers = List.of(1L, 2L, 3L);
 
-        assertThat(positiveListValidator.isValid(numbers, context)).isTrue();
-    }
+            PositiveListValidator positiveListValidator = new PositiveListValidator();
 
-    @Test
-    void 리스트_원소에_음수가_포함된_경우_false_반환한다() {
-        List<Long> numbers = List.of(1L, -2L, 3L);
+            assertThat(positiveListValidator.isValid(numbers, context)).isTrue();
+        }
 
-        PositiveListValidator positiveListValidator = new PositiveListValidator();
+        @Test
+        void 리스트_원소에_음수가_포함된_경우_false_반환한다() {
+            List<Long> numbers = List.of(1L, -2L, 3L);
 
-        assertThat(positiveListValidator.isValid(numbers, context)).isFalse();
+            PositiveListValidator positiveListValidator = new PositiveListValidator();
+
+            assertThat(positiveListValidator.isValid(numbers, context)).isFalse();
+        }
     }
 }
