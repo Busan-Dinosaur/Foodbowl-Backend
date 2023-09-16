@@ -88,6 +88,8 @@ public interface ReviewControllerDocs {
             )
     })
     ResponseEntity<Void> update(
+            @Parameter(description = "리뷰 ID", example = "1")
+            @Positive(message = "ID는 양수만 가능합니다.") Long id,
             @Valid ReviewUpdateRequest reviewUpdateRequest,
             @Size(max = 4, message = "사진의 개수는 최대 4개까지 가능합니다.") List<MultipartFile> imageFiles,
             Member member

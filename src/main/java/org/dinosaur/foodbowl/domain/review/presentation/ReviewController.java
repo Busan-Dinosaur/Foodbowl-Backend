@@ -41,14 +41,18 @@ public class ReviewController implements ReviewControllerDocs {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PatchMapping(
+            path = "/{id}",
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE}
+    )
     public ResponseEntity<Void> update(
+            @PathVariable @Positive(message = "ID는 양수만 가능합니다.") Long id,
             @RequestPart(name = "request") @Valid ReviewUpdateRequest reviewUpdateRequest,
             @RequestPart(name = "images", required = false)
             @Size(max = 4, message = "사진의 개수는 최대 4개까지 가능합니다.") List<MultipartFile> imageFiles,
             @Auth Member member
     ) {
-        reviewService.update(reviewUpdateRequest, imageFiles, member);
+        reviewService.update(id, reviewUpdateRequest, imageFiles, member);
         return ResponseEntity.noContent().build();
     }
 

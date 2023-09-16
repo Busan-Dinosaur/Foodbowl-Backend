@@ -93,9 +93,9 @@ class ReviewServiceTest extends IntegrationTest {
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
             Member member = memberTestPersister.memberBuilder().save();
             Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member).getId();
-            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(reviewId, Collections.emptyList());
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(Collections.emptyList());
 
-            reviewService.update(reviewUpdateRequest, null, member);
+            reviewService.update(reviewId, reviewUpdateRequest, null, member);
 
             Review updateReview = reviewRepository.findById(reviewId).get();
             assertSoftly(softly -> {
@@ -111,10 +111,10 @@ class ReviewServiceTest extends IntegrationTest {
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
             Member member = memberTestPersister.memberBuilder().save();
             Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member).getId();
-            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(reviewId, Collections.emptyList());
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(Collections.emptyList());
             List<MultipartFile> updateImages = FileTestUtils.generateMultipartFiles(2);
 
-            reviewService.update(reviewUpdateRequest, updateImages, member);
+            reviewService.update(reviewId, reviewUpdateRequest, updateImages, member);
 
             Review updateReview = reviewRepository.findById(reviewId).get();
             int updatePhotoSize = multipartFiles.size() + updateImages.size();
@@ -133,9 +133,9 @@ class ReviewServiceTest extends IntegrationTest {
             Review review = reviewService.create(reviewCreateRequest, multipartFiles, member);
             List<Photo> reviewPhotos = reviewPhotoService.findPhotos(review);
             List<Long> deletePhotoIds = List.of(reviewPhotos.get(0).getId());
-            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(review.getId(), deletePhotoIds);
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(deletePhotoIds);
 
-            reviewService.update(reviewUpdateRequest, null, member);
+            reviewService.update(review.getId(), reviewUpdateRequest, null, member);
 
             Review updateReview = reviewRepository.findById(review.getId()).get();
             int updatePhotoSize = multipartFiles.size() - deletePhotoIds.size();
@@ -154,10 +154,10 @@ class ReviewServiceTest extends IntegrationTest {
             Review review = reviewService.create(reviewCreateRequest, multipartFiles, member);
             List<Photo> reviewPhotos = reviewPhotoService.findPhotos(review);
             List<Long> deletePhotoIds = List.of(reviewPhotos.get(0).getId());
-            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(review.getId(), deletePhotoIds);
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(deletePhotoIds);
             List<MultipartFile> updateImages = FileTestUtils.generateMultipartFiles(2);
 
-            reviewService.update(reviewUpdateRequest, updateImages, member);
+            reviewService.update(review.getId(), reviewUpdateRequest, updateImages, member);
 
             Review updateReview = reviewRepository.findById(review.getId()).get();
             int updatePhotoSize = multipartFiles.size()  + updateImages.size() - deletePhotoIds.size();
@@ -175,9 +175,9 @@ class ReviewServiceTest extends IntegrationTest {
             Member member = memberTestPersister.memberBuilder().save();
             Member otherMember = memberTestPersister.memberBuilder().save();
             Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member).getId();
-            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(reviewId, Collections.emptyList());
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(Collections.emptyList());
 
-            assertThatThrownBy(() -> reviewService.update(reviewUpdateRequest, null, otherMember))
+            assertThatThrownBy(() -> reviewService.update(reviewId, reviewUpdateRequest, null, otherMember))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("본인이 작성한 리뷰가 아닙니다.");
         }
@@ -188,10 +188,10 @@ class ReviewServiceTest extends IntegrationTest {
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
             Member member = memberTestPersister.memberBuilder().save();
             Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member).getId();
-            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(reviewId, Collections.emptyList());
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(Collections.emptyList());
             List<MultipartFile> updateImages = FileTestUtils.generateMultipartFiles(3);
 
-            assertThatThrownBy(() -> reviewService.update(reviewUpdateRequest, updateImages, member))
+            assertThatThrownBy(() -> reviewService.update(reviewId, reviewUpdateRequest, updateImages, member))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("리뷰에 사진은 최대 4장까지 가능합니다.");
         }
@@ -203,9 +203,9 @@ class ReviewServiceTest extends IntegrationTest {
             Member member = memberTestPersister.memberBuilder().save();
             Review review = reviewService.create(reviewCreateRequest, multipartFiles, member);
             List<Long> deletePhotoIds = List.of(-1L);
-            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(review.getId(), deletePhotoIds);
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(deletePhotoIds);
 
-            assertThatThrownBy(() -> reviewService.update(reviewUpdateRequest, null, member))
+            assertThatThrownBy(() -> reviewService.update(review.getId(), reviewUpdateRequest, null, member))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("삭제하려는 사진이 현재 리뷰에 존재하지 않습니다.");
         }
@@ -266,9 +266,8 @@ class ReviewServiceTest extends IntegrationTest {
         );
     }
 
-    private ReviewUpdateRequest generateReviewUpdateRequest(Long reviewId, List<Long> deletePhotoIds) {
+    private ReviewUpdateRequest generateReviewUpdateRequest(List<Long> deletePhotoIds) {
         return new ReviewUpdateRequest(
-                reviewId,
                 "애들이 먹기에는 조금 매워요",
                 deletePhotoIds
         );

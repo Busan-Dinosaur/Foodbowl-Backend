@@ -438,7 +438,7 @@ class ReviewControllerTest extends PresentationTest {
         @Test
         void 이미지_변경_없이_정상적으로_수정되면_204_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
-            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(1L, "리뷰 수정 내용",
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest("리뷰 수정 내용",
                     Collections.emptyList());
             MockMultipartFile request = new MockMultipartFile(
                     "request",
@@ -447,9 +447,9 @@ class ReviewControllerTest extends PresentationTest {
                     objectMapper.writeValueAsBytes(reviewUpdateRequest)
             );
             willDoNothing().given(reviewService)
-                    .update(any(ReviewUpdateRequest.class), anyList(), any(Member.class));
+                    .update(anyLong(), any(ReviewUpdateRequest.class), anyList(), any(Member.class));
 
-            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews")
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{id}", 1L)
                             .file(request)
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .characterEncoding(StandardCharsets.UTF_8))
@@ -460,7 +460,7 @@ class ReviewControllerTest extends PresentationTest {
         @Test
         void 이미지를_변경하고_정상적으로_수정되면_204_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
-            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(1L, "리뷰 수정 내용",
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest("리뷰 수정 내용",
                     Collections.emptyList());
             MockMultipartFile request = new MockMultipartFile(
                     "request",
@@ -469,9 +469,9 @@ class ReviewControllerTest extends PresentationTest {
                     objectMapper.writeValueAsBytes(reviewUpdateRequest)
             );
             willDoNothing().given(reviewService)
-                    .update(any(ReviewUpdateRequest.class), anyList(), any(Member.class));
+                    .update(anyLong(), any(ReviewUpdateRequest.class), anyList(), any(Member.class));
 
-            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews")
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{id}", 1L)
                             .file(request)
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .characterEncoding(StandardCharsets.UTF_8))
@@ -482,7 +482,7 @@ class ReviewControllerTest extends PresentationTest {
         @Test
         void ID가_양수가_아니면_400_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
-            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(-1L, "리뷰 수정 내용",
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest("리뷰 수정 내용",
                     Collections.emptyList()
             );
             MockMultipartFile request = new MockMultipartFile(
@@ -492,14 +492,14 @@ class ReviewControllerTest extends PresentationTest {
                     objectMapper.writeValueAsBytes(reviewUpdateRequest)
             );
 
-            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews")
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{id}", -1L)
                             .file(request)
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .characterEncoding(StandardCharsets.UTF_8))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.errorCode").value("CLIENT-100"))
-                    .andExpect(jsonPath("$.message", containsString("리뷰 ID는 양수만 가능합니다.")));
+                    .andExpect(jsonPath("$.errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message", containsString("ID는 양수만 가능합니다.")));
         }
 
         @ParameterizedTest
@@ -507,7 +507,7 @@ class ReviewControllerTest extends PresentationTest {
         @ValueSource(strings = " ")
         void 수정하는_내용이_없으면_400_응답을_반환한다(String content) throws Exception {
             mockingAuthMemberInResolver();
-            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(1L, content,
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(content,
                     Collections.emptyList()
             );
             MockMultipartFile request = new MockMultipartFile(
@@ -517,7 +517,7 @@ class ReviewControllerTest extends PresentationTest {
                     objectMapper.writeValueAsBytes(reviewUpdateRequest)
             );
 
-            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews")
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{id}", 1L)
                             .file(request)
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .characterEncoding(StandardCharsets.UTF_8))
@@ -530,7 +530,7 @@ class ReviewControllerTest extends PresentationTest {
         @Test
         void 삭제하는_사진_필드가_없으면_400_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
-            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(1L, "맛있어요", null);
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest("맛있어요", null);
             MockMultipartFile request = new MockMultipartFile(
                     "request",
                     "",
@@ -538,7 +538,7 @@ class ReviewControllerTest extends PresentationTest {
                     objectMapper.writeValueAsBytes(reviewUpdateRequest)
             );
 
-            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews")
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{id}", 1L)
                             .file(request)
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .characterEncoding(StandardCharsets.UTF_8))
@@ -551,7 +551,7 @@ class ReviewControllerTest extends PresentationTest {
         @Test
         void 삭제하는_사진_ID가_음수이면_400_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
-            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(1L, "맛있어요", List.of(-1L, -2L));
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest("맛있어요", List.of(-1L, -2L));
             MockMultipartFile request = new MockMultipartFile(
                     "request",
                     "",
@@ -559,7 +559,7 @@ class ReviewControllerTest extends PresentationTest {
                     objectMapper.writeValueAsBytes(reviewUpdateRequest)
             );
 
-            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews")
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{id}", 1L)
                             .file(request)
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .characterEncoding(StandardCharsets.UTF_8))
@@ -572,7 +572,7 @@ class ReviewControllerTest extends PresentationTest {
         @Test
         void 추가_사진이_4개_보다_많은_경우_400_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
-            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(1L, "리뷰", Collections.emptyList());
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest("리뷰", Collections.emptyList());
             MockMultipartFile request = new MockMultipartFile(
                     "request",
                     "",
@@ -585,7 +585,7 @@ class ReviewControllerTest extends PresentationTest {
             MockMultipartFile multipartFile4 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
             MockMultipartFile multipartFile5 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
 
-            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews")
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{id}", 1L)
                             .file(request)
                             .file(multipartFile1)
                             .file(multipartFile2)
@@ -660,12 +660,10 @@ class ReviewControllerTest extends PresentationTest {
     }
 
     private ReviewUpdateRequest generateReviewUpdateRequest(
-            Long reviewId,
             String content,
             List<Long> deletePhotoIds
     ) {
         return new ReviewUpdateRequest(
-                reviewId,
                 content,
                 deletePhotoIds
         );
