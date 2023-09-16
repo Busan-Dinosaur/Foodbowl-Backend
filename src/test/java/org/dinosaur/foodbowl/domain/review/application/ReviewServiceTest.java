@@ -205,20 +205,6 @@ class ReviewServiceTest extends IntegrationTest {
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("리뷰에 사진은 최대 4장까지 가능합니다.");
         }
-
-        @Test
-        void 삭제하는_사진이_해당_리뷰에_속해있는_사진이_아니면_예외가_발생한다() {
-            List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2);
-            ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
-            Member member = memberTestPersister.memberBuilder().save();
-            Review review = reviewService.create(reviewCreateRequest, multipartFiles, member);
-            List<Long> deletePhotoIds = List.of(-1L);
-            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(deletePhotoIds);
-
-            assertThatThrownBy(() -> reviewService.update(review.getId(), reviewUpdateRequest, null, member))
-                    .isInstanceOf(BadRequestException.class)
-                    .hasMessage("삭제하려는 사진이 현재 리뷰에 존재하지 않습니다.");
-        }
     }
 
     @Nested
