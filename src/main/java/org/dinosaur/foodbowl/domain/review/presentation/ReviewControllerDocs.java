@@ -85,6 +85,11 @@ public interface ReviewControllerDocs {
                             5.리뷰 ID가 양수가 아닌 경우
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "존재하지 않는 리뷰 ID",
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
     ResponseEntity<Void> update(
