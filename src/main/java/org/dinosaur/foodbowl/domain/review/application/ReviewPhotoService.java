@@ -37,4 +37,9 @@ public class ReviewPhotoService {
     public void delete(Review review) {
         reviewPhotoRepository.deleteAllByReview(review);
     }
+
+    @Transactional
+    public void deleteByReviewAndPhoto(Review review, List<Photo> photos) {
+        reviewPhotoRepository.deleteByReviewAndPhotos(review, photos);
+    }
 }

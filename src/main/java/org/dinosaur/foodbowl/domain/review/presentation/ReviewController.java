@@ -7,12 +7,14 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.application.ReviewService;
-import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
+import org.dinosaur.foodbowl.domain.review.application.dto.request.ReviewCreateRequest;
+import org.dinosaur.foodbowl.domain.review.application.dto.request.ReviewUpdateRequest;
 import org.dinosaur.foodbowl.global.presentation.Auth;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,12 +41,27 @@ public class ReviewController implements ReviewControllerDocs {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(
-            @PathVariable @Positive(message = "ID는 양수만 가능합니다.") Long id,
+    @PatchMapping(
+            path = "/{id}",
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE}
+    )
+    public ResponseEntity<Void> update(
+            @PathVariable("id") @Positive(message = "리뷰 ID는 양수만 가능합니다.") Long reviewId,
+            @RequestPart(name = "request") @Valid ReviewUpdateRequest reviewUpdateRequest,
+            @RequestPart(name = "images", required = false)
+            @Size(max = 4, message = "사진의 개수는 최대 4개까지 가능합니다.") List<MultipartFile> imageFiles,
             @Auth Member member
     ) {
-        reviewService.delete(id, member);
+        reviewService.update(reviewId, reviewUpdateRequest, imageFiles, member);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(
+            @PathVariable("id") @Positive(message = "리뷰 ID는 양수만 가능합니다.") Long reviewId,
+            @Auth Member member
+    ) {
+        reviewService.delete(reviewId, member);
         return ResponseEntity.noContent().build();
     }
 }

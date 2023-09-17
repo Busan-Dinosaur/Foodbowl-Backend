@@ -73,7 +73,7 @@ class MemberControllerTest extends PresentationTest {
             );
             given(memberService.getProfile(anyLong(), any(Member.class))).willReturn(response);
 
-            MvcResult mvcResult = mockMvc.perform(get("/v1/members/{id}/profile", 1L)
+            MvcResult mvcResult = mockMvc.perform(get("/v1/members/{memberId}/profile", 1L)
                             .header(AUTHORIZATION, BEARER + accessToken))
                     .andDo(print())
                     .andExpect(status().isOk())
@@ -87,7 +87,7 @@ class MemberControllerTest extends PresentationTest {
         @ParameterizedTest
         @ValueSource(strings = {"가", "a", "A", "@"})
         void 멤버_ID가_Long_타입이_아니라면_400_응답을_반환한다(String memberId) throws Exception {
-            mockMvc.perform(get("/v1/members/{id}/profile", memberId)
+            mockMvc.perform(get("/v1/members/{memberId}/profile", memberId)
                             .header(AUTHORIZATION, BEARER + accessToken))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
@@ -100,7 +100,7 @@ class MemberControllerTest extends PresentationTest {
         void 멤버_ID가_양수가_아니라면_400_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
 
-            mockMvc.perform(get("/v1/members/{id}/profile", -1L)
+            mockMvc.perform(get("/v1/members/{memberId}/profile", -1L)
                             .header(AUTHORIZATION, BEARER + accessToken))
                     .andDo(print())
                     .andExpect(status().isBadRequest())

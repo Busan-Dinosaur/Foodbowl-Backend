@@ -41,4 +41,18 @@ class ReviewPhotoServiceTest extends IntegrationTest {
 
         assertThat(reviewPhotoRepository.findAllByReview(review)).isEmpty();
     }
+
+    @Test
+    void 리뷰_사진_매핑_정보들을_삭제한다() {
+        Review review = reviewTestPersister.builder().save();
+        Photo photoA = photoTestPersister.builder().save();
+        Photo photoB = photoTestPersister.builder().save();
+        Photo photoC = photoTestPersister.builder().save();
+        reviewPhotoService.save(review, List.of(photoA, photoB, photoC));
+
+        List<Photo> deletePhotos = List.of(photoA, photoB);
+        reviewPhotoService.deleteByReviewAndPhoto(review, deletePhotos);
+
+        assertThat(reviewPhotoRepository.findAllByReview(review)).hasSize(1);
+    }
 }
