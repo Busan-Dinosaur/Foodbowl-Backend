@@ -3,6 +3,7 @@ package org.dinosaur.foodbowl.domain.review.application;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.photo.application.PhotoService;
@@ -88,6 +89,7 @@ public class ReviewService {
         List<Photo> currentPhotos = reviewPhotoService.findPhotos(review);
         List<Long> deletePhotoIds = reviewUpdateRequest.deletePhotoIds();
         validatePhotoSize(imageFiles, currentPhotos, deletePhotoIds);
+        validateDeletePhotoIds(currentPhotos, deletePhotoIds);
 
         List<Photo> deletePhotos = extractPhotosForDelete(currentPhotos, deletePhotoIds);
         reviewPhotoService.deleteByReviewAndPhoto(review, deletePhotos);
@@ -112,6 +114,16 @@ public class ReviewService {
         int updateReviewPhotoSize = currentReviewPhotoSize - deleteReviewPhotoSize + insertReviewPhotoSize;
         if (updateReviewPhotoSize > REVIEW_PHOTO_MAX_SIZE) {
             throw new BadRequestException(ReviewExceptionType.PHOTO_COUNT);
+        }
+    }
+
+    private void validateDeletePhotoIds(List<Photo> currentPhotos, List<Long> deletePhotoIds) {
+        Set<Long> currentPhotoIds = currentPhotos.stream()
+                .map(Photo::getId)
+                .collect(Collectors.toSet());
+
+        if (!currentPhotoIds.containsAll(deletePhotoIds)) {
+            throw new BadRequestException(ReviewExceptionType.INVALID_PHOTO);
         }
     }
 

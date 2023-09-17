@@ -193,6 +193,20 @@ class ReviewServiceTest extends IntegrationTest {
         }
 
         @Test
+        void 삭제하려는_사진이_리뷰의_사진이_아니면_예외가_발생한다() {
+            List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2);
+            ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
+            Member member = memberTestPersister.memberBuilder().save();
+            Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member).getId();
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(List.of(-1L));
+            List<MultipartFile> updateImages = FileTestUtils.generateMultipartFiles(3);
+
+            assertThatThrownBy(() -> reviewService.update(reviewId, reviewUpdateRequest, updateImages, member))
+                    .isInstanceOf(BadRequestException.class)
+                    .hasMessage("삭제하려는 사진이 현재 리뷰에 존재하지 않습니다.");
+        }
+
+        @Test
         void 사진_개수가_최대_사진_개수를_초과하면_예외가_발생한다() {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2);
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();

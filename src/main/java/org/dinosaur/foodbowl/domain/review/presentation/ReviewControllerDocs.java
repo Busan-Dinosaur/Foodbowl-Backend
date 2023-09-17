@@ -85,6 +85,8 @@ public interface ReviewControllerDocs {
                             5.양수가 아닌 리뷰 ID
                             
                             6.삭제 사진 ID가 4개보다 많은 경우
+                            
+                            7.삭제하려는 사진이 해당 리뷰의 사진이 아닌 경우
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             ),
