@@ -60,7 +60,7 @@ class BlameServiceTest extends IntegrationTest {
 
             assertThatThrownBy(() -> blameService.blame(request, loginMember))
                     .isInstanceOf(BadRequestException.class)
-                    .hasMessage("스스로에 대해 신고할 수 없습니다.");
+                    .hasMessage("본인을 신고할 수 없습니다.");
         }
 
         @Test
@@ -71,7 +71,7 @@ class BlameServiceTest extends IntegrationTest {
 
             assertThatThrownBy(() -> blameService.blame(request, loginMember))
                     .isInstanceOf(BadRequestException.class)
-                    .hasMessage("스스로에 대해 신고할 수 없습니다.");
+                    .hasMessage("본인을 신고할 수 없습니다.");
         }
 
         @Test
