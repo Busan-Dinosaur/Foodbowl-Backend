@@ -78,24 +78,28 @@ public interface ReviewControllerDocs {
                                                         
                             2.삭제 사진 필드가 없는 경우
                             
-                            3.삭제 사진 ID에 음수가 포함된 경우제
+                            3.삭제 사진 ID에 음수가 포함된 경우
                             
                             4.수정하는 리뷰 내용이 없는 경우
                             
+                            5.양수가 아닌 리뷰 ID
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "존재하지 않는 리뷰 ID",
+                    description = "존재하지 않는 리뷰",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
     ResponseEntity<Void> update(
             @Parameter(description = "리뷰 ID", example = "1")
-            @Positive(message = "ID는 양수만 가능합니다.") Long id,
+            @Positive(message = "리뷰 ID는 양수만 가능합니다.") Long reviewId,
+
             @Valid ReviewUpdateRequest reviewUpdateRequest,
+
             @Size(max = 4, message = "사진의 개수는 최대 4개까지 가능합니다.") List<MultipartFile> imageFiles,
+
             Member member
     );
 
@@ -112,20 +116,20 @@ public interface ReviewControllerDocs {
                                                         
                             2.양수가 아닌 리뷰 ID
                                                         
-                            3. 리뷰 작성자와 요청을 보낸 사용자가 다른 경우
+                            3.리뷰 작성자와 요청을 보낸 사용자가 다른 경우
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "존재하지 않는 리뷰 ID",
+                    description = "존재하지 않는 리뷰",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
     ResponseEntity<Void> delete(
             @Parameter(description = "리뷰 ID", example = "1")
-            @Positive(message = "ID는 양수만 가능합니다.")
-            Long id,
+            @Positive(message = "리뷰 ID는 양수만 가능합니다.")
+            Long reviewId,
 
             Member member
     );

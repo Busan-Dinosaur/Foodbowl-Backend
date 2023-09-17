@@ -46,22 +46,22 @@ public class ReviewController implements ReviewControllerDocs {
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE}
     )
     public ResponseEntity<Void> update(
-            @PathVariable @Positive(message = "ID는 양수만 가능합니다.") Long id,
+            @PathVariable("id") @Positive(message = "리뷰 ID는 양수만 가능합니다.") Long reviewId,
             @RequestPart(name = "request") @Valid ReviewUpdateRequest reviewUpdateRequest,
             @RequestPart(name = "images", required = false)
             @Size(max = 4, message = "사진의 개수는 최대 4개까지 가능합니다.") List<MultipartFile> imageFiles,
             @Auth Member member
     ) {
-        reviewService.update(id, reviewUpdateRequest, imageFiles, member);
+        reviewService.update(reviewId, reviewUpdateRequest, imageFiles, member);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
-            @PathVariable @Positive(message = "ID는 양수만 가능합니다.") Long id,
+            @PathVariable("id") @Positive(message = "리뷰 ID는 양수만 가능합니다.") Long reviewId,
             @Auth Member member
     ) {
-        reviewService.delete(id, member);
+        reviewService.delete(reviewId, member);
         return ResponseEntity.noContent().build();
     }
 }

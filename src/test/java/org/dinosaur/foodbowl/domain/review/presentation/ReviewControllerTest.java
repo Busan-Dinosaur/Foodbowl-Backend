@@ -449,7 +449,7 @@ class ReviewControllerTest extends PresentationTest {
             willDoNothing().given(reviewService)
                     .update(anyLong(), any(ReviewUpdateRequest.class), anyList(), any(Member.class));
 
-            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{id}", 1L)
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{reviewId}", 1L)
                             .file(request)
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .characterEncoding(StandardCharsets.UTF_8))
@@ -471,7 +471,7 @@ class ReviewControllerTest extends PresentationTest {
             willDoNothing().given(reviewService)
                     .update(anyLong(), any(ReviewUpdateRequest.class), anyList(), any(Member.class));
 
-            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{id}", 1L)
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{reviewId}", 1L)
                             .file(request)
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .characterEncoding(StandardCharsets.UTF_8))
@@ -492,7 +492,7 @@ class ReviewControllerTest extends PresentationTest {
                     objectMapper.writeValueAsBytes(reviewUpdateRequest)
             );
 
-            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{id}", -1L)
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{reviewId}", -1L)
                             .file(request)
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .characterEncoding(StandardCharsets.UTF_8))
@@ -517,7 +517,7 @@ class ReviewControllerTest extends PresentationTest {
                     objectMapper.writeValueAsBytes(reviewUpdateRequest)
             );
 
-            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{id}", 1L)
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{reviewId}", 1L)
                             .file(request)
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .characterEncoding(StandardCharsets.UTF_8))
@@ -538,7 +538,7 @@ class ReviewControllerTest extends PresentationTest {
                     objectMapper.writeValueAsBytes(reviewUpdateRequest)
             );
 
-            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{id}", 1L)
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{reviewId}", 1L)
                             .file(request)
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .characterEncoding(StandardCharsets.UTF_8))
@@ -559,7 +559,7 @@ class ReviewControllerTest extends PresentationTest {
                     objectMapper.writeValueAsBytes(reviewUpdateRequest)
             );
 
-            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{id}", 1L)
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{reviewId}", 1L)
                             .file(request)
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .characterEncoding(StandardCharsets.UTF_8))
@@ -585,7 +585,7 @@ class ReviewControllerTest extends PresentationTest {
             MockMultipartFile multipartFile4 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
             MockMultipartFile multipartFile5 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
 
-            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{id}", 1L)
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{reviewId}", 1L)
                             .file(request)
                             .file(multipartFile1)
                             .file(multipartFile2)
@@ -611,7 +611,7 @@ class ReviewControllerTest extends PresentationTest {
             mockingAuthMemberInResolver();
             willDoNothing().given(reviewService).delete(anyLong(), any(Member.class));
 
-            mockMvc.perform(delete("/v1/reviews/{id}", 1L)
+            mockMvc.perform(delete("/v1/reviews/{reviewId}", 1L)
                             .header(AUTHORIZATION, BEARER + accessToken))
                     .andDo(print())
                     .andExpect(status().isNoContent());
@@ -620,7 +620,7 @@ class ReviewControllerTest extends PresentationTest {
         @ParameterizedTest
         @ValueSource(strings = {"가", "a", "A", "@"})
         void 리뷰_ID가_Long_타입이_아니라면_400_응답을_반환한다(String reviewId) throws Exception {
-            mockMvc.perform(delete("/v1/reviews/{id}", reviewId)
+            mockMvc.perform(delete("/v1/reviews/{reviewId}", reviewId)
                             .header(AUTHORIZATION, BEARER + accessToken))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
@@ -633,7 +633,7 @@ class ReviewControllerTest extends PresentationTest {
         void 리뷰_ID가_양수가_아니면_400_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
 
-            mockMvc.perform(delete("/v1/reviews/{id}", -1L)
+            mockMvc.perform(delete("/v1/reviews/{reviewId}", -1L)
                             .header(AUTHORIZATION, BEARER + accessToken))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
