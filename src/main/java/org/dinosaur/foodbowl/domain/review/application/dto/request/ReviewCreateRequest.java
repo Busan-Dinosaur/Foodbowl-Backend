@@ -1,4 +1,4 @@
-package org.dinosaur.foodbowl.domain.review.dto.request;
+package org.dinosaur.foodbowl.domain.review.application.dto.request;
 
 import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 
