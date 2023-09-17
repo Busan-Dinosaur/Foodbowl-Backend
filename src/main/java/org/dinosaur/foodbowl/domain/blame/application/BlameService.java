@@ -3,7 +3,6 @@ package org.dinosaur.foodbowl.domain.blame.application;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
@@ -89,13 +88,12 @@ public class BlameService {
     }
 
     private void validateDuplicate(BlameRequest blameRequest, Member member) {
-        Optional<Blame> blame = blameRepository.findByMemberAndTargetIdAndBlameTarget(
+        blameRepository.findByMemberAndTargetIdAndBlameTarget(
                 member,
                 blameRequest.targetId(),
                 blameRequest.blameTarget()
-        );
-        if (blame.isPresent()) {
+        ).ifPresent(exist -> {
             throw new BadRequestException(BlameExceptionType.DUPLICATE_BLAME);
-        }
+        });
     }
 }
