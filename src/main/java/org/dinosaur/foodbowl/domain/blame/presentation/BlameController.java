@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/v1/blames")
 @RestController
-public class BlameController {
+public class BlameController implements BlameControllerDocs {
 
     private final BlameService blameService;
 
