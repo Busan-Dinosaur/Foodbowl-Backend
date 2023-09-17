@@ -83,6 +83,8 @@ public interface ReviewControllerDocs {
                             4.수정하는 리뷰 내용이 없는 경우
                             
                             5.양수가 아닌 리뷰 ID
+                            
+                            6.삭제 사진 ID가 4개보다 많은 경우
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             ),

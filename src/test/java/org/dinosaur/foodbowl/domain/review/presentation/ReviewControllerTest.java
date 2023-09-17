@@ -499,7 +499,7 @@ class ReviewControllerTest extends PresentationTest {
                     .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.errorCode").value("CLIENT-101"))
-                    .andExpect(jsonPath("$.message", containsString("ID는 양수만 가능합니다.")));
+                    .andExpect(jsonPath("$.message", containsString("리뷰 ID는 양수만 가능합니다.")));
         }
 
         @ParameterizedTest
@@ -567,6 +567,27 @@ class ReviewControllerTest extends PresentationTest {
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.errorCode").value("CLIENT-100"))
                     .andExpect(jsonPath("$.message", containsString("삭제하는 사진 ID는 양수만 가능합니다.")));
+        }
+
+        @Test
+        void 삭제하는_사진_ID가_4개를_초과하면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest("맛있어요", List.of(1L, 2L, 3L, 4L, 5L));
+            MockMultipartFile request = new MockMultipartFile(
+                    "request",
+                    "",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(reviewUpdateRequest)
+            );
+
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{reviewId}", 1L)
+                            .file(request)
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errorCode").value("CLIENT-100"))
+                    .andExpect(jsonPath("$.message", containsString("삭제하는 사진은 최대 4개까지 가능합니다.")));
         }
 
         @Test
@@ -638,7 +659,7 @@ class ReviewControllerTest extends PresentationTest {
                     .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.errorCode").value("CLIENT-101"))
-                    .andExpect(jsonPath("$.message", containsString("ID는 양수만 가능합니다.")));
+                    .andExpect(jsonPath("$.message", containsString("리뷰 ID는 양수만 가능합니다.")));
         }
     }
 

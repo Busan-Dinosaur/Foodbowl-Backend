@@ -5,6 +5,7 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 import org.dinosaur.foodbowl.global.presentation.PositiveList;
 
@@ -20,6 +21,7 @@ public record ReviewUpdateRequest(
                 requiredMode = REQUIRED
         )
         @NotNull(message = "삭제하는 사진 배열은 반드시 포함되어야 합니다.")
+        @Size(max = 4, message = "삭제하는 사진은 최대 4개까지 가능합니다.")
         @PositiveList(message = "삭제하는 사진 ID는 양수만 가능합니다.")
         List<Long> deletePhotoIds
 ) {
