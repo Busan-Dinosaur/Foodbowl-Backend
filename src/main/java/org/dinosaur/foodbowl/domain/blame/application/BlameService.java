@@ -28,8 +28,8 @@ public class BlameService {
     private final ReviewRepository reviewRepository;
 
     private final Map<BlameTarget, Predicate<Long>> reportCheck = new EnumMap<>(BlameTarget.class) {{
-        put(BlameTarget.MEMBER, BlameService.this::existMember);
-        put(BlameTarget.REVIEW, BlameService.this::existReview);
+        put(BlameTarget.MEMBER, BlameService.this::isExistMember);
+        put(BlameTarget.REVIEW, BlameService.this::isExistReview);
     }};
 
     private final Map<BlameTarget, BiPredicate<Long, Member>> reportMe = new EnumMap<>(BlameTarget.class) {{
@@ -37,11 +37,11 @@ public class BlameService {
         put(BlameTarget.REVIEW, BlameService.this::isReviewMe);
     }};
 
-    private boolean existMember(Long targetId) {
+    private boolean isExistMember(Long targetId) {
         return memberRepository.findById(targetId).isPresent();
     }
 
-    private boolean existReview(Long targetId) {
+    private boolean isExistReview(Long targetId) {
         return reviewRepository.findById(targetId).isPresent();
     }
 
@@ -74,14 +74,18 @@ public class BlameService {
     }
 
     private void validateExistTarget(BlameRequest blameRequest) {
-        boolean existTarget = reportCheck.get(blameRequest.blameTarget()).test(blameRequest.targetId());
-        if (!existTarget) {
+        boolean isExistTarget = reportCheck.get(blameRequest.blameTarget())
+                .test(blameRequest.targetId());
+
+        if (!isExistTarget) {
             throw new NotFoundException(BlameExceptionType.NOT_EXIST_TARGET);
         }
     }
 
     private void validateBlameMe(BlameRequest blameRequest, Member member) {
-        boolean blameMe = reportMe.get(blameRequest.blameTarget()).test(blameRequest.targetId(), member);
+        boolean blameMe = reportMe.get(blameRequest.blameTarget())
+                .test(blameRequest.targetId(), member);
+
         if (blameMe) {
             throw new BadRequestException(BlameExceptionType.BLAME_ME);
         }

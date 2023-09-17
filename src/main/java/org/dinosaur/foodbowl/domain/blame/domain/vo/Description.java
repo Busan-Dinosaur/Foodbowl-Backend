@@ -1,6 +1,5 @@
 package org.dinosaur.foodbowl.domain.blame.domain.vo;
 
-import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
@@ -27,7 +26,7 @@ public class Description {
     }
 
     private void validate(String value) {
-        if (StringUtils.isBlank(value)) {
+        if (value == null || value.isBlank()) {
             throw new InvalidArgumentException(BlameExceptionType.DESCRIPTION_EMPTY);
         }
         if (value.length() > MAXIMUM_LENGTH) {
