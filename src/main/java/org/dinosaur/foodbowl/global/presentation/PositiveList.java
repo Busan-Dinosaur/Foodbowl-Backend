@@ -13,6 +13,8 @@ import java.lang.annotation.Target;
 public @interface PositiveList {
 
     String message() default "List elements must be positive";
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 }

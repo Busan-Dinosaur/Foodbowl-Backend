@@ -69,7 +69,8 @@ class ReviewPhotoCustomRepositoryImplTest extends PersistenceTest {
         assertSoftly(softly -> {
             softly.assertThat(deleteCount).isEqualTo(deleteTargetPhotos.size());
             softly.assertThat(reviewPhotoRepository.findAllByReview(review)).containsExactly(reviewPhoto);
-            softly.assertThat(reviewPhotoRepository.findAllByReview(review)).doesNotContain(deleteReviewPhotoA, deleteReviewPhotoB);
+            softly.assertThat(reviewPhotoRepository.findAllByReview(review))
+                    .doesNotContain(deleteReviewPhotoA, deleteReviewPhotoB);
         });
     }
 }

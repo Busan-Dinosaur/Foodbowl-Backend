@@ -1,11 +1,13 @@
 package org.dinosaur.foodbowl.test;
 
+import org.dinosaur.foodbowl.test.persister.BlameTestPersister;
 import org.dinosaur.foodbowl.test.persister.FollowTestPersister;
 import org.dinosaur.foodbowl.test.persister.MemberTestPersister;
 import org.dinosaur.foodbowl.test.persister.PhotoTestPersister;
 import org.dinosaur.foodbowl.test.persister.ReviewTestPersister;
 import org.dinosaur.foodbowl.test.persister.SchoolTestPersister;
 import org.dinosaur.foodbowl.test.persister.StoreTestPersister;
+import org.dinosaur.foodbowl.test.persister.ThumbnailTestPersister;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class IntegrationTest {
 
     @Autowired
-    protected ReviewTestPersister reviewTestPersister;
+    protected BlameTestPersister blameTestPersister;
+
+    @Autowired
+    protected FollowTestPersister followTestPersister;
 
     @Autowired
     protected MemberTestPersister memberTestPersister;
@@ -27,11 +32,14 @@ public class IntegrationTest {
     protected PhotoTestPersister photoTestPersister;
 
     @Autowired
-    protected StoreTestPersister storeTestPersister;
+    protected ReviewTestPersister reviewTestPersister;
 
     @Autowired
     protected SchoolTestPersister schoolTestPersister;
 
     @Autowired
-    protected FollowTestPersister followTestPersister;
+    protected StoreTestPersister storeTestPersister;
+
+    @Autowired
+    protected ThumbnailTestPersister thumbnailTestPersister;
 }

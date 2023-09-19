@@ -81,7 +81,12 @@ public class ReviewService {
     }
 
     @Transactional
-    public void update(Long id, ReviewUpdateRequest reviewUpdateRequest, List<MultipartFile> imageFiles, Member member) {
+    public void update(
+            Long id,
+            ReviewUpdateRequest reviewUpdateRequest,
+            List<MultipartFile> imageFiles,
+            Member member
+    ) {
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ReviewExceptionType.NOT_FOUND));
         validateReviewOwner(member, review);

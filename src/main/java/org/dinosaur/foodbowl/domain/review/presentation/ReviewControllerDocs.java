@@ -57,14 +57,14 @@ public interface ReviewControllerDocs {
 
     @Operation(summary = "리뷰 수정",
             description = """
-                        가게에 해당하는 리뷰를 수정합니다.
-                        
-                        images 필드에는 새롭게 추가되는 사진을 보내면 됩니다.
-                        
-                        request의 deleteIds 필드에는 삭제하는 사진의 ID를 담아서 보내면 됩니다.
-                        
-                        삭제하는 사진이 없는 경우에도 deleteIds 빈 배열 '[]'을 반드시 보내야 합니다.
-                        """
+                    가게에 해당하는 리뷰를 수정합니다.
+                                            
+                    images 필드에는 새롭게 추가되는 사진을 보내면 됩니다.
+                                            
+                    request의 deleteIds 필드에는 삭제하는 사진의 ID를 담아서 보내면 됩니다.
+                                            
+                    삭제하는 사진이 없는 경우에도 deleteIds 빈 배열 '[]'을 반드시 보내야 합니다.
+                    """
     )
     @ApiResponses({
             @ApiResponse(
@@ -77,15 +77,15 @@ public interface ReviewControllerDocs {
                             1.사진이 4개보다 많은 경우
                                                         
                             2.삭제 사진 필드가 없는 경우
-                            
+                                                        
                             3.삭제 사진 ID에 음수가 포함된 경우
-                            
+                                                        
                             4.수정하는 리뷰 내용이 없는 경우
-                            
+                                                        
                             5.양수가 아닌 리뷰 ID
-                            
+                                                        
                             6.삭제 사진 ID가 4개보다 많은 경우
-                            
+                                                        
                             7.삭제하려는 사진이 해당 리뷰의 사진이 아닌 경우
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))

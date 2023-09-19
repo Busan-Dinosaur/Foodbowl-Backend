@@ -160,7 +160,7 @@ class ReviewServiceTest extends IntegrationTest {
             reviewService.update(review.getId(), reviewUpdateRequest, updateImages, member);
 
             Review updateReview = reviewRepository.findById(review.getId()).get();
-            int updatePhotoSize = multipartFiles.size()  + updateImages.size() - deletePhotoIds.size();
+            int updatePhotoSize = multipartFiles.size() + updateImages.size() - deletePhotoIds.size();
             assertSoftly(softly -> {
                 softly.assertThat(updateReview.getContent()).isEqualTo(reviewUpdateRequest.reviewContent());
                 softly.assertThat(reviewPhotoService.findPhotos(updateReview)).hasSize(updatePhotoSize);
