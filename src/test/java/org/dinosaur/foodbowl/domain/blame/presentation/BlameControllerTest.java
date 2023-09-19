@@ -51,7 +51,7 @@ class BlameControllerTest extends PresentationTest {
         @Test
         void 정상적인_요청이라면_200_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
-            BlameRequest request = new BlameRequest(1L, BlameTarget.MEMBER, "부적절한 닉네임");
+            BlameRequest request = new BlameRequest(1L, BlameTarget.MEMBER.name(), "부적절한 닉네임");
             willDoNothing().given(blameService).blame(any(BlameRequest.class), any(Member.class));
 
             mockMvc.perform(post("/v1/blames")
@@ -65,7 +65,7 @@ class BlameControllerTest extends PresentationTest {
         @Test
         void 신고_대상_ID가_양의_정수가_아니라면_400_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
-            BlameRequest request = new BlameRequest(-1L, BlameTarget.MEMBER, "부적절한 닉네임");
+            BlameRequest request = new BlameRequest(-1L, BlameTarget.MEMBER.name(), "부적절한 닉네임");
 
             mockMvc.perform(post("/v1/blames")
                             .header(AUTHORIZATION, BEARER + accessToken)
@@ -98,7 +98,7 @@ class BlameControllerTest extends PresentationTest {
         @ValueSource(strings = {" "})
         void 신고_사유가_공백이거나_존재하지_않으면_400_응답을_반환한다(String description) throws Exception {
             mockingAuthMemberInResolver();
-            BlameRequest request = new BlameRequest(1L, BlameTarget.MEMBER, description);
+            BlameRequest request = new BlameRequest(1L, BlameTarget.MEMBER.name(), description);
 
             mockMvc.perform(post("/v1/blames")
                             .header(AUTHORIZATION, BEARER + accessToken)

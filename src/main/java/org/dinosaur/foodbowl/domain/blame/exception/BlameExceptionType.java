@@ -10,12 +10,13 @@ public enum BlameExceptionType implements ExceptionType {
     NOT_EXIST_TARGET("BLAME-101", "존재하지 않는 신고 대상입니다."),
     DUPLICATE_BLAME("BLAME-102", "신고 대상에 대한 신고 이력이 존재합니다."),
     DESCRIPTION_EMPTY("BLAME-103", "신고 내용이 공백이거나 존재하지 않습니다."),
-    INVALID_DESCRIPTION_LENGTH("BLAME-104", "신고 내용의 최대 길이를 초과하였습니다.");
+    INVALID_DESCRIPTION_LENGTH("BLAME-104", "신고 내용의 최대 길이를 초과하였습니다."),
+    NOT_EXIST_TYPE("BLAME-105", "존재하지 않는 신고 타입입니다.");
 
     private final String errorCode;
     private final String message;
 
-    BlameExceptionType(final String errorCode, final String message) {
+    BlameExceptionType(String errorCode, String message) {
         this.errorCode = errorCode;
         this.message = message;
     }

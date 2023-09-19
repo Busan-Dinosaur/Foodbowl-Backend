@@ -2,8 +2,8 @@ package org.dinosaur.foodbowl.domain.blame.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import org.dinosaur.foodbowl.domain.blame.domain.vo.BlameTarget;
 
 @Schema(description = "신고 요청")
 public record BlameRequest(
@@ -12,7 +12,8 @@ public record BlameRequest(
         Long targetId,
 
         @Schema(description = "신고 대상 타입", example = "MEMBER")
-        BlameTarget blameTarget,
+        @NotNull(message = "신고 대상 타입이 공백이거나 존재하지 않습니다.")
+        String blameTarget,
 
         @Schema(description = "신고 사유", example = "부적절한 리뷰입니다.")
         @NotBlank(message = "신고 사유가 공백이거나 존재하지 않습니다.")

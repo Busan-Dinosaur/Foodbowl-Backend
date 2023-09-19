@@ -57,47 +57,45 @@ public class BlameService {
 
     @Transactional
     public void blame(BlameRequest blameRequest, Member loginMember) {
-        validateBlame(blameRequest, loginMember);
+        BlameTarget blameTarget = BlameTarget.from(blameRequest.blameTarget());
+        validateBlame(blameTarget, blameRequest.targetId(), loginMember);
         Blame blame = Blame.builder()
                 .member(loginMember)
                 .targetId(blameRequest.targetId())
-                .blameTarget(blameRequest.blameTarget())
+                .blameTarget(blameTarget)
                 .description(blameRequest.description())
                 .build();
         blameRepository.save(blame);
     }
 
-    private void validateBlame(BlameRequest blameRequest, Member member) {
-        validateExistTarget(blameRequest);
-        validateBlameMe(blameRequest, member);
-        validateDuplicate(blameRequest, member);
+    private void validateBlame(BlameTarget blameTarget, Long targetId, Member member) {
+        validateExistTarget(blameTarget, targetId);
+        validateBlameMe(blameTarget, targetId, member);
+        validateDuplicate(blameTarget, targetId, member);
     }
 
-    private void validateExistTarget(BlameRequest blameRequest) {
-        boolean isExistTarget = reportCheck.get(blameRequest.blameTarget())
-                .test(blameRequest.targetId());
+    private void validateExistTarget(BlameTarget blameTarget, Long targetId) {
+        boolean isExistTarget = reportCheck.get(blameTarget)
+                .test(targetId);
 
         if (!isExistTarget) {
             throw new NotFoundException(BlameExceptionType.NOT_EXIST_TARGET);
         }
     }
 
-    private void validateBlameMe(BlameRequest blameRequest, Member member) {
-        boolean blameMe = reportMe.get(blameRequest.blameTarget())
-                .test(blameRequest.targetId(), member);
+    private void validateBlameMe(BlameTarget blameTarget, Long targetId, Member member) {
+        boolean blameMe = reportMe.get(blameTarget)
+                .test(targetId, member);
 
         if (blameMe) {
             throw new BadRequestException(BlameExceptionType.BLAME_ME);
         }
     }
 
-    private void validateDuplicate(BlameRequest blameRequest, Member member) {
-        blameRepository.findByMemberAndTargetIdAndBlameTarget(
-                member,
-                blameRequest.targetId(),
-                blameRequest.blameTarget()
-        ).ifPresent(exist -> {
-            throw new BadRequestException(BlameExceptionType.DUPLICATE_BLAME);
-        });
+    private void validateDuplicate(BlameTarget blameTarget, Long targetId, Member member) {
+        blameRepository.findByMemberAndTargetIdAndBlameTarget(member, targetId, blameTarget)
+                .ifPresent(exist -> {
+                    throw new BadRequestException(BlameExceptionType.DUPLICATE_BLAME);
+                });
     }
 }
