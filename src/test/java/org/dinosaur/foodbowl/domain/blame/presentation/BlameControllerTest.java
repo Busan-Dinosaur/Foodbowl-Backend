@@ -78,19 +78,21 @@ class BlameControllerTest extends PresentationTest {
             ;
         }
 
-        @Test
-        void 신고_대상_타입이_올바르지_않으면_400_응답을_반환한다() throws Exception {
+        @ParameterizedTest
+        @NullAndEmptySource
+        @ValueSource(strings = {" "})
+        void 신고_대상_타입이_공백이거나_존재하지_않으면_400_응답을_반환한다(String blameTarget) throws Exception {
             mockingAuthMemberInResolver();
-            String content = """
-                    "targetId":-1,"blameTarget":"HELLO","description":"부적절한 닉네임"
-                    """;
+            BlameRequest request = new BlameRequest(1L, blameTarget, "부적절한 닉네임");
 
             mockMvc.perform(post("/v1/blames")
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(content))
+                            .content(objectMapper.writeValueAsString(request)))
                     .andDo(print())
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errorCode").value("CLIENT-100"))
+                    .andExpect(jsonPath("$.message", containsString("신고 대상 타입이 공백이거나 존재하지 않습니다.")));
         }
 
         @ParameterizedTest
