@@ -12,6 +12,7 @@ public record StoreCreateDto(
         String storeUrl,
         String phone,
         String schoolName,
+        String schoolAddress,
         BigDecimal schoolX,
         BigDecimal schoolY
 ) {

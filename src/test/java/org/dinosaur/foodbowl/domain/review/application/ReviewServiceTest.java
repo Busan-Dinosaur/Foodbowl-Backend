@@ -271,6 +271,7 @@ class ReviewServiceTest extends IntegrationTest {
                 "한식",
                 "맛있습니다.",
                 "부산대학교",
+                "부산광역시 금정구 부산대학로63번길 2",
                 BigDecimal.valueOf(124.1234),
                 BigDecimal.valueOf(34.545)
         );

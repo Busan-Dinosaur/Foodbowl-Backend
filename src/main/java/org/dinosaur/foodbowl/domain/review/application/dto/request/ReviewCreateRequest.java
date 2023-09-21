@@ -47,6 +47,9 @@ public record ReviewCreateRequest(
         @Schema(description = "학교 이름", example = "부산대학교")
         String schoolName,
 
+        @Schema(description = "학교 주소", example = "부산광역시 금정구 부산대학로63번길 2")
+        String schoolAddress,
+
         @Schema(description = "학교 경도", example = "126.12557")
         BigDecimal schoolX,
 

@@ -25,9 +25,10 @@ class SchoolServiceTest extends IntegrationTest {
         @Test
         void 등록된_학교라면_학교를_조회한다() {
             String name = "부산대학교";
+            String addressName = "부산광역시 금정구 부산대학로63번길 2";
             BigDecimal x = BigDecimal.valueOf(123.1234);
             BigDecimal y = BigDecimal.valueOf(37.12421);
-            schoolService.save(name, x, y);
+            schoolService.save(name, addressName, x, y);
 
             assertThat(schoolService.findByName(name)).isPresent();
         }
@@ -55,6 +56,7 @@ class SchoolServiceTest extends IntegrationTest {
         void 정상적인_요청이라면_학교를_저장한다() {
             School school = schoolService.save(
                     "부산대학교",
+                    "부산광역시 금정구 부산대학로63번길 2",
                     BigDecimal.valueOf(123.1234),
                     BigDecimal.valueOf(37.12421)
             );
@@ -65,11 +67,12 @@ class SchoolServiceTest extends IntegrationTest {
         @Test
         void 이미_등록된_학교라면_예외를_던진다() {
             String name = "부산대학교";
+            String addressName = "부산광역시 금정구 부산대학로63번길 2";
             BigDecimal x = BigDecimal.valueOf(123.1234);
             BigDecimal y = BigDecimal.valueOf(37.12421);
-            schoolService.save(name, x, y);
+            schoolService.save(name, addressName, x, y);
 
-            assertThatThrownBy(() -> schoolService.save(name, x, y))
+            assertThatThrownBy(() -> schoolService.save(name, addressName, x, y))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("이미 존재하는 학교입니다.");
         }

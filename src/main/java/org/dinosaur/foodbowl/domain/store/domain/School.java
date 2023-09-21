@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -34,13 +35,18 @@ public class School extends AuditingEntity {
     @Embedded
     private SchoolName name;
 
+    @NotNull
+    @Column(name = "address_name", length = 512)
+    private String addressName;
+
     @Valid
     @Embedded
     private Coordinate coordinate;
 
     @Builder
-    private School(String name, BigDecimal x, BigDecimal y) {
+    private School(String name, String addressName, BigDecimal x, BigDecimal y) {
         this.name = new SchoolName(name);
+        this.addressName = addressName;
         this.coordinate = new Coordinate(x, y);
     }
 

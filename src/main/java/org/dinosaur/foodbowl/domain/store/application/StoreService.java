@@ -54,7 +54,13 @@ public class StoreService {
         );
         Store store = storeRepository.save(convertToStore(storeCreateDto));
         if (storeCreateDto.schoolName() != null) {
-            saveSchool(store, storeCreateDto.schoolName(), storeCreateDto.schoolX(), storeCreateDto.schoolY());
+            saveSchool(
+                    store,
+                    storeCreateDto.schoolName(),
+                    storeCreateDto.schoolAddress(),
+                    storeCreateDto.schoolX(),
+                    storeCreateDto.schoolY()
+            );
         }
         return store;
     }
@@ -74,9 +80,15 @@ public class StoreService {
                 .build();
     }
 
-    private void saveSchool(Store store, String schoolName, BigDecimal schoolX, BigDecimal schoolY) {
+    private void saveSchool(
+            Store store,
+            String schoolName,
+            String schoolAddress,
+            BigDecimal schoolX,
+            BigDecimal schoolY
+    ) {
         School school = schoolService.findByName(schoolName)
-                .orElseGet(() -> schoolService.save(schoolName, schoolX, schoolY));
+                .orElseGet(() -> schoolService.save(schoolName, schoolAddress, schoolX, schoolY));
 
         storeSchoolService.save(store, school);
     }

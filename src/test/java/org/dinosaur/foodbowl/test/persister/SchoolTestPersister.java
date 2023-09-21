@@ -19,11 +19,17 @@ public class SchoolTestPersister {
     public class SchoolBuilder {
 
         private String name;
+        private String addressName;
         private BigDecimal x;
         private BigDecimal y;
 
         public SchoolBuilder name(String name) {
             this.name = name;
+            return this;
+        }
+
+        public SchoolBuilder addressName(String addressName) {
+            this.addressName = addressName;
             return this;
         }
 
@@ -40,6 +46,7 @@ public class SchoolTestPersister {
         public School save() {
             School school = School.builder()
                     .name(name == null ? RandomStringUtils.random(2, true, false) + "대학교" : name)
+                    .addressName(addressName == null ? "서울시 영등포구 여의도동 451" : addressName)
                     .x(x == null ? BigDecimal.valueOf(123.1245) : x)
                     .y(y == null ? BigDecimal.valueOf(37.445) : y)
                     .build();
