@@ -9,7 +9,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -33,10 +32,7 @@ import org.hibernate.annotations.Formula;
 @Entity
 @Table(
         name = "member",
-        uniqueConstraints = {
-                @UniqueConstraint(name = "UQ_MEMBER", columnNames = {"social_id", "social_type"})
-        },
-        indexes = {@Index(name = "IDX_MEMBER", columnList = "social_id, social_type")}
+        uniqueConstraints = {@UniqueConstraint(name = "UQ_MEMBER", columnNames = {"social_id", "social_type"})}
 )
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
