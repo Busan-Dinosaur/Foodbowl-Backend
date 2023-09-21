@@ -16,6 +16,8 @@ import org.dinosaur.foodbowl.domain.store.persistence.CategoryRepository;
 import org.dinosaur.foodbowl.domain.store.persistence.StoreRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
+import org.dinosaur.foodbowl.global.util.PointUtils;
+import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,7 +70,8 @@ public class StoreService {
     private Store convertToStore(StoreCreateDto storeCreateDto) {
         CategoryType categoryType = CategoryType.of(storeCreateDto.category());
         Category category = categoryRepository.findById(categoryType.getId());
-        Address address = Address.of(storeCreateDto.address(), storeCreateDto.storeX(), storeCreateDto.storeY());
+        Point coordinate = PointUtils.generate(storeCreateDto.storeX(), storeCreateDto.storeY());
+        Address address = Address.of(storeCreateDto.address(), coordinate);
 
         return Store.builder()
                 .locationId(storeCreateDto.locationId())

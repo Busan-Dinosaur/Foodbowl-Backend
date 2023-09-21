@@ -2,10 +2,7 @@ package org.dinosaur.foodbowl.domain.store.domain.vo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.Embedded;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import lombok.AccessLevel;
@@ -14,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.dinosaur.foodbowl.domain.store.exception.StoreExceptionType;
 import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
+import org.locationtech.jts.geom.Point;
 
 @Getter
 @Embeddable
@@ -43,11 +41,11 @@ public class Address {
     @Column(name = "road_name", length = 100)
     private String roadName;
 
-    @Valid
-    @Embedded
-    private Coordinate coordinate;
+    @NotNull
+    @Column(name = "coordinate")
+    private Point coordinate;
 
-    public static Address of(String storeAddress, BigDecimal x, BigDecimal y) {
+    public static Address of(String storeAddress, Point coordinate) {
         if (storeAddress == null) {
             throw new InvalidArgumentException(StoreExceptionType.ADDRESS_NOT_FOUND);
         }
@@ -63,8 +61,7 @@ public class Address {
                 .region2depthName(addressElements.get(1))
                 .region3depthName(addressElements.get(2))
                 .roadName(roadName)
-                .x(x)
-                .y(y)
+                .coordinate(coordinate)
                 .build();
     }
 
@@ -75,14 +72,13 @@ public class Address {
             String region2depthName,
             String region3depthName,
             String roadName,
-            BigDecimal x,
-            BigDecimal y
+            Point coordinate
     ) {
         this.addressName = addressName;
         this.region1depthName = region1depthName;
         this.region2depthName = region2depthName;
         this.region3depthName = region3depthName;
         this.roadName = roadName;
-        this.coordinate = new Coordinate(x, y);
+        this.coordinate = coordinate;
     }
 }

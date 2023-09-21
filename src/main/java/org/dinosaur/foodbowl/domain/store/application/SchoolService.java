@@ -10,6 +10,7 @@ import org.dinosaur.foodbowl.domain.store.dto.response.SchoolsResponse;
 import org.dinosaur.foodbowl.domain.store.exception.SchoolExceptionType;
 import org.dinosaur.foodbowl.domain.store.persistence.SchoolRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
+import org.dinosaur.foodbowl.global.util.PointUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,8 +41,7 @@ public class SchoolService {
         School school = School.builder()
                 .name(name)
                 .addressName(address)
-                .x(x)
-                .y(y)
+                .coordinate(PointUtils.generate(x, y))
                 .build();
         return schoolRepository.save(school);
     }

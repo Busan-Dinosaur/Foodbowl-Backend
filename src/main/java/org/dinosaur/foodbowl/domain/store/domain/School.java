@@ -15,9 +15,9 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.dinosaur.foodbowl.domain.store.domain.vo.Coordinate;
 import org.dinosaur.foodbowl.domain.store.domain.vo.SchoolName;
 import org.dinosaur.foodbowl.global.persistence.AuditingEntity;
+import org.locationtech.jts.geom.Point;
 
 @Getter
 @Entity
@@ -39,15 +39,15 @@ public class School extends AuditingEntity {
     @Column(name = "address_name", length = 512)
     private String addressName;
 
-    @Valid
-    @Embedded
-    private Coordinate coordinate;
+    @NotNull
+    @Column(name = "coordinate")
+    private Point coordinate;
 
     @Builder
-    private School(String name, String addressName, BigDecimal x, BigDecimal y) {
+    private School(String name, String addressName, Point coordinate) {
         this.name = new SchoolName(name);
         this.addressName = addressName;
-        this.coordinate = new Coordinate(x, y);
+        this.coordinate = coordinate;
     }
 
     public String getName() {
@@ -55,10 +55,10 @@ public class School extends AuditingEntity {
     }
 
     public BigDecimal getX() {
-        return this.coordinate.getX();
+        return BigDecimal.valueOf(this.coordinate.getX());
     }
 
     public BigDecimal getY() {
-        return this.coordinate.getY();
+        return BigDecimal.valueOf(this.coordinate.getY());
     }
 }

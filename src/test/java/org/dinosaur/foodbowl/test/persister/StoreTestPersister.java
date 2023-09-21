@@ -8,6 +8,7 @@ import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
 import org.dinosaur.foodbowl.domain.store.persistence.CategoryRepository;
 import org.dinosaur.foodbowl.domain.store.persistence.StoreRepository;
+import org.dinosaur.foodbowl.global.util.PointUtils;
 
 @RequiredArgsConstructor
 @Persister
@@ -67,8 +68,7 @@ public class StoreTestPersister {
                     .address(address == null ?
                             Address.of(
                                     "서울시 영등포구 여의도동 451",
-                                    BigDecimal.valueOf(123.23),
-                                    BigDecimal.valueOf(35.52)
+                                    PointUtils.generate(BigDecimal.valueOf(123.23), BigDecimal.valueOf(35.52))
                             ) : address
                     )
                     .storeUrl(storeUrl == null ? "http://image.bbq.foodbowl" : storeUrl)

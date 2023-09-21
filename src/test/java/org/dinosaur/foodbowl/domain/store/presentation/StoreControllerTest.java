@@ -69,8 +69,20 @@ class StoreControllerTest extends PresentationTest {
     void 학교_목록_조회시_학교_목록과_200_응답을_반환한다() throws Exception {
         SchoolsResponse schoolsResponse = new SchoolsResponse(
                 List.of(
-                        new SchoolResponse(1L, "강남대학교", BigDecimal.valueOf(127.125), BigDecimal.valueOf(35.12)),
-                        new SchoolResponse(1L, "부산대학교", BigDecimal.valueOf(127.350), BigDecimal.valueOf(35.78))
+                        new SchoolResponse(
+                                1L,
+                                "강남대학교",
+                                "경기도 용인시 기흥구 강남로 40",
+                                BigDecimal.valueOf(127.125),
+                                BigDecimal.valueOf(35.12)
+                        ),
+                        new SchoolResponse(
+                                2L,
+                                "부산대학교",
+                                "부산광역시 금정구 부산대학로63번길 2",
+                                BigDecimal.valueOf(127.350),
+                                BigDecimal.valueOf(35.78)
+                        )
                 )
         );
         given(schoolService.getSchools()).willReturn(schoolsResponse);
