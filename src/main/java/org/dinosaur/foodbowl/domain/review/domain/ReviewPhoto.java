@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -21,7 +22,10 @@ import org.dinosaur.foodbowl.global.persistence.AuditingEntity;
 
 @Getter
 @Entity
-@Table(name = "review_photo")
+@Table(
+        name = "review_photo",
+        uniqueConstraints = {@UniqueConstraint(name = "uniq_review_photo", columnNames = {"review_id", "photo_id"})}
+)
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReviewPhoto extends AuditingEntity {

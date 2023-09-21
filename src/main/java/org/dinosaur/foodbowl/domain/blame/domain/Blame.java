@@ -31,12 +31,9 @@ import org.dinosaur.foodbowl.global.persistence.AuditingEntity;
 @Table(
         name = "blame",
         uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "UQ_MEMBER_TARGET_ID_TYPE",
-                        columnNames = {"member_id", "target_id", "target_type"}
-                )
+                @UniqueConstraint(name = "uniq_blame", columnNames = {"member_id", "target_id", "target_type"})
         },
-        indexes = {@Index(name = "IDX_BLAME", columnList = "target_id, target_type")}
+        indexes = {@Index(name = "idx_blame", columnList = "target_id, target_type")}
 )
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

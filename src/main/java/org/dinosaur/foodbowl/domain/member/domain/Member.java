@@ -32,7 +32,7 @@ import org.hibernate.annotations.Formula;
 @Entity
 @Table(
         name = "member",
-        uniqueConstraints = {@UniqueConstraint(name = "UQ_MEMBER", columnNames = {"social_id", "social_type"})}
+        uniqueConstraints = {@UniqueConstraint(name = "uniq_social_info", columnNames = {"social_id", "social_type"})}
 )
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

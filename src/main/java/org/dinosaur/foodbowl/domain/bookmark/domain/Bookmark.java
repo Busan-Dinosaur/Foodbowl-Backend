@@ -24,9 +24,7 @@ import org.dinosaur.foodbowl.global.persistence.AuditingEntity;
 @Entity
 @Table(
         name = "bookmark",
-        uniqueConstraints = {
-                @UniqueConstraint(name = "UQ_MEMBER_STORE", columnNames = {"member_id", "store_id"})
-        }
+        uniqueConstraints = {@UniqueConstraint(name = "uniq_bookmark", columnNames = {"member_id", "store_id"})}
 )
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

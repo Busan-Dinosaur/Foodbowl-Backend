@@ -23,9 +23,7 @@ import org.dinosaur.foodbowl.global.persistence.AuditingEntity;
 @Entity
 @Table(
         name = "follow",
-        uniqueConstraints = {
-                @UniqueConstraint(name = "UQ_FOLLOWING_FOLLOWER", columnNames = {"following_id", "follower_id"})
-        }
+        uniqueConstraints = {@UniqueConstraint(name = "uniq_follow", columnNames = {"following_id", "follower_id"})}
 )
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
