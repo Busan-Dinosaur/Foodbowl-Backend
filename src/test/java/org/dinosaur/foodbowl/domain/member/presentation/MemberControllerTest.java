@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -23,6 +24,7 @@ import org.dinosaur.foodbowl.domain.member.dto.request.UpdateProfileRequest;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
 import org.dinosaur.foodbowl.test.PresentationTest;
+import org.dinosaur.foodbowl.test.file.FileTestUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,9 +35,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.multipart.MultipartFile;
 
 @SuppressWarnings("NonAsciiCharacters")
 @WebMvcTest(MemberController.class)
@@ -213,6 +218,36 @@ class MemberControllerTest extends PresentationTest {
                     .andDo(print())
                     .andExpect(jsonPath("$.errorCode").value("CLIENT-100"))
                     .andExpect(jsonPath("$.message", containsString("닉네임이 공백이거나 존재하지 않습니다.")));
+        }
+    }
+
+    @Nested
+    class 프로필_이미지_수정_시 {
+
+        private final String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
+
+        @Test
+        void 썸네일이_존재할_때_프로필_이미지_수정에_성공하면_204_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            MockMultipartFile file = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
+            willDoNothing().given(memberService).updateThumbnail(any(MultipartFile.class), any(Member.class));
+
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/members/thumbnail")
+                            .file(file)
+                            .header(AUTHORIZATION, BEARER + accessToken))
+                    .andDo(print())
+                    .andExpect(status().isNoContent());
+        }
+
+        @Test
+        void 썸네일이_존재하지_않을_때_프로필_이미지_수정에_성공하면_204_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            willDoNothing().given(memberService).updateThumbnail(any(MultipartFile.class), any(Member.class));
+
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/members/thumbnail")
+                            .header(AUTHORIZATION, BEARER + accessToken))
+                    .andDo(print())
+                    .andExpect(status().isNoContent());
         }
     }
 }

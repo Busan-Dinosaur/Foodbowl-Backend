@@ -16,6 +16,7 @@ import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
 import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "회원", description = "회원 API")
 public interface MemberControllerDocs {
@@ -99,4 +100,32 @@ public interface MemberControllerDocs {
             )
     })
     ResponseEntity<Void> updateProfile(@Valid UpdateProfileRequest updateProfileRequest, Member loginMember);
+
+    @Operation(
+            summary = "프로필 이미지 수정",
+            description = """
+                    프로필 이미지를 수정합니다.
+                                        
+                    프로필이 존재하지 않을 때, thumbnail 필드를 요청에 담지 않으면 프로필이 존재하지 않는 상태를 유지합니다.
+                                        
+                    프로필이 존재하지 않을 때, thumbnail에 이미지를 담아 요청한다면 해당 이미지로 프로필이 설정됩니다.
+                                        
+                    프로필이 존재할 때, thumbnail 필드를 요청에 담지 않으면 기존 프로필이 삭제됩니다.
+                                        
+                    프로필이 존재할 때, thumbnail에 이미지를 담아 요청한다면 해당 이미지로 프로필을 변경합니다.
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "프로필 이미지 수정 성공"),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = """
+                            1.기존 프로필 이미지 삭제에 실패하는 경우
+                                                        
+                            2.새로운 프로필 이미지 저장에 실패하는 경우
+                            """,
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            )
+    })
+    ResponseEntity<Void> updateThumbnail(MultipartFile thumbnail, Member loginMember);
 }
