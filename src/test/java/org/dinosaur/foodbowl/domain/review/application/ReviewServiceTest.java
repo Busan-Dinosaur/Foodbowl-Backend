@@ -40,7 +40,7 @@ class ReviewServiceTest extends IntegrationTest {
         @Test
         void 사진_없이_저장한다() {
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
-            Member member = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
 
             Long reviewId = reviewService.create(reviewCreateRequest, null, member).getId();
 
@@ -51,7 +51,7 @@ class ReviewServiceTest extends IntegrationTest {
         void 사진을_포함해서_저장한다() {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2);
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
-            Member member = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
 
             Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member).getId();
 
@@ -62,10 +62,10 @@ class ReviewServiceTest extends IntegrationTest {
         @Test
         void 이미_생성된_가게인_경우에도_정상적으로_저장한다() {
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
-            Member member = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
             reviewService.create(reviewCreateRequest, null, member);
             ReviewCreateRequest otherReviewCreateRequest = generateReviewCreateRequest();
-            Member otherMember = memberTestPersister.memberBuilder().save();
+            Member otherMember = memberTestPersister.builder().save();
 
             Long savedReviewId = reviewService.create(otherReviewCreateRequest, null, otherMember).getId();
 
@@ -76,7 +76,7 @@ class ReviewServiceTest extends IntegrationTest {
         void 사진_개수가_최대_사진_개수를_초과하면_예외가_발생한다() {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(5);
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
-            Member member = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
 
             assertThatThrownBy(() -> reviewService.create(reviewCreateRequest, multipartFiles, member))
                     .isInstanceOf(BadRequestException.class)
@@ -91,7 +91,7 @@ class ReviewServiceTest extends IntegrationTest {
         void 사진_수정_없이_정상적으로_수정된다() {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2);
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
-            Member member = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
             Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member).getId();
             ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(Collections.emptyList());
 
@@ -109,7 +109,7 @@ class ReviewServiceTest extends IntegrationTest {
         void 사진을_새로_추가하고_정상적으로_수정된다() {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2);
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
-            Member member = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
             Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member).getId();
             ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(Collections.emptyList());
             List<MultipartFile> updateImages = FileTestUtils.generateMultipartFiles(2);
@@ -129,7 +129,7 @@ class ReviewServiceTest extends IntegrationTest {
         void 기존_사진을_삭제하고_정상적으로_수정된다() {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2);
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
-            Member member = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
             Review review = reviewService.create(reviewCreateRequest, multipartFiles, member);
             List<Photo> reviewPhotos = reviewPhotoService.findPhotos(review);
             List<Long> deletePhotoIds = List.of(reviewPhotos.get(0).getId());
@@ -150,7 +150,7 @@ class ReviewServiceTest extends IntegrationTest {
         void 기존_사진을_삭제하고_사진을_새롭게_추가하며_정상적으로_수정된다() {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2);
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
-            Member member = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
             Review review = reviewService.create(reviewCreateRequest, multipartFiles, member);
             List<Photo> reviewPhotos = reviewPhotoService.findPhotos(review);
             List<Long> deletePhotoIds = List.of(reviewPhotos.get(0).getId());
@@ -170,7 +170,7 @@ class ReviewServiceTest extends IntegrationTest {
 
         @Test
         void 존재하지_않는_리뷰이면_예외가_발생한다() {
-            Member member = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
             ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(Collections.emptyList());
 
             assertThatThrownBy(() -> reviewService.update(-1L, reviewUpdateRequest, null, member))
@@ -182,8 +182,8 @@ class ReviewServiceTest extends IntegrationTest {
         void 작성자가_아니면_예외가_발생한다() {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2);
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
-            Member member = memberTestPersister.memberBuilder().save();
-            Member otherMember = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
+            Member otherMember = memberTestPersister.builder().save();
             Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member).getId();
             ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(Collections.emptyList());
 
@@ -196,7 +196,7 @@ class ReviewServiceTest extends IntegrationTest {
         void 삭제하려는_사진이_리뷰의_사진이_아니면_예외가_발생한다() {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2);
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
-            Member member = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
             Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member).getId();
             ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(List.of(-1L));
             List<MultipartFile> updateImages = FileTestUtils.generateMultipartFiles(3);
@@ -210,7 +210,7 @@ class ReviewServiceTest extends IntegrationTest {
         void 사진_개수가_최대_사진_개수를_초과하면_예외가_발생한다() {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2);
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
-            Member member = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
             Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member).getId();
             ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(Collections.emptyList());
             List<MultipartFile> updateImages = FileTestUtils.generateMultipartFiles(3);
@@ -228,7 +228,7 @@ class ReviewServiceTest extends IntegrationTest {
         void 정상적인_요청이라면_리뷰를_삭제한다() {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2);
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
-            Member member = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
             Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member).getId();
 
             reviewService.delete(reviewId, member);
@@ -238,7 +238,7 @@ class ReviewServiceTest extends IntegrationTest {
 
         @Test
         void 등록된_리뷰가_아니면_예외를_던진다() {
-            Member member = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
 
             assertThatThrownBy(() -> reviewService.delete(-1L, member))
                     .isInstanceOf(NotFoundException.class)
@@ -249,8 +249,8 @@ class ReviewServiceTest extends IntegrationTest {
         void 리뷰_작성자가_아니면_예외를_던진다() {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2);
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
-            Member member = memberTestPersister.memberBuilder().save();
-            Member otherMember = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
+            Member otherMember = memberTestPersister.builder().save();
             Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member).getId();
 
             assertThatThrownBy(() -> reviewService.delete(reviewId, otherMember))

@@ -17,7 +17,7 @@ class ReviewRepositoryTest extends PersistenceTest {
 
     @Test
     void 리뷰를_조회한다() {
-        Member member = memberTestPersister.memberBuilder().save();
+        Member member = memberTestPersister.builder().save();
         Store store = storeTestPersister.builder().save();
         Review review = Review.builder()
                 .member(member)
@@ -31,7 +31,7 @@ class ReviewRepositoryTest extends PersistenceTest {
 
     @Test
     void 리뷰를_저장한다() {
-        Member member = memberTestPersister.memberBuilder().save();
+        Member member = memberTestPersister.builder().save();
         Store store = storeTestPersister.builder().save();
         Review review = Review.builder()
                 .member(member)
@@ -46,7 +46,7 @@ class ReviewRepositoryTest extends PersistenceTest {
 
     @Test
     void 리뷰를_삭제한다() {
-        Member member = memberTestPersister.memberBuilder().save();
+        Member member = memberTestPersister.builder().save();
         Store store = storeTestPersister.builder().save();
         Review review = Review.builder()
                 .member(member)

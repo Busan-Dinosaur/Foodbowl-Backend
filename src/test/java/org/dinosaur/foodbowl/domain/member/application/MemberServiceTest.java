@@ -27,7 +27,7 @@ class MemberServiceTest extends IntegrationTest {
 
         @Test
         void 나의_프로필이라면_나의_프로필_여부는_true_팔로잉_여부는_false_이다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
+            Member loginMember = memberTestPersister.builder().save();
 
             MemberProfileResponse response = memberService.getProfile(loginMember.getId(), loginMember);
 
@@ -42,8 +42,8 @@ class MemberServiceTest extends IntegrationTest {
 
         @Test
         void 나의_프로필이_아니고_팔로잉_중인_회원이라면_나의_프로필_여부는_false_팔로잉_여부는_true_이다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
-            Member profileTargetMember = memberTestPersister.memberBuilder().save();
+            Member loginMember = memberTestPersister.builder().save();
+            Member profileTargetMember = memberTestPersister.builder().save();
             followTestPersister.builder().following(profileTargetMember).follower(loginMember).save();
 
             MemberProfileResponse response = memberService.getProfile(profileTargetMember.getId(), loginMember);
@@ -59,8 +59,8 @@ class MemberServiceTest extends IntegrationTest {
 
         @Test
         void 나의_프로필이_아니고_팔로잉_중인_회원이_아니라면_나의_프로필_여부는_false_팔로잉_여부는_false_이다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
-            Member profileTargetMember = memberTestPersister.memberBuilder().save();
+            Member loginMember = memberTestPersister.builder().save();
+            Member profileTargetMember = memberTestPersister.builder().save();
 
             MemberProfileResponse response = memberService.getProfile(profileTargetMember.getId(), loginMember);
 
@@ -75,7 +75,7 @@ class MemberServiceTest extends IntegrationTest {
 
         @Test
         void 등록되지_않은_회원이라면_예외를_던진다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
+            Member loginMember = memberTestPersister.builder().save();
 
             assertThatThrownBy(() -> memberService.getProfile(-1L, loginMember))
                     .isInstanceOf(NotFoundException.class)
@@ -85,8 +85,8 @@ class MemberServiceTest extends IntegrationTest {
 
     @Test
     void 나의_프로필을_조회한다() {
-        Member loginMember = memberTestPersister.memberBuilder().save();
-        Member otherMember = memberTestPersister.memberBuilder().save();
+        Member loginMember = memberTestPersister.builder().save();
+        Member otherMember = memberTestPersister.builder().save();
         followTestPersister.builder().following(otherMember).follower(loginMember).save();
 
         MemberProfileResponse response = memberService.getMyProfile(loginMember);
@@ -107,7 +107,7 @@ class MemberServiceTest extends IntegrationTest {
 
         @Test
         void 존재하는_닉네임이라면_true_응답한다() {
-            memberTestPersister.memberBuilder().nickname("hello").save();
+            memberTestPersister.builder().nickname("hello").save();
 
             NicknameExistResponse response = memberService.checkNicknameExist("hello");
 
@@ -127,7 +127,7 @@ class MemberServiceTest extends IntegrationTest {
 
         @Test
         void 정상적인_요청이라면_프로필_정보를_수정한다() {
-            Member member = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
             UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest("hello", "friend");
 
             memberService.updateProfile(updateProfileRequest, member);
@@ -140,7 +140,7 @@ class MemberServiceTest extends IntegrationTest {
 
         @Test
         void 변경_닉네임이_현재_닉네임이라면_프로필_정보를_수정한다() {
-            Member member = memberTestPersister.memberBuilder().nickname("hello").save();
+            Member member = memberTestPersister.builder().nickname("hello").save();
             UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest("hello", "friend");
 
             memberService.updateProfile(updateProfileRequest, member);
@@ -153,7 +153,7 @@ class MemberServiceTest extends IntegrationTest {
 
         @Test
         void 정상적이지_않은_닉네임이라면_예외를_던진다() {
-            Member member = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
             UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest("하 이", "friend");
 
             assertThatThrownBy(() -> memberService.updateProfile(updateProfileRequest, member))
@@ -163,7 +163,7 @@ class MemberServiceTest extends IntegrationTest {
 
         @Test
         void 정상적이지_않은_한_줄_소개라면_예외를_던진다() {
-            Member member = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
             UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest("hello", "  ");
 
             assertThatThrownBy(() -> memberService.updateProfile(updateProfileRequest, member))
@@ -173,8 +173,8 @@ class MemberServiceTest extends IntegrationTest {
 
         @Test
         void 변경_닉네임이_현재_닉네임이_아니고_존재하는_닉네임이라면_예외를_던진다() {
-            memberTestPersister.memberBuilder().nickname("hello").save();
-            Member member = memberTestPersister.memberBuilder().save();
+            memberTestPersister.builder().nickname("hello").save();
+            Member member = memberTestPersister.builder().save();
             UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest("hello", "friend");
 
             assertThatThrownBy(() -> memberService.updateProfile(updateProfileRequest, member))

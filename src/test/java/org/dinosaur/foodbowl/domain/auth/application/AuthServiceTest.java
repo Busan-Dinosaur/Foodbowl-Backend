@@ -56,7 +56,7 @@ class AuthServiceTest extends IntegrationTest {
 
         @Test
         void 등록된_회원이라면_토큰을_반환한다() {
-            Member member = memberTestPersister.memberBuilder()
+            Member member = memberTestPersister.builder()
                     .socialType(SocialType.APPLE)
                     .socialId("1234")
                     .email("email@email.com")

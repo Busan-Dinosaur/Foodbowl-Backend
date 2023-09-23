@@ -4,6 +4,7 @@ import org.dinosaur.foodbowl.global.config.JpaConfig;
 import org.dinosaur.foodbowl.test.persister.BlameTestPersister;
 import org.dinosaur.foodbowl.test.persister.FollowTestPersister;
 import org.dinosaur.foodbowl.test.persister.MemberTestPersister;
+import org.dinosaur.foodbowl.test.persister.MemberThumbnailTestPersister;
 import org.dinosaur.foodbowl.test.persister.Persister;
 import org.dinosaur.foodbowl.test.persister.PhotoTestPersister;
 import org.dinosaur.foodbowl.test.persister.ReviewTestPersister;
@@ -34,6 +35,9 @@ public class PersistenceTest {
 
     @Autowired
     protected MemberTestPersister memberTestPersister;
+
+    @Autowired
+    protected MemberThumbnailTestPersister memberThumbnailTestPersister;
 
     @Autowired
     protected PhotoTestPersister photoTestPersister;

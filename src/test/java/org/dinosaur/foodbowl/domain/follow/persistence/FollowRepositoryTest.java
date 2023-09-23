@@ -24,9 +24,9 @@ class FollowRepositoryTest extends PersistenceTest {
 
     @Test
     void 팔로잉_목록을_페이징_조회한다() {
-        Member follower = memberTestPersister.memberBuilder().save();
-        Member followingA = memberTestPersister.memberBuilder().save();
-        Member followingB = memberTestPersister.memberBuilder().save();
+        Member follower = memberTestPersister.builder().save();
+        Member followingA = memberTestPersister.builder().save();
+        Member followingB = memberTestPersister.builder().save();
 
         Follow followA = followTestPersister.builder().following(followingA).follower(follower).save();
         Follow followB = followTestPersister.builder().following(followingB).follower(follower).save();
@@ -47,9 +47,9 @@ class FollowRepositoryTest extends PersistenceTest {
 
     @Test
     void 팔로워_목록을_페이징_조회한다() {
-        Member following = memberTestPersister.memberBuilder().save();
-        Member followerA = memberTestPersister.memberBuilder().save();
-        Member followerB = memberTestPersister.memberBuilder().save();
+        Member following = memberTestPersister.builder().save();
+        Member followerA = memberTestPersister.builder().save();
+        Member followerB = memberTestPersister.builder().save();
 
         Follow followA = followTestPersister.builder().following(following).follower(followerA).save();
         Follow followB = followTestPersister.builder().following(following).follower(followerB).save();
@@ -77,9 +77,9 @@ class FollowRepositoryTest extends PersistenceTest {
 
         @BeforeEach
         void setUp() {
-            following = memberTestPersister.memberBuilder().save();
-            follower = memberTestPersister.memberBuilder().save();
-            other = memberTestPersister.memberBuilder().save();
+            following = memberTestPersister.builder().save();
+            follower = memberTestPersister.builder().save();
+            other = memberTestPersister.builder().save();
 
             followTestPersister.builder()
                     .following(following)
@@ -118,9 +118,9 @@ class FollowRepositoryTest extends PersistenceTest {
 
     @Test
     void 팔로잉_수를_조회한다() {
-        Member follower = memberTestPersister.memberBuilder().save();
-        Member followingA = memberTestPersister.memberBuilder().save();
-        Member followingB = memberTestPersister.memberBuilder().save();
+        Member follower = memberTestPersister.builder().save();
+        Member followingA = memberTestPersister.builder().save();
+        Member followingB = memberTestPersister.builder().save();
 
         followTestPersister.builder().following(followingA).follower(follower).save();
         followTestPersister.builder().following(followingB).follower(follower).save();

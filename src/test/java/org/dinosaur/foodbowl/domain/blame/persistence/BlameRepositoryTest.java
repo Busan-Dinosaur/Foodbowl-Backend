@@ -22,8 +22,8 @@ class BlameRepositoryTest extends PersistenceTest {
 
         @Test
         void 존재한다면_신고를_반환한다() {
-            Member member = memberTestPersister.memberBuilder().save();
-            Member target = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
+            Member target = memberTestPersister.builder().save();
             blameTestPersister.builder().member(member).targetId(target.getId()).blameTarget(BlameTarget.MEMBER).save();
 
             Optional<Blame> blame =
@@ -34,8 +34,8 @@ class BlameRepositoryTest extends PersistenceTest {
 
         @Test
         void 신고자만_달라도_조회되지_않는다() {
-            Member member = memberTestPersister.memberBuilder().save();
-            Member target = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
+            Member target = memberTestPersister.builder().save();
             blameTestPersister.builder().targetId(target.getId()).blameTarget(BlameTarget.MEMBER).save();
 
             Optional<Blame> blame =
@@ -46,8 +46,8 @@ class BlameRepositoryTest extends PersistenceTest {
 
         @Test
         void 타겟ID만_달라도_조회되지_않는다() {
-            Member member = memberTestPersister.memberBuilder().save();
-            Member target = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
+            Member target = memberTestPersister.builder().save();
             blameTestPersister.builder().targetId(target.getId()).blameTarget(BlameTarget.MEMBER).save();
 
             Long otherTargetId = target.getId() + 1;
@@ -59,8 +59,8 @@ class BlameRepositoryTest extends PersistenceTest {
 
         @Test
         void 타겟대상만_달라도_조회되지_않는다() {
-            Member member = memberTestPersister.memberBuilder().save();
-            Member target = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
+            Member target = memberTestPersister.builder().save();
             blameTestPersister.builder().targetId(target.getId()).blameTarget(BlameTarget.MEMBER).save();
 
             Optional<Blame> blame =
