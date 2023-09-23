@@ -17,8 +17,8 @@ public enum AuthExceptionType implements ExceptionType {
     NOT_AUTHENTICATION("AUTH-108", "인증에 실패하였습니다."),
     FORBIDDEN("AUTH-109", "권한이 없는 회원입니다."),
     INVALID_BASE64_DECODE("AUTH-110", "Base64로 디코딩할 수 없는 값입니다."),
-    NOT_MATCH_REFRESH_TOKEN("AUTH-111", "리프레쉬 토큰이 일치하지 않습니다."),
-    EXPIRED_REFRESH_TONE("AUTH-112", "리프레쉬 토큰 저장이 만료되었습니다.");
+    NOT_MATCH_REFRESH_TOKEN("AUTH-111", "갱신 토큰이 일치하지 않습니다."),
+    EXPIRED_REFRESH_TONE("AUTH-112", "갱신 토큰 저장이 만료되었습니다.");
 
     private final String errorCode;
     private final String message;

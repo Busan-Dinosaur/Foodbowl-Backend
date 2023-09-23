@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.dinosaur.foodbowl.domain.auth.application.AuthService;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.AppleLoginRequest;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.RenewTokenRequest;
-import org.dinosaur.foodbowl.domain.auth.dto.response.RenewTokenResponse;
 import org.dinosaur.foodbowl.domain.auth.dto.response.TokenResponse;
 import org.dinosaur.foodbowl.test.PresentationTest;
 import org.junit.jupiter.api.Nested;
@@ -79,7 +78,7 @@ class AuthControllerTest extends PresentationTest {
         @Test
         void 인증_토큰_갱신에_성공하면_인증_토큰과_200_응답을_반환한다() throws Exception {
             RenewTokenRequest request = new RenewTokenRequest("AccessToken", "RefreshToken");
-            RenewTokenResponse response = new RenewTokenResponse("RenewAccessToken");
+            TokenResponse response = new TokenResponse("RenewAccessToken", "RenewRefreshToken");
             given(authService.renewToken(any(RenewTokenRequest.class))).willReturn(response);
 
             MvcResult mvcResult = mockMvc.perform(post("/v1/auth/token/renew")
@@ -89,7 +88,7 @@ class AuthControllerTest extends PresentationTest {
                     .andExpect(status().isOk())
                     .andReturn();
             String jsonResponse = mvcResult.getResponse().getContentAsString();
-            RenewTokenResponse result = objectMapper.readValue(jsonResponse, RenewTokenResponse.class);
+            TokenResponse result = objectMapper.readValue(jsonResponse, TokenResponse.class);
 
             assertThat(result).usingRecursiveComparison().isEqualTo(response);
         }
@@ -110,7 +109,7 @@ class AuthControllerTest extends PresentationTest {
 
         @ParameterizedTest
         @NullAndEmptySource
-        void 리프레쉬_토큰이_공백이거나_존재하지_않으면_400_응답을_반환한다(String refreshToken) throws Exception {
+        void 갱신_토큰이_공백이거나_존재하지_않으면_400_응답을_반환한다(String refreshToken) throws Exception {
             RenewTokenRequest request = new RenewTokenRequest("AccessToken", refreshToken);
 
             mockMvc.perform(post("/v1/auth/token/renew")
@@ -119,7 +118,7 @@ class AuthControllerTest extends PresentationTest {
                     .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.errorCode").value("CLIENT-100"))
-                    .andExpect(jsonPath("$.message", containsString("리프레쉬 토큰이 존재하지 않습니다.")));
+                    .andExpect(jsonPath("$.message", containsString("갱신 토큰이 존재하지 않습니다.")));
         }
     }
 }
