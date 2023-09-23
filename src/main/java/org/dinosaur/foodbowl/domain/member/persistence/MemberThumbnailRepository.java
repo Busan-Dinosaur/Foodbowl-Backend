@@ -6,4 +6,6 @@ import org.springframework.data.repository.Repository;
 public interface MemberThumbnailRepository extends Repository<MemberThumbnail, Long> {
 
     MemberThumbnail save(MemberThumbnail memberThumbnail);
+
+    void delete(MemberThumbnail memberThumbnail);
 }
