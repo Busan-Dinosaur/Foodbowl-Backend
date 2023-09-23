@@ -1,6 +1,6 @@
 package org.dinosaur.foodbowl.test.file;
 
-import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_WRITE;
+import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.WRITE;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -26,7 +26,7 @@ public class FileTestUtils {
             ImageIO.write(image, "jpg", byteArrayOutputStream);
             return byteArrayOutputStream.toByteArray();
         } catch (IOException e) {
-            throw new FileException(FILE_WRITE);
+            throw new FileException(WRITE);
         }
     }
 

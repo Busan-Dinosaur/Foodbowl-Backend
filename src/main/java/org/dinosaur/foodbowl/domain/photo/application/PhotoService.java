@@ -1,6 +1,5 @@
 package org.dinosaur.foodbowl.domain.photo.application;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.photo.domain.Photo;
 import org.dinosaur.foodbowl.domain.photo.persistence.PhotoRepository;
@@ -16,16 +15,10 @@ public class PhotoService {
     private final PhotoManager photoManager;
 
     @Transactional
-    public List<Photo> save(List<MultipartFile> images, String workingDirectory) {
-        List<String> imagePaths = photoManager.upload(images, workingDirectory);
-        List<Photo> photos = imagePaths.stream()
-                .map(this::convertToPhoto)
-                .toList();
-
-        for (Photo photo : photos) {
-            photoRepository.save(photo);
-        }
-        return photos;
+    public Photo save(MultipartFile file, String workingDirectory) {
+        String imagePath = photoManager.upload(file, workingDirectory);
+        Photo photo = convertToPhoto(imagePath);
+        return photoRepository.save(photo);
     }
 
     private Photo convertToPhoto(String imagePath) {
@@ -35,11 +28,8 @@ public class PhotoService {
     }
 
     @Transactional
-    public void delete(List<Photo> photos) {
-        List<String> photoPaths = photos.stream()
-                .map(Photo::getPath)
-                .toList();
-        photoRepository.deleteAllByPhoto(photos);
-        photoManager.delete(photoPaths);
+    public void delete(Photo photo) {
+        photoRepository.deleteByPhoto(photo);
+        photoManager.delete(photo.getPath());
     }
 }

@@ -23,23 +23,23 @@ class PhotoServiceTest extends IntegrationTest {
 
     @Test
     void 사진을_저장한다() {
-        List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(3);
+        MultipartFile multipartFile = FileTestUtils.generateMultiPartFile();
 
-        List<Photo> photos = photoService.save(multipartFiles, "workingDirectory");
+        Photo photo = photoService.save(multipartFile, "workingDirectory");
 
-        assertThat(photos).hasSize(3);
+        assertThat(photo.getId()).isNotNull();
         FileTestUtils.cleanUp();
     }
 
     @Test
     void 사진을_삭제한다() {
-        List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(3);
-        List<Photo> photos = photoService.save(multipartFiles, "workingDirectory");
+        MultipartFile multipartFile = FileTestUtils.generateMultiPartFile();
+        Photo savePhoto = photoService.save(multipartFile, "workingDirectory");
 
-        photoService.delete(photos);
+        photoService.delete(savePhoto);
 
         List<Photo> selectPhotos = jpaQueryFactory.selectFrom(photo)
-                .where(photo.in(photos))
+                .where(photo.id.eq(savePhoto.getId()))
                 .fetch();
         assertThat(selectPhotos).isEmpty();
         FileTestUtils.cleanUp();
