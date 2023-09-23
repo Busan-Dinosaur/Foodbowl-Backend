@@ -30,13 +30,13 @@ public interface FollowControllerDocs {
             @ApiResponse(
                     responseCode = "400",
                     description = """
-                            1.올바르지 않은 페이지 타입
+                            1.페이지 타입이 올바르지 않은 경우
                                                         
-                            2.음수 페이지
+                            2.음수 페이지인 경우
                                                         
-                            3.올바르지 않은 페이지 크기 타입
+                            3.페이지 크기 타입이 올바르지 않은 경우
                                                         
-                            4.음수 페이지 크기
+                            4.페이지 크기가 음수인 경우
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
@@ -62,23 +62,23 @@ public interface FollowControllerDocs {
             @ApiResponse(
                     responseCode = "400",
                     description = """
-                            1.올바르지 않은 회원 ID 타입
+                            1.회원 ID 타입이 올바르지 않은 경우
                                                         
-                            2.양수가 아닌 회원 ID
+                            2.회원 ID가 양수가 아닌 경우
                                                         
-                            3.올바르지 않은 페이지 타입
+                            3.페이지 타입이 올바르지 않은 경우
                                                         
-                            4.음수 페이지
+                            4.페이지가 음수인 경우
                                                         
-                            5.올바르지 않은 페이지 크기 타입
+                            5.페이지 크기 타입이 올바르지 않은 경우
                                                         
-                            6.음수 페이지 크기
+                            6.페이지 크기가 음수인 경우
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "등록되지 않은 다른 회원 ID",
+                    description = "다른 회원 ID가 등록되지 않은 경우",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             ),
     })
@@ -107,13 +107,13 @@ public interface FollowControllerDocs {
             @ApiResponse(
                     responseCode = "400",
                     description = """
-                            1.올바르지 않은 페이지 타입
+                            1.페이지 타입이 올바르지 않은 경우
                                                         
-                            2.음수 페이지
+                            2.페이지가 음수인 경우
                                                         
-                            3.올바르지 않은 페이지 크기 타입
+                            3.페이지 크기 타입이 올바르지 않은 경우
                                                         
-                            4.음수 페이지 크기
+                            4.페이지 크기가 음수인 경우
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
@@ -139,23 +139,23 @@ public interface FollowControllerDocs {
             @ApiResponse(
                     responseCode = "400",
                     description = """
-                            1.올바르지 않은 회원 ID 타입
+                            1.회원 ID 타입이 올바르지 않은 경우
                                                         
-                            2.양수가 아닌 회원 ID
+                            2.회원 ID가 양수가 아닌 경우
                                                         
-                            3.올바르지 않은 페이지 타입
+                            3.페이지 타입이 올바르지 않은 경우
                                                         
-                            4.음수 페이지
+                            4.페이지가 음수인 경우
                                                         
-                            5.올바르지 않은 페이지 크기 타입
+                            5.페이지 크기 타입이 올바르지 않은 경우
                                                         
-                            6.음수 페이지 크기
+                            6.페이지 크기가 음수인 경우
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "등록되지 않은 다른 회원 ID",
+                    description = "다른 회원 ID가 등록되지 않은 경우",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             ),
     })
@@ -184,19 +184,19 @@ public interface FollowControllerDocs {
             @ApiResponse(
                     responseCode = "400",
                     description = """
-                            1.올바르지 않은 회원 ID 타입
+                            1.회원 ID 타입이 올바르지 않은 경우
                                                         
-                            2.양수가 아닌 회원 ID
+                            2.회원 ID가 양수가 아닌 경우
                                                         
-                            3.본인 팔로우
+                            3.스스로를 팔로우하는 경우
                                                         
-                            4.이미 팔로우 되어있는 회원 팔로우
+                            4.이미 팔로우 되어있는 회원을 팔로우하는 경우
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "등록되지 않은 팔로우 대상 회원 ID",
+                    description = "팔로우 대상 회원 ID가 등록되지 않은 경우",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
@@ -217,17 +217,17 @@ public interface FollowControllerDocs {
             @ApiResponse(
                     responseCode = "400",
                     description = """
-                            1.올바르지 않은 회원 ID 타입
+                            1.회원 ID 타입이 올바르지 않은 경우
                                                         
-                            2.양수가 아닌 회원 ID
+                            2.회원 ID가 양수가 아닌 경우
                                                         
-                            3.팔로우하지 않은 회원 언팔로우
+                            3.팔로우하지 않은 회원을 언팔로우하는 경우
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "등록되지 않은 언팔로우 회원 ID",
+                    description = "언팔로우 회원 ID가 등록되지 않은 경우",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
@@ -248,17 +248,17 @@ public interface FollowControllerDocs {
             @ApiResponse(
                     responseCode = "400",
                     description = """
-                            1.올바르지 않은 회원 ID 타입
+                            1.회원 ID 타입이 올바르지 않은 경우
                                                         
-                            2.양수가 아닌 회원 ID
+                            2.회원 ID가 양수가 아닌 경우
                                                         
-                            3.나를 팔로우 하지 않은 회원 삭제
+                            3.나를 팔로우 하지 않은 회원을 삭제하는 경우
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "등록되지 않은 팔로워 삭제 회원 ID",
+                    description = "팔로워 삭제 회원 ID가 등록되지 않은 경우",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })

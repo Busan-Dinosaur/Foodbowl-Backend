@@ -8,7 +8,6 @@ import org.dinosaur.foodbowl.domain.auth.application.dto.AppleUser;
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.AppleLoginRequest;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.RenewTokenRequest;
-import org.dinosaur.foodbowl.domain.auth.dto.response.RenewTokenResponse;
 import org.dinosaur.foodbowl.domain.auth.dto.response.TokenResponse;
 import org.dinosaur.foodbowl.domain.auth.exception.AuthExceptionType;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
@@ -33,6 +32,7 @@ public class AuthService {
     public TokenResponse appleLogin(AppleLoginRequest appleLoginRequest) {
         AppleUser platformUser = appleOAuthUserProvider.extractPlatformUser(appleLoginRequest.appleToken());
         return memberRepository.findBySocialTypeAndSocialId(platformUser.socialType(), platformUser.socialId())
+                .map(Member::getId)
                 .map(this::generateToken)
                 .orElseGet(() -> {
                     String nickname = generateNickname();
@@ -43,14 +43,14 @@ public class AuthService {
                             .nickname(nickname)
                             .build();
                     Member newMember = memberRepository.save(member);
-                    return generateToken(newMember);
+                    return generateToken(newMember.getId());
                 });
     }
 
-    private TokenResponse generateToken(Member member) {
-        String accessToken = jwtTokenProvider.createAccessToken(member.getId(), RoleType.ROLE_회원);
-        String refreshToken = jwtTokenProvider.createRefreshToken(member.getId());
-        saveToken(member.getId(), refreshToken);
+    private TokenResponse generateToken(Long memberId) {
+        String accessToken = jwtTokenProvider.createAccessToken(memberId, RoleType.ROLE_회원);
+        String refreshToken = jwtTokenProvider.createRefreshToken(memberId);
+        saveToken(memberId, refreshToken);
         return new TokenResponse(accessToken, refreshToken);
     }
 
@@ -73,13 +73,11 @@ public class AuthService {
     }
 
     @Transactional
-    public RenewTokenResponse renewToken(RenewTokenRequest renewTokenRequest) {
+    public TokenResponse renewToken(RenewTokenRequest renewTokenRequest) {
         String memberId = jwtTokenProvider.extractSubject(renewTokenRequest.accessToken());
         String savedRefreshToken = (String) redisTemplate.opsForValue().get(memberId);
         validateRefreshToken(savedRefreshToken, renewTokenRequest.refreshToken());
-
-        String accessToken = jwtTokenProvider.createAccessToken(Long.valueOf(memberId), RoleType.ROLE_회원);
-        return new RenewTokenResponse(accessToken);
+        return generateToken(Long.valueOf(memberId));
     }
 
     private void validateRefreshToken(String savedRefreshToken, String refreshToken) {
