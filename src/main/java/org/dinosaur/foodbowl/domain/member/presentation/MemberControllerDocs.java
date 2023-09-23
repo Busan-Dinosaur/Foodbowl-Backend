@@ -29,15 +29,15 @@ public interface MemberControllerDocs {
             @ApiResponse(
                     responseCode = "400",
                     description = """
-                            1.올바르지 않은 회원 ID 타입
+                            1.회원 ID 타입이 올바르지 않은 경우
                                                         
-                            2.양수가 아닌 회원 ID
+                            2.회원 ID가 양수가 아닌 경우
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "등록되지 않은 회원 ID",
+                    description = "회원 ID가 등록되지 않은 경우",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
@@ -65,9 +65,9 @@ public interface MemberControllerDocs {
             @ApiResponse(
                     responseCode = "400",
                     description = """
-                            1.존재하지 않는 닉네임 파라미터
+                            1.닉네임 파라미터가 존재하지 않는 경우
                                                         
-                            2.공백 닉네임 파라미터
+                            2.닉네임 파라미터가 공백인 경우
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
@@ -87,13 +87,13 @@ public interface MemberControllerDocs {
             @ApiResponse(
                     responseCode = "400",
                     description = """
-                            1.공백이거나 존재하지 않는 닉네임 요청
+                            1.닉네임이 공백이거나 존재하지 않는 경우
                                                         
-                            2.제약사항에 맞지 않는 닉네임
+                            2.닉네임이 제약사항에 맞지 않는 경우
                                                         
-                            3.제약사항에 맞지 않는 한 줄 소개
+                            3.한 줄 소개가 제약사항에 맞지 않는 경우
                                                         
-                            4.이미 존재하는 닉네임
+                            4.이미 존재하는 닉네임인 경우
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )

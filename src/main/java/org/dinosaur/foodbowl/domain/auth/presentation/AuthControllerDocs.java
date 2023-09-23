@@ -23,12 +23,12 @@ public interface AuthControllerDocs {
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "유효하지 않은 애플 토큰",
+                    description = "애플 토큰이 유효하지 않은 경우",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             ),
             @ApiResponse(
                     responseCode = "500",
-                    description = "유효하지 않은 애플 키",
+                    description = "애플 키가 유효하지 않은 경우",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })

@@ -32,9 +32,9 @@ public interface BlameControllerDocs {
             @ApiResponse(
                     responseCode = "400",
                     description = """
-                            1.양의 정수가 아닌 신고 대상 ID
+                            1.신고 대상 ID가 양의 정수가 아닌 경우
                                                         
-                            2.정상적이지 않은 신고 대상 타입
+                            2.신고 대상 타입이 정상적이지 않은 경우
                                                         
                             3.신고 사유가 존재하지 않을 경우
                                                         
@@ -47,9 +47,9 @@ public interface BlameControllerDocs {
             @ApiResponse(
                     responseCode = "404",
                     description = """
-                            1.존재하지 않는 회원 신고
+                            1.존재하지 않는 회원을 신고하는 경우
                                                         
-                            2.존재하지 않는 리뷰 신고
+                            2.존재하지 않는 리뷰를 신고하는 경우
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
