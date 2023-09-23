@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.auth.application.AuthService;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.AppleLoginRequest;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.RenewTokenRequest;
-import org.dinosaur.foodbowl.domain.auth.dto.response.RenewTokenResponse;
 import org.dinosaur.foodbowl.domain.auth.dto.response.TokenResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,8 +26,8 @@ public class AuthController implements AuthControllerDocs {
     }
 
     @PostMapping("/token/renew")
-    public ResponseEntity<RenewTokenResponse> renewToken(@RequestBody @Valid RenewTokenRequest renewTokenRequest) {
-        RenewTokenResponse response = authService.renewToken(renewTokenRequest);
+    public ResponseEntity<TokenResponse> renewToken(@RequestBody @Valid RenewTokenRequest renewTokenRequest) {
+        TokenResponse response = authService.renewToken(renewTokenRequest);
         return ResponseEntity.ok(response);
     }
 }

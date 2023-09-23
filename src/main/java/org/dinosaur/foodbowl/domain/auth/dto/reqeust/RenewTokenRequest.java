@@ -9,8 +9,8 @@ public record RenewTokenRequest(
         @NotBlank(message = "인증 토큰이 존재하지 않습니다.")
         String accessToken,
 
-        @Schema(description = "갱신을 위한 리프레쉬 토큰", example = "A1B2C3D3")
-        @NotBlank(message = "리프레쉬 토큰이 존재하지 않습니다.")
+        @Schema(description = "갱신 토큰", example = "A1B2C3D3")
+        @NotBlank(message = "갱신 토큰이 존재하지 않습니다.")
         String refreshToken
 ) {
 }

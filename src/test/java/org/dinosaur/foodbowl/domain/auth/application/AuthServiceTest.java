@@ -13,7 +13,6 @@ import org.dinosaur.foodbowl.domain.auth.application.dto.AppleUser;
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.AppleLoginRequest;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.RenewTokenRequest;
-import org.dinosaur.foodbowl.domain.auth.dto.response.RenewTokenResponse;
 import org.dinosaur.foodbowl.domain.auth.dto.response.TokenResponse;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
@@ -93,16 +92,20 @@ class AuthServiceTest extends IntegrationTest {
     class 인증_토큰_갱신_시 {
 
         @Test
-        void 정상적인_인증_토큰과_리프레쉬_토큰이라면_새로운_인증_토큰을_반환한다() {
+        void 정상적인_인증_토큰과_갱신_토큰이라면_새로운_인증_토큰과_새로운_갱신_토큰을_발급한다() {
             String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
             String refreshToken = jwtTokenProvider.createRefreshToken(1L);
             redisTemplate.opsForValue().set("1", refreshToken, 10000, TimeUnit.MILLISECONDS);
             RenewTokenRequest renewTokenRequest = new RenewTokenRequest(accessToken, refreshToken);
 
-            RenewTokenResponse response = authService.renewToken(renewTokenRequest);
+            TokenResponse response = authService.renewToken(renewTokenRequest);
 
+            Claims claims = jwtTokenProvider.extractClaims(response.accessToken()).get();
+            String memberId = claims.getSubject();
+            String saveRefreshToken = (String) redisTemplate.opsForValue().get(memberId);
             assertSoftly(softly -> {
                 softly.assertThat(response.accessToken()).isNotNull();
+                softly.assertThat(response.refreshToken()).isEqualTo(saveRefreshToken);
                 softly.assertThat(jwtTokenProvider.extractSubject(response.accessToken())).isEqualTo("1");
             });
         }
@@ -115,23 +118,27 @@ class AuthServiceTest extends IntegrationTest {
             redisTemplate.opsForValue().set("1", refreshToken, 10000, TimeUnit.MILLISECONDS);
             RenewTokenRequest renewTokenRequest = new RenewTokenRequest(accessToken, refreshToken);
 
-            RenewTokenResponse response = authService.renewToken(renewTokenRequest);
+            TokenResponse response = authService.renewToken(renewTokenRequest);
 
+            Claims claims = jwtTokenProvider.extractClaims(response.accessToken()).get();
+            String memberId = claims.getSubject();
+            String saveRefreshToken = (String) redisTemplate.opsForValue().get(memberId);
             assertSoftly(softly -> {
                 softly.assertThat(response.accessToken()).isNotNull();
+                softly.assertThat(response.refreshToken()).isEqualTo(saveRefreshToken);
                 softly.assertThat(jwtTokenProvider.extractSubject(response.accessToken())).isEqualTo("1");
             });
         }
 
         @Test
-        void 토큰_저장소에_리프레쉬_토큰이_존재하지_않으면_예외를_던진다() {
+        void 토큰_저장소에_갱신_토큰이_존재하지_않으면_예외를_던진다() {
             String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
             String refreshToken = jwtTokenProvider.createRefreshToken(1L);
             RenewTokenRequest renewTokenRequest = new RenewTokenRequest(accessToken, refreshToken);
 
             assertThatThrownBy(() -> authService.renewToken(renewTokenRequest))
                     .isInstanceOf(AuthenticationException.class)
-                    .hasMessage("리프레쉬 토큰 저장이 만료되었습니다.");
+                    .hasMessage("갱신 토큰 저장이 만료되었습니다.");
         }
 
         @Test
@@ -146,7 +153,7 @@ class AuthServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 유효하지_않은_리프레쉬_토큰이라면_예외를_던진다() {
+        void 유효하지_않은_갱신_토큰이라면_예외를_던진다() {
             String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
             String refreshToken = "invali token";
             RenewTokenRequest renewTokenRequest = new RenewTokenRequest(accessToken, refreshToken);
@@ -157,7 +164,7 @@ class AuthServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 인증_토큰의_리프레쉬_토큰과_일치하지_않는_리프레쉬_토큰이라면_예외를_던진다() {
+        void 인증_토큰의_갱신_토큰과_일치하지_않는_갱신_토큰이라면_예외를_던진다() {
             String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
             String refreshToken = jwtTokenProvider.createRefreshToken(1L);
             String otherRefreshToken = jwtTokenProvider.createRefreshToken(2L);
@@ -166,7 +173,7 @@ class AuthServiceTest extends IntegrationTest {
 
             assertThatThrownBy(() -> authService.renewToken(renewTokenRequest))
                     .isInstanceOf(AuthenticationException.class)
-                    .hasMessage("리프레쉬 토큰이 일치하지 않습니다.");
+                    .hasMessage("갱신 토큰이 일치하지 않습니다.");
         }
     }
 }

@@ -92,7 +92,7 @@ public interface ReviewControllerDocs {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "존재하지 않는 리뷰",
+                    description = "리뷰가 존재하지 않을 경우",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
@@ -116,9 +116,9 @@ public interface ReviewControllerDocs {
             @ApiResponse(
                     responseCode = "400",
                     description = """
-                            1.올바르지 않은 리뷰 ID 타입
+                            1.리뷰 ID 타입이 올바르지 않은 경우
                                                         
-                            2.양수가 아닌 리뷰 ID
+                            2.리뷰 ID가 양수가 아닌 경우
                                                         
                             3.리뷰 작성자와 요청을 보낸 사용자가 다른 경우
                             """,
@@ -126,7 +126,7 @@ public interface ReviewControllerDocs {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "존재하지 않는 리뷰",
+                    description = "리뷰가 존재하지 않을 경우",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
