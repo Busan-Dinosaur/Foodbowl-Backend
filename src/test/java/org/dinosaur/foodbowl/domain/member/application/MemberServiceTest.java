@@ -4,23 +4,37 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import java.io.File;
+import java.util.Optional;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
+import org.dinosaur.foodbowl.domain.member.domain.MemberThumbnail;
 import org.dinosaur.foodbowl.domain.member.dto.request.UpdateProfileRequest;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
+import org.dinosaur.foodbowl.domain.member.persistence.MemberThumbnailRepository;
+import org.dinosaur.foodbowl.domain.photo.application.ThumbnailService;
+import org.dinosaur.foodbowl.domain.photo.domain.Thumbnail;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
 import org.dinosaur.foodbowl.test.IntegrationTest;
+import org.dinosaur.foodbowl.test.file.FileTestUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
 
 @SuppressWarnings("NonAsciiCharacters")
 class MemberServiceTest extends IntegrationTest {
 
     @Autowired
     private MemberService memberService;
+
+    @Autowired
+    private ThumbnailService thumbnailService;
+
+    @Autowired
+    private MemberThumbnailRepository memberThumbnailRepository;
 
     @Nested
     class 프로필_조회_시 {
@@ -180,6 +194,71 @@ class MemberServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> memberService.updateProfile(updateProfileRequest, member))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("이미 존재하는 닉네임입니다.");
+        }
+    }
+
+    @Nested
+    class 프로필_이미지_수정_시 {
+
+        @Test
+        void 기존_프로필_이미지는_없고_요청_프로필_이미지도_없으면_프로필_이미지는_존재하지_않는다() {
+            Member member = memberTestPersister.builder().save();
+
+            memberService.updateThumbnail(null, member);
+
+            Optional<MemberThumbnail> memberThumbnail = memberThumbnailRepository.findByMember(member);
+            assertThat(memberThumbnail).isNotPresent();
+        }
+
+        @Test
+        void 기존_프로필_이미지는_없고_요청_프로필_이미지가_있으면_새_프로필_이미지를_등록한다() {
+            Member member = memberTestPersister.builder().save();
+            MultipartFile multipartFile = FileTestUtils.generateMultiPartFile();
+
+            memberService.updateThumbnail(multipartFile, member);
+
+            Optional<MemberThumbnail> memberThumbnail = memberThumbnailRepository.findByMember(member);
+            assertSoftly(softly -> {
+                softly.assertThat(memberThumbnail).isPresent();
+                softly.assertThat(new File(memberThumbnail.get().getThumbnail().getPath())).exists();
+            });
+            FileTestUtils.cleanUp();
+        }
+
+        @Test
+        void 기존_프로필_이미지는_있고_요청_프로필_이미지가_없으면_기존_프로필_이미지를_제거한다() {
+            Member member = memberTestPersister.builder().save();
+            MultipartFile multipartFile = FileTestUtils.generateMultiPartFile();
+            Thumbnail thumbnail = thumbnailService.save(multipartFile);
+            memberThumbnailTestPersister.builder().member(member).thumbnail(thumbnail).save();
+
+            memberService.updateThumbnail(null, member);
+
+            Optional<MemberThumbnail> memberThumbnail = memberThumbnailRepository.findByMember(member);
+            assertSoftly(softly -> {
+                softly.assertThat(memberThumbnail).isNotPresent();
+                softly.assertThat(new File(thumbnail.getPath())).doesNotExist();
+            });
+            FileTestUtils.cleanUp();
+        }
+
+        @Test
+        void 기존_프로필_이미지는_있고_요청_프로필_이미지도_있으면_기존_프로필_이미지를_제거_후_새_프로필_이미지를_등록한다() {
+            Member member = memberTestPersister.builder().save();
+            MultipartFile multipartFile = FileTestUtils.generateMultiPartFile();
+            Thumbnail thumbnail = thumbnailService.save(multipartFile);
+            memberThumbnailTestPersister.builder().member(member).thumbnail(thumbnail).save();
+
+            MultipartFile newFile = FileTestUtils.generateMultiPartFile();
+            memberService.updateThumbnail(newFile, member);
+
+            Optional<MemberThumbnail> memberThumbnail = memberThumbnailRepository.findByMember(member);
+            assertSoftly(softly -> {
+                softly.assertThat(memberThumbnail).isPresent();
+                softly.assertThat(new File(memberThumbnail.get().getThumbnail().getPath())).exists();
+                softly.assertThat(new File(thumbnail.getPath())).doesNotExist();
+            });
+            FileTestUtils.cleanUp();
         }
     }
 }

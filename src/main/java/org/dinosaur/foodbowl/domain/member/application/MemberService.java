@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.follow.domain.Follow;
 import org.dinosaur.foodbowl.domain.follow.persistence.FollowRepository;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
+import org.dinosaur.foodbowl.domain.member.domain.MemberThumbnail;
 import org.dinosaur.foodbowl.domain.member.domain.vo.Introduction;
 import org.dinosaur.foodbowl.domain.member.domain.vo.Nickname;
 import org.dinosaur.foodbowl.domain.member.dto.request.UpdateProfileRequest;
@@ -13,16 +14,22 @@ import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
 import org.dinosaur.foodbowl.domain.member.exception.MemberExceptionType;
 import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
+import org.dinosaur.foodbowl.domain.member.persistence.MemberThumbnailRepository;
+import org.dinosaur.foodbowl.domain.photo.application.ThumbnailService;
+import org.dinosaur.foodbowl.domain.photo.domain.Thumbnail;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @Service
 public class MemberService {
 
+    private final ThumbnailService thumbnailService;
     private final MemberRepository memberRepository;
+    private final MemberThumbnailRepository memberThumbnailRepository;
     private final FollowRepository followRepository;
 
     @Transactional(readOnly = true)
@@ -67,5 +74,26 @@ public class MemberService {
         if (nicknameExist) {
             throw new BadRequestException(MemberExceptionType.DUPLICATE_NICKNAME);
         }
+    }
+
+    @Transactional
+    public void updateThumbnail(MultipartFile file, Member loginMember) {
+        memberThumbnailRepository.findByMember(loginMember)
+                .ifPresent(this::deleteMemberThumbnail);
+
+        if (file == null) {
+            return;
+        }
+        Thumbnail thumbnail = thumbnailService.save(file);
+        MemberThumbnail memberThumbnail = MemberThumbnail.builder()
+                .member(loginMember)
+                .thumbnail(thumbnail)
+                .build();
+        memberThumbnailRepository.save(memberThumbnail);
+    }
+
+    private void deleteMemberThumbnail(MemberThumbnail memberThumbnail) {
+        memberThumbnailRepository.delete(memberThumbnail);
+        thumbnailService.delete(memberThumbnail.getThumbnail());
     }
 }
