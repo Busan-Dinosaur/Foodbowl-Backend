@@ -16,7 +16,7 @@ class PhotoRepositoryTest extends PersistenceTest {
     @Test
     void 사진을_저장한다() {
         Photo photo = Photo.builder()
-                .path("http://justdoeat.shop/store1/image.jpg?")
+                .path("http://justdoeat.shop/store/1/image.jpg")
                 .build();
 
         Photo savePhoto = photoRepository.save(photo);
@@ -27,7 +27,7 @@ class PhotoRepositoryTest extends PersistenceTest {
     @Test
     void 사진을_삭제한다() {
         Photo photo = Photo.builder()
-                .path("http://justdoeat.shop/store1/image.jpg?")
+                .path("http://justdoeat.shop/store/1/image.jpg")
                 .build();
         Photo savePhoto = photoRepository.save(photo);
 
