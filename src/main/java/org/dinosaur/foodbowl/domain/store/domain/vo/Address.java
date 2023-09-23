@@ -42,7 +42,7 @@ public class Address {
     private String roadName;
 
     @NotNull
-    @Column(name = "coordinate")
+    @Column(name = "coordinate", columnDefinition = "point")
     private Point coordinate;
 
     public static Address of(String storeAddress, Point coordinate) {

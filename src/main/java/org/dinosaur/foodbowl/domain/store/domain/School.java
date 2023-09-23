@@ -40,7 +40,7 @@ public class School extends AuditingEntity {
     private String addressName;
 
     @NotNull
-    @Column(name = "coordinate")
+    @Column(name = "coordinate", columnDefinition = "point")
     private Point coordinate;
 
     @Builder
