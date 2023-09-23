@@ -31,7 +31,7 @@ public class ThumbnailService {
 
     @Transactional
     public void delete(Thumbnail thumbnail) {
-        thumbnailRepository.deleteByThumbnail(thumbnail);
+        thumbnailRepository.delete(thumbnail);
         photoManager.delete(thumbnail.getPath());
     }
 }
