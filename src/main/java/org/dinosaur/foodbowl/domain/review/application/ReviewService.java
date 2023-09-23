@@ -75,6 +75,7 @@ public class ReviewService {
                 reviewCreateRequest.storeUrl(),
                 reviewCreateRequest.phone(),
                 reviewCreateRequest.schoolName(),
+                reviewCreateRequest.schoolAddress(),
                 reviewCreateRequest.schoolX(),
                 reviewCreateRequest.schoolY()
         );

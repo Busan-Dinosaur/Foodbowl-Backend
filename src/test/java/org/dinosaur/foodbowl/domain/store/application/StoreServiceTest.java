@@ -47,6 +47,7 @@ class StoreServiceTest extends IntegrationTest {
             StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(
                     null,
                     null,
+                    null,
                     null
             );
             Store store = storeService.create(storeCreateDtoWithoutSchool);
@@ -68,6 +69,7 @@ class StoreServiceTest extends IntegrationTest {
         @Test
         void 등록된_가게라면_가게를_조회한다() {
             StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(
+                    null,
                     null,
                     null,
                     null
@@ -95,6 +97,7 @@ class StoreServiceTest extends IntegrationTest {
             StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(
                     null,
                     null,
+                    null,
                     null
             );
 
@@ -113,6 +116,7 @@ class StoreServiceTest extends IntegrationTest {
         void 학교와_함께_생성한다() {
             StoreCreateDto storeCreateDtoWithSchool = generateStoreCreateDto(
                     "부산대학교",
+                    "부산광역시 금정구 부산대학로63번길 2",
                     BigDecimal.valueOf(123.12),
                     BigDecimal.valueOf(37.1234)
             );
@@ -136,6 +140,7 @@ class StoreServiceTest extends IntegrationTest {
         void 이미_존재하는_학교인_경우도_학교와_함께_생성한다() {
             StoreCreateDto storeCreateDtoWithSchool = generateStoreCreateDto(
                     "부산대학교",
+                    "부산광역시 금정구 부산대학로63번길 2",
                     BigDecimal.valueOf(123.12),
                     BigDecimal.valueOf(37.1234)
             );
@@ -150,6 +155,7 @@ class StoreServiceTest extends IntegrationTest {
                     "http://images2.foodbowl",
                     "02-2141-4567",
                     "부산대학교",
+                    "부산광역시 금정구 부산대학로63번길 2",
                     BigDecimal.valueOf(123.12),
                     BigDecimal.valueOf(37.1234));
 
@@ -168,6 +174,7 @@ class StoreServiceTest extends IntegrationTest {
         @Test
         void 이미_등록된_가게라면_예외를_던진다() {
             StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(
+                    null,
                     null,
                     null,
                     null
@@ -193,6 +200,7 @@ class StoreServiceTest extends IntegrationTest {
                     "02-123-4567",
                     schoolName,
                     null,
+                    null,
                     null
             );
 
@@ -216,6 +224,7 @@ class StoreServiceTest extends IntegrationTest {
                     "02-123-4567",
                     null,
                     null,
+                    null,
                     null
             );
 
@@ -225,7 +234,12 @@ class StoreServiceTest extends IntegrationTest {
         }
     }
 
-    private StoreCreateDto generateStoreCreateDto(String schoolName, BigDecimal schoolX, BigDecimal schoolY) {
+    private StoreCreateDto generateStoreCreateDto(
+            String schoolName,
+            String schoolAddress,
+            BigDecimal schoolX,
+            BigDecimal schoolY
+    ) {
         return new StoreCreateDto(
                 "12314535",
                 "농민백암순대",
@@ -236,6 +250,7 @@ class StoreServiceTest extends IntegrationTest {
                 "http://images.foodbowl",
                 "02-123-4567",
                 schoolName,
+                schoolAddress,
                 schoolX,
                 schoolY
         );

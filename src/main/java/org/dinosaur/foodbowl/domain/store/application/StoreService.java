@@ -16,6 +16,8 @@ import org.dinosaur.foodbowl.domain.store.persistence.CategoryRepository;
 import org.dinosaur.foodbowl.domain.store.persistence.StoreRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
+import org.dinosaur.foodbowl.global.util.PointUtils;
+import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,7 +56,13 @@ public class StoreService {
         );
         Store store = storeRepository.save(convertToStore(storeCreateDto));
         if (storeCreateDto.schoolName() != null) {
-            saveSchool(store, storeCreateDto.schoolName(), storeCreateDto.schoolX(), storeCreateDto.schoolY());
+            saveSchool(
+                    store,
+                    storeCreateDto.schoolName(),
+                    storeCreateDto.schoolAddress(),
+                    storeCreateDto.schoolX(),
+                    storeCreateDto.schoolY()
+            );
         }
         return store;
     }
@@ -62,7 +70,8 @@ public class StoreService {
     private Store convertToStore(StoreCreateDto storeCreateDto) {
         CategoryType categoryType = CategoryType.of(storeCreateDto.category());
         Category category = categoryRepository.findById(categoryType.getId());
-        Address address = Address.of(storeCreateDto.address(), storeCreateDto.storeX(), storeCreateDto.storeY());
+        Point coordinate = PointUtils.generate(storeCreateDto.storeX(), storeCreateDto.storeY());
+        Address address = Address.of(storeCreateDto.address(), coordinate);
 
         return Store.builder()
                 .locationId(storeCreateDto.locationId())
@@ -74,9 +83,15 @@ public class StoreService {
                 .build();
     }
 
-    private void saveSchool(Store store, String schoolName, BigDecimal schoolX, BigDecimal schoolY) {
+    private void saveSchool(
+            Store store,
+            String schoolName,
+            String schoolAddress,
+            BigDecimal schoolX,
+            BigDecimal schoolY
+    ) {
         School school = schoolService.findByName(schoolName)
-                .orElseGet(() -> schoolService.save(schoolName, schoolX, schoolY));
+                .orElseGet(() -> schoolService.save(schoolName, schoolAddress, schoolX, schoolY));
 
         storeSchoolService.save(store, school);
     }

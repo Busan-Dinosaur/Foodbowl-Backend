@@ -25,7 +25,7 @@ import org.dinosaur.foodbowl.global.persistence.AuditingEntity;
 @Table(
         name = "member_thumbnail",
         uniqueConstraints = {
-                @UniqueConstraint(name = "UQ_MEMBER_THUMBNAIL", columnNames = {"member_id", "thumbnail_id"})
+                @UniqueConstraint(name = "uniq_member_thumbnail", columnNames = {"member_id", "thumbnail_id"})
         }
 )
 @EqualsAndHashCode(of = {"id"}, callSuper = false)

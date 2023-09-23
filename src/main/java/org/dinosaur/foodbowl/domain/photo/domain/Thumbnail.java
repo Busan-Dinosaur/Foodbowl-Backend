@@ -30,18 +30,8 @@ public class Thumbnail extends AuditingEntity {
     @Column(name = "path", length = 512)
     private String path;
 
-    @NotNull
-    @Column(name = "width")
-    private Integer width;
-
-    @NotNull
-    @Column(name = "height")
-    private Integer height;
-
     @Builder
-    private Thumbnail(String path, Integer width, Integer height) {
+    private Thumbnail(String path) {
         this.path = path;
-        this.width = width;
-        this.height = height;
     }
 }

@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.math.BigDecimal;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
+import org.dinosaur.foodbowl.global.util.PointUtils;
 import org.dinosaur.foodbowl.test.PersistenceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +41,7 @@ class StoreRepositoryTest extends PersistenceTest {
                 .category(categoryRepository.findById(1L))
                 .address(Address.of(
                         "서울시 영등포구 여의도동 451",
-                        BigDecimal.valueOf(123.23),
-                        BigDecimal.valueOf(35.52))
+                        PointUtils.generate(BigDecimal.valueOf(123.23), BigDecimal.valueOf(35.52)))
                 )
                 .storeUrl("http://image.bbq.foodbowl")
                 .phone("02-123-4567")

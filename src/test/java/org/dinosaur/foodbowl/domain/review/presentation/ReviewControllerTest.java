@@ -178,7 +178,9 @@ class ReviewControllerTest extends PresentationTest {
                     "가성비가 매우 좋아요",
                     null,
                     null,
-                    null);
+                    null,
+                    null
+            );
             MockMultipartFile request = new MockMultipartFile(
                     "request",
                     "",
@@ -212,7 +214,9 @@ class ReviewControllerTest extends PresentationTest {
                     "가성비가 매우 좋아요",
                     null,
                     null,
-                    null);
+                    null,
+                    null
+            );
             MockMultipartFile request = new MockMultipartFile(
                     "request",
                     "",
@@ -246,7 +250,9 @@ class ReviewControllerTest extends PresentationTest {
                     "가성비가 매우 좋아요",
                     null,
                     null,
-                    null);
+                    null,
+                    null
+            );
             MockMultipartFile request = new MockMultipartFile(
                     "request",
                     "",
@@ -278,7 +284,9 @@ class ReviewControllerTest extends PresentationTest {
                     "가성비가 매우 좋아요",
                     null,
                     null,
-                    null);
+                    null,
+                    null
+            );
             MockMultipartFile request = new MockMultipartFile(
                     "request",
                     "",
@@ -310,7 +318,9 @@ class ReviewControllerTest extends PresentationTest {
                     "가성비가 매우 좋아요",
                     null,
                     null,
-                    null);
+                    null,
+                    null
+            );
             MockMultipartFile request = new MockMultipartFile(
                     "request",
                     "",
@@ -344,7 +354,9 @@ class ReviewControllerTest extends PresentationTest {
                     "가성비가 매우 좋아요",
                     null,
                     null,
-                    null);
+                    null,
+                    null
+            );
             MockMultipartFile request = new MockMultipartFile(
                     "request",
                     "",
@@ -378,7 +390,9 @@ class ReviewControllerTest extends PresentationTest {
                     "가성비가 매우 좋아요",
                     null,
                     null,
-                    null);
+                    null,
+                    null
+            );
             MockMultipartFile request = new MockMultipartFile(
                     "request",
                     "",
@@ -412,7 +426,9 @@ class ReviewControllerTest extends PresentationTest {
                     content,
                     null,
                     null,
-                    null);
+                    null,
+                    null
+            );
             MockMultipartFile request = new MockMultipartFile(
                     "request",
                     "",
@@ -674,6 +690,7 @@ class ReviewControllerTest extends PresentationTest {
                 "02-1234-2424",
                 "한식",
                 "가성비가 매우 좋아요",
+                null,
                 null,
                 null,
                 null

@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.math.BigDecimal;
 import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
 import org.dinosaur.foodbowl.domain.store.domain.vo.CategoryType;
+import org.dinosaur.foodbowl.global.util.PointUtils;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -25,8 +26,7 @@ class StoreTest {
                 .region2depthName("강남구")
                 .region3depthName("선릉로")
                 .roadName("14번길 245")
-                .x(BigDecimal.valueOf(123.124))
-                .y(BigDecimal.valueOf(37.4545))
+                .coordinate(PointUtils.generate(BigDecimal.valueOf(123.124), BigDecimal.valueOf(37.4545)))
                 .build();
         Store store = Store.builder()
                 .category(category)

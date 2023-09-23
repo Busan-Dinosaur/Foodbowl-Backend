@@ -12,6 +12,9 @@ public record SchoolResponse(
         @Schema(description = "학교명", example = "부산대학교")
         String name,
 
+        @Schema(description = "학교 주소", example = "부산광역시 금정구 부산대학로63번길 2")
+        String address,
+
         @Schema(description = "경도", example = "127.521")
         BigDecimal x,
 
@@ -23,6 +26,7 @@ public record SchoolResponse(
         return new SchoolResponse(
                 school.getId(),
                 school.getName(),
+                school.getAddressName(),
                 school.getX(),
                 school.getY()
         );

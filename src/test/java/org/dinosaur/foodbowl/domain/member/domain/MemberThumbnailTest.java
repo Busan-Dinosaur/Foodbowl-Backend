@@ -23,8 +23,6 @@ class MemberThumbnailTest {
                 .build();
         Thumbnail thumbnail = Thumbnail.builder()
                 .path("http://foodbowl.com/static/images/image.png")
-                .width(100)
-                .height(100)
                 .build();
         MemberThumbnail memberThumbnail = MemberThumbnail.builder()
                 .member(member)
