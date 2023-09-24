@@ -20,4 +20,8 @@ public class PointUtils {
         point.setSRID(SR_ID);
         return point;
     }
+
+    public static int getSrId() {
+        return SR_ID;
+    }
 }
