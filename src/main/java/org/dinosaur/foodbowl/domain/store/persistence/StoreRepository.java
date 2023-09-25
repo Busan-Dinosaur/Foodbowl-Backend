@@ -19,12 +19,18 @@ public interface StoreRepository extends Repository<Store, Long> {
             value = "SELECT "
                     + "s.id as storeId, "
                     + "s.store_name as storeName, " +
-                    "ST_Distance_Sphere(ST_PointFromText(CONCAT('POINT(', :y, ' ', :x, ')'), 4326), s.coordinate) as distance " +
-            "FROM Store s " +
-            "WHERE s.store_name LIKE CONCAT('%', :name, '%') " +
-            "ORDER BY ST_Distance_Sphere(ST_PointFromText(CONCAT('POINT(', :y, ' ', :x, ')'), 4326), s.coordinate) ASC"
+                    "ST_Distance_Sphere(ST_PointFromText(CONCAT('POINT(', :y, ' ', :x, ')'), 4326), s.coordinate) as distance "
+                    +
+                    "FROM Store s " +
+                    "WHERE s.store_name LIKE CONCAT('%', :name, '%') " +
+                    "ORDER BY ST_Distance_Sphere(ST_PointFromText(CONCAT('POINT(', :y, ' ', :x, ')'), 4326), s.coordinate) ASC " +
+                    "LIMIT :size OFFSET 0"
     )
-    List<StoreSearchQueryResponse> search(@Param("name") String name, @Param("x") double x, @Param("y") double y);
+    List<StoreSearchQueryResponse> search(
+            @Param("name") String name,
+            @Param("x") double x,
+            @Param("y") double y,
+            @Param("size") int size);
 
     Store save(Store store);
 }

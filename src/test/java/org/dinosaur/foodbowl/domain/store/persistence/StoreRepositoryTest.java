@@ -61,7 +61,7 @@ class StoreRepositoryTest extends PersistenceTest {
                     .address(createAddress(x + 0.04, y))
                     .storeName("직화숯불구이").save();
 
-            List<StoreSearchQueryResponse> searchResponses = storeRepository.search(name, x, y);
+            List<StoreSearchQueryResponse> searchResponses = storeRepository.search(name, x, y, 10);
 
             List<Long> responseStoreIds = searchResponses.stream()
                     .map(StoreSearchQueryResponse::getStoreId)
