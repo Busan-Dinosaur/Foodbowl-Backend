@@ -3,7 +3,7 @@ package org.dinosaur.foodbowl.domain.follow.persistence;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import org.dinosaur.foodbowl.domain.follow.persistence.dto.MemberFollowCountDto;
+import org.dinosaur.foodbowl.domain.follow.persistence.dto.MemberFollowerCountDto;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.test.PersistenceTest;
 import org.junit.jupiter.api.Test;
@@ -24,12 +24,12 @@ class FollowCustomRepositoryTest extends PersistenceTest {
         followTestPersister.builder().following(memberA).follower(memberC).save();
         followTestPersister.builder().following(memberB).follower(memberC).save();
 
-        List<MemberFollowCountDto> result =
-                followCustomRepository.getFollowCountByMembers(List.of(memberA, memberB));
+        List<MemberFollowerCountDto> result =
+                followCustomRepository.getFollowerCountByMembers(List.of(memberA, memberB));
 
-        List<MemberFollowCountDto> expected = List.of(
-                new MemberFollowCountDto(memberA.getId(), 2),
-                new MemberFollowCountDto(memberB.getId(), 1)
+        List<MemberFollowerCountDto> expected = List.of(
+                new MemberFollowerCountDto(memberA.getId(), 2),
+                new MemberFollowerCountDto(memberB.getId(), 1)
         );
         assertThat(result).usingRecursiveComparison().isEqualTo(expected);
     }

@@ -2,12 +2,12 @@ package org.dinosaur.foodbowl.domain.follow.persistence.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
 
-public record MemberFollowCountDto(
+public record MemberFollowerCountDto(
         Long memberId,
-        long followCount
+        long followerCount
 ) {
 
     @QueryProjection
-    public MemberFollowCountDto {
+    public MemberFollowerCountDto {
     }
 }
