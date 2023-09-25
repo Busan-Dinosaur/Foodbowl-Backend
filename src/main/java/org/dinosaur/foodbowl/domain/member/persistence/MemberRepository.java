@@ -13,7 +13,7 @@ public interface MemberRepository extends Repository<Member, Long> {
     Optional<Member> findById(Long id);
 
     @Query("select m from Member m"
-            + " left join fetch m.memberThumbnail t"
+            + " left join fetch m.memberThumbnails t"
             + " left join fetch t.thumbnail"
             + " where m.id = :id")
     Optional<Member> findByIdWithThumbnail(@Param("id") Long id);
