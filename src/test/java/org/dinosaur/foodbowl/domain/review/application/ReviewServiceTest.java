@@ -10,9 +10,14 @@ import java.util.List;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.photo.domain.Photo;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
+import org.dinosaur.foodbowl.domain.review.domain.ReviewPhoto;
+import org.dinosaur.foodbowl.domain.review.dto.request.CoordinateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
+import org.dinosaur.foodbowl.domain.review.dto.response.PaginationReviewResponse;
+import org.dinosaur.foodbowl.domain.review.dto.response.ReviewResponse;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
+import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
 import org.dinosaur.foodbowl.test.IntegrationTest;
@@ -33,6 +38,134 @@ class ReviewServiceTest extends IntegrationTest {
 
     @Autowired
     private ReviewRepository reviewRepository;
+
+    @Nested
+    class 팔로잉_하는_멤버의_리뷰_목록_페이징_조회_시 {
+
+        @Test
+        void 리뷰_작성자의_팔로워_수도_함께_조회한다() {
+            Member member = memberTestPersister.memberBuilder().save();
+            Member writer = memberTestPersister.memberBuilder().save();
+            Member follower = memberTestPersister.memberBuilder().save();
+            followTestPersister.builder().following(writer).follower(member).save();
+            followTestPersister.builder().following(writer).follower(follower).save();
+            Store store = storeTestPersister.builder().save();
+            reviewTestPersister.builder().member(writer).store(store).save();
+            CoordinateRequest coordinateRequest = new CoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            PaginationReviewResponse paginationReviewsByFollowing =
+                    reviewService.getPaginationReviewsByFollowing(null, coordinateRequest, 10, member);
+
+            List<ReviewResponse> result = paginationReviewsByFollowing.reviews();
+            assertSoftly(softly -> {
+                softly.assertThat(result).hasSize(1);
+                softly.assertThat(result.get(0).writer().id()).isEqualTo(writer.getId());
+                softly.assertThat(result.get(0).writer().nickname()).isEqualTo(writer.getNickname());
+                softly.assertThat(result.get(0).writer().followerCount()).isEqualTo(2);
+            });
+        }
+
+        @Test
+        void 리뷰의_사진_목록도_함께_조회한다() {
+            Member member = memberTestPersister.memberBuilder().save();
+            Member writer = memberTestPersister.memberBuilder().save();
+            followTestPersister.builder().following(writer).follower(member).save();
+            Store store = storeTestPersister.builder().save();
+            Review review = reviewTestPersister.builder().member(writer).store(store).save();
+            ReviewPhoto reviewPhotoA = reviewPhotoTestPersister.builder().review(review).save();
+            ReviewPhoto reviewPhotoB = reviewPhotoTestPersister.builder().review(review).save();
+            CoordinateRequest coordinateRequest = new CoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            PaginationReviewResponse paginationReviewsByFollowing =
+                    reviewService.getPaginationReviewsByFollowing(null, coordinateRequest, 10, member);
+
+            List<ReviewResponse> result = paginationReviewsByFollowing.reviews();
+            assertSoftly(softly -> {
+                softly.assertThat(result).hasSize(1);
+                softly.assertThat(result.get(0).review().id()).isEqualTo(review.getId());
+                softly.assertThat(result.get(0).review().content()).isEqualTo(review.getContent());
+                softly.assertThat(result.get(0).review().imagePaths())
+                        .containsExactly(reviewPhotoA.getPhoto().getPath(), reviewPhotoB.getPhoto().getPath());
+                softly.assertThat(result.get(0).review().createdAt()).isEqualTo(review.getCreatedAt());
+                softly.assertThat(result.get(0).review().updatedAt()).isEqualTo(review.getUpdatedAt());
+            });
+        }
+
+        @Test
+        void 북마크한_가게는_북마크_여부가_TRUE_이다() {
+            Member member = memberTestPersister.memberBuilder().save();
+            Member writer = memberTestPersister.memberBuilder().save();
+            followTestPersister.builder().following(writer).follower(member).save();
+            Store store = storeTestPersister.builder().save();
+            bookmarkTestPersister.builder().member(member).store(store).save();
+            reviewTestPersister.builder().member(writer).store(store).save();
+            CoordinateRequest coordinateRequest = new CoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            PaginationReviewResponse paginationReviewsByFollowing =
+                    reviewService.getPaginationReviewsByFollowing(null, coordinateRequest, 10, member);
+
+            List<ReviewResponse> result = paginationReviewsByFollowing.reviews();
+            assertSoftly(softly -> {
+                softly.assertThat(result).hasSize(1);
+                softly.assertThat(result.get(0).store().id()).isEqualTo(store.getId());
+                softly.assertThat(result.get(0).store().categoryName()).isEqualTo(store.getCategory().getName());
+                softly.assertThat(result.get(0).store().name()).isEqualTo(store.getStoreName());
+                softly.assertThat(result.get(0).store().addressName()).isEqualTo(store.getAddress().getAddressName());
+                softly.assertThat(result.get(0).store().x())
+                        .isEqualTo(BigDecimal.valueOf(store.getAddress().getCoordinate().getX()));
+                softly.assertThat(result.get(0).store().y())
+                        .isEqualTo(BigDecimal.valueOf(store.getAddress().getCoordinate().getY()));
+                softly.assertThat(result.get(0).store().isBookmarked()).isTrue();
+            });
+        }
+
+        @Test
+        void 북마크하지_않은_가게는_북마크_여부가_FALSE_이다() {
+            Member member = memberTestPersister.memberBuilder().save();
+            Member writer = memberTestPersister.memberBuilder().save();
+            followTestPersister.builder().following(writer).follower(member).save();
+            Store store = storeTestPersister.builder().save();
+            reviewTestPersister.builder().member(writer).store(store).save();
+            CoordinateRequest coordinateRequest = new CoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            PaginationReviewResponse paginationReviewsByFollowing =
+                    reviewService.getPaginationReviewsByFollowing(null, coordinateRequest, 10, member);
+
+            List<ReviewResponse> result = paginationReviewsByFollowing.reviews();
+            assertSoftly(softly -> {
+                softly.assertThat(result).hasSize(1);
+                softly.assertThat(result.get(0).store().id()).isEqualTo(store.getId());
+                softly.assertThat(result.get(0).store().categoryName()).isEqualTo(store.getCategory().getName());
+                softly.assertThat(result.get(0).store().name()).isEqualTo(store.getStoreName());
+                softly.assertThat(result.get(0).store().addressName()).isEqualTo(store.getAddress().getAddressName());
+                softly.assertThat(result.get(0).store().x())
+                        .isEqualTo(BigDecimal.valueOf(store.getAddress().getCoordinate().getX()));
+                softly.assertThat(result.get(0).store().y())
+                        .isEqualTo(BigDecimal.valueOf(store.getAddress().getCoordinate().getY()));
+                softly.assertThat(result.get(0).store().isBookmarked()).isFalse();
+            });
+        }
+    }
 
     @Nested
     class 리뷰_저장_시 {

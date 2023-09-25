@@ -4,6 +4,7 @@ import org.dinosaur.foodbowl.test.persister.BlameTestPersister;
 import org.dinosaur.foodbowl.test.persister.BookmarkTestPersister;
 import org.dinosaur.foodbowl.test.persister.FollowTestPersister;
 import org.dinosaur.foodbowl.test.persister.MemberTestPersister;
+import org.dinosaur.foodbowl.test.persister.MemberThumbnailTestPersister;
 import org.dinosaur.foodbowl.test.persister.PhotoTestPersister;
 import org.dinosaur.foodbowl.test.persister.ReviewPhotoTestPersister;
 import org.dinosaur.foodbowl.test.persister.ReviewTestPersister;
@@ -32,6 +33,9 @@ public class IntegrationTest {
 
     @Autowired
     protected MemberTestPersister memberTestPersister;
+
+    @Autowired
+    protected MemberThumbnailTestPersister memberThumbnailTestPersister;
 
     @Autowired
     protected PhotoTestPersister photoTestPersister;

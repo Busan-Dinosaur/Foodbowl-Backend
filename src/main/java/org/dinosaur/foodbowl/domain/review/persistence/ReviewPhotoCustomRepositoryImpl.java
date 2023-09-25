@@ -29,6 +29,7 @@ public class ReviewPhotoCustomRepositoryImpl implements ReviewPhotoCustomReposit
                 .from(reviewPhoto)
                 .innerJoin(reviewPhoto.photo, photo)
                 .where(reviewPhoto.review.in(reviews))
+                .orderBy(reviewPhoto.createdAt.asc())
                 .fetch();
     }
 
