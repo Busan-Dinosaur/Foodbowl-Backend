@@ -4,7 +4,7 @@ import java.util.Optional;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
 import org.springframework.data.repository.Repository;
 
-public interface ReviewRepository extends Repository<Review, Long> {
+public interface ReviewRepository extends Repository<Review, Long>, ReviewCustomRepository {
 
     Optional<Review> findById(Long id);
 
