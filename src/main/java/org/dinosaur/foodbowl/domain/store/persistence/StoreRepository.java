@@ -23,8 +23,8 @@ public interface StoreRepository extends Repository<Store, Long> {
                         ST_Distance_Sphere(ST_PointFromText(CONCAT('POINT(', :y, ' ', :x, ')'), 4326), s.coordinate) as distance,
                         COUNT(r.id) as reviewCount
                                         
-                    FROM Store s
-                    LEFT JOIN Review r ON r.store_id = s.id
+                    FROM store s
+                    LEFT JOIN review r ON r.store_id = s.id
                     WHERE s.store_name LIKE CONCAT('%', :name, '%')
                     GROUP BY s.id
                     ORDER BY ST_Distance_Sphere(ST_PointFromText(CONCAT('POINT(', :y, ' ', :x, ')'), 4326), s.coordinate) ASC
