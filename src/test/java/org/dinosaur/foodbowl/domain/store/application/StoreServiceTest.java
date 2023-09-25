@@ -149,10 +149,10 @@ class StoreServiceTest extends IntegrationTest {
             );
 
             assertSoftly(softly -> {
-                softly.assertThat(storeSearchResponses.getSearchResponses()).hasSize(2);
-                softly.assertThat(storeSearchResponses.getSearchResponses().get(0).getStoreId())
+                softly.assertThat(storeSearchResponses.searchResponses()).hasSize(2);
+                softly.assertThat(storeSearchResponses.searchResponses().get(0).getStoreId())
                         .isEqualTo(nearestStoreA.getId());
-                softly.assertThat(storeSearchResponses.getSearchResponses().get(1).getStoreId())
+                softly.assertThat(storeSearchResponses.searchResponses().get(1).getStoreId())
                         .isEqualTo(storeB.getId());
             });
         }
