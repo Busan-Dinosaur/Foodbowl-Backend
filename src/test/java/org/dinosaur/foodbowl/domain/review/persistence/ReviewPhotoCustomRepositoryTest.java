@@ -7,6 +7,7 @@ import java.util.List;
 import org.dinosaur.foodbowl.domain.photo.domain.Photo;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
 import org.dinosaur.foodbowl.domain.review.domain.ReviewPhoto;
+import org.dinosaur.foodbowl.domain.review.persistence.dto.ReviewPhotoPathDto;
 import org.dinosaur.foodbowl.test.PersistenceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,20 +22,25 @@ class ReviewPhotoCustomRepositoryTest extends PersistenceTest {
     private ReviewPhotoCustomRepositoryImpl reviewPhotoCustomRepository;
 
     @Test
+    void 리뷰_목록에_존재하는_리뷰의_사진_경로_목록을_조회한다() {
+        Review review = reviewTestPersister.builder().save();
+        ReviewPhoto reviewPhotoA = reviewPhotoTestPersister.builder().review(review).save();
+        ReviewPhoto reviewPhotoB = reviewPhotoTestPersister.builder().review(review).save();
+
+        List<ReviewPhotoPathDto> result = reviewPhotoCustomRepository.getPhotoPathByReviews(List.of(review));
+
+        List<ReviewPhotoPathDto> expected = List.of(
+                new ReviewPhotoPathDto(review.getId(), reviewPhotoA.getPhoto().getPath()),
+                new ReviewPhotoPathDto(review.getId(), reviewPhotoB.getPhoto().getPath())
+        );
+        assertThat(result).usingRecursiveComparison().isEqualTo(expected);
+    }
+
+    @Test
     void 리뷰_사진_엔티티를_삭제한다() {
         Review review = reviewTestPersister.builder().save();
-        Photo photo1 = photoTestPersister.builder().save();
-        Photo photo2 = photoTestPersister.builder().save();
-        ReviewPhoto reviewPhoto1 = ReviewPhoto.builder()
-                .review(review)
-                .photo(photo1)
-                .build();
-        ReviewPhoto reviewPhoto2 = ReviewPhoto.builder()
-                .review(review)
-                .photo(photo2)
-                .build();
-        reviewPhotoRepository.save(reviewPhoto1);
-        reviewPhotoRepository.save(reviewPhoto2);
+        reviewPhotoTestPersister.builder().review(review).save();
+        reviewPhotoTestPersister.builder().review(review).save();
 
         long deleteCount = reviewPhotoCustomRepository.deleteAllByReview(review);
 
@@ -47,21 +53,11 @@ class ReviewPhotoCustomRepositoryTest extends PersistenceTest {
         Photo deleteTargetPhotoA = photoTestPersister.builder().save();
         Photo deleteTargetPhotoB = photoTestPersister.builder().save();
         Photo photo = photoTestPersister.builder().save();
-        ReviewPhoto deleteReviewPhotoA = ReviewPhoto.builder()
-                .review(review)
-                .photo(deleteTargetPhotoA)
-                .build();
-        ReviewPhoto deleteReviewPhotoB = ReviewPhoto.builder()
-                .review(review)
-                .photo(deleteTargetPhotoB)
-                .build();
-        ReviewPhoto reviewPhoto = ReviewPhoto.builder()
-                .review(review)
-                .photo(photo)
-                .build();
-        reviewPhotoRepository.save(deleteReviewPhotoA);
-        reviewPhotoRepository.save(deleteReviewPhotoB);
-        reviewPhotoRepository.save(reviewPhoto);
+        ReviewPhoto deleteReviewPhotoA =
+                reviewPhotoTestPersister.builder().review(review).photo(deleteTargetPhotoA).save();
+        ReviewPhoto deleteReviewPhotoB =
+                reviewPhotoTestPersister.builder().review(review).photo(deleteTargetPhotoB).save();
+        ReviewPhoto reviewPhoto = reviewPhotoTestPersister.builder().review(review).photo(photo).save();
 
         List<Photo> deleteTargetPhotos = List.of(deleteTargetPhotoA, deleteTargetPhotoB);
         long deleteCount = reviewPhotoCustomRepository.deleteByReviewAndPhotos(review, deleteTargetPhotos);
