@@ -12,14 +12,63 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
+import org.dinosaur.foodbowl.domain.review.dto.request.CoordinateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
+import org.dinosaur.foodbowl.domain.review.dto.response.PaginationReviewResponse;
 import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "리뷰", description = "리뷰 API")
 public interface ReviewControllerDocs {
+
+    @Operation(
+            summary = "팔로잉 멤버의 리뷰 목록 범위 기반 페이징 조회",
+            description = """
+                    지도 중심의 경도(x), 위도(y)와 경도 증가값(deltaX), 위도 증가값(deltaY)을 통해 사각형 범위를 생성하여
+                                        
+                    해당 범위에 속한 팔로잉 하고 있는 멤버들이 작성한 리뷰 목록을 조회하는 기능입니다.
+                                        
+                    조회 성능을 높이기 위해 NO OFFSET 페이징으로 구현하였기에 페이지 번호 대신 마지막 리뷰 ID를 요청값으로 받습니다.
+                                        
+                    첫 페이지 조회 시에는 마지막 리뷰 ID를 파라미터에 담지 않고 요청을 보내면 됩니다.
+                                        
+                    두번째 페이지 조회 부터는 이전 조회 응답에 담겨 있는 마지막 리뷰 ID를 파라미터로 넘겨주면
+                                        
+                    해당 리뷰 ID보다 작은, 다시 말해서 요청으로 보낸 리뷰 이전에 작성된 리뷰부터 조회하게 됩니다.
+                                        
+                    페이지 크기(응답할 리뷰 개수)는 파라미터로 보내지 않으면 기본적으로 10개로 동작하게 되어있습니다. 
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "팔로잉 멤버의 리뷰 목록 범위 기반 페이징 조회 성공"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = """
+                            1.리뷰 ID가 양수가 아닌 경우
+                                                        
+                            2.경도가 존재하지 않은 경우
+                                                        
+                            3.위도가 존재하지 않은 경우
+                                                        
+                            4.경도 증가값이 존재하지 않은 경우
+                                                        
+                            5.위도 증가값이 존재하지 않은 경우
+                                                        
+                            6.페이지 크기가 양수가 아닌 경우
+                            """
+            )
+    })
+    ResponseEntity<PaginationReviewResponse> getPaginationReviewsByFollowing(
+            @Positive(message = "리뷰 ID는 양수만 가능합니다.") Long lastReviewId,
+            @Valid CoordinateRequest coordinateRequest,
+            @Positive(message = "페이지 크기는 양수만 가능합니다.") int pageSize,
+            Member loginMember
+    );
 
     @Operation(summary = "리뷰 등록", description = "가게에 해당하는 리뷰를 등록합니다.")
     @ApiResponses({
