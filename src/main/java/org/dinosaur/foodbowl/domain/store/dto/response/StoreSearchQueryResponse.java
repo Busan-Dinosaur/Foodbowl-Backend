@@ -7,4 +7,6 @@ public interface StoreSearchQueryResponse {
     String getStoreName();
 
     double getDistance();
+
+    long getReviewCount();
 }

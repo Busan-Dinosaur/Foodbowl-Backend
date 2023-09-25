@@ -11,6 +11,8 @@ import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
 import org.dinosaur.foodbowl.domain.store.domain.vo.CategoryType;
 import org.dinosaur.foodbowl.domain.store.dto.response.CategoriesResponse;
+import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchResponse;
+import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchResponses;
 import org.dinosaur.foodbowl.domain.store.exception.StoreExceptionType;
 import org.dinosaur.foodbowl.domain.store.persistence.CategoryRepository;
 import org.dinosaur.foodbowl.domain.store.persistence.StoreRepository;
@@ -39,6 +41,24 @@ public class StoreService {
     @Transactional(readOnly = true)
     public Optional<Store> findByLocationId(String locationId) {
         return storeRepository.findByLocationId(locationId);
+    }
+
+    @Transactional(readOnly = true)
+    public StoreSearchResponses search(String name, BigDecimal x, BigDecimal y, int size) {
+        validateName(name);
+        Point memberCurrentPoint = PointUtils.generate(x, y);
+        List<StoreSearchResponse> searchResponses = storeRepository.search(name, memberCurrentPoint.getX(),
+                        memberCurrentPoint.getY(), size).stream()
+                .map(StoreSearchResponse::from)
+                .toList();
+
+        return StoreSearchResponses.from(searchResponses);
+    }
+
+    private void validateName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new BadRequestException(StoreExceptionType.EMPTY_SEARCH_NAME);
+        }
     }
 
     @Transactional(readOnly = true)
