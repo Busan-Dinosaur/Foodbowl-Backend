@@ -42,16 +42,16 @@ class StoreRepositoryTest extends PersistenceTest {
 
         @Test
         void 이름이_포함된_가게를_가까운_순으로_조회한다() {
-            String name = "직화";
+            String name = "김밥";
             double x = 124.5135;
             double y = 36.1234;
             Store storeA = storeTestPersister.builder()
                     .address(createAddress(x + 0.01, y))
-                    .storeName("신천직화집")
+                    .storeName("김밥천국")
                     .save();
             Store storeB = storeTestPersister.builder()
                     .address(createAddress(x + 0.02, y))
-                    .storeName("선릉직화집")
+                    .storeName("김밥나라")
                     .save();
             Store storeC = storeTestPersister.builder()
                     .address(createAddress(x + 0.03, y))
@@ -59,7 +59,7 @@ class StoreRepositoryTest extends PersistenceTest {
                     .save();
             Store storeD = storeTestPersister.builder()
                     .address(createAddress(x + 0.04, y))
-                    .storeName("직화숯불구이").save();
+                    .storeName("김밥세상").save();
 
             List<StoreSearchQueryResponse> searchResponses = storeRepository.search(name, x, y, 10);
 

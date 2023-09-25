@@ -16,15 +16,20 @@ public interface StoreRepository extends Repository<Store, Long> {
 
     @Query(
             nativeQuery = true,
-            value = "SELECT "
-                    + "s.id as storeId, "
-                    + "s.store_name as storeName, " +
-                    "ST_Distance_Sphere(ST_PointFromText(CONCAT('POINT(', :y, ' ', :x, ')'), 4326), s.coordinate) as distance "
-                    +
-                    "FROM Store s " +
-                    "WHERE s.store_name LIKE CONCAT('%', :name, '%') " +
-                    "ORDER BY ST_Distance_Sphere(ST_PointFromText(CONCAT('POINT(', :y, ' ', :x, ')'), 4326), s.coordinate) ASC " +
-                    "LIMIT :size OFFSET 0"
+            value = """
+                    SELECT 
+                        s.id as storeId, 
+                        s.store_name as storeName,
+                        ST_Distance_Sphere(ST_PointFromText(CONCAT('POINT(', :y, ' ', :x, ')'), 4326), s.coordinate) as distance,
+                        COUNT(r.id) as reviewCount
+                                        
+                    FROM Store s
+                    LEFT JOIN Review r ON r.store_id = s.id
+                    WHERE s.store_name LIKE CONCAT('%', :name, '%')
+                    GROUP BY s.id
+                    ORDER BY ST_Distance_Sphere(ST_PointFromText(CONCAT('POINT(', :y, ' ', :x, ')'), 4326), s.coordinate) ASC
+                    LIMIT :size OFFSET 0
+                    """
     )
     List<StoreSearchQueryResponse> search(
             @Param("name") String name,
