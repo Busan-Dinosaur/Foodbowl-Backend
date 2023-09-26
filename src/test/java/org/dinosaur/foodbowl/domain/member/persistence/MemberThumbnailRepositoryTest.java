@@ -29,20 +29,20 @@ class MemberThumbnailRepositoryTest extends PersistenceTest {
         @Test
         void 썸네일이_존재한다면_멤버_썸네일을_반환한다() {
             Member member = memberTestPersister.builder().save();
-
-            Optional<MemberThumbnail> result = memberThumbnailRepository.findByMember(member);
-
-            assertThat(result).isNotPresent();
-        }
-
-        @Test
-        void 썸네일이_존재하지_않으면_빈_값을_반환한다() {
-            Member member = memberTestPersister.builder().save();
             MemberThumbnail memberThumbnail = memberThumbnailTestPersister.builder().member(member).save();
 
             Optional<MemberThumbnail> result = memberThumbnailRepository.findByMember(member);
 
             assertThat(result).containsSame(memberThumbnail);
+        }
+
+        @Test
+        void 썸네일이_존재하지_않으면_빈_값을_반환한다() {
+            Member member = memberTestPersister.builder().save();
+
+            Optional<MemberThumbnail> result = memberThumbnailRepository.findByMember(member);
+
+            assertThat(result).isNotPresent();
         }
     }
 
