@@ -63,12 +63,9 @@ public class MemberController implements MemberControllerDocs {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping(
-            value = "/thumbnail",
-            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE}
-    )
+    @PatchMapping(value = "/thumbnail", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> updateThumbnail(
-            @RequestPart(name = "thumbnail", required = false) MultipartFile thumbnail,
+            @RequestPart(name = "image", required = false) MultipartFile thumbnail,
             @Auth Member loginMember
     ) {
         memberService.updateThumbnail(thumbnail, loginMember);
