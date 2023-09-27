@@ -63,12 +63,12 @@ public class MemberController implements MemberControllerDocs {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping(value = "/thumbnail", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> updateThumbnail(
-            @RequestPart(name = "image", required = false) MultipartFile thumbnail,
+    @PatchMapping(value = "/profile/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> updateProfileImage(
+            @RequestPart(name = "image", required = false) MultipartFile image,
             @Auth Member loginMember
     ) {
-        memberService.updateThumbnail(thumbnail, loginMember);
+        memberService.updateProfileImage(image, loginMember);
         return ResponseEntity.noContent().build();
     }
 }

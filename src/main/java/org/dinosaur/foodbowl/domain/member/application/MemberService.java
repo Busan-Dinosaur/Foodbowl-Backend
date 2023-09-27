@@ -77,14 +77,14 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateThumbnail(MultipartFile file, Member loginMember) {
+    public void updateProfileImage(MultipartFile image, Member loginMember) {
         memberThumbnailRepository.findByMember(loginMember)
                 .ifPresent(this::deleteMemberThumbnail);
 
-        if (file == null) {
+        if (image == null) {
             return;
         }
-        Thumbnail thumbnail = thumbnailService.save(file);
+        Thumbnail thumbnail = thumbnailService.save(image);
         MemberThumbnail memberThumbnail = MemberThumbnail.builder()
                 .member(loginMember)
                 .thumbnail(thumbnail)

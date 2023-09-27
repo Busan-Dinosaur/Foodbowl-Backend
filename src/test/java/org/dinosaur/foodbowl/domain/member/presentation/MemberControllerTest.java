@@ -230,7 +230,7 @@ class MemberControllerTest extends PresentationTest {
         void 썸네일이_존재할_때_프로필_이미지_수정에_성공하면_204_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
             MockMultipartFile file = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
-            willDoNothing().given(memberService).updateThumbnail(any(MultipartFile.class), any(Member.class));
+            willDoNothing().given(memberService).updateProfileImage(any(MultipartFile.class), any(Member.class));
 
             mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/members/thumbnail")
                             .file(file)
@@ -242,7 +242,7 @@ class MemberControllerTest extends PresentationTest {
         @Test
         void 썸네일이_존재하지_않을_때_프로필_이미지_수정에_성공하면_204_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
-            willDoNothing().given(memberService).updateThumbnail(any(MultipartFile.class), any(Member.class));
+            willDoNothing().given(memberService).updateProfileImage(any(MultipartFile.class), any(Member.class));
 
             mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/members/thumbnail")
                             .header(AUTHORIZATION, BEARER + accessToken))

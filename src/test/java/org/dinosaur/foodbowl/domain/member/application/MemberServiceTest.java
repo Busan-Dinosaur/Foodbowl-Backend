@@ -204,7 +204,7 @@ class MemberServiceTest extends IntegrationTest {
         void 기존_프로필_이미지는_없고_요청_프로필_이미지도_없으면_프로필_이미지는_존재하지_않는다() {
             Member member = memberTestPersister.builder().save();
 
-            memberService.updateThumbnail(null, member);
+            memberService.updateProfileImage(null, member);
 
             Optional<MemberThumbnail> memberThumbnail = memberThumbnailRepository.findByMember(member);
             assertThat(memberThumbnail).isNotPresent();
@@ -215,7 +215,7 @@ class MemberServiceTest extends IntegrationTest {
             Member member = memberTestPersister.builder().save();
             MultipartFile multipartFile = FileTestUtils.generateMultiPartFile();
 
-            memberService.updateThumbnail(multipartFile, member);
+            memberService.updateProfileImage(multipartFile, member);
 
             Optional<MemberThumbnail> memberThumbnail = memberThumbnailRepository.findByMember(member);
             assertSoftly(softly -> {
@@ -232,7 +232,7 @@ class MemberServiceTest extends IntegrationTest {
             Thumbnail thumbnail = thumbnailService.save(multipartFile);
             memberThumbnailTestPersister.builder().member(member).thumbnail(thumbnail).save();
 
-            memberService.updateThumbnail(null, member);
+            memberService.updateProfileImage(null, member);
 
             Optional<MemberThumbnail> memberThumbnail = memberThumbnailRepository.findByMember(member);
             assertSoftly(softly -> {
@@ -250,7 +250,7 @@ class MemberServiceTest extends IntegrationTest {
             memberThumbnailTestPersister.builder().member(member).thumbnail(thumbnail).save();
 
             MultipartFile newFile = FileTestUtils.generateMultiPartFile();
-            memberService.updateThumbnail(newFile, member);
+            memberService.updateProfileImage(newFile, member);
 
             Optional<MemberThumbnail> memberThumbnail = memberThumbnailRepository.findByMember(member);
             assertSoftly(softly -> {

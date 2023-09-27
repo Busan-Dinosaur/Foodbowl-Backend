@@ -127,5 +127,5 @@ public interface MemberControllerDocs {
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
-    ResponseEntity<Void> updateThumbnail(MultipartFile thumbnail, Member loginMember);
+    ResponseEntity<Void> updateProfileImage(MultipartFile thumbnail, Member loginMember);
 }
