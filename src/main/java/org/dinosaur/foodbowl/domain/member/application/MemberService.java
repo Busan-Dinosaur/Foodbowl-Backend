@@ -80,10 +80,6 @@ public class MemberService {
     public void updateProfileImage(MultipartFile image, Member loginMember) {
         memberThumbnailRepository.findByMember(loginMember)
                 .ifPresent(this::deleteMemberThumbnail);
-
-        if (image == null) {
-            return;
-        }
         Thumbnail thumbnail = thumbnailService.save(image);
         MemberThumbnail memberThumbnail = MemberThumbnail.builder()
                 .member(loginMember)
@@ -95,5 +91,11 @@ public class MemberService {
     private void deleteMemberThumbnail(MemberThumbnail memberThumbnail) {
         memberThumbnailRepository.delete(memberThumbnail);
         thumbnailService.delete(memberThumbnail.getThumbnail());
+    }
+
+    @Transactional
+    public void deleteProfileImage(Member loginMember) {
+        memberThumbnailRepository.findByMember(loginMember)
+                .ifPresent(this::deleteMemberThumbnail);
     }
 }
