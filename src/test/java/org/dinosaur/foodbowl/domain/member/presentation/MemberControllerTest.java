@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -227,12 +228,12 @@ class MemberControllerTest extends PresentationTest {
         private final String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
 
         @Test
-        void 썸네일이_존재할_때_프로필_이미지_수정에_성공하면_204_응답을_반환한다() throws Exception {
+        void 프로필_이미지_수정에_성공하면_204_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
-            MockMultipartFile file = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
+            MockMultipartFile file = (MockMultipartFile) FileTestUtils.generateMultiPartFile("image");
             willDoNothing().given(memberService).updateProfileImage(any(MultipartFile.class), any(Member.class));
 
-            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/members/thumbnail")
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/members/profile/image")
                             .file(file)
                             .header(AUTHORIZATION, BEARER + accessToken))
                     .andDo(print())
@@ -240,14 +241,25 @@ class MemberControllerTest extends PresentationTest {
         }
 
         @Test
-        void 썸네일이_존재하지_않을_때_프로필_이미지_수정에_성공하면_204_응답을_반환한다() throws Exception {
+        void 프로필_이미지가_존재하지_않으면_400_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
-            willDoNothing().given(memberService).updateProfileImage(any(MultipartFile.class), any(Member.class));
 
-            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/members/thumbnail")
+            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/members/profile/image")
                             .header(AUTHORIZATION, BEARER + accessToken))
                     .andDo(print())
-                    .andExpect(status().isNoContent());
+                    .andExpect(status().isBadRequest());
         }
+    }
+
+    @Test
+    void 프로필_이미지_삭제에_성공하면_204_응답을_반환한다() throws Exception {
+        mockingAuthMemberInResolver();
+        willDoNothing().given(memberService).deleteProfileImage(any(Member.class));
+        String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
+
+        mockMvc.perform(delete("/v1/members/profile/image")
+                        .header(AUTHORIZATION, BEARER + accessToken))
+                .andDo(print())
+                .andExpect(status().isNoContent());
     }
 }

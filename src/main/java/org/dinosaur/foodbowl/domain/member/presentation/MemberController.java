@@ -13,6 +13,7 @@ import org.dinosaur.foodbowl.global.presentation.Auth;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -65,10 +66,16 @@ public class MemberController implements MemberControllerDocs {
 
     @PatchMapping(value = "/profile/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> updateProfileImage(
-            @RequestPart(name = "image", required = false) MultipartFile image,
+            @RequestPart(name = "image") MultipartFile image,
             @Auth Member loginMember
     ) {
         memberService.updateProfileImage(image, loginMember);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping(value = "/profile/image")
+    public ResponseEntity<Void> deleteProfileImage(@Auth Member loginMember) {
+        memberService.deleteProfileImage(loginMember);
         return ResponseEntity.noContent().build();
     }
 }
