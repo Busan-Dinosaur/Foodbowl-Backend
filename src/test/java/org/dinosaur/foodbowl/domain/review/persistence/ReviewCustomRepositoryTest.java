@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class ReviewCustomRepositoryTest extends PersistenceTest {
 
     @Autowired
-    private ReviewCustomRepositoryImpl reviewCustomRepository;
+    private ReviewCustomRepository reviewCustomRepository;
 
     @Nested
     class 팔로잉_유저의_리뷰_목록_페이징_조회_시 {

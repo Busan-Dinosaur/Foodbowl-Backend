@@ -1,6 +1,6 @@
 package org.dinosaur.foodbowl.test;
 
-import org.dinosaur.foodbowl.global.config.JpaConfig;
+import org.dinosaur.foodbowl.test.config.TestQuerydslConfig;
 import org.dinosaur.foodbowl.test.persister.BlameTestPersister;
 import org.dinosaur.foodbowl.test.persister.BookmarkTestPersister;
 import org.dinosaur.foodbowl.test.persister.FollowTestPersister;
@@ -24,7 +24,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@Import(JpaConfig.class)
+@Import(TestQuerydslConfig.class)
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @DataJpaTest(includeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = Persister.class))
 public class PersistenceTest {

@@ -21,6 +21,7 @@ import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.response.PaginationReviewResponse;
 import org.dinosaur.foodbowl.domain.review.exception.ReviewExceptionType;
+import org.dinosaur.foodbowl.domain.review.persistence.ReviewCustomRepository;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewPhotoRepository;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
 import org.dinosaur.foodbowl.domain.review.persistence.dto.ReviewPhotoPathDto;
@@ -39,6 +40,7 @@ public class ReviewService {
 
     private static final int REVIEW_PHOTO_MAX_SIZE = 4;
     private final ReviewRepository reviewRepository;
+    private final ReviewCustomRepository reviewCustomRepository;
     private final FollowRepository followRepository;
     private final BookmarkRepository bookmarkRepository;
     private final ReviewPhotoRepository reviewPhotoRepository;
@@ -55,7 +57,7 @@ public class ReviewService {
     ) {
         CoordinateBoundDto coordinateBoundDto =
                 CoordinateBoundDto.of(request.x(), request.y(), request.deltaX(), request.deltaY());
-        List<Review> reviews = reviewRepository.getPaginationReviewsByFollowing(
+        List<Review> reviews = reviewCustomRepository.getPaginationReviewsByFollowing(
                 loginMember.getId(),
                 lastReviewId,
                 coordinateBoundDto,
