@@ -10,15 +10,19 @@ import org.dinosaur.foodbowl.domain.member.dto.request.UpdateProfileRequest;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
 import org.dinosaur.foodbowl.global.presentation.Auth;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @Validated
 @RequiredArgsConstructor
@@ -57,6 +61,21 @@ public class MemberController implements MemberControllerDocs {
             @Auth Member loginMember
     ) {
         memberService.updateProfile(updateProfileRequest, loginMember);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping(value = "/profile/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> updateProfileImage(
+            @RequestPart(name = "image") MultipartFile image,
+            @Auth Member loginMember
+    ) {
+        memberService.updateProfileImage(image, loginMember);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping(value = "/profile/image")
+    public ResponseEntity<Void> deleteProfileImage(@Auth Member loginMember) {
+        memberService.deleteProfileImage(loginMember);
         return ResponseEntity.noContent().build();
     }
 }

@@ -1,6 +1,6 @@
 package org.dinosaur.foodbowl.test.file;
 
-import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.FILE_WRITE;
+import static org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType.WRITE;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -26,24 +26,24 @@ public class FileTestUtils {
             ImageIO.write(image, "jpg", byteArrayOutputStream);
             return byteArrayOutputStream.toByteArray();
         } catch (IOException e) {
-            throw new FileException(FILE_WRITE);
+            throw new FileException(WRITE);
         }
     }
 
-    public static MultipartFile generateMultiPartFile() {
+    public static MultipartFile generateMultiPartFile(String name) {
         return new MockMultipartFile(
-                "images",
+                name,
                 "foodBowl.jpg",
                 MediaType.IMAGE_JPEG_VALUE,
                 IMAGE
         );
     }
 
-    public static List<MultipartFile> generateMultipartFiles(int size) {
+    public static List<MultipartFile> generateMultipartFiles(int size, String name) {
         List<MultipartFile> multipartFiles = new ArrayList<>();
 
         for (int i = 0; i < size; i++) {
-            MultipartFile file = generateMultiPartFile();
+            MultipartFile file = generateMultiPartFile(name);
             multipartFiles.add(file);
         }
         return multipartFiles;

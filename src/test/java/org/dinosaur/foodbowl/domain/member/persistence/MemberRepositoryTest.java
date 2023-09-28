@@ -19,7 +19,7 @@ class MemberRepositoryTest extends PersistenceTest {
 
     @Test
     void ID에_일치하는_회원을_조회한다() {
-        Member saveMember = memberTestPersister.memberBuilder().save();
+        Member saveMember = memberTestPersister.builder().save();
 
         Member findMember = memberRepository.findById(saveMember.getId()).get();
 
@@ -28,8 +28,8 @@ class MemberRepositoryTest extends PersistenceTest {
 
     @Test
     void ID에_일치하는_회원을_썸네일과_함께_조회한다() {
-        Member member = memberTestPersister.memberBuilder().save();
-        memberTestPersister.memberThumbnailBuilder().member(member).save();
+        Member member = memberTestPersister.builder().save();
+        memberThumbnailTestPersister.builder().member(member).save();
 
         Member findMember = memberRepository.findByIdWithThumbnail(member.getId()).get();
 
@@ -43,7 +43,7 @@ class MemberRepositoryTest extends PersistenceTest {
         void 일치하는_회원이_존재하면_회원을_조회한다() {
             SocialType socialType = SocialType.APPLE;
             String socialId = "abcd";
-            memberTestPersister.memberBuilder()
+            memberTestPersister.builder()
                     .socialType(socialType)
                     .socialId(socialId)
                     .save();
@@ -64,7 +64,7 @@ class MemberRepositoryTest extends PersistenceTest {
 
         @Test
         void 존재하는_닉네임이라면_true_반환한다() {
-            Member saveMember = memberTestPersister.memberBuilder()
+            Member saveMember = memberTestPersister.builder()
                     .nickname("hello")
                     .save();
 

@@ -15,7 +15,14 @@ public class PhotoCustomRepositoryImpl implements PhotoCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public long deleteAllByPhoto(List<Photo> photos) {
+    public long deleteByPhoto(Photo deletePhoto) {
+        return jpaQueryFactory.delete(photo)
+                .where(photo.eq(deletePhoto))
+                .execute();
+    }
+
+    @Override
+    public long deleteAllByPhotos(List<Photo> photos) {
         return jpaQueryFactory.delete(photo)
                 .where(photo.in(photos))
                 .execute();
