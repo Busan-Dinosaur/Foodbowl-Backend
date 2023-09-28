@@ -23,18 +23,18 @@ class ReviewPhotoCustomRepositoryImplTest extends PersistenceTest {
     @Test
     void 리뷰_사진_엔티티를_삭제한다() {
         Review review = reviewTestPersister.builder().save();
-        Photo photo1 = photoTestPersister.builder().save();
-        Photo photo2 = photoTestPersister.builder().save();
-        ReviewPhoto reviewPhoto1 = ReviewPhoto.builder()
+        Photo photoA = photoTestPersister.builder().save();
+        Photo photoB = photoTestPersister.builder().save();
+        ReviewPhoto reviewPhotoA = ReviewPhoto.builder()
                 .review(review)
-                .photo(photo1)
+                .photo(photoA)
                 .build();
-        ReviewPhoto reviewPhoto2 = ReviewPhoto.builder()
+        ReviewPhoto reviewPhotoB = ReviewPhoto.builder()
                 .review(review)
-                .photo(photo2)
+                .photo(photoB)
                 .build();
-        reviewPhotoRepository.save(reviewPhoto1);
-        reviewPhotoRepository.save(reviewPhoto2);
+        reviewPhotoRepository.save(reviewPhotoA);
+        reviewPhotoRepository.save(reviewPhotoB);
 
         long deleteCount = reviewPhotoCustomRepositoryImpl.deleteAllByReview(review);
 

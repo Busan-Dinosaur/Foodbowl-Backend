@@ -84,7 +84,7 @@ public class ReviewService {
 
         List<Photo> deletePhotos = extractPhotosForDelete(currentPhotos, deletePhotoIds);
         reviewPhotoService.deleteByReviewAndPhoto(review, deletePhotos);
-        deletePhotos.forEach(photoService::delete);
+        photoService.deleteAll(deletePhotos);
 
         saveImagesIfExists(imageFiles, review.getStore(), review);
         review.updateContent(reviewUpdateRequest.reviewContent());
@@ -144,9 +144,7 @@ public class ReviewService {
             throw new BadRequestException(ReviewExceptionType.PHOTO_COUNT);
         }
 
-        List<Photo> photos = images.stream()
-                .map(image -> photoService.save(image, store.getId().toString()))
-                .toList();
+        List<Photo> photos = photoService.saveAll(images, store.getId().toString());
         reviewPhotoService.save(review, photos);
     }
 

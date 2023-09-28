@@ -23,16 +23,4 @@ class PhotoRepositoryTest extends PersistenceTest {
 
         assertThat(savePhoto.getId()).isNotNull();
     }
-
-    @Test
-    void 사진을_삭제한다() {
-        Photo photo = Photo.builder()
-                .path("http://justdoeat.shop/store/1/image.jpg")
-                .build();
-        Photo savePhoto = photoRepository.save(photo);
-
-        long deleteCount = photoRepository.deleteByPhoto(savePhoto);
-
-        assertThat(deleteCount).isEqualTo(1);
-    }
 }
