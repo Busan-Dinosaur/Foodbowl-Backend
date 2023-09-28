@@ -30,7 +30,7 @@ class PhotoLocalManagerTest extends IntegrationTest {
 
         @Test
         void 정상적인_요청이라면_이미지_파일을_디렉토리에_저장한다() {
-            MultipartFile multipartFile = FileTestUtils.generateMultiPartFile();
+            MultipartFile multipartFile = FileTestUtils.generateMultiPartFile("image");
 
             String filePath = photoLocalUploader.upload(multipartFile, "test");
 
@@ -79,7 +79,7 @@ class PhotoLocalManagerTest extends IntegrationTest {
 
         @Test
         void 정상적인_요청이라면_이미지_파일을_삭제한다() {
-            MultipartFile multipartFile = FileTestUtils.generateMultiPartFile();
+            MultipartFile multipartFile = FileTestUtils.generateMultiPartFile("image");
             String filePath = photoLocalUploader.upload(multipartFile, "test");
 
             photoLocalUploader.delete(filePath);

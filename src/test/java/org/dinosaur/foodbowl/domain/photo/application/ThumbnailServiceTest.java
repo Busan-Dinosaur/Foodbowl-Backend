@@ -30,7 +30,7 @@ class ThumbnailServiceTest extends IntegrationTest {
 
     @Test
     void 썸네일을_저장한다() {
-        MultipartFile multipartFile = FileTestUtils.generateMultiPartFile();
+        MultipartFile multipartFile = FileTestUtils.generateMultiPartFile("image");
 
         Thumbnail thumbnail = thumbnailService.save(multipartFile);
 
@@ -42,7 +42,7 @@ class ThumbnailServiceTest extends IntegrationTest {
 
     @Test
     void 썸네일을_삭제한다() {
-        MultipartFile multipartFile = FileTestUtils.generateMultiPartFile();
+        MultipartFile multipartFile = FileTestUtils.generateMultiPartFile("image");
         Thumbnail saveThumbnail = thumbnailService.save(multipartFile);
 
         thumbnailService.delete(saveThumbnail);

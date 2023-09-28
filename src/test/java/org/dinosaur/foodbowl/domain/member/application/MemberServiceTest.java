@@ -204,7 +204,7 @@ class MemberServiceTest extends IntegrationTest {
         @Test
         void 기존_프로필_이미지는_없고_요청_프로필_이미지가_있으면_새_프로필_이미지를_등록한다() {
             Member member = memberTestPersister.builder().save();
-            MultipartFile multipartFile = FileTestUtils.generateMultiPartFile();
+            MultipartFile multipartFile = FileTestUtils.generateMultiPartFile("image");
 
             memberService.updateProfileImage(multipartFile, member);
 
@@ -219,11 +219,11 @@ class MemberServiceTest extends IntegrationTest {
         @Test
         void 기존_프로필_이미지는_있고_요청_프로필_이미지도_있으면_기존_프로필_이미지를_제거_후_새_프로필_이미지를_등록한다() {
             Member member = memberTestPersister.builder().save();
-            MultipartFile multipartFile = FileTestUtils.generateMultiPartFile();
+            MultipartFile multipartFile = FileTestUtils.generateMultiPartFile("image");
             Thumbnail thumbnail = thumbnailService.save(multipartFile);
             memberThumbnailTestPersister.builder().member(member).thumbnail(thumbnail).save();
 
-            MultipartFile newFile = FileTestUtils.generateMultiPartFile();
+            MultipartFile newFile = FileTestUtils.generateMultiPartFile("image");
             memberService.updateProfileImage(newFile, member);
 
             Optional<MemberThumbnail> memberThumbnail = memberThumbnailRepository.findByMember(member);
@@ -261,7 +261,7 @@ class MemberServiceTest extends IntegrationTest {
         @Test
         void 기존_프로필_이미지가_있으면_프로필_이미지를_삭제한다() {
             Member member = memberTestPersister.builder().save();
-            MultipartFile multipartFile = FileTestUtils.generateMultiPartFile();
+            MultipartFile multipartFile = FileTestUtils.generateMultiPartFile("image");
             Thumbnail thumbnail = thumbnailService.save(multipartFile);
             memberThumbnailTestPersister.builder().member(member).thumbnail(thumbnail).save();
 

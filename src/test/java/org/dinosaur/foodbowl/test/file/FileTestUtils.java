@@ -30,20 +30,20 @@ public class FileTestUtils {
         }
     }
 
-    public static MultipartFile generateMultiPartFile() {
+    public static MultipartFile generateMultiPartFile(String name) {
         return new MockMultipartFile(
-                "images",
+                name,
                 "foodBowl.jpg",
                 MediaType.IMAGE_JPEG_VALUE,
                 IMAGE
         );
     }
 
-    public static List<MultipartFile> generateMultipartFiles(int size) {
+    public static List<MultipartFile> generateMultipartFiles(int size, String name) {
         List<MultipartFile> multipartFiles = new ArrayList<>();
 
         for (int i = 0; i < size; i++) {
-            MultipartFile file = generateMultiPartFile();
+            MultipartFile file = generateMultiPartFile(name);
             multipartFiles.add(file);
         }
         return multipartFiles;

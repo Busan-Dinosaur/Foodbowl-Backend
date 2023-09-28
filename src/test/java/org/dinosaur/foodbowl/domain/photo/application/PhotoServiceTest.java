@@ -23,7 +23,7 @@ class PhotoServiceTest extends IntegrationTest {
 
     @Test
     void 사진을_저장한다() {
-        MultipartFile multipartFile = FileTestUtils.generateMultiPartFile();
+        MultipartFile multipartFile = FileTestUtils.generateMultiPartFile("image");
 
         Photo photo = photoService.save(multipartFile, "workingDirectory");
 
@@ -33,7 +33,7 @@ class PhotoServiceTest extends IntegrationTest {
 
     @Test
     void 사진을_삭제한다() {
-        MultipartFile multipartFile = FileTestUtils.generateMultiPartFile();
+        MultipartFile multipartFile = FileTestUtils.generateMultiPartFile("image");
         Photo savePhoto = photoService.save(multipartFile, "workingDirectory");
 
         photoService.delete(savePhoto);
