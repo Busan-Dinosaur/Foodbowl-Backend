@@ -12,7 +12,7 @@ import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.dinosaur.foodbowl.domain.review.application.dto.CoordinateBoundDto;
+import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
 import org.dinosaur.foodbowl.global.util.PointUtils;
 import org.springframework.stereotype.Repository;
@@ -23,10 +23,10 @@ public class ReviewCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<Review> getPaginationReviewsByFollowing(
-            Long memberId,
+    public List<Review> findPaginationReviewsByFollowingInMapBounds(
+            Long followerId,
             Long lastReviewId,
-            CoordinateBoundDto coordinateBoundDto,
+            MapCoordinateBoundDto mapCoordinateBoundDto,
             int pageSize
     ) {
         return jpaQueryFactory.selectDistinct(review)
@@ -37,8 +37,8 @@ public class ReviewCustomRepository {
                 .innerJoin(follow).on(review.member.id.eq(follow.following.id))
                 .where(
                         ltLastReviewId(lastReviewId),
-                        follow.follower.id.eq(memberId),
-                        containsPolygon(coordinateBoundDto)
+                        follow.follower.id.eq(followerId),
+                        containsPolygon(mapCoordinateBoundDto)
                 )
                 .orderBy(review.id.desc())
                 .limit(pageSize)
@@ -52,36 +52,36 @@ public class ReviewCustomRepository {
         return review.id.lt(lastReviewId);
     }
 
-    private BooleanExpression containsPolygon(CoordinateBoundDto coordinateBoundDto) {
+    private BooleanExpression containsPolygon(MapCoordinateBoundDto mapCoordinateBoundDto) {
         return Expressions.booleanTemplate(
                 "ST_Contains({0}, {1})",
-                convertTextToPolygon(coordinateBoundDto),
+                convertTextToPolygon(mapCoordinateBoundDto),
                 store.address.coordinate
         );
     }
 
-    private StringExpression convertTextToPolygon(CoordinateBoundDto coordinateBoundDto) {
+    private StringExpression convertTextToPolygon(MapCoordinateBoundDto mapCoordinateBoundDto) {
         return Expressions.stringTemplate(
                 "ST_GeomFromText({0}, {1})",
-                getPolygon(coordinateBoundDto),
+                getPolygon(mapCoordinateBoundDto),
                 PointUtils.getSrId()
         );
     }
 
-    private String getPolygon(CoordinateBoundDto coordinateBoundDto) {
+    private String getPolygon(MapCoordinateBoundDto mapCoordinateBoundDto) {
         String polygonTemplate = "POLYGON((%s %s, %s %s, %s %s, %s %s, %s %s))";
         return String.format(
                 polygonTemplate,
-                coordinateBoundDto.downLeftPoint().getY(),
-                coordinateBoundDto.downLeftPoint().getX(),
-                coordinateBoundDto.downRightPoint().getY(),
-                coordinateBoundDto.downRightPoint().getX(),
-                coordinateBoundDto.topRightPoint().getY(),
-                coordinateBoundDto.topRightPoint().getX(),
-                coordinateBoundDto.topLeftPoint().getY(),
-                coordinateBoundDto.topLeftPoint().getX(),
-                coordinateBoundDto.downLeftPoint().getY(),
-                coordinateBoundDto.downLeftPoint().getX()
+                mapCoordinateBoundDto.downLeftPoint().getY(),
+                mapCoordinateBoundDto.downLeftPoint().getX(),
+                mapCoordinateBoundDto.downRightPoint().getY(),
+                mapCoordinateBoundDto.downRightPoint().getX(),
+                mapCoordinateBoundDto.topRightPoint().getY(),
+                mapCoordinateBoundDto.topRightPoint().getX(),
+                mapCoordinateBoundDto.topLeftPoint().getY(),
+                mapCoordinateBoundDto.topLeftPoint().getX(),
+                mapCoordinateBoundDto.downLeftPoint().getY(),
+                mapCoordinateBoundDto.downLeftPoint().getX()
         );
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 
-public interface FollowRepository extends Repository<Follow, Long>, FollowCustomRepository {
+public interface FollowRepository extends Repository<Follow, Long> {
 
     Optional<Follow> findById(Long id);
 

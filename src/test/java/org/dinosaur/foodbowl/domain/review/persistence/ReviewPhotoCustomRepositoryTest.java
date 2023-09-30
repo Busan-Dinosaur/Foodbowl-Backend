@@ -19,7 +19,7 @@ class ReviewPhotoCustomRepositoryTest extends PersistenceTest {
     private ReviewPhotoRepository reviewPhotoRepository;
 
     @Autowired
-    private ReviewPhotoCustomRepositoryImpl reviewPhotoCustomRepository;
+    private ReviewPhotoCustomRepository reviewPhotoCustomRepository;
 
     @Test
     void 리뷰_목록에_존재하는_리뷰의_사진_경로_목록을_조회한다() {
@@ -27,7 +27,7 @@ class ReviewPhotoCustomRepositoryTest extends PersistenceTest {
         ReviewPhoto reviewPhotoA = reviewPhotoTestPersister.builder().review(review).save();
         ReviewPhoto reviewPhotoB = reviewPhotoTestPersister.builder().review(review).save();
 
-        List<ReviewPhotoPathDto> result = reviewPhotoCustomRepository.getPhotoPathByReviews(List.of(review));
+        List<ReviewPhotoPathDto> result = reviewPhotoCustomRepository.findPhotoPathByReviews(List.of(review));
 
         List<ReviewPhotoPathDto> expected = List.of(
                 new ReviewPhotoPathDto(review.getId(), reviewPhotoA.getPhoto().getPath()),

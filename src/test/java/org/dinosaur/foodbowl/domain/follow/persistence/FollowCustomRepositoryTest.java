@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class FollowCustomRepositoryTest extends PersistenceTest {
 
     @Autowired
-    private FollowCustomRepositoryImpl followCustomRepository;
+    private FollowCustomRepository followCustomRepository;
 
     @Test
     void 멤버_목록에_존재하는_멤버의_팔로우_수를_조회한다() {
@@ -25,7 +25,7 @@ class FollowCustomRepositoryTest extends PersistenceTest {
         followTestPersister.builder().following(memberB).follower(memberC).save();
 
         List<MemberFollowerCountDto> result =
-                followCustomRepository.getFollowerCountByMembers(List.of(memberA, memberB));
+                followCustomRepository.findFollowerCountByMembers(List.of(memberA, memberB));
 
         List<MemberFollowerCountDto> expected = List.of(
                 new MemberFollowerCountDto(memberA.getId(), 2),
