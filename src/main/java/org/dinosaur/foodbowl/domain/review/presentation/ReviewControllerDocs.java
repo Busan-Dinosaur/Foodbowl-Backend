@@ -12,10 +12,11 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
-import org.dinosaur.foodbowl.domain.review.dto.request.CoordinateRequest;
+import org.dinosaur.foodbowl.domain.review.dto.request.DeviceCoordinateRequest;
+import org.dinosaur.foodbowl.domain.review.dto.request.MapCoordinateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
-import org.dinosaur.foodbowl.domain.review.dto.response.PaginationReviewResponse;
+import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
 import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +31,8 @@ public interface ReviewControllerDocs {
                                         
                     해당 범위에 속한 팔로잉 하고 있는 멤버들이 작성한 리뷰 목록을 조회하는 기능입니다.
                                         
+                    디바이스 경도(deviceX), 디바이스 위도(deviceY)를 통해 디바이스와 가게 사이의 거리를 계산합니다.
+                                        
                     조회 성능을 높이기 위해 NO OFFSET 페이징으로 구현하였기에 페이지 번호 대신 마지막 리뷰 ID를 요청값으로 받습니다.
                                         
                     첫 페이지 조회 시에는 마지막 리뷰 ID를 파라미터에 담지 않고 요청을 보내면 됩니다.
@@ -38,7 +41,7 @@ public interface ReviewControllerDocs {
                                         
                     해당 리뷰 ID보다 작은, 다시 말해서 요청으로 보낸 리뷰 이전에 작성된 리뷰부터 조회하게 됩니다.
                                         
-                    페이지 크기(응답할 리뷰 개수)는 파라미터로 보내지 않으면 기본적으로 10개로 동작하게 되어있습니다. 
+                    페이지 크기(응답할 리뷰 개수)는 파라미터로 보내지 않으면 기본적으로 10개로 동작하게 되어있습니다.
                     """
     )
     @ApiResponses({
@@ -51,22 +54,43 @@ public interface ReviewControllerDocs {
                     description = """
                             1.리뷰 ID가 양수가 아닌 경우
                                                         
-                            2.경도가 존재하지 않은 경우
+                            2.지도 중심 경도가 존재하지 않은 경우
                                                         
-                            3.위도가 존재하지 않은 경우
+                            3.지도 중심 위도가 존재하지 않은 경우
                                                         
-                            4.경도 증가값이 존재하지 않은 경우
+                            4.지도 경도 증가값이 존재하지 않은 경우
                                                         
-                            5.위도 증가값이 존재하지 않은 경우
+                            5.지도 위도 증가값이 존재하지 않은 경우
                                                         
-                            6.페이지 크기가 양수가 아닌 경우
+                            6.지도 경도 증가값이 0이상 양수가 아닌 경우
+                                                        
+                            7.지도 위도 증가값이 0이상 양수가 아닌 경우
+                                                        
+                            8.디바이스 경도가 존재하지 않은 경우
+                                                        
+                            9.디바이스 위도가 존재하지 않은 경우
+                                                        
+                            10.페이지 크기가 양수가 아닌 경우
                             """
             )
     })
-    ResponseEntity<PaginationReviewResponse> getPaginationReviewsByFollowing(
-            @Positive(message = "리뷰 ID는 양수만 가능합니다.") Long lastReviewId,
-            @Valid CoordinateRequest coordinateRequest,
-            @Positive(message = "페이지 크기는 양수만 가능합니다.") int pageSize,
+    ResponseEntity<ReviewPageResponse> getReviewsByFollowingInMapBounds(
+            @Parameter(description = "이전 조회의 마지막 리뷰 ID(첫 조회 시에는 파라미터 요청 X)", example = "1")
+            @Positive(message = "리뷰 ID는 양수만 가능합니다.")
+            Long lastReviewId,
+
+            @Parameter(description = "지도 좌표 요청")
+            @Valid
+            MapCoordinateRequest mapCoordinateRequest,
+
+            @Parameter(description = "디바이스 좌표 요청")
+            @Valid
+            DeviceCoordinateRequest deviceCoordinateRequest,
+
+            @Parameter(description = "페이지 크기", example = "10")
+            @Positive(message = "페이지 크기는 양수만 가능합니다.")
+            int pageSize,
+
             Member loginMember
     );
 

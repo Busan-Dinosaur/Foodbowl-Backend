@@ -7,10 +7,11 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.application.ReviewService;
-import org.dinosaur.foodbowl.domain.review.dto.request.CoordinateRequest;
+import org.dinosaur.foodbowl.domain.review.dto.request.DeviceCoordinateRequest;
+import org.dinosaur.foodbowl.domain.review.dto.request.MapCoordinateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
-import org.dinosaur.foodbowl.domain.review.dto.response.PaginationReviewResponse;
+import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
 import org.dinosaur.foodbowl.global.presentation.Auth;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,14 +36,20 @@ public class ReviewController implements ReviewControllerDocs {
     private final ReviewService reviewService;
 
     @GetMapping("/following")
-    public ResponseEntity<PaginationReviewResponse> getPaginationReviewsByFollowing(
+    public ResponseEntity<ReviewPageResponse> getReviewsByFollowingInMapBounds(
             @RequestParam(name = "lastReviewId", required = false) @Positive(message = "리뷰 ID는 양수만 가능합니다.") Long lastReviewId,
-            @Valid CoordinateRequest coordinateRequest,
+            @Valid MapCoordinateRequest mapCoordinateRequest,
+            @Valid DeviceCoordinateRequest deviceCoordinateRequest,
             @RequestParam(name = "pageSize", defaultValue = "10") @Positive(message = "페이지 크기는 양수만 가능합니다.") int pageSize,
             @Auth Member loginMember
     ) {
-        PaginationReviewResponse response =
-                reviewService.getPaginationReviewsByFollowing(lastReviewId, coordinateRequest, pageSize, loginMember);
+        ReviewPageResponse response = reviewService.getReviewsByFollowingInMapBounds(
+                lastReviewId,
+                mapCoordinateRequest,
+                deviceCoordinateRequest,
+                pageSize,
+                loginMember
+        );
         return ResponseEntity.ok(response);
     }
 

@@ -6,22 +6,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.dinosaur.foodbowl.global.exception.response.ErrorResponse;
 import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
 import org.dinosaur.foodbowl.global.exception.type.ServerExceptionType;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @Slf4j
 @RestControllerAdvice
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> handleException(Exception e) {
@@ -37,19 +34,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(ExceptionResponse.from(e.getExceptionType()));
     }
 
-    @Override
-    public ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex,
-            HttpHeaders headers,
-            HttpStatusCode status,
-            WebRequest request
-    ) {
-        List<ErrorResponse> errorResponses = ex.getBindingResult()
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ExceptionResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        List<ErrorResponse> errorResponses = e.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(fieldError -> new ErrorResponse(fieldError.getField(), fieldError.getDefaultMessage()))
                 .toList();
-        log.warn("[" + ex.getClass() + "] " + errorResponses);
+        log.warn("[" + e.getClass() + "] " + errorResponses);
         return ResponseEntity.badRequest()
                 .body(new ExceptionResponse("CLIENT-100", errorResponses.toString()));
     }
@@ -85,20 +77,29 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(new ExceptionResponse("CLIENT-103", errorResponse.toString()));
     }
 
-    @Override
-    public ResponseEntity<Object> handleMissingServletRequestParameter(
-            MissingServletRequestParameterException ex,
-            HttpHeaders headers,
-            HttpStatusCode status,
-            WebRequest request
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ExceptionResponse> handleMissingServletRequestParameterException(
+            MissingServletRequestParameterException e
     ) {
         ErrorResponse errorResponse = new ErrorResponse(
-                ex.getParameterName(),
+                e.getParameterName(),
                 "파라미터가 필요합니다."
         );
-        log.warn("[" + ex.getClass() + "] " + errorResponse);
+        log.warn("[" + e.getClass() + "] " + errorResponse);
         return ResponseEntity.badRequest()
                 .body(new ExceptionResponse("CLIENT-104", errorResponse.toString()));
+    }
+
+    @ExceptionHandler(BindException.class)
+    public ResponseEntity<ExceptionResponse> handleBindException(BindException e) {
+        List<ErrorResponse> errorResponses = e.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(fieldError -> new ErrorResponse(fieldError.getField(), fieldError.getDefaultMessage()))
+                .toList();
+        log.warn("[" + e.getClass() + "] " + errorResponses);
+        return ResponseEntity.badRequest()
+                .body(new ExceptionResponse("CLIENT-105", errorResponses.toString()));
     }
 
     @ExceptionHandler(BadRequestException.class)

@@ -27,12 +27,13 @@ import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.application.ReviewService;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
-import org.dinosaur.foodbowl.domain.review.dto.request.CoordinateRequest;
+import org.dinosaur.foodbowl.domain.review.dto.request.DeviceCoordinateRequest;
+import org.dinosaur.foodbowl.domain.review.dto.request.MapCoordinateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
-import org.dinosaur.foodbowl.domain.review.dto.response.PaginationReviewResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewContentResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageInfo;
+import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewStoreResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewWriterResponse;
@@ -76,31 +77,33 @@ class ReviewControllerTest extends PresentationTest {
         @Test
         void 정상적인_요청이라면_200_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
-            PaginationReviewResponse response = new PaginationReviewResponse(
-                    List.of(new ReviewResponse(
-                            new ReviewWriterResponse(1L, "hello", "image.png", 0L),
-                            new ReviewContentResponse(
-                                    1L,
-                                    "content",
-                                    List.of("image.png"),
-                                    LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS),
-                                    LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
-                            ),
-                            new ReviewStoreResponse(
-                                    1L,
-                                    "카페",
-                                    "가게",
-                                    "가게주소",
-                                    BigDecimal.valueOf(123.3636),
-                                    BigDecimal.valueOf(32.3636),
-                                    false
+            ReviewPageResponse response = new ReviewPageResponse(
+                    List.of(
+                            new ReviewResponse(
+                                    new ReviewWriterResponse(1L, "hello", "image.png", 0L),
+                                    new ReviewContentResponse(
+                                            1L,
+                                            "content",
+                                            List.of("image.png"),
+                                            LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS),
+                                            LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+                                    ),
+                                    new ReviewStoreResponse(
+                                            1L,
+                                            "카페",
+                                            "가게",
+                                            "가게주소",
+                                            100.13,
+                                            false
+                                    )
                             )
-                    )),
+                    ),
                     new ReviewPageInfo(10L, 1L, 10)
             );
-            given(reviewService.getPaginationReviewsByFollowing(
+            given(reviewService.getReviewsByFollowingInMapBounds(
                     any(),
-                    any(CoordinateRequest.class),
+                    any(MapCoordinateRequest.class),
+                    any(DeviceCoordinateRequest.class),
                     anyInt(),
                     any(Member.class)
             )).willReturn(response);
@@ -110,13 +113,15 @@ class ReviewControllerTest extends PresentationTest {
                             .param("x", "123.3636")
                             .param("y", "32.3636")
                             .param("deltaX", "3.12")
-                            .param("deltaY", "3.12"))
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andReturn();
 
             String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
-            PaginationReviewResponse result = objectMapper.readValue(jsonResponse, PaginationReviewResponse.class);
+            ReviewPageResponse result = objectMapper.readValue(jsonResponse, ReviewPageResponse.class);
             assertThat(result).usingRecursiveComparison().isEqualTo(response);
         }
 
@@ -130,7 +135,9 @@ class ReviewControllerTest extends PresentationTest {
                             .param("x", "123.3636")
                             .param("y", "32.3636")
                             .param("deltaX", "3.12")
-                            .param("deltaY", "3.12"))
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("errorCode").value("CLIENT-101"))
@@ -145,9 +152,13 @@ class ReviewControllerTest extends PresentationTest {
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .param("y", "32.3636")
                             .param("deltaX", "3.12")
-                            .param("deltaY", "3.12"))
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
                     .andDo(print())
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-105"))
+                    .andExpect(jsonPath("$.message").value(containsString("지도 중심 경도가 존재하지 않습니다.")));
         }
 
         @Test
@@ -158,9 +169,13 @@ class ReviewControllerTest extends PresentationTest {
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .param("x", "123.3636")
                             .param("deltaX", "3.12")
-                            .param("deltaY", "3.12"))
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
                     .andDo(print())
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-105"))
+                    .andExpect(jsonPath("$.message").value(containsString("지도 중심 위도가 존재하지 않습니다.")));
         }
 
         @Test
@@ -171,9 +186,13 @@ class ReviewControllerTest extends PresentationTest {
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .param("x", "123.3636")
                             .param("y", "32.3636")
-                            .param("deltaY", "3.12"))
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
                     .andDo(print())
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-105"))
+                    .andExpect(jsonPath("$.message").value(containsString("경도 증가값이 존재하지 않습니다.")));
         }
 
         @Test
@@ -184,9 +203,85 @@ class ReviewControllerTest extends PresentationTest {
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .param("x", "123.3636")
                             .param("y", "32.3636")
-                            .param("deltaX", "3.12"))
+                            .param("deltaX", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
                     .andDo(print())
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-105"))
+                    .andExpect(jsonPath("$.message").value(containsString("위도 증가값이 존재하지 않습니다.")));
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 경도_증가값이_0이상의_양수가_아니라면_400_응답을_반환한다(String deltaX) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/following")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", deltaX)
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-105"))
+                    .andExpect(jsonPath("$.message").value(containsString("경도 증가값은 0이상의 양수만 가능합니다.")));
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 위도ㅡ증가값이_0이상의_양수가_아니라면_400_응답을_반환한다(String deltaY) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/following")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", deltaY)
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-105"))
+                    .andExpect(jsonPath("$.message").value(containsString("위도 증가값은 0이상의 양수만 가능합니다.")));
+        }
+
+        @Test
+        void 디바이스_경도가_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/following")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-105"))
+                    .andExpect(jsonPath("$.message").value(containsString("디바이스 경도가 존재하지 않습니다.")));
+        }
+
+        @Test
+        void 디바이스_위도가_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/following")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-105"))
+                    .andExpect(jsonPath("$.message").value(containsString("디바이스 위도가 존재하지 않습니다.")));
         }
 
         @Test
@@ -199,6 +294,8 @@ class ReviewControllerTest extends PresentationTest {
                             .param("y", "32.3636")
                             .param("deltaX", "3.12")
                             .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636")
                             .param("pageSize", "-1"))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
