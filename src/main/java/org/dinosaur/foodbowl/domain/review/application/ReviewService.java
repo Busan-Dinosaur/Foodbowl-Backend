@@ -1,30 +1,26 @@
 package org.dinosaur.foodbowl.domain.review.application;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.dinosaur.foodbowl.domain.bookmark.domain.Bookmark;
-import org.dinosaur.foodbowl.domain.bookmark.persistence.BookmarkRepository;
-import org.dinosaur.foodbowl.domain.follow.persistence.FollowRepository;
-import org.dinosaur.foodbowl.domain.follow.persistence.dto.MemberFollowerCountDto;
+import org.dinosaur.foodbowl.domain.bookmark.application.BookmarkQueryService;
+import org.dinosaur.foodbowl.domain.follow.application.FollowCustomService;
+import org.dinosaur.foodbowl.domain.follow.application.dto.MemberToFollowerCountDto;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.photo.application.PhotoService;
 import org.dinosaur.foodbowl.domain.photo.domain.Photo;
-import org.dinosaur.foodbowl.domain.review.application.dto.CoordinateBoundDto;
+import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
+import org.dinosaur.foodbowl.domain.review.application.dto.ReviewToPhotoPathDto;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
-import org.dinosaur.foodbowl.domain.review.dto.request.CoordinateRequest;
+import org.dinosaur.foodbowl.domain.review.dto.request.DeviceCoordinateRequest;
+import org.dinosaur.foodbowl.domain.review.dto.request.MapCoordinateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
-import org.dinosaur.foodbowl.domain.review.dto.response.PaginationReviewResponse;
+import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
 import org.dinosaur.foodbowl.domain.review.exception.ReviewExceptionType;
-import org.dinosaur.foodbowl.domain.review.persistence.ReviewCustomRepository;
-import org.dinosaur.foodbowl.domain.review.persistence.ReviewPhotoRepository;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
-import org.dinosaur.foodbowl.domain.review.persistence.dto.ReviewPhotoPathDto;
 import org.dinosaur.foodbowl.domain.store.application.StoreService;
 import org.dinosaur.foodbowl.domain.store.application.dto.StoreCreateDto;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
@@ -40,72 +36,54 @@ public class ReviewService {
 
     private static final int REVIEW_PHOTO_MAX_SIZE = 4;
     private final ReviewRepository reviewRepository;
-    private final ReviewCustomRepository reviewCustomRepository;
-    private final FollowRepository followRepository;
-    private final BookmarkRepository bookmarkRepository;
-    private final ReviewPhotoRepository reviewPhotoRepository;
     private final StoreService storeService;
     private final PhotoService photoService;
     private final ReviewPhotoService reviewPhotoService;
+    private final ReviewCustomService reviewCustomService;
+    private final ReviewPhotoCustomService reviewPhotoCustomService;
+    private final FollowCustomService followCustomService;
+    private final BookmarkQueryService bookmarkQueryService;
 
     @Transactional(readOnly = true)
-    public PaginationReviewResponse getPaginationReviewsByFollowing(
+    public ReviewPageResponse getReviewsByFollowingInMapBounds(
             Long lastReviewId,
-            CoordinateRequest request,
+            MapCoordinateRequest mapCoordinateRequest,
+            DeviceCoordinateRequest deviceCoordinateRequest,
             int pageSize,
             Member loginMember
     ) {
-        CoordinateBoundDto coordinateBoundDto =
-                CoordinateBoundDto.of(request.x(), request.y(), request.deltaX(), request.deltaY());
-        List<Review> reviews = reviewCustomRepository.getPaginationReviewsByFollowing(
-                loginMember.getId(),
-                lastReviewId,
-                coordinateBoundDto,
-                pageSize
+        MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                mapCoordinateRequest.x(),
+                mapCoordinateRequest.y(),
+                mapCoordinateRequest.deltaX(),
+                mapCoordinateRequest.deltaY()
         );
 
-        Map<Long, Long> memberIdFollowerCountGroup = getMemberFollowerCountGroup(reviews);
-        Map<Long, List<String>> reviewIdPhotoPathsGroup = getReviewPhotoPathsGroup(reviews);
-        Set<Long> bookmarkStoreIds = getBookmarkStoreIds(loginMember);
+        List<Review> reviews = reviewCustomService.getReviewsByFollowingInMapBounds(
+                loginMember.getId(),
+                lastReviewId,
+                mapCoordinateBoundDto,
+                pageSize
+        );
+        MemberToFollowerCountDto memberToFollowerCountDto =
+                followCustomService.getFollowerCountByMembers(getWriters(reviews));
+        ReviewToPhotoPathDto reviewToPhotoPathDto = reviewPhotoCustomService.getPhotoPathByReviews(reviews);
+        Set<Store> bookmarkStores = bookmarkQueryService.getBookmarkStoresByMember(loginMember);
 
-        return PaginationReviewResponse.of(reviews, memberIdFollowerCountGroup, reviewIdPhotoPathsGroup,
-                bookmarkStoreIds);
+        return ReviewPageResponse.of(
+                reviews,
+                memberToFollowerCountDto,
+                reviewToPhotoPathDto,
+                bookmarkStores,
+                deviceCoordinateRequest.deviceX(),
+                deviceCoordinateRequest.deviceY()
+        );
     }
 
-    private Map<Long, Long> getMemberFollowerCountGroup(List<Review> reviews) {
-        List<Member> writers = extractReviewWriters(reviews);
-        List<MemberFollowerCountDto> memberFollowerCounts = followRepository.getFollowerCountByMembers(writers);
-        return memberFollowerCounts.stream()
-                .collect(Collectors.toMap(
-                        MemberFollowerCountDto::memberId,
-                        MemberFollowerCountDto::followerCount,
-                        (exist, replace) -> replace,
-                        HashMap::new
-                ));
-    }
-
-    private List<Member> extractReviewWriters(List<Review> reviews) {
+    private List<Member> getWriters(List<Review> reviews) {
         return reviews.stream()
                 .map(Review::getMember)
-                .distinct()
                 .toList();
-    }
-
-    private Map<Long, List<String>> getReviewPhotoPathsGroup(List<Review> reviews) {
-        List<ReviewPhotoPathDto> reviewPhotoPaths = reviewPhotoRepository.getPhotoPathByReviews(reviews);
-        return reviewPhotoPaths.stream()
-                .collect(Collectors.groupingBy(
-                        ReviewPhotoPathDto::reviewId,
-                        Collectors.mapping(ReviewPhotoPathDto::photoPath, Collectors.toList())
-                ));
-    }
-
-    private Set<Long> getBookmarkStoreIds(Member member) {
-        List<Bookmark> bookmarks = bookmarkRepository.findByMember(member);
-        return bookmarks.stream()
-                .map(Bookmark::getStore)
-                .map(Store::getId)
-                .collect(Collectors.toSet());
     }
 
     @Transactional

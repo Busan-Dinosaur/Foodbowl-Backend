@@ -1,7 +1,6 @@
 package org.dinosaur.foodbowl.domain.review.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.math.BigDecimal;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 
 @Schema(description = "리뷰 가게 응답")
@@ -18,24 +17,20 @@ public record ReviewStoreResponse(
         @Schema(description = "가게 주소", example = "부산광역시 금정구 40-4")
         String addressName,
 
-        @Schema(description = "가게 경도", example = "123.3636")
-        BigDecimal x,
-
-        @Schema(description = "가게 위도", example = "32.3636")
-        BigDecimal y,
+        @Schema(description = "디바이스와 가게와의 거리(m)", example = "511.1313")
+        double distance,
 
         @Schema(description = "가게 북마크 여부", example = "false")
         boolean isBookmarked
 ) {
 
-    public static ReviewStoreResponse of(Store store, boolean isBookmarked) {
+    public static ReviewStoreResponse of(Store store, double distance, boolean isBookmarked) {
         return new ReviewStoreResponse(
                 store.getId(),
                 store.getCategory().getName(),
                 store.getStoreName(),
                 store.getAddress().getAddressName(),
-                BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
-                BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                distance,
                 isBookmarked
         );
     }

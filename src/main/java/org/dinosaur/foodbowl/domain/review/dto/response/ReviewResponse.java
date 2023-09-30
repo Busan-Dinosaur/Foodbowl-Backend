@@ -1,11 +1,13 @@
 package org.dinosaur.foodbowl.domain.review.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
 import java.util.Set;
+import org.dinosaur.foodbowl.domain.follow.application.dto.MemberToFollowerCountDto;
+import org.dinosaur.foodbowl.domain.review.application.dto.ReviewToPhotoPathDto;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
+import org.dinosaur.foodbowl.domain.store.domain.Store;
+import org.dinosaur.foodbowl.global.util.PointUtils;
 
 @Schema(description = "리뷰 응답")
 public record ReviewResponse(
@@ -21,22 +23,28 @@ public record ReviewResponse(
 
     public static ReviewResponse of(
             Review review,
-            Map<Long, Long> memberIdFollowerCountGroup,
-            Map<Long, List<String>> reviewIdPhotoPathsGroup,
-            Set<Long> bookmarkStoreIds
+            MemberToFollowerCountDto memberToFollowerCountDto,
+            ReviewToPhotoPathDto reviewToPhotoPathDto,
+            Set<Store> bookmarkStores,
+            BigDecimal deviceX,
+            BigDecimal deviceY
     ) {
         return new ReviewResponse(
                 ReviewWriterResponse.of(
                         review.getMember(),
-                        memberIdFollowerCountGroup.getOrDefault(review.getMember().getId(), 0L)
+                        memberToFollowerCountDto.getFollowCount(review.getMember().getId())
                 ),
                 ReviewContentResponse.of(
                         review,
-                        reviewIdPhotoPathsGroup.getOrDefault(review.getId(), Collections.emptyList())
+                        reviewToPhotoPathDto.getPhotoPath(review.getId())
                 ),
                 ReviewStoreResponse.of(
                         review.getStore(),
-                        bookmarkStoreIds.contains(review.getStore().getId())
+                        PointUtils.calculateDistance(
+                                PointUtils.generate(deviceX, deviceY),
+                                review.getStore().getAddress().getCoordinate()
+                        ),
+                        bookmarkStores.contains(review.getStore())
                 )
         );
     }
