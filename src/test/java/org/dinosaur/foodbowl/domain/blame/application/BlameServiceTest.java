@@ -26,8 +26,8 @@ class BlameServiceTest extends IntegrationTest {
 
         @Test
         void 정상적인_요청이라면_신고가_등록된다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
-            Member target = memberTestPersister.memberBuilder().save();
+            Member loginMember = memberTestPersister.builder().save();
+            Member target = memberTestPersister.builder().save();
             BlameRequest request = new BlameRequest(target.getId(), BlameTarget.MEMBER.name(), "부적절한 닉네임");
 
             assertThatNoException().isThrownBy(() -> blameService.blame(request, loginMember));
@@ -35,8 +35,8 @@ class BlameServiceTest extends IntegrationTest {
 
         @Test
         void 정상적이지_않은_신고_타입이라면_예외를_던진다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
-            Member target = memberTestPersister.memberBuilder().save();
+            Member loginMember = memberTestPersister.builder().save();
+            Member target = memberTestPersister.builder().save();
             BlameRequest request = new BlameRequest(target.getId(), "HELLO", "부적절한 닉네임");
 
             assertThatThrownBy(() -> blameService.blame(request, loginMember))
@@ -46,7 +46,7 @@ class BlameServiceTest extends IntegrationTest {
 
         @Test
         void 회원_신고_시_존재하지_않는_회원이면_예외를_던진다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
+            Member loginMember = memberTestPersister.builder().save();
             Long invalidMemberId = loginMember.getId() + 1;
             BlameRequest request = new BlameRequest(invalidMemberId, BlameTarget.MEMBER.name(), "부적절한 닉네임");
 
@@ -57,7 +57,7 @@ class BlameServiceTest extends IntegrationTest {
 
         @Test
         void 리뷰_신고_시_존재하지_않는_리뷰라면_예외를_던진다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
+            Member loginMember = memberTestPersister.builder().save();
             BlameRequest request = new BlameRequest(1L, BlameTarget.REVIEW.name(), "부적절한 리뷰 내용");
 
             assertThatThrownBy(() -> blameService.blame(request, loginMember))
@@ -67,7 +67,7 @@ class BlameServiceTest extends IntegrationTest {
 
         @Test
         void 회원_신고_시_나를_신고한다면_예외를_던진다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
+            Member loginMember = memberTestPersister.builder().save();
             BlameRequest request = new BlameRequest(loginMember.getId(), BlameTarget.MEMBER.name(), "부적절한 닉네임");
 
             assertThatThrownBy(() -> blameService.blame(request, loginMember))
@@ -77,7 +77,7 @@ class BlameServiceTest extends IntegrationTest {
 
         @Test
         void 리뷰_신고_시_나의_리뷰를_신고한다면_예외를_던진다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
+            Member loginMember = memberTestPersister.builder().save();
             Review review = reviewTestPersister.builder().member(loginMember).save();
             BlameRequest request = new BlameRequest(review.getId(), BlameTarget.REVIEW.name(), "부적절한 닉네임");
 
@@ -88,8 +88,8 @@ class BlameServiceTest extends IntegrationTest {
 
         @Test
         void 이미_신고한_대상이라면_예외를_던진다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
-            Member target = memberTestPersister.memberBuilder().save();
+            Member loginMember = memberTestPersister.builder().save();
+            Member target = memberTestPersister.builder().save();
             BlameRequest request = new BlameRequest(target.getId(), BlameTarget.MEMBER.name(), "부적절한 닉네임");
             blameService.blame(request, loginMember);
 

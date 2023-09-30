@@ -319,8 +319,8 @@ class ReviewControllerTest extends PresentationTest {
                     "application/json",
                     objectMapper.writeValueAsBytes(reviewCreateRequest)
             );
-            MockMultipartFile multipartFile1 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
-            MockMultipartFile multipartFile2 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
+            MockMultipartFile multipartFile1 = (MockMultipartFile) FileTestUtils.generateMultiPartFile("images");
+            MockMultipartFile multipartFile2 = (MockMultipartFile) FileTestUtils.generateMultiPartFile("images");
             given(reviewService.create(any(ReviewCreateRequest.class), anyList(), any(Member.class)))
                     .willReturn(Review.builder().content(reviewCreateRequest.reviewContent()).build());
 
@@ -365,11 +365,11 @@ class ReviewControllerTest extends PresentationTest {
                     "application/json",
                     objectMapper.writeValueAsBytes(reviewCreateRequest)
             );
-            MockMultipartFile multipartFile1 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
-            MockMultipartFile multipartFile2 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
-            MockMultipartFile multipartFile3 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
-            MockMultipartFile multipartFile4 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
-            MockMultipartFile multipartFile5 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
+            MockMultipartFile multipartFile1 = (MockMultipartFile) FileTestUtils.generateMultiPartFile("images");
+            MockMultipartFile multipartFile2 = (MockMultipartFile) FileTestUtils.generateMultiPartFile("images");
+            MockMultipartFile multipartFile3 = (MockMultipartFile) FileTestUtils.generateMultiPartFile("images");
+            MockMultipartFile multipartFile4 = (MockMultipartFile) FileTestUtils.generateMultiPartFile("images");
+            MockMultipartFile multipartFile5 = (MockMultipartFile) FileTestUtils.generateMultiPartFile("images");
 
             mockMvc.perform(multipart("/v1/reviews")
                             .file(request)
@@ -396,7 +396,7 @@ class ReviewControllerTest extends PresentationTest {
                     "application/json",
                     objectMapper.writeValueAsBytes(reviewCreateRequest)
             );
-            MockMultipartFile multipartFile = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
+            MockMultipartFile multipartFile = (MockMultipartFile) FileTestUtils.generateMultiPartFile("images");
             given(reviewService.create(any(ReviewCreateRequest.class), anyList(), any(Member.class)))
                     .willThrow(new MaxUploadSizeExceededException(5));
 
@@ -865,11 +865,11 @@ class ReviewControllerTest extends PresentationTest {
                     "application/json",
                     objectMapper.writeValueAsBytes(reviewUpdateRequest)
             );
-            MockMultipartFile multipartFile1 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
-            MockMultipartFile multipartFile2 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
-            MockMultipartFile multipartFile3 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
-            MockMultipartFile multipartFile4 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
-            MockMultipartFile multipartFile5 = (MockMultipartFile) FileTestUtils.generateMultiPartFile();
+            MockMultipartFile multipartFile1 = (MockMultipartFile) FileTestUtils.generateMultiPartFile("images");
+            MockMultipartFile multipartFile2 = (MockMultipartFile) FileTestUtils.generateMultiPartFile("images");
+            MockMultipartFile multipartFile3 = (MockMultipartFile) FileTestUtils.generateMultiPartFile("images");
+            MockMultipartFile multipartFile4 = (MockMultipartFile) FileTestUtils.generateMultiPartFile("images");
+            MockMultipartFile multipartFile5 = (MockMultipartFile) FileTestUtils.generateMultiPartFile("images");
 
             mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{reviewId}", 1L)
                             .file(request)

@@ -5,5 +5,7 @@ import org.dinosaur.foodbowl.domain.photo.domain.Photo;
 
 public interface PhotoCustomRepository {
 
-    long deleteAllByPhoto(List<Photo> photos);
+    long deleteByPhoto(Photo deletePhoto);
+
+    long deleteAllByPhotos(List<Photo> photos);
 }

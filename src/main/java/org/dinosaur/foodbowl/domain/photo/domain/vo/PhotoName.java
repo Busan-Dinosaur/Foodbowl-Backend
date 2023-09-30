@@ -22,26 +22,24 @@ public class PhotoName {
 
     private static String convertNameToPath(String originalFilename) {
         String extension = StringUtils.getFilenameExtension(originalFilename);
-
         if (extension == null) {
-            throw new FileException(FileExceptionType.FILE_FORMAT);
+            throw new FileException(FileExceptionType.FORMAT);
         }
         String fileBaseName = UUID.randomUUID().toString().substring(0, 8);
         validateFileName(fileBaseName);
-        validateExtension(extension);
-
+        validateImageExtension(extension);
         return fileBaseName + UNDER_BAR + System.currentTimeMillis() + DOT + extension;
     }
 
     private static void validateFileName(String fileName) {
         if (fileName == null || fileName.isBlank()) {
-            throw new FileException(FileExceptionType.FILE_BASE_NAME);
+            throw new FileException(FileExceptionType.BASE_NAME);
         }
     }
 
-    private static void validateExtension(String extension) {
+    private static void validateImageExtension(String extension) {
         if (!IMAGE_EXTENSIONS.contains(extension.toLowerCase())) {
-            throw new FileException(FileExceptionType.FILE_EXTENSION);
+            throw new FileException(FileExceptionType.EXTENSION);
         }
     }
 }

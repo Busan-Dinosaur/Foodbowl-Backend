@@ -35,7 +35,7 @@ public class MemberThumbnailTestPersister {
 
         public MemberThumbnail save() {
             MemberThumbnail memberThumbnail = MemberThumbnail.builder()
-                    .member(member == null ? memberTestPersister.memberBuilder().save() : member)
+                    .member(member == null ? memberTestPersister.builder().save() : member)
                     .thumbnail(thumbnail == null ? thumbnailTestPersister.builder().save() : thumbnail)
                     .build();
             return memberThumbnailRepository.save(memberThumbnail);

@@ -18,7 +18,7 @@ class BookmarkRepositoryTest extends PersistenceTest {
 
     @Test
     void 멤버과_가게로_북마크를_조회한다() {
-        Member member = memberTestPersister.memberBuilder().save();
+        Member member = memberTestPersister.builder().save();
         Store store = storeTestPersister.builder().save();
         bookmarkTestPersister.builder().member(member).store(store).save();
 
@@ -27,7 +27,7 @@ class BookmarkRepositoryTest extends PersistenceTest {
 
     @Test
     void 멤버의_북마크_목록을_조회한다() {
-        Member member = memberTestPersister.memberBuilder().save();
+        Member member = memberTestPersister.builder().save();
         Store storeA = storeTestPersister.builder().save();
         Store storeB = storeTestPersister.builder().save();
         Bookmark bookmarkA = bookmarkTestPersister.builder().member(member).store(storeA).save();
@@ -40,7 +40,7 @@ class BookmarkRepositoryTest extends PersistenceTest {
 
     @Test
     void 북마크를_저장한다() {
-        Member member = memberTestPersister.memberBuilder().save();
+        Member member = memberTestPersister.builder().save();
         Store store = storeTestPersister.builder().save();
         Bookmark bookmark = Bookmark.builder()
                 .member(member)
@@ -54,7 +54,7 @@ class BookmarkRepositoryTest extends PersistenceTest {
 
     @Test
     void 북마크를_삭제한다() {
-        Member member = memberTestPersister.memberBuilder().save();
+        Member member = memberTestPersister.builder().save();
         Store store = storeTestPersister.builder().save();
         Bookmark bookmark = bookmarkTestPersister.builder().member(member).store(store).save();
 

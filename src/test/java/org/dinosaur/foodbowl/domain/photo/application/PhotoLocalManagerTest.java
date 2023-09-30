@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.File;
-import java.util.List;
 import org.dinosaur.foodbowl.global.exception.FileException;
 import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.dinosaur.foodbowl.test.file.FileTestUtils;
@@ -31,13 +30,11 @@ class PhotoLocalManagerTest extends IntegrationTest {
 
         @Test
         void 정상적인_요청이라면_이미지_파일을_디렉토리에_저장한다() {
-            MultipartFile multipartFile = FileTestUtils.generateMultiPartFile();
-            List<MultipartFile> multipartFiles = List.of(multipartFile);
+            MultipartFile multipartFile = FileTestUtils.generateMultiPartFile("image");
 
-            List<String> filePaths = photoLocalUploader.upload(multipartFiles, "test");
+            String filePath = photoLocalUploader.upload(multipartFile, "test");
 
-            String imagePath = filePaths.get(0);
-            File file = new File(imagePath);
+            File file = new File(filePath);
             assertThat(file).exists();
             FileTestUtils.cleanUp();
         }
@@ -47,9 +44,8 @@ class PhotoLocalManagerTest extends IntegrationTest {
         void 파일_이름이_이미지_형식이_아니면_예외를_던진다(String originalFilename) {
             MockMultipartFile multipartFile =
                     new MockMultipartFile("bucket", originalFilename, MediaType.IMAGE_JPEG_VALUE, image);
-            List<MultipartFile> multipartFiles = List.of(multipartFile);
 
-            assertThatThrownBy(() -> photoLocalUploader.upload(multipartFiles, "test"))
+            assertThatThrownBy(() -> photoLocalUploader.upload(multipartFile, "test"))
                     .isInstanceOf(FileException.class)
                     .hasMessage("이미지 파일만 업로드 가능합니다.");
         }
@@ -60,9 +56,8 @@ class PhotoLocalManagerTest extends IntegrationTest {
         void 파일_이름이_없으면_예외를_던진다(String originalFilename) {
             MockMultipartFile multipartFile =
                     new MockMultipartFile("bucket", originalFilename, MediaType.IMAGE_JPEG_VALUE, image);
-            List<MultipartFile> multipartFiles = List.of(multipartFile);
 
-            assertThatThrownBy(() -> photoLocalUploader.upload(multipartFiles, "test"))
+            assertThatThrownBy(() -> photoLocalUploader.upload(multipartFile, "test"))
                     .isInstanceOf(FileException.class)
                     .hasMessage("파일 이름은 공백이 될 수 없습니다");
         }
@@ -72,9 +67,8 @@ class PhotoLocalManagerTest extends IntegrationTest {
         void 확장자가_없으면_예외를_던진다(String originalFilename) {
             MockMultipartFile multipartFile =
                     new MockMultipartFile("bucket", originalFilename, MediaType.IMAGE_JPEG_VALUE, image);
-            List<MultipartFile> multipartFiles = List.of(multipartFile);
 
-            assertThatThrownBy(() -> photoLocalUploader.upload(multipartFiles, "test"))
+            assertThatThrownBy(() -> photoLocalUploader.upload(multipartFile, "test"))
                     .isInstanceOf(FileException.class)
                     .hasMessage("파일에 확장자가 존재하지 않습니다.");
         }
@@ -85,14 +79,12 @@ class PhotoLocalManagerTest extends IntegrationTest {
 
         @Test
         void 정상적인_요청이라면_이미지_파일을_삭제한다() {
-            MultipartFile multipartFile = FileTestUtils.generateMultiPartFile();
-            List<MultipartFile> multipartFiles = List.of(multipartFile);
-            List<String> filePaths = photoLocalUploader.upload(multipartFiles, "test");
+            MultipartFile multipartFile = FileTestUtils.generateMultiPartFile("image");
+            String filePath = photoLocalUploader.upload(multipartFile, "test");
 
-            photoLocalUploader.delete(filePaths);
+            photoLocalUploader.delete(filePath);
 
-            String imagePath = filePaths.get(0);
-            File file = new File(imagePath);
+            File file = new File(filePath);
             assertThat(file).doesNotExist();
             FileTestUtils.cleanUp();
         }
@@ -101,7 +93,7 @@ class PhotoLocalManagerTest extends IntegrationTest {
         void 파일_이름에_URL_정보가_없으면_예외를_던진다() {
             String fullPath = "https://image.url";
 
-            assertThatThrownBy(() -> photoLocalUploader.delete(List.of(fullPath)))
+            assertThatThrownBy(() -> photoLocalUploader.delete(fullPath))
                     .isInstanceOf(FileException.class)
                     .hasMessage("파일의 URL 정보를 찾을 수 없습니다.");
         }

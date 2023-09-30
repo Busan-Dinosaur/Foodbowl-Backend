@@ -18,7 +18,7 @@ spring:
   servlet:
     multipart:
       max-file-size: 5MB
-      max-request-size: 20MB
+      max-request-size: 25MB
 
   data:
     redis:
@@ -27,6 +27,8 @@ spring:
 
 server:
   forward-headers-strategy: framework
+  tomcat:
+    max-http-form-post-size: 25MB
 
 logging:
   level:

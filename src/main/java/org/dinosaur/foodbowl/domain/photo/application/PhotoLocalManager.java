@@ -1,12 +1,7 @@
 package org.dinosaur.foodbowl.domain.photo.application;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import javax.imageio.ImageIO;
 import org.dinosaur.foodbowl.domain.photo.domain.vo.PhotoName;
 import org.dinosaur.foodbowl.domain.photo.exception.FileExceptionType;
 import org.dinosaur.foodbowl.global.exception.FileException;
@@ -31,28 +26,22 @@ public class PhotoLocalManager implements PhotoManager {
         this.fileDirectory = fileDirectory;
     }
 
-    public List<String> upload(List<MultipartFile> files, String workingDirectory) {
-        File directory = loadDirectory(getImageStorePath(workingDirectory));
-
-        List<String> filePaths = new ArrayList<>();
-        for (MultipartFile multipartFile : files) {
-            if (isEmptyFileOrNotImage(multipartFile)) {
-                continue;
-            }
-
-            String saveFileName = PhotoName.of(multipartFile.getOriginalFilename());
-            File uploadPath = new File(directory, saveFileName);
-            transferFile(multipartFile, uploadPath);
-            filePaths.add(getImageFullPath(workingDirectory, saveFileName));
+    public String upload(MultipartFile image, String workingDirectory) {
+        File directory = loadDirectory(getFileStorePath(workingDirectory));
+        if (isEmptyFile(image)) {
+            throw new FileException(FileExceptionType.EMPTY);
         }
-        return filePaths;
+        String saveFileName = PhotoName.of(image.getOriginalFilename());
+        File uploadPath = new File(directory, saveFileName);
+        transferFile(image, uploadPath);
+        return getFileFullPath(workingDirectory, saveFileName);
     }
 
-    private String getImageStorePath(String workingDirectory) {
+    private String getFileStorePath(String workingDirectory) {
         return SYSTEM_PATH + SLASH + fileDirectory + SLASH + workingDirectory;
     }
 
-    private String getImageFullPath(String workingDirectory, String fileName) {
+    private String getFileFullPath(String workingDirectory, String fileName) {
         return url + SLASH + fileDirectory + SLASH + workingDirectory + SLASH + fileName;
     }
 
@@ -64,39 +53,28 @@ public class PhotoLocalManager implements PhotoManager {
         return directory;
     }
 
-    private boolean isEmptyFileOrNotImage(MultipartFile multipartFile) {
-        return multipartFile == null || multipartFile.isEmpty() || isNotImageFile(multipartFile);
-    }
-
-    private boolean isNotImageFile(MultipartFile file) {
-        try (InputStream originalInputStream = new BufferedInputStream(file.getInputStream())) {
-            return ImageIO.read(originalInputStream) == null;
-        } catch (IOException e) {
-            throw new FileException(FileExceptionType.FILE_READ);
-        }
+    private boolean isEmptyFile(MultipartFile multipartFile) {
+        return multipartFile == null || multipartFile.isEmpty();
     }
 
     private void transferFile(MultipartFile file, File uploadPath) {
         try {
             file.transferTo(uploadPath);
         } catch (IOException e) {
-            throw new FileException(FileExceptionType.FILE_TRANSFER, e);
+            throw new FileException(FileExceptionType.TRANSFER, e);
         }
     }
 
-    public void delete(List<String> paths) {
-        for (String path : paths) {
-            String deletePath = getImageLocalPath(path);
-            File file = new File(deletePath);
-            deleteFile(file);
-        }
+    public void delete(String path) {
+        String deletePath = getFileLocalPath(path);
+        File file = new File(deletePath);
+        deleteFile(file);
     }
 
-    private String getImageLocalPath(String fullPath) {
+    private String getFileLocalPath(String fullPath) {
         int urlIndex = fullPath.lastIndexOf(url);
-
         if (urlIndex == -1) {
-            throw new FileException(FileExceptionType.FILE_NAME);
+            throw new FileException(FileExceptionType.NAME);
         }
         int urlNextIndex = urlIndex + url.length();
         return SYSTEM_PATH + fullPath.substring(urlNextIndex);

@@ -33,8 +33,8 @@ public class FollowTestPersister {
 
         public Follow save() {
             Follow follow = Follow.builder()
-                    .following(following == null ? memberTestPersister.memberBuilder().save() : following)
-                    .follower(follower == null ? memberTestPersister.memberBuilder().save() : follower)
+                    .following(following == null ? memberTestPersister.builder().save() : following)
+                    .follower(follower == null ? memberTestPersister.builder().save() : follower)
                     .build();
             return followRepository.save(follow);
         }

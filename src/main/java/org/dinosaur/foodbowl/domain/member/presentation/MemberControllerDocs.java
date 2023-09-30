@@ -16,6 +16,7 @@ import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
 import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "회원", description = "회원 API")
 public interface MemberControllerDocs {
@@ -99,4 +100,63 @@ public interface MemberControllerDocs {
             )
     })
     ResponseEntity<Void> updateProfile(@Valid UpdateProfileRequest updateProfileRequest, Member loginMember);
+
+    @Operation(
+            summary = "프로필 이미지 수정",
+            description = """
+                    요청 이미지로 프로필 이미지를 수정합니다.
+                                        
+                    요청 이미지가 비어있거나 존재하지 않으면 예외가 발생합니다.
+                                        
+                    기존 프로필 이미지가 존재하지 않을 경우 요청 이미지를 프로필 이미지로 등록합니다.
+                                        
+                    기존 프로필 이미지가 존재하는 경우 기존 프로필 이미지를 삭제하고 요청 이미지를 프로필 이미지로 등록합니다.
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "프로필 이미지 수정 성공"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = """
+                            1.새로운 프로필 이미지가 존재하지 않을 경우
+                                                        
+                            2.기존 프로필 이미지 삭제에 실패하는 경우
+                                                        
+                            3.새로운 프로필 이미지 저장에 실패하는 경우
+                            """,
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            )
+    })
+    ResponseEntity<Void> updateProfileImage(
+            @Parameter(description = "수정할 프로필 이미지")
+            MultipartFile thumbnail,
+
+            Member loginMember
+    );
+
+    @Operation(
+            summary = "프로필 이미지 삭제",
+            description = """
+                    설정되어 있는 프로필 이미지를 삭제합니다.
+                                        
+                    기존 프로필 이미지가 존재하는 경우 프로필 이미지를 삭제합니다.
+                                        
+                    기존 프로필 이미지가 존재하지 않을 경우 프로필 이미지가 없는 상태를 유지합니다.
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "프로필 이미지 삭제 성공"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "기존 프로필 이미지 삭제에 실패하는 경우",
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            )
+    })
+    ResponseEntity<Void> deleteProfileImage(Member loginMember);
 }
