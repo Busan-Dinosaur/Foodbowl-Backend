@@ -1,8 +1,9 @@
 package org.dinosaur.foodbowl.domain.bookmark.application;
 
+import static java.util.stream.Collectors.toSet;
+
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.bookmark.domain.Bookmark;
 import org.dinosaur.foodbowl.domain.bookmark.persistence.BookmarkRepository;
@@ -22,6 +23,6 @@ public class BookmarkQueryService {
         List<Bookmark> bookmarks = bookmarkRepository.findByMember(member);
         return bookmarks.stream()
                 .map(Bookmark::getStore)
-                .collect(Collectors.toSet());
+                .collect(toSet());
     }
 }

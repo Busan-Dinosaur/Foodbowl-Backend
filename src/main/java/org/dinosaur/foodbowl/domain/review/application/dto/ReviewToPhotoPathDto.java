@@ -1,9 +1,12 @@
 package org.dinosaur.foodbowl.domain.review.application.dto;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.dinosaur.foodbowl.domain.review.persistence.dto.ReviewPhotoPathDto;
 
 public record ReviewToPhotoPathDto(
@@ -13,9 +16,9 @@ public record ReviewToPhotoPathDto(
     public static ReviewToPhotoPathDto from(List<ReviewPhotoPathDto> reviewPhotoPaths) {
         Map<Long, List<String>> reviewToPhotoPath = reviewPhotoPaths.stream()
                 .collect(
-                        Collectors.groupingBy(
+                        groupingBy(
                                 ReviewPhotoPathDto::reviewId,
-                                Collectors.mapping(ReviewPhotoPathDto::photoPath, Collectors.toList())
+                                mapping(ReviewPhotoPathDto::photoPath, toList())
                         )
                 );
         return new ReviewToPhotoPathDto(reviewToPhotoPath);

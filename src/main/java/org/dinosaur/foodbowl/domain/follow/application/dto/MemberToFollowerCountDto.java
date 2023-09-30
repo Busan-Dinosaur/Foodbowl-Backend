@@ -1,9 +1,10 @@
 package org.dinosaur.foodbowl.domain.follow.application.dto;
 
+import static java.util.stream.Collectors.toMap;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.dinosaur.foodbowl.domain.follow.persistence.dto.MemberFollowerCountDto;
 
 public record MemberToFollowerCountDto(
@@ -13,7 +14,7 @@ public record MemberToFollowerCountDto(
     public static MemberToFollowerCountDto from(List<MemberFollowerCountDto> memberFollowerCounts) {
         Map<Long, Long> memberToFollowerCount = memberFollowerCounts.stream()
                 .collect(
-                        Collectors.toMap(
+                        toMap(
                                 MemberFollowerCountDto::memberId,
                                 MemberFollowerCountDto::followerCount,
                                 (exist, replace) -> replace,
