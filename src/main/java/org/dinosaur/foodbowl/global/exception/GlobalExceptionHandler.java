@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 @Slf4j
 @RestControllerAdvice
@@ -100,6 +101,19 @@ public class GlobalExceptionHandler {
         log.warn("[" + e.getClass() + "] " + errorResponses);
         return ResponseEntity.badRequest()
                 .body(new ExceptionResponse("CLIENT-105", errorResponses.toString()));
+    }
+
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public ResponseEntity<ExceptionResponse> handleMissingServletRequestPartException(
+            MissingServletRequestPartException e
+    ) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                e.getRequestPartName(),
+                "파트가 필요합니다."
+        );
+        log.warn("[" + e.getClass() + "] " + errorResponse);
+        return ResponseEntity.badRequest()
+                .body(new ExceptionResponse("CLIENT-106", errorResponse.toString()));
     }
 
     @ExceptionHandler(BadRequestException.class)

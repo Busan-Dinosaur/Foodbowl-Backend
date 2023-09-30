@@ -47,9 +47,9 @@ class ReviewServiceTest extends IntegrationTest {
 
         @Test
         void 리뷰_작성자의_팔로워_수도_함께_조회한다() {
-            Member member = memberTestPersister.memberBuilder().save();
-            Member writer = memberTestPersister.memberBuilder().save();
-            Member follower = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
+            Member follower = memberTestPersister.builder().save();
             followTestPersister.builder().following(writer).follower(member).save();
             followTestPersister.builder().following(writer).follower(follower).save();
             Store store = storeTestPersister.builder().save();
@@ -84,8 +84,8 @@ class ReviewServiceTest extends IntegrationTest {
 
         @Test
         void 리뷰의_사진_목록도_함께_조회한다() {
-            Member member = memberTestPersister.memberBuilder().save();
-            Member writer = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
             followTestPersister.builder().following(writer).follower(member).save();
             Store store = storeTestPersister.builder().save();
             Review review = reviewTestPersister.builder().member(writer).store(store).save();
@@ -124,8 +124,8 @@ class ReviewServiceTest extends IntegrationTest {
 
         @Test
         void 북마크한_가게는_북마크_여부가_TRUE_이다() {
-            Member member = memberTestPersister.memberBuilder().save();
-            Member writer = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
             followTestPersister.builder().following(writer).follower(member).save();
             Store store = storeTestPersister.builder()
                     .address(
@@ -173,8 +173,8 @@ class ReviewServiceTest extends IntegrationTest {
 
         @Test
         void 북마크하지_않은_가게는_북마크_여부가_FALSE_이다() {
-            Member member = memberTestPersister.memberBuilder().save();
-            Member writer = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
             followTestPersister.builder().following(writer).follower(member).save();
             Store store = storeTestPersister.builder()
                     .address(

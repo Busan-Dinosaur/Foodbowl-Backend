@@ -18,7 +18,7 @@ class BookmarkQueryServiceTest extends IntegrationTest {
 
     @Test
     void 멤버의_북마크_가게_목록을_조회한다() {
-        Member member = memberTestPersister.memberBuilder().save();
+        Member member = memberTestPersister.builder().save();
         Bookmark bookmarkA = bookmarkTestPersister.builder().member(member).save();
         Bookmark bookmarkB = bookmarkTestPersister.builder().member(member).save();
 

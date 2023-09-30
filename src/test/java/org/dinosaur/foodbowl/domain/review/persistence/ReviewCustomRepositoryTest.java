@@ -24,8 +24,8 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
 
         @Test
         void 마지막_리뷰ID가_NULL이_아닐때_마지막_리뷰ID보다_작은_리뷰는_조회한다() {
-            Member member = memberTestPersister.memberBuilder().save();
-            Member writer = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
             followTestPersister.builder().following(writer).follower(member).save();
             Store store = storeTestPersister.builder().save();
             Review review = reviewTestPersister.builder().store(store).member(writer).save();
@@ -48,8 +48,8 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
 
         @Test
         void 마지막_리뷰ID가_NULL이_아닐때_마지막_리뷰ID보다_큰_리뷰는_조회하지_않는다() {
-            Member member = memberTestPersister.memberBuilder().save();
-            Member writer = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
             followTestPersister.builder().following(writer).follower(member).save();
             Store store = storeTestPersister.builder().save();
             Review review = reviewTestPersister.builder().store(store).member(writer).save();
@@ -72,8 +72,8 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
 
         @Test
         void 팔로잉_하고있는_유저의_리뷰를_조회한다() {
-            Member member = memberTestPersister.memberBuilder().save();
-            Member writer = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
             followTestPersister.builder().following(writer).follower(member).save();
             Store store = storeTestPersister.builder().save();
             Review review = reviewTestPersister.builder().store(store).member(writer).save();
@@ -96,8 +96,8 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
 
         @Test
         void 팔로잉_하고있지_않은_유저의_리뷰는_조회하지_않는다() {
-            Member member = memberTestPersister.memberBuilder().save();
-            Member writer = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
             Store store = storeTestPersister.builder().save();
             reviewTestPersister.builder().store(store).member(writer).save();
             MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
@@ -119,8 +119,8 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
 
         @Test
         void 폴리곤_영역에_경도가_속하지_않는_가게의_리뷰는_조회하지_않는다() {
-            Member member = memberTestPersister.memberBuilder().save();
-            Member writer = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
             followTestPersister.builder().following(writer).follower(member).save();
             Store store = storeTestPersister.builder().save();
             reviewTestPersister.builder().store(store).member(writer).save();
@@ -143,8 +143,8 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
 
         @Test
         void 폴리곤_영역에_위도가_속하지_않는_가게의_리뷰는_조회하지_않는다() {
-            Member member = memberTestPersister.memberBuilder().save();
-            Member writer = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
             followTestPersister.builder().following(writer).follower(member).save();
             Store store = storeTestPersister.builder().save();
             reviewTestPersister.builder().store(store).member(writer).save();
@@ -167,8 +167,8 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
 
         @Test
         void 폴리곤_영역에_경도와_위도가_속하지_않는_가게의_리뷰는_조회하지_않는다() {
-            Member member = memberTestPersister.memberBuilder().save();
-            Member writer = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
             followTestPersister.builder().following(writer).follower(member).save();
             Store store = storeTestPersister.builder().save();
             reviewTestPersister.builder().store(store).member(writer).save();
@@ -191,8 +191,8 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
 
         @Test
         void 리뷰ID를_내림차순으로_조회한다() {
-            Member member = memberTestPersister.memberBuilder().save();
-            Member writer = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
             followTestPersister.builder().following(writer).follower(member).save();
             Store store = storeTestPersister.builder().save();
             Review reviewA = reviewTestPersister.builder().store(store).member(writer).save();
@@ -216,8 +216,8 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
 
         @Test
         void 페이지_크기만큼_조회한다() {
-            Member member = memberTestPersister.memberBuilder().save();
-            Member writer = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
             followTestPersister.builder().following(writer).follower(member).save();
             Store store = storeTestPersister.builder().save();
             Review reviewA = reviewTestPersister.builder().store(store).member(writer).save();

@@ -17,9 +17,9 @@ class FollowCustomRepositoryTest extends PersistenceTest {
 
     @Test
     void 멤버_목록에_존재하는_멤버의_팔로우_수를_조회한다() {
-        Member memberA = memberTestPersister.memberBuilder().save();
-        Member memberB = memberTestPersister.memberBuilder().save();
-        Member memberC = memberTestPersister.memberBuilder().save();
+        Member memberA = memberTestPersister.builder().save();
+        Member memberB = memberTestPersister.builder().save();
+        Member memberC = memberTestPersister.builder().save();
         followTestPersister.builder().following(memberA).follower(memberB).save();
         followTestPersister.builder().following(memberA).follower(memberC).save();
         followTestPersister.builder().following(memberB).follower(memberC).save();

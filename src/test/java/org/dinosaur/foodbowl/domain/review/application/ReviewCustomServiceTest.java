@@ -19,8 +19,8 @@ class ReviewCustomServiceTest extends IntegrationTest {
 
     @Test
     void 팔로잉_하는_멤버의_리뷰_목록을_범위를_통해_조회한다() {
-        Member member = memberTestPersister.memberBuilder().save();
-        Member writer = memberTestPersister.memberBuilder().save();
+        Member member = memberTestPersister.builder().save();
+        Member writer = memberTestPersister.builder().save();
         followTestPersister.builder().following(writer).follower(member).save();
         Store store = storeTestPersister.builder().save();
         Review review = reviewTestPersister.builder().member(writer).store(store).save();

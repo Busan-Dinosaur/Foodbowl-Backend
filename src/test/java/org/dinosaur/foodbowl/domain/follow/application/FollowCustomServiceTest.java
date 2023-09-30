@@ -17,8 +17,8 @@ class FollowCustomServiceTest extends IntegrationTest {
 
     @Test
     void 멤버_별_팔로워_수를_집계한다() {
-        Member memberA = memberTestPersister.memberBuilder().save();
-        Member memberB = memberTestPersister.memberBuilder().save();
+        Member memberA = memberTestPersister.builder().save();
+        Member memberB = memberTestPersister.builder().save();
         followTestPersister.builder().following(memberA).follower(memberB).save();
         followTestPersister.builder().following(memberB).follower(memberA).save();
 

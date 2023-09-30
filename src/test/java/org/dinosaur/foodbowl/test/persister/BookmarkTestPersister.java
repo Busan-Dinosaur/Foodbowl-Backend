@@ -35,7 +35,7 @@ public class BookmarkTestPersister {
 
         public Bookmark save() {
             Bookmark bookmark = Bookmark.builder()
-                    .member(member == null ? memberTestPersister.memberBuilder().save() : member)
+                    .member(member == null ? memberTestPersister.builder().save() : member)
                     .store(store == null ? storeTestPersister.builder().save() : store)
                     .build();
             return bookmarkRepository.save(bookmark);
