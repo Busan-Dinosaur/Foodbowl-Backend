@@ -14,7 +14,7 @@ public record ReviewContentResponse(
         @Schema(description = "리뷰 내용", example = "정말 맛있어요!")
         String content,
 
-        @Schema(description = "리뷰 이미지 경로 목록")
+        @Schema(description = "리뷰 이미지 경로 목록", example = "['imageA.png', 'imageB.png']")
         List<String> imagePaths,
 
         @Schema(description = "리뷰 생성시간", example = "2023-10-01 23:59:59")
