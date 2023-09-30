@@ -28,7 +28,7 @@ public class ReviewPhotoCustomRepository {
                 .from(reviewPhoto)
                 .innerJoin(reviewPhoto.photo, photo)
                 .where(reviewPhoto.review.in(reviews))
-                .orderBy(reviewPhoto.createdAt.asc())
+                .orderBy(reviewPhoto.id.asc())
                 .fetch();
     }
 
