@@ -64,6 +64,7 @@ class StoreRepositoryTest extends PersistenceTest {
                 .toList();
         assertSoftly(softly -> {
             assertThat(responseStoreIds).containsExactly(storeB.getId(), storeD.getId(), storeA.getId());
+            assertThat(responseStoreIds).hasSize(3);
             assertThat(responseStoreIds).doesNotContain(storeC.getId());
         });
     }
