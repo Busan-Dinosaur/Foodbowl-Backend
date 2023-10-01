@@ -12,34 +12,45 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class PhotoService {
 
-    private final PhotoRepository photoRepository;
     private final PhotoManager photoManager;
+    private final PhotoRepository photoRepository;
 
     @Transactional
-    public List<Photo> save(List<MultipartFile> images, String workingDirectory) {
-        List<String> imagePaths = photoManager.upload(images, workingDirectory);
-        List<Photo> photos = imagePaths.stream()
-                .map(this::convertToPhoto)
-                .toList();
-
-        for (Photo photo : photos) {
-            photoRepository.save(photo);
-        }
-        return photos;
+    public Photo save(MultipartFile file, String workingDirectory) {
+        String imagePath = photoManager.upload(file, workingDirectory);
+        return savePhoto(imagePath);
     }
 
-    private Photo convertToPhoto(String imagePath) {
-        return Photo.builder()
+    private Photo savePhoto(String imagePath) {
+        Photo photo = Photo.builder()
                 .path(imagePath)
                 .build();
+        return photoRepository.save(photo);
     }
 
     @Transactional
-    public void delete(List<Photo> photos) {
-        List<String> photoPaths = photos.stream()
-                .map(Photo::getPath)
+    public List<Photo> saveAll(List<MultipartFile> files, String workingDirectory) {
+        return files.stream()
+                .map(file -> photoManager.upload(file, workingDirectory))
+                .map(this::savePhoto)
                 .toList();
-        photoRepository.deleteAllByPhoto(photos);
-        photoManager.delete(photoPaths);
+    }
+
+    @Transactional
+    public void delete(Photo photo) {
+        photoRepository.deleteByPhoto(photo);
+        photoManager.delete(photo.getPath());
+    }
+
+    @Transactional
+    public void deleteAll(List<Photo> photos) {
+        photoRepository.deleteAllByPhotos(photos);
+        deleteAllPhotoFiles(photos);
+    }
+
+    private void deleteAllPhotoFiles(List<Photo> photos) {
+        photos.stream()
+                .map(Photo::getPath)
+                .forEach(photoManager::delete);
     }
 }

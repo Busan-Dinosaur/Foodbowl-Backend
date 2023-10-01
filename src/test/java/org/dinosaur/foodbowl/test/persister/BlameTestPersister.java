@@ -46,7 +46,7 @@ public class BlameTestPersister {
 
         public Blame save() {
             Blame blame = Blame.builder()
-                    .member(member == null ? memberTestPersister.memberBuilder().save() : member)
+                    .member(member == null ? memberTestPersister.builder().save() : member)
                     .targetId(targetId == null ? 1L : targetId)
                     .blameTarget(blameTarget == null ? BlameTarget.MEMBER : blameTarget)
                     .description(description == null ? "invalid" : description)

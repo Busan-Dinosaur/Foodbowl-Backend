@@ -28,7 +28,7 @@ class BookmarkServiceTest extends IntegrationTest {
         @Test
         void 북마크_추가에_성공하면_북마크가_등록된다() {
             Store store = storeTestPersister.builder().save();
-            Member member = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
 
             bookmarkService.save(store.getId(), member);
 
@@ -37,7 +37,7 @@ class BookmarkServiceTest extends IntegrationTest {
 
         @Test
         void 가게가_존재하지_않으면_예외가_발생한다() {
-            Member member = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
 
             assertThatThrownBy(() -> bookmarkService.save(-1L, member))
                     .isInstanceOf(NotFoundException.class)
@@ -47,7 +47,7 @@ class BookmarkServiceTest extends IntegrationTest {
         @Test
         void 이미_북마크에_추가된_가게라면_예외가_발생한다() {
             Store store = storeTestPersister.builder().save();
-            Member member = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
             bookmarkService.save(store.getId(), member);
 
             assertThatThrownBy(() -> bookmarkService.save(store.getId(), member))
@@ -62,7 +62,7 @@ class BookmarkServiceTest extends IntegrationTest {
         @Test
         void 북마크_삭제에_성공하면_북마크가_삭제된다() {
             Store store = storeTestPersister.builder().save();
-            Member member = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
             bookmarkService.save(store.getId(), member);
 
             bookmarkService.delete(store.getId(), member);
@@ -72,7 +72,7 @@ class BookmarkServiceTest extends IntegrationTest {
 
         @Test
         void 가게가_존재하지_않으면_예외가_발생한다() {
-            Member member = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
 
             assertThatThrownBy(() -> bookmarkService.delete(-1L, member))
                     .isInstanceOf(NotFoundException.class)
@@ -82,7 +82,7 @@ class BookmarkServiceTest extends IntegrationTest {
         @Test
         void 북마크에_등록하지_않은_가게라면_예외가_발생한다() {
             Store store = storeTestPersister.builder().save();
-            Member member = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
 
             assertThatThrownBy(() -> bookmarkService.delete(store.getId(), member))
                     .isInstanceOf(BadRequestException.class)

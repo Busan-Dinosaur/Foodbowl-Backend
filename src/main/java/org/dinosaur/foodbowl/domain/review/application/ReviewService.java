@@ -35,7 +35,6 @@ public class ReviewService {
     @Transactional
     public Review create(ReviewCreateRequest reviewCreateRequest, List<MultipartFile> imageFiles, Member member) {
         StoreCreateDto storeCreateDto = convertStoreCreateDto(reviewCreateRequest);
-
         Store store = storeService.findByLocationId(reviewCreateRequest.locationId())
                 .orElseGet(() -> storeService.create(storeCreateDto));
 
@@ -46,22 +45,8 @@ public class ReviewService {
                         .content(reviewCreateRequest.reviewContent())
                         .build()
         );
-
         saveImagesIfExists(imageFiles, store, review);
         return review;
-    }
-
-    private void saveImagesIfExists(List<MultipartFile> images, Store store, Review review) {
-        if (images == null || images.isEmpty()) {
-            return;
-        }
-
-        if (images.size() > REVIEW_PHOTO_MAX_SIZE) {
-            throw new BadRequestException(ReviewExceptionType.PHOTO_COUNT);
-        }
-
-        List<Photo> photos = photoService.save(images, store.getId().toString());
-        reviewPhotoService.save(review, photos);
     }
 
     private StoreCreateDto convertStoreCreateDto(ReviewCreateRequest reviewCreateRequest) {
@@ -99,7 +84,7 @@ public class ReviewService {
 
         List<Photo> deletePhotos = extractPhotosForDelete(currentPhotos, deletePhotoIds);
         reviewPhotoService.deleteByReviewAndPhoto(review, deletePhotos);
-        photoService.delete(deletePhotos);
+        photoService.deleteAll(deletePhotos);
 
         saveImagesIfExists(imageFiles, review.getStore(), review);
         review.updateContent(reviewUpdateRequest.reviewContent());
@@ -144,13 +129,23 @@ public class ReviewService {
     public void delete(Long id, Member member) {
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ReviewExceptionType.NOT_FOUND));
-
         validateReviewOwner(member, review);
 
         List<Photo> photos = reviewPhotoService.findPhotos(review);
-
         reviewPhotoService.deleteByReviewAndPhoto(review, photos);
         reviewRepository.delete(review);
+    }
+
+    private void saveImagesIfExists(List<MultipartFile> images, Store store, Review review) {
+        if (images == null || images.isEmpty()) {
+            return;
+        }
+        if (images.size() > REVIEW_PHOTO_MAX_SIZE) {
+            throw new BadRequestException(ReviewExceptionType.PHOTO_COUNT);
+        }
+
+        List<Photo> photos = photoService.saveAll(images, store.getId().toString());
+        reviewPhotoService.save(review, photos);
     }
 
     private void validateReviewOwner(Member member, Review review) {

@@ -41,7 +41,7 @@ public class ReviewTestPersister {
 
         public Review save() {
             Review review = Review.builder()
-                    .member(member == null ? memberTestPersister.memberBuilder().save() : member)
+                    .member(member == null ? memberTestPersister.builder().save() : member)
                     .store(store == null ? storeTestPersister.builder().save() : store)
                     .content(content == null ? "리뷰 내용입니다." : content)
                     .build();

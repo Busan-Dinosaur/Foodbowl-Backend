@@ -32,9 +32,9 @@ class FollowServiceTest extends IntegrationTest {
 
     @Test
     void 나의_팔로잉_목록을_페이징_조회한다() {
-        Member follower = memberTestPersister.memberBuilder().save();
-        Member followingA = memberTestPersister.memberBuilder().save();
-        Member followingB = memberTestPersister.memberBuilder().save();
+        Member follower = memberTestPersister.builder().save();
+        Member followingA = memberTestPersister.builder().save();
+        Member followingB = memberTestPersister.builder().save();
 
         Follow followA = followTestPersister.builder().following(followingA).follower(follower).save();
         Follow followB = followTestPersister.builder().following(followingB).follower(follower).save();
@@ -63,10 +63,10 @@ class FollowServiceTest extends IntegrationTest {
 
         @Test
         void 유효한_상황이라면_팔로잉_목록을_조회한다() {
-            Member member = memberTestPersister.memberBuilder().save();
-            Member follower = memberTestPersister.memberBuilder().save();
-            Member followingA = memberTestPersister.memberBuilder().save();
-            Member followingB = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
+            Member follower = memberTestPersister.builder().save();
+            Member followingA = memberTestPersister.builder().save();
+            Member followingB = memberTestPersister.builder().save();
 
             followTestPersister.builder().following(followingA).follower(follower).save();
             followTestPersister.builder().following(followingB).follower(follower).save();
@@ -93,7 +93,7 @@ class FollowServiceTest extends IntegrationTest {
 
         @Test
         void 등록되지_않은_회원이라면_예외를_던진다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
+            Member loginMember = memberTestPersister.builder().save();
 
             assertThatThrownBy(() -> followService.getOtherUserFollowings(-1L, 0, 2, loginMember))
                     .isInstanceOf(NotFoundException.class)
@@ -103,9 +103,9 @@ class FollowServiceTest extends IntegrationTest {
 
     @Test
     void 나의_팔로워_목록을_페이징_조회한다() {
-        Member following = memberTestPersister.memberBuilder().save();
-        Member followerA = memberTestPersister.memberBuilder().save();
-        Member followerB = memberTestPersister.memberBuilder().save();
+        Member following = memberTestPersister.builder().save();
+        Member followerA = memberTestPersister.builder().save();
+        Member followerB = memberTestPersister.builder().save();
 
         Follow followA = followTestPersister.builder().following(following).follower(followerA).save();
         Follow followB = followTestPersister.builder().following(following).follower(followerB).save();
@@ -134,10 +134,10 @@ class FollowServiceTest extends IntegrationTest {
 
         @Test
         void 유효한_상황이라면_팔로워_목록을_조회한다() {
-            Member member = memberTestPersister.memberBuilder().save();
-            Member following = memberTestPersister.memberBuilder().save();
-            Member followerA = memberTestPersister.memberBuilder().save();
-            Member followerB = memberTestPersister.memberBuilder().save();
+            Member member = memberTestPersister.builder().save();
+            Member following = memberTestPersister.builder().save();
+            Member followerA = memberTestPersister.builder().save();
+            Member followerB = memberTestPersister.builder().save();
 
             followTestPersister.builder().following(following).follower(followerA).save();
             followTestPersister.builder().following(following).follower(followerB).save();
@@ -164,7 +164,7 @@ class FollowServiceTest extends IntegrationTest {
 
         @Test
         void 등록되지_않은_회원이라면_예외를_던진다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
+            Member loginMember = memberTestPersister.builder().save();
 
             assertThatThrownBy(() -> followService.getOtherUserFollowers(-1L, 0, 2, loginMember))
                     .isInstanceOf(NotFoundException.class)
@@ -177,8 +177,8 @@ class FollowServiceTest extends IntegrationTest {
 
         @Test
         void 유효한_상황이라면_팔로우한다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
-            Member other = memberTestPersister.memberBuilder().save();
+            Member loginMember = memberTestPersister.builder().save();
+            Member other = memberTestPersister.builder().save();
 
             followService.follow(other.getId(), loginMember);
 
@@ -188,7 +188,7 @@ class FollowServiceTest extends IntegrationTest {
 
         @Test
         void 등록되지_않은_회원이라면_예외를_던진다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
+            Member loginMember = memberTestPersister.builder().save();
 
             assertThatThrownBy(() -> followService.follow(-1L, loginMember))
                     .isInstanceOf(NotFoundException.class)
@@ -197,7 +197,7 @@ class FollowServiceTest extends IntegrationTest {
 
         @Test
         void 자신을_팔로우한다면_예외를_던진다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
+            Member loginMember = memberTestPersister.builder().save();
 
             assertThatThrownBy(() -> followService.follow(loginMember.getId(), loginMember))
                     .isInstanceOf(BadRequestException.class)
@@ -206,8 +206,8 @@ class FollowServiceTest extends IntegrationTest {
 
         @Test
         void 이미_팔로우한_회원이라면_예외를_던진다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
-            Member other = memberTestPersister.memberBuilder().save();
+            Member loginMember = memberTestPersister.builder().save();
+            Member other = memberTestPersister.builder().save();
             followTestPersister.builder()
                     .following(other)
                     .follower(loginMember)
@@ -224,8 +224,8 @@ class FollowServiceTest extends IntegrationTest {
 
         @Test
         void 유효한_상황이라면_언팔로우한다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
-            Member followMember = memberTestPersister.memberBuilder().save();
+            Member loginMember = memberTestPersister.builder().save();
+            Member followMember = memberTestPersister.builder().save();
             Follow follow = followTestPersister.builder()
                     .following(followMember)
                     .follower(loginMember)
@@ -238,7 +238,7 @@ class FollowServiceTest extends IntegrationTest {
 
         @Test
         void 등록되지_않은_회원이라면_에외를_던진다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
+            Member loginMember = memberTestPersister.builder().save();
 
             assertThatThrownBy(() -> followService.unfollow(-1L, loginMember))
                     .isInstanceOf(NotFoundException.class)
@@ -247,8 +247,8 @@ class FollowServiceTest extends IntegrationTest {
 
         @Test
         void 팔로우_하지_않은_회원이라면_예외를_던진다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
-            Member followMember = memberTestPersister.memberBuilder().save();
+            Member loginMember = memberTestPersister.builder().save();
+            Member followMember = memberTestPersister.builder().save();
 
             assertThatThrownBy(() -> followService.unfollow(followMember.getId(), loginMember))
                     .isInstanceOf(BadRequestException.class)
@@ -261,8 +261,8 @@ class FollowServiceTest extends IntegrationTest {
 
         @Test
         void 유효한_상황이라면_팔로워를_삭제한다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
-            Member followMember = memberTestPersister.memberBuilder().save();
+            Member loginMember = memberTestPersister.builder().save();
+            Member followMember = memberTestPersister.builder().save();
             Follow follow = followTestPersister.builder()
                     .following(loginMember)
                     .follower(followMember)
@@ -275,7 +275,7 @@ class FollowServiceTest extends IntegrationTest {
 
         @Test
         void 등록되지_않은_회원이라면_예외를_던진다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
+            Member loginMember = memberTestPersister.builder().save();
 
             assertThatThrownBy(() -> followService.deleteFollower(-1L, loginMember))
                     .isInstanceOf(NotFoundException.class)
@@ -284,8 +284,8 @@ class FollowServiceTest extends IntegrationTest {
 
         @Test
         void 나를_팔로우하지_않은_회원이라면_예외를_던진다() {
-            Member loginMember = memberTestPersister.memberBuilder().save();
-            Member followMember = memberTestPersister.memberBuilder().save();
+            Member loginMember = memberTestPersister.builder().save();
+            Member followMember = memberTestPersister.builder().save();
 
             assertThatThrownBy(() -> followService.deleteFollower(followMember.getId(), loginMember))
                     .isInstanceOf(BadRequestException.class)
