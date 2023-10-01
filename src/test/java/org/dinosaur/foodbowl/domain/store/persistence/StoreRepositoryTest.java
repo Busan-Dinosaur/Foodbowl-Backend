@@ -10,7 +10,6 @@ import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchQueryResponse;
 import org.dinosaur.foodbowl.global.util.PointUtils;
 import org.dinosaur.foodbowl.test.PersistenceTest;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,54 +22,50 @@ class StoreRepositoryTest extends PersistenceTest {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    @Nested
-    class 가게를_조회할_때 {
+    @Test
+    void 장소_ID로_가게를_조회한다() {
+        Store store = storeTestPersister.builder().save();
 
-        @Test
-        void 장소_ID로_가게를_조회한다() {
-            Store store = storeTestPersister.builder().save();
+        assertThat(storeRepository.findByLocationId(store.getLocationId())).isPresent();
+    }
 
-            assertThat(storeRepository.findByLocationId(store.getLocationId())).isPresent();
-        }
+    @Test
+    void 가게_ID로_가게를_조회한다() {
+        Store store = storeTestPersister.builder().save();
 
-        @Test
-        void 가게_ID로_가게를_조회한다() {
-            Store store = storeTestPersister.builder().save();
+        assertThat(storeRepository.findById(store.getId())).isPresent();
+    }
 
-            assertThat(storeRepository.findById(store.getId())).isPresent();
-        }
+    @Test
+    void 이름이_포함된_가게를_가까운_순으로_조회한다() {
+        String name = "김밥";
+        double x = 124.5135;
+        double y = 36.1234;
+        Store storeA = storeTestPersister.builder()
+                .address(createAddress(x + 0.05, y))
+                .storeName("김밥천국")
+                .save();
+        Store storeB = storeTestPersister.builder()
+                .address(createAddress(x + 0.02, y))
+                .storeName("김밥나라")
+                .save();
+        Store storeC = storeTestPersister.builder()
+                .address(createAddress(x + 0.03, y))
+                .storeName("꺼벙이분식")
+                .save();
+        Store storeD = storeTestPersister.builder()
+                .address(createAddress(x + 0.04, y))
+                .storeName("김밥세상").save();
 
-        @Test
-        void 이름이_포함된_가게를_가까운_순으로_조회한다() {
-            String name = "김밥";
-            double x = 124.5135;
-            double y = 36.1234;
-            Store storeA = storeTestPersister.builder()
-                    .address(createAddress(x + 0.01, y))
-                    .storeName("김밥천국")
-                    .save();
-            Store storeB = storeTestPersister.builder()
-                    .address(createAddress(x + 0.02, y))
-                    .storeName("김밥나라")
-                    .save();
-            Store storeC = storeTestPersister.builder()
-                    .address(createAddress(x + 0.03, y))
-                    .storeName("꺼벙이분식")
-                    .save();
-            Store storeD = storeTestPersister.builder()
-                    .address(createAddress(x + 0.04, y))
-                    .storeName("김밥세상").save();
+        List<StoreSearchQueryResponse> searchResponses = storeRepository.search(name, x, y, 10);
 
-            List<StoreSearchQueryResponse> searchResponses = storeRepository.search(name, x, y, 10);
-
-            List<Long> responseStoreIds = searchResponses.stream()
-                    .map(StoreSearchQueryResponse::getStoreId)
-                    .toList();
-            assertSoftly(softly -> {
-                assertThat(responseStoreIds).containsExactly(storeA.getId(), storeB.getId(), storeD.getId());
-                assertThat(responseStoreIds).doesNotContain(storeC.getId());
-            });
-        }
+        List<Long> responseStoreIds = searchResponses.stream()
+                .map(StoreSearchQueryResponse::getStoreId)
+                .toList();
+        assertSoftly(softly -> {
+            assertThat(responseStoreIds).containsExactly(storeB.getId(), storeD.getId(), storeA.getId());
+            assertThat(responseStoreIds).doesNotContain(storeC.getId());
+        });
     }
 
     @Test

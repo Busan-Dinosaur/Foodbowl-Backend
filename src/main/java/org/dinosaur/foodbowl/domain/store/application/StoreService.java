@@ -47,10 +47,16 @@ public class StoreService {
     public StoreSearchResponses search(String name, BigDecimal x, BigDecimal y, int size) {
         validateName(name);
         Point memberCurrentPoint = PointUtils.generate(x, y);
-        List<StoreSearchResponse> searchResponses = storeRepository.search(name, memberCurrentPoint.getX(),
-                        memberCurrentPoint.getY(), size).stream()
-                .map(StoreSearchResponse::from)
-                .toList();
+        List<StoreSearchResponse> searchResponses =
+                storeRepository.search(
+                                name,
+                                memberCurrentPoint.getX(),
+                                memberCurrentPoint.getY(),
+                                size
+                        )
+                        .stream()
+                        .map(StoreSearchResponse::from)
+                        .toList();
 
         return StoreSearchResponses.from(searchResponses);
     }

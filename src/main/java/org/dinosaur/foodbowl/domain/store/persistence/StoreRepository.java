@@ -17,12 +17,11 @@ public interface StoreRepository extends Repository<Store, Long> {
     @Query(
             nativeQuery = true,
             value = """
-                    SELECT 
-                        s.id as storeId, 
+                    SELECT
+                        s.id as storeId,
                         s.store_name as storeName,
                         ST_Distance_Sphere(ST_PointFromText(CONCAT('POINT(', :y, ' ', :x, ')'), 4326), s.coordinate) as distance,
                         COUNT(r.id) as reviewCount
-                                        
                     FROM store s
                     LEFT JOIN review r ON r.store_id = s.id
                     WHERE s.store_name LIKE CONCAT('%', :name, '%')
@@ -35,7 +34,8 @@ public interface StoreRepository extends Repository<Store, Long> {
             @Param("name") String name,
             @Param("x") double x,
             @Param("y") double y,
-            @Param("size") int size);
+            @Param("size") int size
+    );
 
     Store save(Store store);
 }
