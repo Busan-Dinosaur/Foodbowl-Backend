@@ -117,6 +117,18 @@ class StoreControllerTest extends PresentationTest {
                     .andExpect(jsonPath("message").value(containsString("BigDecimal 타입으로 변환할 수 없는 요청입니다.")));
         }
 
+        @Test
+        void 사용자의_경도_값이_없으면_400_응답을_반환한다() throws Exception {
+            mockMvc.perform(get("/v1/stores/search")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("name", "김밥")
+                            .param("y", "37.2341")
+                            .param("size", "15")
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
         @ParameterizedTest
         @ValueSource(strings = {"hello", "!@#$%", "java1234"})
         void 사용자의_위도_값이_숫자가_아니면_400_응답을_반환한다(String y) throws Exception {
@@ -131,6 +143,18 @@ class StoreControllerTest extends PresentationTest {
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("errorCode").value("CLIENT-103"))
                     .andExpect(jsonPath("message").value(containsString("BigDecimal 타입으로 변환할 수 없는 요청입니다.")));
+        }
+
+        @Test
+        void 사용자의_위도_값이_없으면_400_응답을_반환한다() throws Exception {
+            mockMvc.perform(get("/v1/stores/search")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("name", "김밥")
+                            .param("x", "127.2341")
+                            .param("size", "15")
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
         }
 
         @ParameterizedTest

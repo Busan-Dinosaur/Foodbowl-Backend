@@ -21,7 +21,8 @@ import org.springframework.http.ResponseEntity;
 @Tag(name = "가게", description = "가게 API")
 public interface StoreControllerDocs {
 
-    @Operation(summary = "가게 검색 결과 조회",
+    @Operation(
+            summary = "가게 검색 결과 조회",
             description = """
                     키워드로 가게를 검색합니다.
                     
@@ -49,6 +50,10 @@ public interface StoreControllerDocs {
                             4.검색 결과 수가 최대 결과 수(30)보다 큰 경우
                             
                             5.검색 결과 수가 0이하인 경우
+                            
+                            6.사용자 위치의 경도 값이 없는 경우
+                            
+                            7.사용자 위치의 위도 값이 없는 경우
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
