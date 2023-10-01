@@ -12,7 +12,6 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PointUtils {
@@ -40,7 +39,7 @@ public class PointUtils {
     public static double calculateDistance(Point src, Point dest) {
         try {
             return JTS.orthodromicDistance(src.getCoordinate(), dest.getCoordinate(), crs);
-        } catch (TransformException e) {
+        } catch (Exception e) {
             throw new ServerException(ServerExceptionType.INVALID_COORDINATE_TRANSFORM, e);
         }
     }
