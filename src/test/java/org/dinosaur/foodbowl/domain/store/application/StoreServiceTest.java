@@ -9,6 +9,7 @@ import java.util.List;
 import org.dinosaur.foodbowl.domain.store.application.dto.StoreCreateDto;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.StoreSchool;
+import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
 import org.dinosaur.foodbowl.domain.store.domain.vo.SchoolName;
 import org.dinosaur.foodbowl.domain.store.dto.response.CategoriesResponse;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchResponses;
@@ -16,6 +17,7 @@ import org.dinosaur.foodbowl.domain.store.persistence.StoreSchoolRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
+import org.dinosaur.foodbowl.global.util.PointUtils;
 import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -98,48 +100,30 @@ class StoreServiceTest extends IntegrationTest {
             String name = "김밥";
             BigDecimal userX = new BigDecimal("123.1667");
             BigDecimal userY = new BigDecimal("37.1245");
-            StoreCreateDto storeCreateDtoA = new StoreCreateDto(
-                    "915366999",
-                    "얌샘김밥 선릉점",
-                    "한식",
-                    "서울시 강남구 선릉로 424번길 2323",
-                    userX,
-                    userY,
-                    "http://images2.foodbowl",
-                    "02-2141-4567",
-                    "부산대학교",
-                    "부산광역시 금정구 부산대학로63번길 2",
-                    BigDecimal.valueOf(123.12),
-                    BigDecimal.valueOf(37.1234));
-            StoreCreateDto storeCreateDtoB = new StoreCreateDto(
-                    "12346585",
-                    "김밥천국 선릉점",
-                    "한식",
-                    "서울시 강남구 선릉로 4244번길 2323-124",
-                    BigDecimal.valueOf(123.123434),
-                    BigDecimal.valueOf(37.454775),
-                    "http://images3.foodbowl",
-                    "02-2141-4567",
-                    "부산대학교",
-                    "부산광역시 금정구 부산대학로63번길 2",
-                    BigDecimal.valueOf(123.12),
-                    BigDecimal.valueOf(37.1234));
-            StoreCreateDto storeCreateDtoC = new StoreCreateDto(
-                    "122355",
-                    "고기듬뿍냉면",
-                    "한식",
-                    "서울시 강남구 헌릉로 4244번길 2323-124",
-                    BigDecimal.valueOf(123.15125434),
-                    BigDecimal.valueOf(37.4543426775),
-                    "http://images4.foodbowl",
-                    "02-2141-4567",
-                    "부산대학교",
-                    "부산광역시 금정구 부산대학로63번길 2",
-                    BigDecimal.valueOf(123.12),
-                    BigDecimal.valueOf(37.1234));
-            Store nearestStoreA = storeService.create(storeCreateDtoA);
-            Store storeB = storeService.create(storeCreateDtoB);
-            Store storeC = storeService.create(storeCreateDtoC);
+            Store storeA = storeTestPersister.builder()
+                    .locationId("12346585")
+                    .storeName("김밥천국 선릉점")
+                    .address(Address.of(
+                                    "서울시 강남구 선릉로 4244번길 2323-124",
+                                    PointUtils.generate(BigDecimal.valueOf(125.142), BigDecimal.valueOf(36.241)))
+                    )
+                    .save();
+            Store nearestStoreB = storeTestPersister.builder()
+                    .locationId("915366999")
+                    .storeName("얌샘김밥 선릉점")
+                    .address(Address.of(
+                            "서울시 강남구 선릉로 424번길 2323",
+                            PointUtils.generate(userX, userY))
+                    )
+                    .save();
+            Store storeC = storeTestPersister.builder()
+                    .locationId("122355")
+                    .storeName("고기듬뿍냉면")
+                    .address(Address.of(
+                            "서울시 강남구 헌릉로 4244번길 2323-124",
+                            PointUtils.generate(BigDecimal.valueOf(125.14242), BigDecimal.valueOf(36.21141))
+                    ))
+                    .save();
 
             StoreSearchResponses storeSearchResponses = storeService.search(
                     name,
@@ -151,9 +135,9 @@ class StoreServiceTest extends IntegrationTest {
             assertSoftly(softly -> {
                 softly.assertThat(storeSearchResponses.searchResponses()).hasSize(2);
                 softly.assertThat(storeSearchResponses.searchResponses().get(0).getStoreId())
-                        .isEqualTo(nearestStoreA.getId());
+                        .isEqualTo(nearestStoreB.getId());
                 softly.assertThat(storeSearchResponses.searchResponses().get(1).getStoreId())
-                        .isEqualTo(storeB.getId());
+                        .isEqualTo(storeA.getId());
             });
         }
 
@@ -161,7 +145,8 @@ class StoreServiceTest extends IntegrationTest {
         @ValueSource(strings = " ")
         @NullAndEmptySource
         void 검색_단어가_존재하지_않거나_공백이면_예외가_발생한다(String name) {
-            assertThatThrownBy(() -> storeService.search(name, BigDecimal.valueOf(123.45), BigDecimal.valueOf(35.124), 10))
+            assertThatThrownBy(
+                    () -> storeService.search(name, BigDecimal.valueOf(123.45), BigDecimal.valueOf(35.124), 10))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("가게 검색 키워드는 반드시 포함되어야 합니다.");
         }
