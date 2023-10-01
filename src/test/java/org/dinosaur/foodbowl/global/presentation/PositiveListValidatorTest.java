@@ -1,10 +1,9 @@
-package org.dinosaur.foodbowl.domain.review.presentation;
+package org.dinosaur.foodbowl.global.presentation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import jakarta.validation.ConstraintValidatorContext;
 import java.util.List;
-import org.dinosaur.foodbowl.global.presentation.PositiveListValidator;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;

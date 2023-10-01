@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.photo.domain.Photo;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
 import org.dinosaur.foodbowl.domain.review.domain.ReviewPhoto;
+import org.dinosaur.foodbowl.domain.review.persistence.ReviewPhotoCustomRepository;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewPhotoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReviewPhotoService {
 
     private final ReviewPhotoRepository reviewPhotoRepository;
+    private final ReviewPhotoCustomRepository reviewPhotoCustomRepository;
 
     @Transactional(readOnly = true)
     public List<Photo> findPhotos(Review review) {
@@ -35,11 +37,11 @@ public class ReviewPhotoService {
 
     @Transactional
     public void delete(Review review) {
-        reviewPhotoRepository.deleteAllByReview(review);
+        reviewPhotoCustomRepository.deleteAllByReview(review);
     }
 
     @Transactional
     public void deleteByReviewAndPhoto(Review review, List<Photo> photos) {
-        reviewPhotoRepository.deleteByReviewAndPhotos(review, photos);
+        reviewPhotoCustomRepository.deleteByReviewAndPhotos(review, photos);
     }
 }

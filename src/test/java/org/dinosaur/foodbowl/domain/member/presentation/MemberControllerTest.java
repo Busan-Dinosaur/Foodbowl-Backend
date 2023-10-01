@@ -247,7 +247,9 @@ class MemberControllerTest extends PresentationTest {
             mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/members/profile/image")
                             .header(AUTHORIZATION, BEARER + accessToken))
                     .andDo(print())
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errorCode").value("CLIENT-106"))
+                    .andExpect(jsonPath("$.message", containsString("파트가 필요합니다.")));
         }
     }
 
