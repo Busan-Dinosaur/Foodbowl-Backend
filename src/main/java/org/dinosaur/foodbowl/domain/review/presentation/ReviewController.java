@@ -3,6 +3,7 @@ package org.dinosaur.foodbowl.domain.review.presentation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
@@ -38,11 +39,17 @@ public class ReviewController implements ReviewControllerDocs {
     @GetMapping("/following")
     public ResponseEntity<ReviewPageResponse> getReviewsByFollowingInMapBounds(
             @RequestParam(name = "lastReviewId", required = false) @Positive(message = "리뷰 ID는 양수만 가능합니다.") Long lastReviewId,
-            @Valid MapCoordinateRequest mapCoordinateRequest,
-            @Valid DeviceCoordinateRequest deviceCoordinateRequest,
+            @RequestParam(name = "x") BigDecimal x,
+            @RequestParam(name = "y") BigDecimal y,
+            @RequestParam(name = "deltaX") @Positive(message = "경도 증가값은 0이상의 양수만 가능합니다.") BigDecimal deltaX,
+            @RequestParam(name = "deltaY") @Positive(message = "위도 증가값은 0이상의 양수만 가능합니다.") BigDecimal deltaY,
+            @RequestParam(name = "deviceX") BigDecimal deviceX,
+            @RequestParam(name = "deviceY") BigDecimal deviceY,
             @RequestParam(name = "pageSize", defaultValue = "10") @Positive(message = "페이지 크기는 양수만 가능합니다.") int pageSize,
             @Auth Member loginMember
     ) {
+        MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(x, y, deltaX, deltaY);
+        DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(deviceX, deviceY);
         ReviewPageResponse response = reviewService.getReviewsByFollowingInMapBounds(
                 lastReviewId,
                 mapCoordinateRequest,

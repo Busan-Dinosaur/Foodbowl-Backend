@@ -6,20 +6,23 @@ import lombok.extern.slf4j.Slf4j;
 import org.dinosaur.foodbowl.global.exception.response.ErrorResponse;
 import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
 import org.dinosaur.foodbowl.global.exception.type.ServerExceptionType;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @Slf4j
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> handleException(Exception e) {
@@ -35,14 +38,19 @@ public class GlobalExceptionHandler {
                 .body(ExceptionResponse.from(e.getExceptionType()));
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ExceptionResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        List<ErrorResponse> errorResponses = e.getBindingResult()
+    @Override
+    public ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request
+    ) {
+        List<ErrorResponse> errorResponses = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(fieldError -> new ErrorResponse(fieldError.getField(), fieldError.getDefaultMessage()))
                 .toList();
-        log.warn("[" + e.getClass() + "] " + errorResponses);
+        log.warn("[" + ex.getClass() + "] " + errorResponses);
         return ResponseEntity.badRequest()
                 .body(new ExceptionResponse("CLIENT-100", errorResponses.toString()));
     }
@@ -78,40 +86,34 @@ public class GlobalExceptionHandler {
                 .body(new ExceptionResponse("CLIENT-103", errorResponse.toString()));
     }
 
-    @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<ExceptionResponse> handleMissingServletRequestParameterException(
-            MissingServletRequestParameterException e
+    @Override
+    public ResponseEntity<Object> handleMissingServletRequestParameter(
+            MissingServletRequestParameterException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request
     ) {
         ErrorResponse errorResponse = new ErrorResponse(
-                e.getParameterName(),
+                ex.getParameterName(),
                 "파라미터가 필요합니다."
         );
-        log.warn("[" + e.getClass() + "] " + errorResponse);
+        log.warn("[" + ex.getClass() + "] " + errorResponse);
         return ResponseEntity.badRequest()
                 .body(new ExceptionResponse("CLIENT-104", errorResponse.toString()));
     }
 
-    @ExceptionHandler(BindException.class)
-    public ResponseEntity<ExceptionResponse> handleBindException(BindException e) {
-        List<ErrorResponse> errorResponses = e.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(fieldError -> new ErrorResponse(fieldError.getField(), fieldError.getDefaultMessage()))
-                .toList();
-        log.warn("[" + e.getClass() + "] " + errorResponses);
-        return ResponseEntity.badRequest()
-                .body(new ExceptionResponse("CLIENT-105", errorResponses.toString()));
-    }
-
-    @ExceptionHandler(MissingServletRequestPartException.class)
-    public ResponseEntity<ExceptionResponse> handleMissingServletRequestPartException(
-            MissingServletRequestPartException e
+    @Override
+    public ResponseEntity<Object> handleMissingServletRequestPart(
+            MissingServletRequestPartException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request
     ) {
         ErrorResponse errorResponse = new ErrorResponse(
-                e.getRequestPartName(),
+                ex.getRequestPartName(),
                 "파트가 필요합니다."
         );
-        log.warn("[" + e.getClass() + "] " + errorResponse);
+        log.warn("[" + ex.getClass() + "] " + errorResponse);
         return ResponseEntity.badRequest()
                 .body(new ExceptionResponse("CLIENT-106", errorResponse.toString()));
     }

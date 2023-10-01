@@ -10,10 +10,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.util.List;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
-import org.dinosaur.foodbowl.domain.review.dto.request.DeviceCoordinateRequest;
-import org.dinosaur.foodbowl.domain.review.dto.request.MapCoordinateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
@@ -79,13 +78,25 @@ public interface ReviewControllerDocs {
             @Positive(message = "리뷰 ID는 양수만 가능합니다.")
             Long lastReviewId,
 
-            @Parameter(description = "지도 좌표 요청")
-            @Valid
-            MapCoordinateRequest mapCoordinateRequest,
+            @Parameter(description = "지도 중심 경도", example = "123.3636")
+            BigDecimal x,
 
-            @Parameter(description = "디바이스 좌표 요청")
-            @Valid
-            DeviceCoordinateRequest deviceCoordinateRequest,
+            @Parameter(description = "지도 중심 위도", example = "32.3636")
+            BigDecimal y,
+
+            @Parameter(description = "지도 경도 증가값", example = "3.1212")
+            @Positive(message = "경도 증가값은 0이상의 양수만 가능합니다.")
+            BigDecimal deltaX,
+
+            @Parameter(description = "지도 위도 증가값", example = "3.1212")
+            @Positive(message = "위도 증가값은 0이상의 양수만 가능합니다.")
+            BigDecimal deltaY,
+
+            @Parameter(description = "사용자 경도", example = "123.3636")
+            BigDecimal deviceX,
+
+            @Parameter(description = "사용자 위도", example = "32.3636")
+            BigDecimal deviceY,
 
             @Parameter(description = "페이지 크기", example = "10")
             @Positive(message = "페이지 크기는 양수만 가능합니다.")

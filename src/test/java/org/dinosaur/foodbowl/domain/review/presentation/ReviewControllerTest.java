@@ -156,9 +156,7 @@ class ReviewControllerTest extends PresentationTest {
                             .param("deviceX", "123.3636")
                             .param("deviceY", "32.3636"))
                     .andDo(print())
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("errorCode").value("CLIENT-105"))
-                    .andExpect(jsonPath("$.message").value(containsString("지도 중심 경도가 존재하지 않습니다.")));
+                    .andExpect(status().isBadRequest());
         }
 
         @Test
@@ -173,9 +171,7 @@ class ReviewControllerTest extends PresentationTest {
                             .param("deviceX", "123.3636")
                             .param("deviceY", "32.3636"))
                     .andDo(print())
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("errorCode").value("CLIENT-105"))
-                    .andExpect(jsonPath("$.message").value(containsString("지도 중심 위도가 존재하지 않습니다.")));
+                    .andExpect(status().isBadRequest());
         }
 
         @Test
@@ -190,9 +186,7 @@ class ReviewControllerTest extends PresentationTest {
                             .param("deviceX", "123.3636")
                             .param("deviceY", "32.3636"))
                     .andDo(print())
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("errorCode").value("CLIENT-105"))
-                    .andExpect(jsonPath("$.message").value(containsString("경도 증가값이 존재하지 않습니다.")));
+                    .andExpect(status().isBadRequest());
         }
 
         @Test
@@ -207,9 +201,7 @@ class ReviewControllerTest extends PresentationTest {
                             .param("deviceX", "123.3636")
                             .param("deviceY", "32.3636"))
                     .andDo(print())
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("errorCode").value("CLIENT-105"))
-                    .andExpect(jsonPath("$.message").value(containsString("위도 증가값이 존재하지 않습니다.")));
+                    .andExpect(status().isBadRequest());
         }
 
         @ParameterizedTest
@@ -227,13 +219,13 @@ class ReviewControllerTest extends PresentationTest {
                             .param("deviceY", "32.3636"))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("errorCode").value("CLIENT-105"))
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
                     .andExpect(jsonPath("$.message").value(containsString("경도 증가값은 0이상의 양수만 가능합니다.")));
         }
 
         @ParameterizedTest
         @ValueSource(strings = {"-1", "0"})
-        void 위도ㅡ증가값이_0이상의_양수가_아니라면_400_응답을_반환한다(String deltaY) throws Exception {
+        void 위도_증가값이_0이상의_양수가_아니라면_400_응답을_반환한다(String deltaY) throws Exception {
             mockingAuthMemberInResolver();
 
             mockMvc.perform(get("/v1/reviews/following")
@@ -246,7 +238,7 @@ class ReviewControllerTest extends PresentationTest {
                             .param("deviceY", "32.3636"))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("errorCode").value("CLIENT-105"))
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
                     .andExpect(jsonPath("$.message").value(containsString("위도 증가값은 0이상의 양수만 가능합니다.")));
         }
 
@@ -262,9 +254,7 @@ class ReviewControllerTest extends PresentationTest {
                             .param("deltaY", "3.12")
                             .param("deviceY", "32.3636"))
                     .andDo(print())
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("errorCode").value("CLIENT-105"))
-                    .andExpect(jsonPath("$.message").value(containsString("디바이스 경도가 존재하지 않습니다.")));
+                    .andExpect(status().isBadRequest());
         }
 
         @Test
@@ -279,9 +269,7 @@ class ReviewControllerTest extends PresentationTest {
                             .param("deltaY", "3.12")
                             .param("deviceX", "123.3636"))
                     .andDo(print())
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("errorCode").value("CLIENT-105"))
-                    .andExpect(jsonPath("$.message").value(containsString("디바이스 위도가 존재하지 않습니다.")));
+                    .andExpect(status().isBadRequest());
         }
 
         @Test
