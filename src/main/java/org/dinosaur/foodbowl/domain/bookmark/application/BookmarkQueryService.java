@@ -13,12 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
 public class BookmarkQueryService {
 
     private final BookmarkRepository bookmarkRepository;
 
+    @Transactional(readOnly = true)
     public Set<Store> getBookmarkStoresByMember(Member member) {
         List<Bookmark> bookmarks = bookmarkRepository.findByMember(member);
         return bookmarks.stream()
