@@ -12,3 +12,4 @@ public interface StoreRepository extends Repository<Store, Long> {
 
     Store save(Store store);
 }
+

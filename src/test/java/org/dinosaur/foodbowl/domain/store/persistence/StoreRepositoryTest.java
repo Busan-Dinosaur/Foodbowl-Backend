@@ -39,10 +39,7 @@ class StoreRepositoryTest extends PersistenceTest {
                 .locationId("1412414")
                 .storeName("비비큐 여의도한강공원점")
                 .category(categoryRepository.findById(1L))
-                .address(Address.of(
-                        "서울시 영등포구 여의도동 451",
-                        PointUtils.generate(BigDecimal.valueOf(123.23), BigDecimal.valueOf(35.52)))
-                )
+                .address(createAddress(125.1241, 34.125152))
                 .storeUrl("http://image.bbq.foodbowl")
                 .phone("02-123-4567")
                 .build();
@@ -50,5 +47,12 @@ class StoreRepositoryTest extends PersistenceTest {
         Store saveStore = storeRepository.save(store);
 
         assertThat(saveStore.getId()).isNotNull();
+    }
+
+    private Address createAddress(double x, double y) {
+        return Address.of(
+                "서울시 서초구 방배동 1234",
+                PointUtils.generate(new BigDecimal(x), new BigDecimal(y))
+        );
     }
 }

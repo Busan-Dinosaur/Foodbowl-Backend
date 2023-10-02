@@ -11,8 +11,11 @@ import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
 import org.dinosaur.foodbowl.domain.store.domain.vo.CategoryType;
 import org.dinosaur.foodbowl.domain.store.dto.response.CategoriesResponse;
+import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchResponse;
+import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchResponses;
 import org.dinosaur.foodbowl.domain.store.exception.StoreExceptionType;
 import org.dinosaur.foodbowl.domain.store.persistence.CategoryRepository;
+import org.dinosaur.foodbowl.domain.store.persistence.StoreCustomRepository;
 import org.dinosaur.foodbowl.domain.store.persistence.StoreRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
@@ -26,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class StoreService {
 
     private final StoreRepository storeRepository;
+    private final StoreCustomRepository storeCustomRepository;
     private final CategoryRepository categoryRepository;
     private final SchoolService schoolService;
     private final StoreSchoolService storeSchoolService;
@@ -39,6 +43,22 @@ public class StoreService {
     @Transactional(readOnly = true)
     public Optional<Store> findByLocationId(String locationId) {
         return storeRepository.findByLocationId(locationId);
+    }
+
+    @Transactional(readOnly = true)
+    public StoreSearchResponses search(String name, BigDecimal x, BigDecimal y, int size) {
+        Point memberCurrentPoint = PointUtils.generate(x, y);
+        List<StoreSearchResponse> searchResponses =
+                storeCustomRepository.search(
+                                name,
+                                memberCurrentPoint.getX(),
+                                memberCurrentPoint.getY(),
+                                size
+                        )
+                        .stream()
+                        .toList();
+
+        return StoreSearchResponses.from(searchResponses);
     }
 
     @Transactional(readOnly = true)
