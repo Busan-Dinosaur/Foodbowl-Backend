@@ -13,16 +13,10 @@ public interface FollowRepository extends Repository<Follow, Long> {
 
     Optional<Follow> findById(Long id);
 
-    @Query("select f from Follow f"
-            + " left join fetch f.following.memberThumbnail.thumbnail"
-            + " where f.follower = :follower"
-    )
+    @Query("select f from Follow f where f.follower = :follower")
     Slice<Follow> findAllByFollower(@Param("follower") Member follower, Pageable pageable);
 
-    @Query("select f from Follow f"
-            + " left join fetch f.follower.memberThumbnail.thumbnail"
-            + " where f.following = :following"
-    )
+    @Query("select f from Follow f where f.following = :following")
     Slice<Follow> findAllByFollowing(@Param("following") Member following, Pageable pageable);
 
     Optional<Follow> findByFollowingAndFollower(Member following, Member follower);

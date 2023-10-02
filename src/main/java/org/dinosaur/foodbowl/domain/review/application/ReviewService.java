@@ -5,12 +5,20 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.dinosaur.foodbowl.domain.bookmark.application.BookmarkQueryService;
+import org.dinosaur.foodbowl.domain.follow.application.FollowCustomService;
+import org.dinosaur.foodbowl.domain.follow.application.dto.MemberToFollowerCountDto;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.photo.application.PhotoService;
 import org.dinosaur.foodbowl.domain.photo.domain.Photo;
-import org.dinosaur.foodbowl.domain.review.application.dto.request.ReviewCreateRequest;
-import org.dinosaur.foodbowl.domain.review.application.dto.request.ReviewUpdateRequest;
+import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
+import org.dinosaur.foodbowl.domain.review.application.dto.ReviewToPhotoPathDto;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
+import org.dinosaur.foodbowl.domain.review.dto.request.DeviceCoordinateRequest;
+import org.dinosaur.foodbowl.domain.review.dto.request.MapCoordinateRequest;
+import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
+import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
+import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
 import org.dinosaur.foodbowl.domain.review.exception.ReviewExceptionType;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
 import org.dinosaur.foodbowl.domain.store.application.StoreService;
@@ -31,6 +39,52 @@ public class ReviewService {
     private final StoreService storeService;
     private final PhotoService photoService;
     private final ReviewPhotoService reviewPhotoService;
+    private final ReviewCustomService reviewCustomService;
+    private final ReviewPhotoCustomService reviewPhotoCustomService;
+    private final FollowCustomService followCustomService;
+    private final BookmarkQueryService bookmarkQueryService;
+
+    @Transactional(readOnly = true)
+    public ReviewPageResponse getReviewsByFollowingInMapBounds(
+            Long lastReviewId,
+            MapCoordinateRequest mapCoordinateRequest,
+            DeviceCoordinateRequest deviceCoordinateRequest,
+            int pageSize,
+            Member loginMember
+    ) {
+        MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                mapCoordinateRequest.x(),
+                mapCoordinateRequest.y(),
+                mapCoordinateRequest.deltaX(),
+                mapCoordinateRequest.deltaY()
+        );
+
+        List<Review> reviews = reviewCustomService.getReviewsByFollowingInMapBounds(
+                loginMember.getId(),
+                lastReviewId,
+                mapCoordinateBoundDto,
+                pageSize
+        );
+        MemberToFollowerCountDto memberToFollowerCountDto =
+                followCustomService.getFollowerCountByMembers(getWriters(reviews));
+        ReviewToPhotoPathDto reviewToPhotoPathDto = reviewPhotoCustomService.getPhotoPathByReviews(reviews);
+        Set<Store> bookmarkStores = bookmarkQueryService.getBookmarkStoresByMember(loginMember);
+
+        return ReviewPageResponse.of(
+                reviews,
+                memberToFollowerCountDto,
+                reviewToPhotoPathDto,
+                bookmarkStores,
+                deviceCoordinateRequest.deviceX(),
+                deviceCoordinateRequest.deviceY()
+        );
+    }
+
+    private List<Member> getWriters(List<Review> reviews) {
+        return reviews.stream()
+                .map(Review::getMember)
+                .toList();
+    }
 
     @Transactional
     public Review create(ReviewCreateRequest reviewCreateRequest, List<MultipartFile> imageFiles, Member member) {

@@ -6,7 +6,7 @@ import org.dinosaur.foodbowl.domain.review.domain.ReviewPhoto;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.repository.Repository;
 
-public interface ReviewPhotoRepository extends Repository<ReviewPhoto, Long>, ReviewPhotoCustomRepository {
+public interface ReviewPhotoRepository extends Repository<ReviewPhoto, Long> {
 
     @EntityGraph(attributePaths = {"photo"})
     List<ReviewPhoto> findAllByReview(Review review);

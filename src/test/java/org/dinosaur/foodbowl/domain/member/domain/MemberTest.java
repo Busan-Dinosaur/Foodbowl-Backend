@@ -4,9 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import java.util.List;
 import org.dinosaur.foodbowl.domain.member.domain.vo.Introduction;
 import org.dinosaur.foodbowl.domain.member.domain.vo.Nickname;
 import org.dinosaur.foodbowl.domain.member.domain.vo.SocialType;
+import org.dinosaur.foodbowl.domain.photo.domain.Thumbnail;
 import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -121,6 +124,48 @@ class MemberTest {
             boolean result = member.hasNickname(nickname);
 
             assertThat(result).isFalse();
+        }
+    }
+
+    @Nested
+    class 프로필_이미지_경로_조회_시 {
+
+        @Test
+        void 프로필_이미지가_존재하면_프로필_이미지_경로를_반환한다() {
+            Member member = Member.builder()
+                    .socialType(SocialType.APPLE)
+                    .socialId("A1B2C3D4")
+                    .email("email@email.com")
+                    .nickname("nickname")
+                    .introduction("introduction")
+                    .build();
+            Thumbnail thumbnail = Thumbnail.builder()
+                    .path("image.png")
+                    .build();
+            MemberThumbnail memberThumbnail = MemberThumbnail.builder()
+                    .member(member)
+                    .thumbnail(thumbnail)
+                    .build();
+            ReflectionTestUtils.setField(member, "memberThumbnails", List.of(memberThumbnail));
+
+            String profileImageUrl = member.getProfileImageUrl();
+
+            assertThat(profileImageUrl).isEqualTo(thumbnail.getPath());
+        }
+
+        @Test
+        void 프로필_이미지가_존재하지_않으면_NULL_반환한다() {
+            Member member = Member.builder()
+                    .socialType(SocialType.APPLE)
+                    .socialId("A1B2C3D4")
+                    .email("email@email.com")
+                    .nickname("nickname")
+                    .introduction("introduction")
+                    .build();
+
+            String profileImageUrl = member.getProfileImageUrl();
+
+            assertThat(profileImageUrl).isNull();
         }
     }
 }
