@@ -140,16 +140,6 @@ class StoreServiceTest extends IntegrationTest {
                         .isEqualTo(storeA.getId());
             });
         }
-
-        @ParameterizedTest
-        @ValueSource(strings = " ")
-        @NullAndEmptySource
-        void 검색_단어가_존재하지_않거나_공백이면_예외가_발생한다(String name) {
-            assertThatThrownBy(
-                    () -> storeService.search(name, BigDecimal.valueOf(123.45), BigDecimal.valueOf(35.124), 10))
-                    .isInstanceOf(BadRequestException.class)
-                    .hasMessage("가게 검색 키워드는 반드시 포함되어야 합니다.");
-        }
     }
 
     @Nested

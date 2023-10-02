@@ -47,7 +47,6 @@ public class StoreService {
 
     @Transactional(readOnly = true)
     public StoreSearchResponses search(String name, BigDecimal x, BigDecimal y, int size) {
-        validateName(name);
         Point memberCurrentPoint = PointUtils.generate(x, y);
         List<StoreSearchResponse> searchResponses =
                 storeCustomRepository.search(
@@ -60,12 +59,6 @@ public class StoreService {
                         .toList();
 
         return StoreSearchResponses.from(searchResponses);
-    }
-
-    private void validateName(String name) {
-        if (name == null || name.isBlank()) {
-            throw new BadRequestException(StoreExceptionType.EMPTY_SEARCH_NAME);
-        }
     }
 
     @Transactional(readOnly = true)
