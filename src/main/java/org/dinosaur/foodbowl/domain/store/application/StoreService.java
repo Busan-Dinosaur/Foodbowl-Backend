@@ -15,6 +15,7 @@ import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchResponse;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchResponses;
 import org.dinosaur.foodbowl.domain.store.exception.StoreExceptionType;
 import org.dinosaur.foodbowl.domain.store.persistence.CategoryRepository;
+import org.dinosaur.foodbowl.domain.store.persistence.StoreCustomRepository;
 import org.dinosaur.foodbowl.domain.store.persistence.StoreRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class StoreService {
 
     private final StoreRepository storeRepository;
+    private final StoreCustomRepository storeCustomRepository;
     private final CategoryRepository categoryRepository;
     private final SchoolService schoolService;
     private final StoreSchoolService storeSchoolService;
@@ -48,14 +50,13 @@ public class StoreService {
         validateName(name);
         Point memberCurrentPoint = PointUtils.generate(x, y);
         List<StoreSearchResponse> searchResponses =
-                storeRepository.search(
+                storeCustomRepository.search(
                                 name,
                                 memberCurrentPoint.getX(),
                                 memberCurrentPoint.getY(),
                                 size
                         )
                         .stream()
-                        .map(StoreSearchResponse::from)
                         .toList();
 
         return StoreSearchResponses.from(searchResponses);

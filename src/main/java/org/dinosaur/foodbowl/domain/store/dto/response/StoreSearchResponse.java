@@ -23,14 +23,5 @@ public class StoreSearchResponse {
 
     @Schema(description = "가게 리뷰 개수", example = "10")
     private long reviewCount;
-
-    public static StoreSearchResponse from(StoreSearchQueryResponse response) {
-        return new StoreSearchResponse(
-                response.getStoreId(),
-                response.getStoreName(),
-                response.getDistance(),
-                response.getReviewCount()
-        );
-    }
 }
 

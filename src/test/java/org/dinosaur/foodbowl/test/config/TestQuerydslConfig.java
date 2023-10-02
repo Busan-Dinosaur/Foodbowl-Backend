@@ -6,6 +6,7 @@ import jakarta.persistence.PersistenceContext;
 import org.dinosaur.foodbowl.domain.follow.persistence.FollowCustomRepository;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewCustomRepository;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewPhotoCustomRepository;
+import org.dinosaur.foodbowl.domain.store.persistence.StoreCustomRepository;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
@@ -35,5 +36,10 @@ public class TestQuerydslConfig {
     @Bean
     public ReviewPhotoCustomRepository reviewPhotoCustomRepository() {
         return new ReviewPhotoCustomRepository(jpaQueryFactory());
+    }
+
+    @Bean
+    public StoreCustomRepository storeCustomRepository() {
+        return new StoreCustomRepository(jpaQueryFactory());
     }
 }
