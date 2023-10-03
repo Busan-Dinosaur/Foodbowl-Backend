@@ -6,6 +6,7 @@ import static org.dinosaur.foodbowl.domain.member.domain.QMember.member;
 import static org.dinosaur.foodbowl.domain.review.domain.QReview.review;
 import static org.dinosaur.foodbowl.domain.store.domain.QCategory.category;
 import static org.dinosaur.foodbowl.domain.store.domain.QStore.store;
+import static org.dinosaur.foodbowl.domain.store.domain.QStoreSchool.storeSchool;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -63,6 +64,30 @@ public class ReviewCustomRepository {
                 .where(
                         ltLastReviewId(lastReviewId),
                         follow.follower.id.eq(followerId),
+                        containsPolygon(mapCoordinateBoundDto)
+                )
+                .orderBy(review.id.desc())
+                .limit(pageSize)
+                .fetch();
+    }
+
+    public List<Review> findPaginationReviewsBySchoolInMapBounds(
+            Long schoolId,
+            Long lastReviewId,
+            MapCoordinateBoundDto mapCoordinateBoundDto,
+            int pageSize
+    ) {
+        return jpaQueryFactory.selectDistinct(review)
+                .from(review)
+                .innerJoin(review.store, store).fetchJoin()
+                .innerJoin(review.member, member).fetchJoin()
+                .innerJoin(store.category, category).fetchJoin()
+                .innerJoin(storeSchool).on(
+                        storeSchool.store.eq(review.store),
+                        storeSchool.school.id.eq(schoolId)
+                )
+                .where(
+                        ltLastReviewId(lastReviewId),
                         containsPolygon(mapCoordinateBoundDto)
                 )
                 .orderBy(review.id.desc())

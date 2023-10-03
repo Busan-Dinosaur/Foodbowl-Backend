@@ -84,6 +84,32 @@ public class ReviewController implements ReviewControllerDocs {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/schools")
+    public ResponseEntity<ReviewPageResponse> getReviewsBySchoolInMapBounds(
+            @RequestParam(name = "schoolId") @Positive(message = "학교 ID는 양수만 가능합니다.") Long schoolId,
+            @RequestParam(name = "lastReviewId", required = false) @Positive(message = "리뷰 ID는 양수만 가능합니다.") Long lastReviewId,
+            @RequestParam(name = "x") BigDecimal x,
+            @RequestParam(name = "y") BigDecimal y,
+            @RequestParam(name = "deltaX") @Positive(message = "경도 증가값은 0이상의 양수만 가능합니다.") BigDecimal deltaX,
+            @RequestParam(name = "deltaY") @Positive(message = "위도 증가값은 0이상의 양수만 가능합니다.") BigDecimal deltaY,
+            @RequestParam(name = "deviceX") BigDecimal deviceX,
+            @RequestParam(name = "deviceY") BigDecimal deviceY,
+            @RequestParam(name = "pageSize", defaultValue = "10") @Positive(message = "페이지 크기는 양수만 가능합니다.") int pageSize,
+            @Auth Member loginMember
+    ) {
+        MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(x, y, deltaX, deltaY);
+        DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(deviceX, deviceY);
+        ReviewPageResponse response = reviewService.getReviewsBySchoolInMapBounds(
+                schoolId,
+                lastReviewId,
+                mapCoordinateRequest,
+                deviceCoordinateRequest,
+                pageSize,
+                loginMember
+        );
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> create(
             @RequestPart(name = "request") @Valid ReviewCreateRequest reviewCreateRequest,
