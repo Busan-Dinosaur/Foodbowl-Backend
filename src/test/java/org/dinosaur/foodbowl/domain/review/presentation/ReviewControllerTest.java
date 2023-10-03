@@ -70,6 +70,139 @@ class ReviewControllerTest extends PresentationTest {
     private ReviewService reviewService;
 
     @Nested
+    class 북마크한_가게_리뷰_페이징_조회_시 {
+
+        private final String accessToken = jwtTokenProvider.createAccessToken(1L, ROLE_회원);
+
+        @Test
+        void 정상적인_요청이라면_200_응답을_바노한한다() throws Exception {
+            mockingAuthMemberInResolver();
+            ReviewPageResponse response = new ReviewPageResponse(
+                    List.of(
+                            new ReviewResponse(
+                                    new ReviewWriterResponse(1L, "hello", "image.png", 0L),
+                                    new ReviewContentResponse(
+                                            1L,
+                                            "content",
+                                            List.of("image.png"),
+                                            LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS),
+                                            LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+                                    ),
+                                    new ReviewStoreResponse(
+                                            1L,
+                                            "카페",
+                                            "가게",
+                                            "가게주소",
+                                            100.13,
+                                            false
+                                    )
+                            )
+                    ),
+                    new ReviewPageInfo(10L, 1L, 10)
+            );
+            given(reviewService.getReviewsByBookmarkInMapBounds(
+                    any(),
+                    any(MapCoordinateRequest.class),
+                    any(DeviceCoordinateRequest.class),
+                    anyInt(),
+                    any(Member.class)
+            )).willReturn(response);
+
+            MvcResult mvcResult = mockMvc.perform(get("/v1/reviews/bookmarks")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+            ReviewPageResponse result = objectMapper.readValue(jsonResponse, ReviewPageResponse.class);
+            assertThat(result).usingRecursiveComparison().isEqualTo(response);
+        }
+
+        @Test
+        void 마지막_리뷰ID가_양수가_아니라면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/bookmarks")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("lastReviewId", "-1")
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("리뷰 ID는 양수만 가능합니다.")));
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 경도_증가값이_0이상의_양수가_아니라면_400_응답을_반환한다(String deltaX) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/bookmarks")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", deltaX)
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("경도 증가값은 0이상의 양수만 가능합니다.")));
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 위도_증가값이_0이상의_양수가_아니라면_400_응답을_반환한다(String deltaY) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/bookmarks")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", deltaY)
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("위도 증가값은 0이상의 양수만 가능합니다.")));
+        }
+
+        @Test
+        void 페이지_크기가_양수가_아니라면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/bookmarks")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636")
+                            .param("pageSize", "-1"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("페이지 크기는 양수만 가능합니다.")));
+        }
+    }
+
+    @Nested
     class 팔로잉_멤버의_리뷰_페이징_조회_시 {
 
         private final String accessToken = jwtTokenProvider.createAccessToken(1L, ROLE_회원);
