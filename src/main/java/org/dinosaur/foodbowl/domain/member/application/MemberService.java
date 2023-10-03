@@ -80,8 +80,8 @@ public class MemberService {
         return MemberSearchResponse.of(
                 member,
                 loginMember,
-                followRepository.findByFollowingAndFollower(member, loginMember).isPresent(),
-                followerCountByMembers
+                followerCountByMembers.getFollowCount(member.getId()),
+                followRepository.findByFollowingAndFollower(member, loginMember).isPresent()
         );
     }
 
