@@ -4,6 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.dinosaur.foodbowl.domain.follow.persistence.FollowCustomRepository;
+import org.dinosaur.foodbowl.domain.member.persistence.MemberCustomRepository;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewCustomRepository;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewPhotoCustomRepository;
 import org.dinosaur.foodbowl.domain.store.persistence.StoreCustomRepository;
@@ -41,5 +42,10 @@ public class TestQuerydslConfig {
     @Bean
     public StoreCustomRepository storeCustomRepository() {
         return new StoreCustomRepository(jpaQueryFactory());
+    }
+
+    @Bean
+    public MemberCustomRepository memberCustomRepository() {
+        return new MemberCustomRepository(jpaQueryFactory());
     }
 }
