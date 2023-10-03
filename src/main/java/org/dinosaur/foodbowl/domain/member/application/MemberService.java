@@ -79,6 +79,7 @@ public class MemberService {
     ) {
         return MemberSearchResponse.of(
                 member,
+                loginMember,
                 followRepository.findByFollowingAndFollower(member, loginMember).isPresent(),
                 followerCountByMembers
         );

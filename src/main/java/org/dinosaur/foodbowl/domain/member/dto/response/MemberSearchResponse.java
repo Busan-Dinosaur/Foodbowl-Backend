@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.domain.member.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.Objects;
 import org.dinosaur.foodbowl.domain.follow.application.dto.MemberToFollowerCountDto;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 
@@ -19,10 +20,14 @@ public record MemberSearchResponse(
         long followerCount,
 
         @Schema(description = "팔로잉 여부", example = "true")
-        boolean isFollowing
+        boolean isFollowing,
+
+        @Schema(description = "검색한 사용자 여부", example = "false")
+        boolean isMe
 ) {
     public static MemberSearchResponse of(
             Member member,
+            Member loginMember,
             boolean isFollowing,
             MemberToFollowerCountDto memberToFollowerCountDto
     ) {
@@ -31,7 +36,8 @@ public record MemberSearchResponse(
                 member.getNickname(),
                 member.getProfileImageUrl(),
                 memberToFollowerCountDto.getFollowCount(member.getId()),
-                isFollowing
+                isFollowing,
+                Objects.equals(member, loginMember)
         );
     }
 }
