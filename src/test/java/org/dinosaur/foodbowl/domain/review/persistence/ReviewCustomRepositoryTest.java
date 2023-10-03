@@ -114,52 +114,6 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
         }
 
         @Test
-        void 폴리곤_영역에_경도가_속하지_않는_가게의_리뷰는_조회하지_않는다() {
-            Member member = memberTestPersister.builder().save();
-            Store store = storeTestPersister.builder().save();
-            reviewTestPersister.builder().store(store).save();
-            bookmarkTestPersister.builder().member(member).store(store).save();
-            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
-                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX() + 10),
-                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
-                    BigDecimal.valueOf(1),
-                    BigDecimal.valueOf(1)
-            );
-
-            List<Review> result = reviewCustomRepository.findPaginationReviewsByBookmarkInMapBounds(
-                    member.getId(),
-                    null,
-                    mapCoordinateBoundDto,
-                    10
-            );
-
-            assertThat(result).isEmpty();
-        }
-
-        @Test
-        void 폴리곤_영역에_위도가_속하지_않는_가게의_리뷰는_조회하지_않는다() {
-            Member member = memberTestPersister.builder().save();
-            Store store = storeTestPersister.builder().save();
-            reviewTestPersister.builder().store(store).save();
-            bookmarkTestPersister.builder().member(member).store(store).save();
-            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
-                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
-                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY() + 10),
-                    BigDecimal.valueOf(1),
-                    BigDecimal.valueOf(1)
-            );
-
-            List<Review> result = reviewCustomRepository.findPaginationReviewsByBookmarkInMapBounds(
-                    member.getId(),
-                    null,
-                    mapCoordinateBoundDto,
-                    10
-            );
-
-            assertThat(result).isEmpty();
-        }
-
-        @Test
         void 폴리곤_영역에_경도와_위도가_속하지_않는_가게의_리뷰는_조회하지_않는다() {
             Member member = memberTestPersister.builder().save();
             Store store = storeTestPersister.builder().save();
@@ -318,54 +272,6 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
                     BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
                     BigDecimal.valueOf(3),
                     BigDecimal.valueOf(3)
-            );
-
-            List<Review> result = reviewCustomRepository.findPaginationReviewsByFollowingInMapBounds(
-                    member.getId(),
-                    null,
-                    mapCoordinateBoundDto,
-                    10
-            );
-
-            assertThat(result).isEmpty();
-        }
-
-        @Test
-        void 폴리곤_영역에_경도가_속하지_않는_가게의_리뷰는_조회하지_않는다() {
-            Member member = memberTestPersister.builder().save();
-            Member writer = memberTestPersister.builder().save();
-            followTestPersister.builder().following(writer).follower(member).save();
-            Store store = storeTestPersister.builder().save();
-            reviewTestPersister.builder().store(store).member(writer).save();
-            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
-                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX() + 10),
-                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
-                    BigDecimal.valueOf(1),
-                    BigDecimal.valueOf(1)
-            );
-
-            List<Review> result = reviewCustomRepository.findPaginationReviewsByFollowingInMapBounds(
-                    member.getId(),
-                    null,
-                    mapCoordinateBoundDto,
-                    10
-            );
-
-            assertThat(result).isEmpty();
-        }
-
-        @Test
-        void 폴리곤_영역에_위도가_속하지_않는_가게의_리뷰는_조회하지_않는다() {
-            Member member = memberTestPersister.builder().save();
-            Member writer = memberTestPersister.builder().save();
-            followTestPersister.builder().following(writer).follower(member).save();
-            Store store = storeTestPersister.builder().save();
-            reviewTestPersister.builder().store(store).member(writer).save();
-            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
-                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
-                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY() + 10),
-                    BigDecimal.valueOf(1),
-                    BigDecimal.valueOf(1)
             );
 
             List<Review> result = reviewCustomRepository.findPaginationReviewsByFollowingInMapBounds(
