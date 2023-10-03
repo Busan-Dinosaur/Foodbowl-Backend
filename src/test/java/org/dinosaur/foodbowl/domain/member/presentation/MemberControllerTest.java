@@ -175,7 +175,7 @@ class MemberControllerTest extends PresentationTest {
 
         @ParameterizedTest
         @ValueSource(strings = {" ", ""})
-        void 검색어가_없거나_공백이면_400_상태코드를_반환한다(String name) throws Exception {
+        void 검색어가_없거나_공백이면_400_응답을_반환한다(String name) throws Exception {
             mockingAuthMemberInResolver();
 
             mockMvc.perform(get("/v1/members/search")
@@ -189,7 +189,7 @@ class MemberControllerTest extends PresentationTest {
         }
 
         @Test
-        void 검색어_파라미터가_없으면_400_상태코드를_반환한다() throws Exception {
+        void 검색어_파라미터가_없으면_400_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
 
             mockMvc.perform(get("/v1/members/search")

@@ -64,7 +64,7 @@ public interface MemberControllerDocs {
     @Operation(
             summary = "회원 검색",
             description = """
-                    닉네임으로 회원을 검색합니.
+                    닉네임으로 회원을 검색합니다.
                     
                     필수 파라미터: name(검색 키워드)
                     
@@ -99,7 +99,8 @@ public interface MemberControllerDocs {
             @NotBlank(message = "검색어는 빈 값이 될 수 없습니다.") String name,
 
             @Parameter(description = "검색 최대 결과 수", example = "15")
-            @Positive(message = "조회 크기는 1이상만 가능합니다.") @Max(value = 30, message = "최대 30개까지 조회가능합니다.") int size,
+            @Positive(message = "조회 크기는 1이상만 가능합니다.")
+            @Max(value = 30, message = "최대 30개까지 조회가능합니다.") int size,
 
             @Auth Member loginMember
     );
