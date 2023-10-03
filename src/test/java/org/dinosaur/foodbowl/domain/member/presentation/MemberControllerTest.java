@@ -3,6 +3,7 @@ package org.dinosaur.foodbowl.domain.member.presentation;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -17,12 +18,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.member.application.MemberService;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
 import org.dinosaur.foodbowl.domain.member.dto.request.UpdateProfileRequest;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
+import org.dinosaur.foodbowl.domain.member.dto.response.MemberSearchResponse;
+import org.dinosaur.foodbowl.domain.member.dto.response.MemberSearchResponses;
 import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
 import org.dinosaur.foodbowl.test.PresentationTest;
 import org.dinosaur.foodbowl.test.file.FileTestUtils;
@@ -58,6 +62,7 @@ class MemberControllerTest extends PresentationTest {
 
     @MockBean
     private MemberService memberService;
+
 
     @Nested
     class 프로필_조회_시 {
@@ -139,6 +144,92 @@ class MemberControllerTest extends PresentationTest {
         MemberProfileResponse result = objectMapper.readValue(jsonResponse, MemberProfileResponse.class);
 
         assertThat(result).usingRecursiveComparison().isEqualTo(response);
+    }
+
+    @Nested
+    class 닉네임으로_회원_검색_시 {
+
+        private final String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
+
+        @Test
+        void 정상적으로_검색하면_200_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            MemberSearchResponses response = new MemberSearchResponses(
+                    List.of(new MemberSearchResponse(1L, "gray", "https://image.com", 10, true, false))
+            );
+            given(memberService.search(anyString(), anyInt(), any(Member.class)))
+                    .willReturn(response);
+
+            MvcResult mvcResult = mockMvc.perform(get("/v1/members/search")
+                            .param("name", "gray")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andReturn();
+            String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+            MemberSearchResponses result = objectMapper.readValue(jsonResponse, MemberSearchResponses.class);
+
+            assertThat(result).usingRecursiveComparison().isEqualTo(response);
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {" ", ""})
+        void 검색어가_없거나_공백이면_400_상태코드를_반환한다(String name) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/members/search")
+                            .param("name", name)
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("message").value(containsString("검색어는 빈 값이 될 수 없습니다.")));
+        }
+
+        @Test
+        void 검색어_파라미터가_없으면_400_상태코드를_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/members/search")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @ParameterizedTest
+        @ValueSource(ints = {31, 50})
+        void 결과_응답_수가_최대_응답_수보다_크면_400_응답을_반환한다(int size) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/members/search")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("name", "gray")
+                            .param("size", String.valueOf(size))
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("message").value(containsString("최대 30개까지 조회가능합니다.")));
+        }
+
+        @ParameterizedTest
+        @ValueSource(ints = {0, -1, -10})
+        void 결과_응답_수가_0_이하이면_400_응답을_반환한다(int size) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/members/search")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("name", "gray")
+                            .param("size", String.valueOf(size))
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("message").value(containsString("조회 크기는 1이상만 가능합니다.")));
+        }
     }
 
     @Nested

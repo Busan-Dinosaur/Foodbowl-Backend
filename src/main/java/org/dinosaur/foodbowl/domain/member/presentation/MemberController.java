@@ -1,13 +1,16 @@
 package org.dinosaur.foodbowl.domain.member.presentation;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.application.MemberService;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.dto.request.UpdateProfileRequest;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
+import org.dinosaur.foodbowl.domain.member.dto.response.MemberSearchResponses;
 import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
 import org.dinosaur.foodbowl.global.presentation.Auth;
 import org.springframework.http.MediaType;
@@ -44,6 +47,17 @@ public class MemberController implements MemberControllerDocs {
     @GetMapping("/me/profile")
     public ResponseEntity<MemberProfileResponse> getMyProfile(@Auth Member loginMember) {
         MemberProfileResponse response = memberService.getMyProfile(loginMember);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<MemberSearchResponses> search(
+            @RequestParam @NotBlank(message = "검색어는 빈 값이 될 수 없습니다.") String name,
+            @RequestParam(defaultValue = "10") @Positive(message = "조회 크기는 1이상만 가능합니다.")
+            @Max(value = 30, message = "최대 30개까지 조회가능합니다.") int size,
+            @Auth Member loginMember
+    ) {
+        MemberSearchResponses response = memberService.search(name, size, loginMember);
         return ResponseEntity.ok(response);
     }
 
