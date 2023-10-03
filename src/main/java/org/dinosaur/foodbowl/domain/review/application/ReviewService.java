@@ -23,7 +23,10 @@ import org.dinosaur.foodbowl.domain.review.exception.ReviewExceptionType;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
 import org.dinosaur.foodbowl.domain.store.application.StoreService;
 import org.dinosaur.foodbowl.domain.store.application.dto.StoreCreateDto;
+import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
+import org.dinosaur.foodbowl.domain.store.exception.SchoolExceptionType;
+import org.dinosaur.foodbowl.domain.store.persistence.SchoolRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
 import org.springframework.stereotype.Service;
@@ -36,6 +39,7 @@ public class ReviewService {
 
     private static final int REVIEW_PHOTO_MAX_SIZE = 4;
     private final ReviewRepository reviewRepository;
+    private final SchoolRepository schoolRepository;
     private final StoreService storeService;
     private final PhotoService photoService;
     private final ReviewPhotoService reviewPhotoService;
@@ -83,6 +87,32 @@ public class ReviewService {
         );
         List<Review> reviews = reviewCustomService.getReviewsByFollowingInMapBounds(
                 loginMember.getId(),
+                lastReviewId,
+                mapCoordinateBoundDto,
+                pageSize
+        );
+        return convertToReviewPageResponse(loginMember, reviews, deviceCoordinateRequest);
+    }
+
+    @Transactional(readOnly = true)
+    public ReviewPageResponse getReviewsBySchoolInMapBounds(
+            Long schoolId,
+            Long lastReviewId,
+            MapCoordinateRequest mapCoordinateRequest,
+            DeviceCoordinateRequest deviceCoordinateRequest,
+            int pageSize,
+            Member loginMember
+    ) {
+        School school = schoolRepository.findById(schoolId)
+                .orElseThrow(() -> new NotFoundException(SchoolExceptionType.NOT_FOUND));
+        MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                mapCoordinateRequest.x(),
+                mapCoordinateRequest.y(),
+                mapCoordinateRequest.deltaX(),
+                mapCoordinateRequest.deltaY()
+        );
+        List<Review> reviews = reviewCustomService.getReviewsBySchoolInMapBounds(
+                school.getId(),
                 lastReviewId,
                 mapCoordinateBoundDto,
                 pageSize

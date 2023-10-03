@@ -18,6 +18,7 @@ import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewResponse;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
+import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
@@ -330,6 +331,216 @@ class ReviewServiceTest extends IntegrationTest {
             );
 
             ReviewPageResponse response = reviewService.getReviewsByFollowingInMapBounds(
+                    null,
+                    mapCoordinateRequest,
+                    deviceCoordinateRequest,
+                    10,
+                    member
+            );
+
+            List<ReviewResponse> result = response.reviews();
+            assertSoftly(softly -> {
+                softly.assertThat(result).hasSize(1);
+                softly.assertThat(result.get(0).store().id()).isEqualTo(store.getId());
+                softly.assertThat(result.get(0).store().categoryName()).isEqualTo(store.getCategory().getName());
+                softly.assertThat(result.get(0).store().name()).isEqualTo(store.getStoreName());
+                softly.assertThat(result.get(0).store().addressName()).isEqualTo(store.getAddress().getAddressName());
+                softly.assertThat(Math.round(result.get(0).store().distance() / 10) * 10).isEqualTo(130);
+                softly.assertThat(result.get(0).store().isBookmarked()).isFalse();
+            });
+        }
+    }
+
+    @Nested
+    class 학교_근처_리뷰_목록_페이징_조회_시 {
+
+        @Test
+        void 존재하지_않는_학교라면_예외를_던진다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            assertThatThrownBy(() -> reviewService.getReviewsBySchoolInMapBounds(
+                    9999L,
+                    null,
+                    mapCoordinateRequest,
+                    deviceCoordinateRequest,
+                    10,
+                    member
+            ))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("존재하지 않는 학교입니다.");
+        }
+
+        @Test
+        void 리뷰_작성자의_팔로워_수도_함께_조회한다() {
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
+            followTestPersister.builder().following(writer).save();
+            followTestPersister.builder().following(writer).save();
+            Store store = storeTestPersister.builder().save();
+            School school = schoolTestPersister.builder().save();
+            storeSchoolTestPersister.builder().store(store).school(school).save();
+            Review review = reviewTestPersister.builder().member(writer).store(store).save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            ReviewPageResponse response = reviewService.getReviewsBySchoolInMapBounds(
+                    school.getId(),
+                    null,
+                    mapCoordinateRequest,
+                    deviceCoordinateRequest,
+                    10,
+                    member
+            );
+
+            List<ReviewResponse> result = response.reviews();
+            assertSoftly(softly -> {
+                softly.assertThat(result).hasSize(1);
+                softly.assertThat(result.get(0).writer().id()).isEqualTo(writer.getId());
+                softly.assertThat(result.get(0).writer().nickname()).isEqualTo(writer.getNickname());
+                softly.assertThat(result.get(0).writer().followerCount()).isEqualTo(2);
+            });
+        }
+
+        @Test
+        void 리뷰의_사진_목록도_함께_조회한다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            School school = schoolTestPersister.builder().save();
+            storeSchoolTestPersister.builder().store(store).school(school).save();
+            Review review = reviewTestPersister.builder().store(store).save();
+            ReviewPhoto reviewPhotoA = reviewPhotoTestPersister.builder().review(review).save();
+            ReviewPhoto reviewPhotoB = reviewPhotoTestPersister.builder().review(review).save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            ReviewPageResponse response = reviewService.getReviewsBySchoolInMapBounds(
+                    school.getId(),
+                    null,
+                    mapCoordinateRequest,
+                    deviceCoordinateRequest,
+                    10,
+                    member
+            );
+
+            List<ReviewResponse> result = response.reviews();
+            assertSoftly(softly -> {
+                softly.assertThat(result).hasSize(1);
+                softly.assertThat(result.get(0).review().id()).isEqualTo(review.getId());
+                softly.assertThat(result.get(0).review().content()).isEqualTo(review.getContent());
+                softly.assertThat(result.get(0).review().imagePaths())
+                        .containsExactly(reviewPhotoA.getPhoto().getPath(), reviewPhotoB.getPhoto().getPath());
+                softly.assertThat(result.get(0).review().createdAt()).isEqualTo(review.getCreatedAt());
+                softly.assertThat(result.get(0).review().updatedAt()).isEqualTo(review.getUpdatedAt());
+            });
+        }
+
+        @Test
+        void 북마크한_가게는_북마크_여부가_TRUE_이다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder()
+                    .address(
+                            Address.of(
+                                    "부산광역시 금정구 부산대학로63번길 2",
+                                    PointUtils.generate(
+                                            BigDecimal.valueOf(129.084180374589),
+                                            BigDecimal.valueOf(35.23159315706788)
+                                    )
+                            )
+                    )
+                    .save();
+            bookmarkTestPersister.builder().member(member).store(store).save();
+            School school = schoolTestPersister.builder().save();
+            storeSchoolTestPersister.builder().store(store).school(school).save();
+            Review review = reviewTestPersister.builder().store(store).save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(129.0842730512684),
+                    BigDecimal.valueOf(35.23038627521815)
+            );
+
+            ReviewPageResponse response = reviewService.getReviewsBySchoolInMapBounds(
+                    school.getId(),
+                    null,
+                    mapCoordinateRequest,
+                    deviceCoordinateRequest,
+                    10,
+                    member
+            );
+
+            List<ReviewResponse> result = response.reviews();
+            assertSoftly(softly -> {
+                softly.assertThat(result).hasSize(1);
+                softly.assertThat(result.get(0).store().id()).isEqualTo(store.getId());
+                softly.assertThat(result.get(0).store().categoryName()).isEqualTo(store.getCategory().getName());
+                softly.assertThat(result.get(0).store().name()).isEqualTo(store.getStoreName());
+                softly.assertThat(result.get(0).store().addressName()).isEqualTo(store.getAddress().getAddressName());
+                softly.assertThat(Math.round(result.get(0).store().distance() / 10) * 10).isEqualTo(130);
+                softly.assertThat(result.get(0).store().isBookmarked()).isTrue();
+            });
+        }
+
+        @Test
+        void 북마크하지_않은_가게는_북마크_여부가_FALSE_이다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder()
+                    .address(
+                            Address.of(
+                                    "부산광역시 금정구 부산대학로63번길 2",
+                                    PointUtils.generate(
+                                            BigDecimal.valueOf(129.084180374589),
+                                            BigDecimal.valueOf(35.23159315706788)
+                                    )
+                            )
+                    )
+                    .save();
+            School school = schoolTestPersister.builder().save();
+            storeSchoolTestPersister.builder().store(store).school(school).save();
+            Review review = reviewTestPersister.builder().store(store).save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(129.0842730512684),
+                    BigDecimal.valueOf(35.23038627521815)
+            );
+
+            ReviewPageResponse response = reviewService.getReviewsBySchoolInMapBounds(
+                    school.getId(),
                     null,
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
