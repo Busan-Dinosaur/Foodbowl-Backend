@@ -9,6 +9,7 @@ import org.dinosaur.foodbowl.test.persister.PhotoTestPersister;
 import org.dinosaur.foodbowl.test.persister.ReviewPhotoTestPersister;
 import org.dinosaur.foodbowl.test.persister.ReviewTestPersister;
 import org.dinosaur.foodbowl.test.persister.SchoolTestPersister;
+import org.dinosaur.foodbowl.test.persister.StoreSchoolTestPersister;
 import org.dinosaur.foodbowl.test.persister.StoreTestPersister;
 import org.dinosaur.foodbowl.test.persister.ThumbnailTestPersister;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -48,6 +49,9 @@ public class IntegrationTest {
 
     @Autowired
     protected SchoolTestPersister schoolTestPersister;
+
+    @Autowired
+    protected StoreSchoolTestPersister storeSchoolTestPersister;
 
     @Autowired
     protected StoreTestPersister storeTestPersister;
