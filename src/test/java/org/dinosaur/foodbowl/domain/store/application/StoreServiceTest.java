@@ -104,8 +104,8 @@ class StoreServiceTest extends IntegrationTest {
                     .locationId("12346585")
                     .storeName("김밥천국 선릉점")
                     .address(Address.of(
-                                    "서울시 강남구 선릉로 4244번길 2323-124",
-                                    PointUtils.generate(BigDecimal.valueOf(125.142), BigDecimal.valueOf(36.241)))
+                            "서울시 강남구 선릉로 4244번길 2323-124",
+                            PointUtils.generate(BigDecimal.valueOf(125.142), BigDecimal.valueOf(36.241)))
                     )
                     .save();
             Store nearestStoreB = storeTestPersister.builder()
