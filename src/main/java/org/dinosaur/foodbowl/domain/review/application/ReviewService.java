@@ -45,6 +45,29 @@ public class ReviewService {
     private final BookmarkQueryService bookmarkQueryService;
 
     @Transactional(readOnly = true)
+    public ReviewPageResponse getReviewsByBookmarkInMapBounds(
+            Long lastReviewId,
+            MapCoordinateRequest mapCoordinateRequest,
+            DeviceCoordinateRequest deviceCoordinateRequest,
+            int pageSize,
+            Member loginMember
+    ) {
+        MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                mapCoordinateRequest.x(),
+                mapCoordinateRequest.y(),
+                mapCoordinateRequest.deltaX(),
+                mapCoordinateRequest.deltaY()
+        );
+        List<Review> reviews = reviewCustomService.getReviewsByBookmarkInMapBounds(
+                loginMember.getId(),
+                lastReviewId,
+                mapCoordinateBoundDto,
+                pageSize
+        );
+        return convertToReviewPageResponse(loginMember, reviews, deviceCoordinateRequest);
+    }
+
+    @Transactional(readOnly = true)
     public ReviewPageResponse getReviewsByFollowingInMapBounds(
             Long lastReviewId,
             MapCoordinateRequest mapCoordinateRequest,
@@ -58,13 +81,20 @@ public class ReviewService {
                 mapCoordinateRequest.deltaX(),
                 mapCoordinateRequest.deltaY()
         );
-
         List<Review> reviews = reviewCustomService.getReviewsByFollowingInMapBounds(
                 loginMember.getId(),
                 lastReviewId,
                 mapCoordinateBoundDto,
                 pageSize
         );
+        return convertToReviewPageResponse(loginMember, reviews, deviceCoordinateRequest);
+    }
+
+    private ReviewPageResponse convertToReviewPageResponse(
+            Member loginMember,
+            List<Review> reviews,
+            DeviceCoordinateRequest deviceCoordinateRequest
+    ) {
         MemberToFollowerCountDto memberToFollowerCountDto =
                 followCustomService.getFollowerCountByMembers(getWriters(reviews));
         ReviewToPhotoPathDto reviewToPhotoPathDto = reviewPhotoCustomService.getPhotoPathByReviews(reviews);
