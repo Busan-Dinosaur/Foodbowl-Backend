@@ -25,7 +25,7 @@ public class ReviewCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     public List<Review> findPaginationReviewsByBookmarkInMapBounds(
-            Long bookmakerId,
+            Long memberId,
             Long lastReviewId,
             MapCoordinateBoundDto mapCoordinateBoundDto,
             int pageSize
@@ -37,7 +37,7 @@ public class ReviewCustomRepository {
                 .innerJoin(store.category, category).fetchJoin()
                 .innerJoin(bookmark).on(
                         bookmark.store.eq(review.store),
-                        bookmark.member.id.eq(bookmakerId)
+                        bookmark.member.id.eq(memberId)
                 )
                 .where(
                         ltLastReviewId(lastReviewId),

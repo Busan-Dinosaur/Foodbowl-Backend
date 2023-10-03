@@ -16,13 +16,13 @@ public class ReviewCustomService {
 
     @Transactional(readOnly = true)
     public List<Review> getReviewsByBookmarkInMapBounds(
-            Long bookmakerId,
+            Long memberId,
             Long lastReviewId,
             MapCoordinateBoundDto mapCoordinateBoundDto,
             int pageSize
     ) {
         return reviewCustomRepository.findPaginationReviewsByBookmarkInMapBounds(
-                bookmakerId,
+                memberId,
                 lastReviewId,
                 mapCoordinateBoundDto,
                 pageSize
