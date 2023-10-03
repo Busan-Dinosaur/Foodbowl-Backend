@@ -1,8 +1,9 @@
 package org.dinosaur.foodbowl.domain.review.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.math.BigDecimal;
 import java.util.List;
-import org.assertj.core.api.Assertions;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
@@ -16,6 +17,29 @@ class ReviewCustomServiceTest extends IntegrationTest {
 
     @Autowired
     private ReviewCustomService reviewCustomService;
+
+    @Test
+    void 북마크한_가게_리뷰_목록을_범위를_통해_조회한다() {
+        Member member = memberTestPersister.builder().save();
+        Store store = storeTestPersister.builder().save();
+        Review review = reviewTestPersister.builder().store(store).save();
+        bookmarkTestPersister.builder().member(member).store(store).save();
+        MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                BigDecimal.valueOf(3),
+                BigDecimal.valueOf(3)
+        );
+
+        List<Review> result = reviewCustomService.getReviewsByBookmarkInMapBounds(
+                member.getId(),
+                null,
+                mapCoordinateBoundDto,
+                10
+        );
+
+        assertThat(result).containsExactly(review);
+    }
 
     @Test
     void 팔로잉_하는_멤버의_리뷰_목록을_범위를_통해_조회한다() {
@@ -38,6 +62,6 @@ class ReviewCustomServiceTest extends IntegrationTest {
                 10
         );
 
-        Assertions.assertThat(result).containsExactly(review);
+        assertThat(result).containsExactly(review);
     }
 }
