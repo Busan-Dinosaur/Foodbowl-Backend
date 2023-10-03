@@ -38,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ReviewService {
 
     private static final int REVIEW_PHOTO_MAX_SIZE = 4;
+
     private final ReviewRepository reviewRepository;
     private final SchoolRepository schoolRepository;
     private final StoreService storeService;
