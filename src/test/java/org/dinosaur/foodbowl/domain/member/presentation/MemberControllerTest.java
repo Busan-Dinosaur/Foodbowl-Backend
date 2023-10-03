@@ -200,7 +200,7 @@ class MemberControllerTest extends PresentationTest {
         }
 
         @ParameterizedTest
-        @ValueSource(ints = {31, 50})
+        @ValueSource(ints = {51, 100})
         void 결과_응답_수가_최대_응답_수보다_크면_400_응답을_반환한다(int size) throws Exception {
             mockingAuthMemberInResolver();
 

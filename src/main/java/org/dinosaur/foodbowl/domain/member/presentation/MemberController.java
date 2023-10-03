@@ -54,7 +54,7 @@ public class MemberController implements MemberControllerDocs {
     public ResponseEntity<MemberSearchResponses> search(
             @RequestParam @NotBlank(message = "검색어는 빈 값이 될 수 없습니다.") String name,
             @RequestParam(defaultValue = "10") @Positive(message = "조회 크기는 1이상만 가능합니다.")
-            @Max(value = 30, message = "최대 30개까지 조회가능합니다.") int size,
+            @Max(value = 50, message = "최대 50개까지 조회가능합니다.") int size,
             @Auth Member loginMember
     ) {
         MemberSearchResponses response = memberService.search(name, size, loginMember);
