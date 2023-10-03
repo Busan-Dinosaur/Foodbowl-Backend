@@ -100,7 +100,7 @@ public interface MemberControllerDocs {
 
             @Parameter(description = "검색 최대 결과 수", example = "15")
             @Positive(message = "조회 크기는 1이상만 가능합니다.")
-            @Max(value = 30, message = "최대 30개까지 조회가능합니다.") int size,
+            @Max(value = 50, message = "최대 50개까지 조회가능합니다.") int size,
 
             @Auth Member loginMember
     );

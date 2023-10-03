@@ -212,7 +212,7 @@ class MemberControllerTest extends PresentationTest {
                     .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("errorCode").value("CLIENT-101"))
-                    .andExpect(jsonPath("message").value(containsString("최대 30개까지 조회가능합니다.")));
+                    .andExpect(jsonPath("message").value(containsString("최대 50개까지 조회가능합니다.")));
         }
 
         @ParameterizedTest
