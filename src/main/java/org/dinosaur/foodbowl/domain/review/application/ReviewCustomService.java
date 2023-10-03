@@ -43,4 +43,19 @@ public class ReviewCustomService {
                 pageSize
         );
     }
+
+    @Transactional(readOnly = true)
+    public List<Review> getReviewsBySchoolInMapBounds(
+            Long schoolId,
+            Long lastReviewId,
+            MapCoordinateBoundDto mapCoordinateBoundDto,
+            int pageSize
+    ) {
+        return reviewCustomRepository.findPaginationReviewsBySchoolInMapBounds(
+                schoolId,
+                lastReviewId,
+                mapCoordinateBoundDto,
+                pageSize
+        );
+    }
 }
