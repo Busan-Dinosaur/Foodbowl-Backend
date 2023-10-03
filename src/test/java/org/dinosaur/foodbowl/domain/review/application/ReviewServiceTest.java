@@ -370,7 +370,7 @@ class ReviewServiceTest extends IntegrationTest {
             );
 
             assertThatThrownBy(() -> reviewService.getReviewsBySchoolInMapBounds(
-                    9999L,
+                    -1L,
                     null,
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
