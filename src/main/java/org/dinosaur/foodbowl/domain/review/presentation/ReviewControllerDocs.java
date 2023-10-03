@@ -70,7 +70,8 @@ public interface ReviewControllerDocs {
                             9.디바이스 위도가 존재하지 않은 경우
                                                         
                             10.페이지 크기가 양수가 아닌 경우
-                            """
+                            """,
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
     ResponseEntity<ReviewPageResponse> getReviewsByBookmarkInMapBounds(
@@ -152,7 +153,8 @@ public interface ReviewControllerDocs {
                             9.디바이스 위도가 존재하지 않은 경우
                                                         
                             10.페이지 크기가 양수가 아닌 경우
-                            """
+                            """,
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
     ResponseEntity<ReviewPageResponse> getReviewsByFollowingInMapBounds(
