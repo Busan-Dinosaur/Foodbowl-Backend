@@ -75,7 +75,7 @@ class ReviewControllerTest extends PresentationTest {
         private final String accessToken = jwtTokenProvider.createAccessToken(1L, ROLE_회원);
 
         @Test
-        void 정상적인_요청이라면_200_응답을_바노한한다() throws Exception {
+        void 정상적인_요청이라면_200_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
             ReviewPageResponse response = new ReviewPageResponse(
                     List.of(
