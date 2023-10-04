@@ -21,8 +21,8 @@ public record FollowerAndFollowingDto(
             return false;
         }
         FollowerAndFollowingDto that = (FollowerAndFollowingDto) o;
-        return Objects.equals(followerId, that.followerId) && Objects.equals(followingId,
-                that.followingId);
+        return Objects.equals(followerId, that.followerId)
+                && Objects.equals(followingId, that.followingId);
     }
 
     @Override

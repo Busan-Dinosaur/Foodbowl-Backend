@@ -24,9 +24,9 @@ public class FollowCustomService {
     }
 
     @Transactional(readOnly = true)
-    public MemberToFollowingsDto getFollowingsByMember(List<Member> members, Member loginMember) {
-        List<FollowerAndFollowingDto> followingsByFollowingsAndFollower = followCustomRepository.findFollowingsByFollowingsAndFollower(
-                members, loginMember);
+    public MemberToFollowingsDto getFollowInMembers(List<Member> members, Member loginMember) {
+        List<FollowerAndFollowingDto> followingsByFollowingsAndFollower =
+                followCustomRepository.findFollowingsByFollowingsAndFollower(members, loginMember);
         return MemberToFollowingsDto.from(followingsByFollowingsAndFollower);
     }
 }

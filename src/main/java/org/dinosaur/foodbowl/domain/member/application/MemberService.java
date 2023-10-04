@@ -64,7 +64,7 @@ public class MemberService {
         List<Member> members = memberCustomService.search(name, size);
 
         MemberToFollowerCountDto followerCountByMembers = followCustomService.getFollowerCountByMembers(members);
-        MemberToFollowingsDto followingsByMember = followCustomService.getFollowingsByMember(members, loginMember);
+        MemberToFollowingsDto followingsByMember = followCustomService.getFollowInMembers(members, loginMember);
 
         return MemberSearchResponses.of(
                 members,

@@ -48,8 +48,8 @@ class FollowCustomRepositoryTest extends PersistenceTest {
         followTestPersister.builder().follower(gray).following(memberD).save();
         List<Member> members = List.of(memberA, memberB, memberC, memberD);
 
-        List<FollowerAndFollowingDto> results = followCustomRepository.findFollowingsByFollowingsAndFollower(
-                members, gray);
+        List<FollowerAndFollowingDto> results =
+                followCustomRepository.findFollowingsByFollowingsAndFollower(members, gray);
 
         assertSoftly(softly -> {
             softly.assertThat(results).hasSize(3);

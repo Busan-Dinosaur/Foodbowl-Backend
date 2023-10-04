@@ -38,7 +38,7 @@ class FollowCustomServiceTest extends IntegrationTest {
         Member memberC = memberTestPersister.builder().save();
         followTestPersister.builder().following(memberB).follower(memberA).save();
 
-        MemberToFollowingsDto memberToFollowingsDto = followCustomService.getFollowingsByMember(
+        MemberToFollowingsDto memberToFollowingsDto = followCustomService.getFollowInMembers(
                 List.of(memberB, memberC),
                 memberA
         );
