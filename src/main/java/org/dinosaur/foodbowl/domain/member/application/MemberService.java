@@ -6,6 +6,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.follow.application.FollowCustomService;
 import org.dinosaur.foodbowl.domain.follow.application.dto.MemberToFollowerCountDto;
+import org.dinosaur.foodbowl.domain.follow.application.dto.MemberToFollowingsDto;
 import org.dinosaur.foodbowl.domain.follow.domain.Follow;
 import org.dinosaur.foodbowl.domain.follow.persistence.FollowRepository;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
@@ -14,7 +15,6 @@ import org.dinosaur.foodbowl.domain.member.domain.vo.Introduction;
 import org.dinosaur.foodbowl.domain.member.domain.vo.Nickname;
 import org.dinosaur.foodbowl.domain.member.dto.request.UpdateProfileRequest;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
-import org.dinosaur.foodbowl.domain.member.dto.response.MemberSearchResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberSearchResponses;
 import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
 import org.dinosaur.foodbowl.domain.member.exception.MemberExceptionType;
@@ -64,24 +64,13 @@ public class MemberService {
         List<Member> members = memberCustomService.search(name, size);
 
         MemberToFollowerCountDto followerCountByMembers = followCustomService.getFollowerCountByMembers(members);
+        MemberToFollowingsDto followingsByMember = followCustomService.getFollowingsByMember(members, loginMember);
 
-        List<MemberSearchResponse> memberSearchResponses = members.stream()
-                .map(member -> getMemberSearchResponse(loginMember, member, followerCountByMembers))
-                .toList();
-
-        return MemberSearchResponses.from(memberSearchResponses);
-    }
-
-    private MemberSearchResponse getMemberSearchResponse(
-            Member loginMember,
-            Member member,
-            MemberToFollowerCountDto followerCountByMembers
-    ) {
-        return MemberSearchResponse.of(
-                member,
+        return MemberSearchResponses.of(
+                members,
                 loginMember,
-                followerCountByMembers.getFollowCount(member.getId()),
-                followRepository.findByFollowingAndFollower(member, loginMember).isPresent()
+                followerCountByMembers,
+                followingsByMember
         );
     }
 
