@@ -8,6 +8,8 @@ import org.springframework.data.repository.Repository;
 
 public interface SchoolRepository extends Repository<School, Long> {
 
+    Optional<School> findById(Long id);
+
     Optional<School> findByName(SchoolName schoolName);
 
     List<School> findAllByOrderByName();

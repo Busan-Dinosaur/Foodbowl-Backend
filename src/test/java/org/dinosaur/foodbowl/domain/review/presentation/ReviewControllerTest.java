@@ -125,13 +125,14 @@ class ReviewControllerTest extends PresentationTest {
             assertThat(result).usingRecursiveComparison().isEqualTo(response);
         }
 
-        @Test
-        void 마지막_리뷰ID가_양수가_아니라면_400_응답을_반환한다() throws Exception {
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 마지막_리뷰ID가_양수가_아니라면_400_응답을_반환한다(String lastReviewId) throws Exception {
             mockingAuthMemberInResolver();
 
             mockMvc.perform(get("/v1/reviews/bookmarks")
                             .header(AUTHORIZATION, BEARER + accessToken)
-                            .param("lastReviewId", "-1")
+                            .param("lastReviewId", lastReviewId)
                             .param("x", "123.3636")
                             .param("y", "32.3636")
                             .param("deltaX", "3.12")
@@ -272,8 +273,9 @@ class ReviewControllerTest extends PresentationTest {
                     .andExpect(status().isBadRequest());
         }
 
-        @Test
-        void 페이지_크기가_양수가_아니라면_400_응답을_반환한다() throws Exception {
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 페이지_크기가_양수가_아니라면_400_응답을_반환한다(String pageSize) throws Exception {
             mockingAuthMemberInResolver();
 
             mockMvc.perform(get("/v1/reviews/bookmarks")
@@ -284,7 +286,7 @@ class ReviewControllerTest extends PresentationTest {
                             .param("deltaY", "3.12")
                             .param("deviceX", "123.3636")
                             .param("deviceY", "32.3636")
-                            .param("pageSize", "-1"))
+                            .param("pageSize", pageSize))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("errorCode").value("CLIENT-101"))
@@ -348,13 +350,14 @@ class ReviewControllerTest extends PresentationTest {
             assertThat(result).usingRecursiveComparison().isEqualTo(response);
         }
 
-        @Test
-        void 마지막_리뷰ID가_양수가_아니라면_400_응답을_반환한다() throws Exception {
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 마지막_리뷰ID가_양수가_아니라면_400_응답을_반환한다(String lastReviewId) throws Exception {
             mockingAuthMemberInResolver();
 
             mockMvc.perform(get("/v1/reviews/following")
                             .header(AUTHORIZATION, BEARER + accessToken)
-                            .param("lastReviewId", "-1")
+                            .param("lastReviewId", lastReviewId)
                             .param("x", "123.3636")
                             .param("y", "32.3636")
                             .param("deltaX", "3.12")
@@ -495,8 +498,9 @@ class ReviewControllerTest extends PresentationTest {
                     .andExpect(status().isBadRequest());
         }
 
-        @Test
-        void 페이지_크기가_양수가_아니라면_400_응답을_반환한다() throws Exception {
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 페이지_크기가_양수가_아니라면_400_응답을_반환한다(String pageSize) throws Exception {
             mockingAuthMemberInResolver();
 
             mockMvc.perform(get("/v1/reviews/following")
@@ -507,7 +511,264 @@ class ReviewControllerTest extends PresentationTest {
                             .param("deltaY", "3.12")
                             .param("deviceX", "123.3636")
                             .param("deviceY", "32.3636")
-                            .param("pageSize", "-1"))
+                            .param("pageSize", pageSize))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("페이지 크기는 양수만 가능합니다.")));
+        }
+    }
+
+    @Nested
+    class 학교_근처_가게_리뷰_페이징_조회_시 {
+
+        private final String accessToken = jwtTokenProvider.createAccessToken(1L, ROLE_회원);
+
+        @Test
+        void 정상적인_요청이라면_200_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            ReviewPageResponse response = new ReviewPageResponse(
+                    List.of(
+                            new ReviewResponse(
+                                    new ReviewWriterResponse(1L, "hello", "image.png", 0L),
+                                    new ReviewContentResponse(
+                                            1L,
+                                            "content",
+                                            List.of("image.png"),
+                                            LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS),
+                                            LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+                                    ),
+                                    new ReviewStoreResponse(
+                                            1L,
+                                            "카페",
+                                            "가게",
+                                            "가게주소",
+                                            100.13,
+                                            false
+                                    )
+                            )
+                    ),
+                    new ReviewPageInfo(10L, 1L, 10)
+            );
+            given(reviewService.getReviewsBySchoolInMapBounds(
+                    anyLong(),
+                    any(),
+                    any(MapCoordinateRequest.class),
+                    any(DeviceCoordinateRequest.class),
+                    anyInt(),
+                    any(Member.class)
+            )).willReturn(response);
+
+            MvcResult mvcResult = mockMvc.perform(get("/v1/reviews/schools")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("schoolId", "1")
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+            ReviewPageResponse result = objectMapper.readValue(jsonResponse, ReviewPageResponse.class);
+            assertThat(result).usingRecursiveComparison().isEqualTo(response);
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 학교ID가_양수가_아니라면_400_응답을_반환한다(String schoolId) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/schools")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("schoolId", schoolId)
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("학교 ID는 양수만 가능합니다.")));
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 마지막_리뷰ID가_양수가_아니라면_400_응답을_반환한다(String lastReviewId) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/schools")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("schoolId", "1")
+                            .param("lastReviewId", lastReviewId)
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("리뷰 ID는 양수만 가능합니다.")));
+        }
+
+        @Test
+        void 경도가_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/schools")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("schoolId", "1")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void 위도가_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/schools")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("schoolId", "1")
+                            .param("x", "123.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void 경도_증가값이_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/schools")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("schoolId", "1")
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void 위도_증가값이_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/schools")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("schoolId", "1")
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 경도_증가값이_0이상의_양수가_아니라면_400_응답을_반환한다(String deltaX) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/schools")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("schoolId", "1")
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", deltaX)
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("경도 증가값은 0이상의 양수만 가능합니다.")));
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 위도_증가값이_0이상의_양수가_아니라면_400_응답을_반환한다(String deltaY) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/schools")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("schoolId", "1")
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", deltaY)
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("위도 증가값은 0이상의 양수만 가능합니다.")));
+        }
+
+        @Test
+        void 디바이스_경도가_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/schools")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("schoolId", "1")
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void 디바이스_위도가_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/schools")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("schoolId", "1")
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 페이지_크기가_양수가_아니라면_400_응답을_반환한다(String pageSize) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/schools")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("schoolId", "1")
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636")
+                            .param("pageSize", pageSize))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("errorCode").value("CLIENT-101"))
