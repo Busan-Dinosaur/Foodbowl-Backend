@@ -1,8 +1,10 @@
 package org.dinosaur.foodbowl.domain.follow.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
+import org.dinosaur.foodbowl.domain.follow.persistence.dto.FollowAndFollowingDto;
 import org.dinosaur.foodbowl.domain.follow.persistence.dto.MemberFollowerCountDto;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.test.PersistenceTest;
@@ -32,5 +34,29 @@ class FollowCustomRepositoryTest extends PersistenceTest {
                 new MemberFollowerCountDto(memberB.getId(), 1)
         );
         assertThat(result).usingRecursiveComparison().isEqualTo(expected);
+    }
+
+    @Test
+    void 사용자가_여러_사용자_중_팔로잉_하는_회원을_조회한다() {
+        Member gray = memberTestPersister.builder().save();
+        Member memberA = memberTestPersister.builder().save();
+        Member memberB = memberTestPersister.builder().save();
+        Member memberC = memberTestPersister.builder().save();
+        Member memberD = memberTestPersister.builder().save();
+        followTestPersister.builder().follower(gray).following(memberA).save();
+        followTestPersister.builder().follower(gray).following(memberC).save();
+        followTestPersister.builder().follower(gray).following(memberD).save();
+        List<Member> members = List.of(memberA, memberB, memberC, memberD);
+
+        List<FollowAndFollowingDto> results = followCustomRepository.findFollowingsByFollowingsAndFollower(
+                members, gray);
+
+        assertSoftly(softly -> {
+            softly.assertThat(results).hasSize(3);
+            softly.assertThat(results.contains(new FollowAndFollowingDto(gray.getId(), memberA.getId()))).isTrue();
+            softly.assertThat(results.contains(new FollowAndFollowingDto(gray.getId(), memberB.getId()))).isFalse();
+            softly.assertThat(results.contains(new FollowAndFollowingDto(gray.getId(), memberC.getId()))).isTrue();
+            softly.assertThat(results.contains(new FollowAndFollowingDto(gray.getId(), memberD.getId()))).isTrue();
+        });
     }
 }
