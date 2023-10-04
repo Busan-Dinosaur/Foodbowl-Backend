@@ -131,7 +131,7 @@ class StoreCustomRepositoryTest extends PersistenceTest {
         List<StoreSearchResponse> responses = storeCustomRepository.search(name, x, y, 10);
 
         List<Long> responseStoreIds = responses.stream()
-                .map(StoreSearchResponse::getStoreId)
+                .map(StoreSearchResponse::storeId)
                 .toList();
         assertSoftly(softly -> {
             assertThat(responseStoreIds).containsExactly(storeB.getId(), storeD.getId(), storeA.getId());

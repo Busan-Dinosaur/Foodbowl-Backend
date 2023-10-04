@@ -1,6 +1,5 @@
 package org.dinosaur.foodbowl.domain.store.persistence;
 
-import static com.querydsl.core.types.Projections.constructor;
 import static org.dinosaur.foodbowl.domain.follow.domain.QFollow.follow;
 import static org.dinosaur.foodbowl.domain.member.domain.QMember.member;
 import static org.dinosaur.foodbowl.domain.review.domain.QReview.review;
@@ -17,6 +16,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
+import org.dinosaur.foodbowl.domain.store.dto.response.QStoreSearchResponse;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchResponse;
 import org.dinosaur.foodbowl.global.util.PointUtils;
 import org.springframework.stereotype.Repository;
@@ -76,8 +76,7 @@ public class StoreCustomRepository {
 
     public List<StoreSearchResponse> search(String name, double x, double y, int size) {
         return jpaQueryFactory.select(
-                        constructor(
-                                StoreSearchResponse.class,
+                        new QStoreSearchResponse(
                                 store.id,
                                 store.storeName,
                                 calculateDistance(x, y),

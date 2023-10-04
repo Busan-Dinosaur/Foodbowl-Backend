@@ -5,11 +5,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.io.File;
+import java.util.List;
 import java.util.Optional;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.domain.MemberThumbnail;
 import org.dinosaur.foodbowl.domain.member.dto.request.UpdateProfileRequest;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
+import org.dinosaur.foodbowl.domain.member.dto.response.MemberSearchResponse;
+import org.dinosaur.foodbowl.domain.member.dto.response.MemberSearchResponses;
 import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
 import org.dinosaur.foodbowl.domain.member.persistence.MemberThumbnailRepository;
 import org.dinosaur.foodbowl.domain.photo.application.ThumbnailService;
@@ -115,6 +118,55 @@ class MemberServiceTest extends IntegrationTest {
             softly.assertThat(response.isMyProfile()).isTrue();
             softly.assertThat(response.isFollowing()).isFalse();
         });
+    }
+
+    @Nested
+    class 닉네임을_이용해_회원_검색_시 {
+
+        @Test
+        void 정상적으로_검색한다() {
+            String name = "gray";
+            Member dazzle = memberTestPersister.builder().nickname("dazzle").save();
+            Member memberA = memberTestPersister.builder().nickname("gray1234").save();
+            Member memberB = memberTestPersister.builder().nickname("gray").save();
+            followTestPersister.builder().follower(dazzle).following(memberB).save();
+
+            MemberSearchResponses responses = memberService.search(name, 10, dazzle);
+            List<MemberSearchResponse> memberSearchResponses = responses.memberSearchResponses();
+
+            assertSoftly(softly -> {
+                softly.assertThat(memberSearchResponses.get(0).memberId()).isEqualTo(memberB.getId());
+                softly.assertThat(memberSearchResponses.get(0).nickname()).isEqualTo(memberB.getNickname());
+                softly.assertThat(memberSearchResponses.get(0).profileImageUrl()).isEqualTo(memberB.getProfileImageUrl());
+                softly.assertThat(memberSearchResponses.get(0).followerCount()).isOne();
+                softly.assertThat(memberSearchResponses.get(0).isFollowing()).isTrue();
+                softly.assertThat(memberSearchResponses.get(0).isMe()).isFalse();
+                softly.assertThat(memberSearchResponses.get(1).memberId()).isEqualTo(memberA.getId());
+                softly.assertThat(memberSearchResponses.get(1).nickname()).isEqualTo(memberA.getNickname());
+                softly.assertThat(memberSearchResponses.get(1).profileImageUrl()).isEqualTo(memberA.getProfileImageUrl());
+                softly.assertThat(memberSearchResponses.get(1).followerCount()).isZero();
+                softly.assertThat(memberSearchResponses.get(1).isFollowing()).isFalse();
+                softly.assertThat(memberSearchResponses.get(1).isMe()).isFalse();
+            });
+        }
+
+        @Test
+        void 결과에_검색한_사용자가_포함되면_isMe는_true_이다() {
+            String name = "gray";
+            Member member = memberTestPersister.builder().nickname("gray").save();
+
+            MemberSearchResponses responses = memberService.search(name, 10, member);
+            List<MemberSearchResponse> memberSearchResponses = responses.memberSearchResponses();
+
+            assertSoftly(softly -> {
+                softly.assertThat(memberSearchResponses.get(0).memberId()).isEqualTo(member.getId());
+                softly.assertThat(memberSearchResponses.get(0).nickname()).isEqualTo(member.getNickname());
+                softly.assertThat(memberSearchResponses.get(0).profileImageUrl()).isEqualTo(member.getProfileImageUrl());
+                softly.assertThat(memberSearchResponses.get(0).followerCount()).isZero();
+                softly.assertThat(memberSearchResponses.get(0).isFollowing()).isFalse();
+                softly.assertThat(memberSearchResponses.get(0).isMe()).isTrue();
+            });
+        }
     }
 
     @Nested
