@@ -25,6 +25,27 @@ public class ReviewCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
+    public List<Review> findPaginationReviewsByMemberInMapBound(
+            Long memberId,
+            Long lastReviewId,
+            MapCoordinateBoundDto mapCoordinateBoundDto,
+            int pageSize
+    ) {
+        return jpaQueryFactory.selectDistinct(review)
+                .from(review)
+                .innerJoin(review.store, store).fetchJoin()
+                .innerJoin(review.member, member).fetchJoin()
+                .innerJoin(store.category, category).fetchJoin()
+                .where(
+                        ltLastReviewId(lastReviewId),
+                        member.id.eq(memberId),
+                        containsPolygon(mapCoordinateBoundDto)
+                )
+                .orderBy(review.id.desc())
+                .limit(pageSize)
+                .fetch();
+    }
+
     public List<Review> findPaginationReviewsByBookmarkInMapBounds(
             Long memberId,
             Long lastReviewId,
@@ -60,10 +81,12 @@ public class ReviewCustomRepository {
                 .innerJoin(review.store, store).fetchJoin()
                 .innerJoin(review.member, member).fetchJoin()
                 .innerJoin(store.category, category).fetchJoin()
-                .innerJoin(follow).on(review.member.id.eq(follow.following.id))
+                .innerJoin(follow).on(
+                        review.member.id.eq(follow.following.id),
+                        follow.follower.id.eq(followerId)
+                )
                 .where(
                         ltLastReviewId(lastReviewId),
-                        follow.follower.id.eq(followerId),
                         containsPolygon(mapCoordinateBoundDto)
                 )
                 .orderBy(review.id.desc())
