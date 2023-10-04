@@ -1,8 +1,12 @@
 package org.dinosaur.foodbowl.domain.member.application;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.dinosaur.foodbowl.domain.follow.application.FollowCustomService;
+import org.dinosaur.foodbowl.domain.follow.application.dto.MemberToFollowerCountDto;
+import org.dinosaur.foodbowl.domain.follow.application.dto.MemberToFollowingsDto;
 import org.dinosaur.foodbowl.domain.follow.domain.Follow;
 import org.dinosaur.foodbowl.domain.follow.persistence.FollowRepository;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
@@ -11,6 +15,7 @@ import org.dinosaur.foodbowl.domain.member.domain.vo.Introduction;
 import org.dinosaur.foodbowl.domain.member.domain.vo.Nickname;
 import org.dinosaur.foodbowl.domain.member.dto.request.UpdateProfileRequest;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
+import org.dinosaur.foodbowl.domain.member.dto.response.MemberSearchResponses;
 import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
 import org.dinosaur.foodbowl.domain.member.exception.MemberExceptionType;
 import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
@@ -29,6 +34,8 @@ public class MemberService {
 
     private final ThumbnailService thumbnailService;
     private final MemberRepository memberRepository;
+    private final MemberCustomService memberCustomService;
+    private final FollowCustomService followCustomService;
     private final MemberThumbnailRepository memberThumbnailRepository;
     private final FollowRepository followRepository;
 
@@ -50,6 +57,21 @@ public class MemberService {
     public MemberProfileResponse getMyProfile(Member loginMember) {
         long followingCount = followRepository.countByFollower(loginMember);
         return MemberProfileResponse.of(loginMember, (int) followingCount, true, false);
+    }
+
+    @Transactional(readOnly = true)
+    public MemberSearchResponses search(String name, int size, Member loginMember) {
+        List<Member> members = memberCustomService.search(name, size);
+
+        MemberToFollowerCountDto followerCountByMembers = followCustomService.getFollowerCountByMembers(members);
+        MemberToFollowingsDto followingsByMember = followCustomService.getFollowInMembers(members, loginMember);
+
+        return MemberSearchResponses.of(
+                members,
+                loginMember,
+                followerCountByMembers,
+                followingsByMember
+        );
     }
 
     @Transactional(readOnly = true)

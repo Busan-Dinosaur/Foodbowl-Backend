@@ -70,7 +70,8 @@ public interface StoreControllerDocs {
             @NotNull(message = "위도는 반드시 포함되어야 합니다.") BigDecimal y,
 
             @Parameter(description = "검색 최대 결과 수", example = "15")
-            @Positive(message = "조회 크기는 1이상만 가능합니다.") @Max(value = 30, message = "최대 30개까지 조회가능합니다.") int size
+            @Positive(message = "조회 크기는 1이상만 가능합니다.")
+            @Max(value = 30, message = "최대 30개까지 조회가능합니다.") int size
     );
 
     @Operation(summary = "카테고리 목록 조회", description = "카테고리 목록을 조회한다.")
