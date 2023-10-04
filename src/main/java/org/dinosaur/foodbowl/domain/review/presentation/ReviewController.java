@@ -36,9 +36,9 @@ public class ReviewController implements ReviewControllerDocs {
 
     private final ReviewService reviewService;
 
-    @GetMapping("/{memberId}/profile")
+    @GetMapping("/members")
     public ResponseEntity<ReviewPageResponse> getReviewsByMemberInMapBounds(
-            @PathVariable(name = "memberId") @Positive(message = "멤버 ID는 양수만 가능합니다.") Long memberId,
+            @RequestParam(name = "memberId") @Positive(message = "멤버 ID는 양수만 가능합니다.") Long memberId,
             @RequestParam(name = "lastReviewId", required = false) @Positive(message = "리뷰 ID는 양수만 가능합니다.") Long lastReviewId,
             @RequestParam(name = "x") BigDecimal x,
             @RequestParam(name = "y") BigDecimal y,

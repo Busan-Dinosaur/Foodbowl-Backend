@@ -109,8 +109,9 @@ class ReviewControllerTest extends PresentationTest {
                     any(Member.class)
             )).willReturn(response);
 
-            MvcResult mvcResult = mockMvc.perform(get("/v1/reviews/{memberId}/profile", 1L)
+            MvcResult mvcResult = mockMvc.perform(get("/v1/reviews/members")
                             .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("memberId", "1")
                             .param("x", "123.3636")
                             .param("y", "32.3636")
                             .param("deltaX", "3.12")
@@ -131,8 +132,9 @@ class ReviewControllerTest extends PresentationTest {
         void 멤버_ID가_양수가_아니라면_400_응답을_반환한다(String memberId) throws Exception {
             mockingAuthMemberInResolver();
 
-            mockMvc.perform(get("/v1/reviews/{memberId}/profile", memberId)
+            mockMvc.perform(get("/v1/reviews/members")
                             .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("memberId", memberId)
                             .param("x", "123.3636")
                             .param("y", "32.3636")
                             .param("deltaX", "3.12")
@@ -150,9 +152,10 @@ class ReviewControllerTest extends PresentationTest {
         void 마지막_리뷰ID가_양수가_아니라면_400_응답을_반환한다(String lastReviewId) throws Exception {
             mockingAuthMemberInResolver();
 
-            mockMvc.perform(get("/v1/reviews/{memberId}/profile", 1L)
+            mockMvc.perform(get("/v1/reviews/members")
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .param("lastReviewId", lastReviewId)
+                            .param("memberId", "1")
                             .param("x", "123.3636")
                             .param("y", "32.3636")
                             .param("deltaX", "3.12")
@@ -169,8 +172,9 @@ class ReviewControllerTest extends PresentationTest {
         void 경도가_존재하지_않으면_400_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
 
-            mockMvc.perform(get("/v1/reviews/{memberId}/profile", 1L)
+            mockMvc.perform(get("/v1/reviews/members")
                             .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("memberId", "1")
                             .param("y", "32.3636")
                             .param("deltaX", "3.12")
                             .param("deltaY", "3.12")
@@ -184,8 +188,9 @@ class ReviewControllerTest extends PresentationTest {
         void 위도가_존재하지_않으면_400_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
 
-            mockMvc.perform(get("/v1/reviews/{memberId}/profile", 1L)
+            mockMvc.perform(get("/v1/reviews/members")
                             .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("memberId", "1")
                             .param("x", "123.3636")
                             .param("deltaX", "3.12")
                             .param("deltaY", "3.12")
@@ -199,8 +204,9 @@ class ReviewControllerTest extends PresentationTest {
         void 경도_증가값이_존재하지_않으면_400_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
 
-            mockMvc.perform(get("/v1/reviews/{memberId}/profile", 1L)
+            mockMvc.perform(get("/v1/reviews/members")
                             .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("memberId", "1")
                             .param("x", "123.3636")
                             .param("y", "32.3636")
                             .param("deltaY", "3.12")
@@ -214,8 +220,9 @@ class ReviewControllerTest extends PresentationTest {
         void 위도_증가값이_존재하지_않으면_400_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
 
-            mockMvc.perform(get("/v1/reviews/{memberId}/profile", 1L)
+            mockMvc.perform(get("/v1/reviews/members")
                             .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("memerId", "1")
                             .param("x", "123.3636")
                             .param("y", "32.3636")
                             .param("deltaX", "3.12")
@@ -230,8 +237,9 @@ class ReviewControllerTest extends PresentationTest {
         void 경도_증가값이_0이상의_양수가_아니라면_400_응답을_반환한다(String deltaX) throws Exception {
             mockingAuthMemberInResolver();
 
-            mockMvc.perform(get("/v1/reviews/{memberId}/profile", 1L)
+            mockMvc.perform(get("/v1/reviews/members")
                             .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("memberId", "1")
                             .param("x", "123.3636")
                             .param("y", "32.3636")
                             .param("deltaX", deltaX)
@@ -249,8 +257,9 @@ class ReviewControllerTest extends PresentationTest {
         void 위도_증가값이_0이상의_양수가_아니라면_400_응답을_반환한다(String deltaY) throws Exception {
             mockingAuthMemberInResolver();
 
-            mockMvc.perform(get("/v1/reviews/{memberId}/profile", 1L)
+            mockMvc.perform(get("/v1/reviews/members")
                             .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("memberId", "1")
                             .param("x", "123.3636")
                             .param("y", "32.3636")
                             .param("deltaX", "3.12")
@@ -267,8 +276,9 @@ class ReviewControllerTest extends PresentationTest {
         void 디바이스_경도가_존재하지_않으면_400_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
 
-            mockMvc.perform(get("/v1/reviews/{memberId}/profile", 1L)
+            mockMvc.perform(get("/v1/reviews/members")
                             .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("memberId", "1")
                             .param("x", "123.3636")
                             .param("y", "32.3636")
                             .param("deltaX", "3.12")
@@ -282,8 +292,9 @@ class ReviewControllerTest extends PresentationTest {
         void 디바이스_위도가_존재하지_않으면_400_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
 
-            mockMvc.perform(get("/v1/reviews/{memberId}/profile", 1L)
+            mockMvc.perform(get("/v1/reviews/members")
                             .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("memberId", "1")
                             .param("x", "123.3636")
                             .param("y", "32.3636")
                             .param("deltaX", "3.12")
@@ -298,8 +309,9 @@ class ReviewControllerTest extends PresentationTest {
         void 페이지_크기가_양수가_아니라면_400_응답을_반환한다(String pageSize) throws Exception {
             mockingAuthMemberInResolver();
 
-            mockMvc.perform(get("/v1/reviews/{memberId}/profile", 1L)
+            mockMvc.perform(get("/v1/reviews/members")
                             .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("memberId", "1")
                             .param("x", "123.3636")
                             .param("y", "32.3636")
                             .param("deltaX", "3.12")
