@@ -24,6 +24,21 @@ public class ReviewCustomService {
     }
 
     @Transactional(readOnly = true)
+    public List<Review> getReviewsByMemberInMapBounds(
+            Long memberId,
+            Long lastReviewId,
+            MapCoordinateBoundDto mapCoordinateBoundDto,
+            int pageSize
+    ) {
+        return reviewCustomRepository.findPaginationReviewsByMemberInMapBound(
+                memberId,
+                lastReviewId,
+                mapCoordinateBoundDto,
+                pageSize
+        );
+    }
+
+    @Transactional(readOnly = true)
     public List<Review> getReviewsByBookmarkInMapBounds(
             Long memberId,
             Long lastReviewId,

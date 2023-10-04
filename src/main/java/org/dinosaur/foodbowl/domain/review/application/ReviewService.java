@@ -50,6 +50,25 @@ public class ReviewService {
     private final BookmarkQueryService bookmarkQueryService;
 
     @Transactional(readOnly = true)
+    public ReviewPageResponse getReviewsByMemberInMapBounds(
+            Long memberId,
+            Long lastReviewId,
+            MapCoordinateRequest mapCoordinateRequest,
+            DeviceCoordinateRequest deviceCoordinateRequest,
+            int pageSize,
+            Member loginMember
+    ) {
+        MapCoordinateBoundDto mapCoordinateBoundDto = convertToMapCoordinateBound(mapCoordinateRequest);
+        List<Review> reviews = reviewCustomService.getReviewsByMemberInMapBounds(
+                memberId,
+                lastReviewId,
+                mapCoordinateBoundDto,
+                pageSize
+        );
+        return convertToReviewPageResponse(loginMember, reviews, deviceCoordinateRequest);
+    }
+
+    @Transactional(readOnly = true)
     public ReviewPageResponse getReviewsByBookmarkInMapBounds(
             Long lastReviewId,
             MapCoordinateRequest mapCoordinateRequest,
@@ -57,12 +76,7 @@ public class ReviewService {
             int pageSize,
             Member loginMember
     ) {
-        MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
-                mapCoordinateRequest.x(),
-                mapCoordinateRequest.y(),
-                mapCoordinateRequest.deltaX(),
-                mapCoordinateRequest.deltaY()
-        );
+        MapCoordinateBoundDto mapCoordinateBoundDto = convertToMapCoordinateBound(mapCoordinateRequest);
         List<Review> reviews = reviewCustomService.getReviewsByBookmarkInMapBounds(
                 loginMember.getId(),
                 lastReviewId,
@@ -80,12 +94,7 @@ public class ReviewService {
             int pageSize,
             Member loginMember
     ) {
-        MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
-                mapCoordinateRequest.x(),
-                mapCoordinateRequest.y(),
-                mapCoordinateRequest.deltaX(),
-                mapCoordinateRequest.deltaY()
-        );
+        MapCoordinateBoundDto mapCoordinateBoundDto = convertToMapCoordinateBound(mapCoordinateRequest);
         List<Review> reviews = reviewCustomService.getReviewsByFollowingInMapBounds(
                 loginMember.getId(),
                 lastReviewId,
@@ -106,12 +115,7 @@ public class ReviewService {
     ) {
         School school = schoolRepository.findById(schoolId)
                 .orElseThrow(() -> new NotFoundException(SchoolExceptionType.NOT_FOUND));
-        MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
-                mapCoordinateRequest.x(),
-                mapCoordinateRequest.y(),
-                mapCoordinateRequest.deltaX(),
-                mapCoordinateRequest.deltaY()
-        );
+        MapCoordinateBoundDto mapCoordinateBoundDto = convertToMapCoordinateBound(mapCoordinateRequest);
         List<Review> reviews = reviewCustomService.getReviewsBySchoolInMapBounds(
                 school.getId(),
                 lastReviewId,
@@ -119,6 +123,15 @@ public class ReviewService {
                 pageSize
         );
         return convertToReviewPageResponse(loginMember, reviews, deviceCoordinateRequest);
+    }
+
+    private MapCoordinateBoundDto convertToMapCoordinateBound(MapCoordinateRequest mapCoordinateRequest) {
+        return MapCoordinateBoundDto.of(
+                mapCoordinateRequest.x(),
+                mapCoordinateRequest.y(),
+                mapCoordinateRequest.deltaX(),
+                mapCoordinateRequest.deltaY()
+        );
     }
 
     private ReviewPageResponse convertToReviewPageResponse(

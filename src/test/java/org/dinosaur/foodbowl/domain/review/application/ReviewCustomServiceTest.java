@@ -41,6 +41,28 @@ class ReviewCustomServiceTest extends IntegrationTest {
     }
 
     @Test
+    void 멤버_리뷰_목록을_범위를_통해_조회한다() {
+        Member writer = memberTestPersister.builder().save();
+        Store store = storeTestPersister.builder().save();
+        Review review = reviewTestPersister.builder().member(writer).store(store).save();
+        MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                BigDecimal.valueOf(3),
+                BigDecimal.valueOf(3)
+        );
+
+        List<Review> result = reviewCustomService.getReviewsByMemberInMapBounds(
+                writer.getId(),
+                null,
+                mapCoordinateBoundDto,
+                10
+        );
+
+        assertThat(result).containsExactly(review);
+    }
+
+    @Test
     void 북마크한_가게_리뷰_목록을_범위를_통해_조회한다() {
         Member member = memberTestPersister.builder().save();
         Store store = storeTestPersister.builder().save();
