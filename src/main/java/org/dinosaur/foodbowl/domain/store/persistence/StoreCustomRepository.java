@@ -4,6 +4,7 @@ import static com.querydsl.core.types.Projections.constructor;
 import static org.dinosaur.foodbowl.domain.follow.domain.QFollow.follow;
 import static org.dinosaur.foodbowl.domain.member.domain.QMember.member;
 import static org.dinosaur.foodbowl.domain.review.domain.QReview.review;
+import static org.dinosaur.foodbowl.domain.store.domain.QCategory.category;
 import static org.dinosaur.foodbowl.domain.store.domain.QStore.store;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -29,6 +30,7 @@ public class StoreCustomRepository {
     public List<Store> findStoresByFollowingInMapBounds(Long memberId, MapCoordinateBoundDto mapCoordinateBoundDto) {
         return jpaQueryFactory.selectDistinct(store)
                 .from(store)
+                .innerJoin(store.category, category).fetchJoin()
                 .innerJoin(review).on(review.store.eq(store))
                 .innerJoin(member).on(review.member.eq(member))
                 .innerJoin(follow).on(
