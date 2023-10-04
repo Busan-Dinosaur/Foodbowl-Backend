@@ -44,7 +44,7 @@ class FollowCustomServiceTest extends IntegrationTest {
         );
 
         assertSoftly(softly -> {
-            softly.assertThat(memberToFollowingsDto.followAndFollowingDtos()).hasSize(1);
+            softly.assertThat(memberToFollowingsDto.followerAndFollowingDtos()).hasSize(1);
             softly.assertThat(memberToFollowingsDto.isFollowing(memberA.getId(), memberB.getId())).isTrue();
             softly.assertThat(memberToFollowingsDto.isFollowing(memberA.getId(), memberC.getId())).isFalse();
         });

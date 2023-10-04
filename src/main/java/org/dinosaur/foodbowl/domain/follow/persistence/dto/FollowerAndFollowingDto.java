@@ -1,11 +1,16 @@
 package org.dinosaur.foodbowl.domain.follow.persistence.dto;
 
+import com.querydsl.core.annotations.QueryProjection;
 import java.util.Objects;
 
-public record FollowAndFollowingDto(
+public record FollowerAndFollowingDto(
         Long followerId,
         Long followingId
 ) {
+
+    @QueryProjection
+    public FollowerAndFollowingDto {
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -15,7 +20,7 @@ public record FollowAndFollowingDto(
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        FollowAndFollowingDto that = (FollowAndFollowingDto) o;
+        FollowerAndFollowingDto that = (FollowerAndFollowingDto) o;
         return Objects.equals(followerId, that.followerId) && Objects.equals(followingId,
                 that.followingId);
     }

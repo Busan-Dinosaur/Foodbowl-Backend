@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
-import org.dinosaur.foodbowl.domain.follow.persistence.dto.FollowAndFollowingDto;
+import org.dinosaur.foodbowl.domain.follow.persistence.dto.FollowerAndFollowingDto;
 import org.dinosaur.foodbowl.domain.follow.persistence.dto.MemberFollowerCountDto;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.test.PersistenceTest;
@@ -48,15 +48,15 @@ class FollowCustomRepositoryTest extends PersistenceTest {
         followTestPersister.builder().follower(gray).following(memberD).save();
         List<Member> members = List.of(memberA, memberB, memberC, memberD);
 
-        List<FollowAndFollowingDto> results = followCustomRepository.findFollowingsByFollowingsAndFollower(
+        List<FollowerAndFollowingDto> results = followCustomRepository.findFollowingsByFollowingsAndFollower(
                 members, gray);
 
         assertSoftly(softly -> {
             softly.assertThat(results).hasSize(3);
-            softly.assertThat(results.contains(new FollowAndFollowingDto(gray.getId(), memberA.getId()))).isTrue();
-            softly.assertThat(results.contains(new FollowAndFollowingDto(gray.getId(), memberB.getId()))).isFalse();
-            softly.assertThat(results.contains(new FollowAndFollowingDto(gray.getId(), memberC.getId()))).isTrue();
-            softly.assertThat(results.contains(new FollowAndFollowingDto(gray.getId(), memberD.getId()))).isTrue();
+            softly.assertThat(results.contains(new FollowerAndFollowingDto(gray.getId(), memberA.getId()))).isTrue();
+            softly.assertThat(results.contains(new FollowerAndFollowingDto(gray.getId(), memberB.getId()))).isFalse();
+            softly.assertThat(results.contains(new FollowerAndFollowingDto(gray.getId(), memberC.getId()))).isTrue();
+            softly.assertThat(results.contains(new FollowerAndFollowingDto(gray.getId(), memberD.getId()))).isTrue();
         });
     }
 }
