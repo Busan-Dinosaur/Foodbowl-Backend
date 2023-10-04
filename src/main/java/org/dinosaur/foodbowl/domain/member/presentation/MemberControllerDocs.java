@@ -65,13 +65,13 @@ public interface MemberControllerDocs {
             summary = "회원 검색",
             description = """
                     닉네임으로 회원을 검색합니다.
-                    
+                                        
                     필수 파라미터: name(검색 키워드)
-                    
+                                        
                     선택 파라미터: size(응답으로 받을 최대 검색 결과 수, Default: 10, Max: 30)
-                    
+                                        
                     요청 예시: /v1/memberse/search?name=coby1234&size=15
-                    
+                                        
                     검색하는 사용자가 검색 결과에 포함되는 경우 isMe 필드가 true로 반환됩니다.
                     """
     )
