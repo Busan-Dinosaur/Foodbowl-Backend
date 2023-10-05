@@ -206,6 +206,22 @@ class StoreServiceTest extends IntegrationTest {
                 softly.assertThat(result.get(0).isBookmarked()).isTrue();
             });
         }
+
+        @Test
+        void 일치하는_가게가_없으면_빈_리스트를_반환한다() {
+            Member member = memberTestPersister.builder().save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(123.3636),
+                    BigDecimal.valueOf(32.3131),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            StoreMapBoundResponses response =
+                    storeService.getStoresByFollowingInMapBounds(mapCoordinateRequest, member);
+
+            assertThat(response.stores()).isEmpty();
+        }
     }
 
     @Nested
