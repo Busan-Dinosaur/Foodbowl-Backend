@@ -40,6 +40,113 @@ class StoreServiceTest extends IntegrationTest {
     private StoreSchoolRepository storeSchoolRepository;
 
     @Nested
+    class 가게_ID로_조회_시 {
+
+        @Test
+        void 등록된_가게라면_가게를_조회한다() {
+            StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(
+                    null,
+                    null,
+                    null,
+                    null
+            );
+            Store store = storeService.create(storeCreateDtoWithoutSchool);
+
+            Store findStore = storeService.findById(store.getId());
+
+            assertThat(findStore).isEqualTo(store);
+        }
+
+        @Test
+        void 등록되지_않은_가게라면_예외를_던진다() {
+            assertThatThrownBy(() -> storeService.findById(Long.MAX_VALUE))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("일치하는 가게를 찾을 수 없습니다.");
+        }
+    }
+
+    @Nested
+    class 장소_ID로_조회_시 {
+
+        @Test
+        void 등록된_가게라면_가게를_조회한다() {
+            StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(
+                    null,
+                    null,
+                    null,
+                    null
+            );
+            Store store = storeService.create(storeCreateDtoWithoutSchool);
+
+            assertThat(storeService.findByLocationId(store.getLocationId())).isPresent();
+        }
+
+        @Test
+        void 등록되지_않은_가게라면_가게가_조회되지_않는다() {
+            String locationId = String.valueOf(Long.MAX_VALUE);
+
+            assertThat(storeService.findByLocationId(locationId)).isEmpty();
+        }
+    }
+
+    @Test
+    void 등록된_모든_카테고리_목록을_조회한다() {
+        CategoriesResponse response = storeService.getCategories();
+
+        assertThat(response.categories()).hasSize(11);
+    }
+
+    @Nested
+    class 가게_검색_시 {
+
+        @Test
+        void 단어가_포함된_가게들을_사용자_위치에서_가까운_순으로_조회한다() {
+            String name = "김밥";
+            BigDecimal userX = new BigDecimal("123.1667");
+            BigDecimal userY = new BigDecimal("37.1245");
+            Store storeA = storeTestPersister.builder()
+                    .locationId("12346585")
+                    .storeName("김밥천국 선릉점")
+                    .address(Address.of(
+                            "서울시 강남구 선릉로 4244번길 2323-124",
+                            PointUtils.generate(BigDecimal.valueOf(125.142), BigDecimal.valueOf(36.241)))
+                    )
+                    .save();
+            Store nearestStoreB = storeTestPersister.builder()
+                    .locationId("915366999")
+                    .storeName("얌샘김밥 선릉점")
+                    .address(Address.of(
+                            "서울시 강남구 선릉로 424번길 2323",
+                            PointUtils.generate(userX, userY))
+                    )
+                    .save();
+            Store storeC = storeTestPersister.builder()
+                    .locationId("122355")
+                    .storeName("고기듬뿍냉면")
+                    .address(Address.of(
+                            "서울시 강남구 헌릉로 4244번길 2323-124",
+                            PointUtils.generate(BigDecimal.valueOf(125.14242), BigDecimal.valueOf(36.21141))
+                    ))
+                    .save();
+
+            StoreSearchResponses storeSearchResponses = storeService.search(
+                    name,
+                    userX,
+                    userY,
+                    10
+            );
+
+            assertSoftly(softly -> {
+                softly.assertThat(storeSearchResponses.searchResponses()).hasSize(2);
+                softly.assertThat(storeSearchResponses.searchResponses().get(0).storeId())
+                        .isEqualTo(nearestStoreB.getId());
+                softly.assertThat(storeSearchResponses.searchResponses().get(1).storeId())
+                        .isEqualTo(storeA.getId());
+            });
+        }
+    }
+
+    @Nested
     class 팔로잉_유저의_리뷰가_존재하는_가게_목록_조회_시 {
 
         @Test
@@ -97,113 +204,6 @@ class StoreServiceTest extends IntegrationTest {
             assertSoftly(softly -> {
                 softly.assertThat(result).hasSize(1);
                 softly.assertThat(result.get(0).isBookmarked()).isTrue();
-            });
-        }
-    }
-
-    @Test
-    void 등록된_모든_카테고리_목록을_조회한다() {
-        CategoriesResponse response = storeService.getCategories();
-
-        assertThat(response.categories()).hasSize(11);
-    }
-
-    @Nested
-    class 장소_ID로_조회_시 {
-
-        @Test
-        void 등록된_가게라면_가게를_조회한다() {
-            StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(
-                    null,
-                    null,
-                    null,
-                    null
-            );
-            Store store = storeService.create(storeCreateDtoWithoutSchool);
-
-            assertThat(storeService.findByLocationId(store.getLocationId())).isPresent();
-        }
-
-        @Test
-        void 등록되지_않은_가게라면_가게가_조회되지_않는다() {
-            String locationId = String.valueOf(Long.MAX_VALUE);
-
-            assertThat(storeService.findByLocationId(locationId)).isEmpty();
-        }
-    }
-
-    @Nested
-    class 가게_ID로_조회_시 {
-
-        @Test
-        void 등록된_가게라면_가게를_조회한다() {
-            StoreCreateDto storeCreateDtoWithoutSchool = generateStoreCreateDto(
-                    null,
-                    null,
-                    null,
-                    null
-            );
-            Store store = storeService.create(storeCreateDtoWithoutSchool);
-
-            Store findStore = storeService.findById(store.getId());
-
-            assertThat(findStore).isEqualTo(store);
-        }
-
-        @Test
-        void 등록되지_않은_가게라면_예외를_던진다() {
-            assertThatThrownBy(() -> storeService.findById(Long.MAX_VALUE))
-                    .isInstanceOf(NotFoundException.class)
-                    .hasMessage("일치하는 가게를 찾을 수 없습니다.");
-        }
-    }
-
-    @Nested
-    class 가게_검색_시 {
-
-        @Test
-        void 단어가_포함된_가게들을_사용자_위치에서_가까운_순으로_조회한다() {
-            String name = "김밥";
-            BigDecimal userX = new BigDecimal("123.1667");
-            BigDecimal userY = new BigDecimal("37.1245");
-            Store storeA = storeTestPersister.builder()
-                    .locationId("12346585")
-                    .storeName("김밥천국 선릉점")
-                    .address(Address.of(
-                            "서울시 강남구 선릉로 4244번길 2323-124",
-                            PointUtils.generate(BigDecimal.valueOf(125.142), BigDecimal.valueOf(36.241)))
-                    )
-                    .save();
-            Store nearestStoreB = storeTestPersister.builder()
-                    .locationId("915366999")
-                    .storeName("얌샘김밥 선릉점")
-                    .address(Address.of(
-                            "서울시 강남구 선릉로 424번길 2323",
-                            PointUtils.generate(userX, userY))
-                    )
-                    .save();
-            Store storeC = storeTestPersister.builder()
-                    .locationId("122355")
-                    .storeName("고기듬뿍냉면")
-                    .address(Address.of(
-                            "서울시 강남구 헌릉로 4244번길 2323-124",
-                            PointUtils.generate(BigDecimal.valueOf(125.14242), BigDecimal.valueOf(36.21141))
-                    ))
-                    .save();
-
-            StoreSearchResponses storeSearchResponses = storeService.search(
-                    name,
-                    userX,
-                    userY,
-                    10
-            );
-
-            assertSoftly(softly -> {
-                softly.assertThat(storeSearchResponses.searchResponses()).hasSize(2);
-                softly.assertThat(storeSearchResponses.searchResponses().get(0).storeId())
-                        .isEqualTo(nearestStoreB.getId());
-                softly.assertThat(storeSearchResponses.searchResponses().get(1).storeId())
-                        .isEqualTo(storeA.getId());
             });
         }
     }

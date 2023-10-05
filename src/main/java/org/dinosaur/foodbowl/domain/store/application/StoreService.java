@@ -46,28 +46,6 @@ public class StoreService {
     private final BookmarkQueryService bookmarkQueryService;
 
     @Transactional(readOnly = true)
-    public StoreMapBoundResponses getStoresByFollowingInMapBounds(
-            MapCoordinateRequest mapCoordinateRequest,
-            Member loginMember
-    ) {
-        MapCoordinateBoundDto mapCoordinateBoundDto = convertToMapCoordinateBound(mapCoordinateRequest);
-        List<Store> stores =
-                storeCustomService.getStoresByFollowingInMapBounds(loginMember.getId(), mapCoordinateBoundDto);
-        StoreToReviewCountDto storeToReviewCountDto = reviewCustomService.getReviewCountByStores(stores);
-        Set<Store> bookmarkStores = bookmarkQueryService.getBookmarkStoresByMember(loginMember);
-        return StoreMapBoundResponses.of(stores, storeToReviewCountDto, bookmarkStores);
-    }
-
-    private MapCoordinateBoundDto convertToMapCoordinateBound(MapCoordinateRequest mapCoordinateRequest) {
-        return MapCoordinateBoundDto.of(
-                mapCoordinateRequest.x(),
-                mapCoordinateRequest.y(),
-                mapCoordinateRequest.deltaX(),
-                mapCoordinateRequest.deltaY()
-        );
-    }
-
-    @Transactional(readOnly = true)
     public Store findById(Long id) {
         return storeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(StoreExceptionType.NOT_FOUND));
@@ -76,6 +54,12 @@ public class StoreService {
     @Transactional(readOnly = true)
     public Optional<Store> findByLocationId(String locationId) {
         return storeRepository.findByLocationId(locationId);
+    }
+
+    @Transactional(readOnly = true)
+    public CategoriesResponse getCategories() {
+        List<Category> categories = categoryRepository.findAllByOrderById();
+        return CategoriesResponse.from(categories);
     }
 
     @Transactional(readOnly = true)
@@ -95,9 +79,25 @@ public class StoreService {
     }
 
     @Transactional(readOnly = true)
-    public CategoriesResponse getCategories() {
-        List<Category> categories = categoryRepository.findAllByOrderById();
-        return CategoriesResponse.from(categories);
+    public StoreMapBoundResponses getStoresByFollowingInMapBounds(
+            MapCoordinateRequest mapCoordinateRequest,
+            Member loginMember
+    ) {
+        MapCoordinateBoundDto mapCoordinateBoundDto = convertToMapCoordinateBound(mapCoordinateRequest);
+        List<Store> stores =
+                storeCustomService.getStoresByFollowingInMapBounds(loginMember.getId(), mapCoordinateBoundDto);
+        StoreToReviewCountDto storeToReviewCountDto = reviewCustomService.getReviewCountByStores(stores);
+        Set<Store> bookmarkStores = bookmarkQueryService.getBookmarkStoresByMember(loginMember);
+        return StoreMapBoundResponses.of(stores, storeToReviewCountDto, bookmarkStores);
+    }
+
+    private MapCoordinateBoundDto convertToMapCoordinateBound(MapCoordinateRequest mapCoordinateRequest) {
+        return MapCoordinateBoundDto.of(
+                mapCoordinateRequest.x(),
+                mapCoordinateRequest.y(),
+                mapCoordinateRequest.deltaX(),
+                mapCoordinateRequest.deltaY()
+        );
     }
 
     @Transactional
