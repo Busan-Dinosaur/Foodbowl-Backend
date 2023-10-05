@@ -32,12 +32,15 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
         reviewTestPersister.builder().member(writer).store(storeA).save();
         reviewTestPersister.builder().member(writer).store(storeB).save();
 
-        List<StoreReviewCountDto> result = reviewCustomRepository.findReviewCountByStores(List.of(storeA, storeC));
+        List<StoreReviewCountDto> result =
+                reviewCustomRepository.findReviewCountByStores(List.of(storeA, storeB, storeC));
 
         assertSoftly(softly -> {
-            softly.assertThat(result).hasSize(1);
+            softly.assertThat(result).hasSize(2);
             softly.assertThat(result.get(0).storeId()).isEqualTo(storeA.getId());
             softly.assertThat(result.get(0).reviewCount()).isEqualTo(2);
+            softly.assertThat(result.get(1).storeId()).isEqualTo(storeB.getId());
+            softly.assertThat(result.get(1).reviewCount()).isEqualTo(1);
         });
     }
 
