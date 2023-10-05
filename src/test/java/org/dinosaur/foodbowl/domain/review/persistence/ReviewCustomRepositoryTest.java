@@ -1,12 +1,14 @@
 package org.dinosaur.foodbowl.domain.review.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
+import org.dinosaur.foodbowl.domain.review.persistence.dto.StoreReviewCountDto;
 import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.test.PersistenceTest;
@@ -19,6 +21,28 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
 
     @Autowired
     private ReviewCustomRepository reviewCustomRepository;
+
+    @Test
+    void 가게_목록에_존재하는_가게의_리뷰_개수를_조회한다() {
+        Member writer = memberTestPersister.builder().save();
+        Store storeA = storeTestPersister.builder().save();
+        Store storeB = storeTestPersister.builder().save();
+        Store storeC = storeTestPersister.builder().save();
+        reviewTestPersister.builder().member(writer).store(storeA).save();
+        reviewTestPersister.builder().member(writer).store(storeA).save();
+        reviewTestPersister.builder().member(writer).store(storeB).save();
+
+        List<StoreReviewCountDto> result =
+                reviewCustomRepository.findReviewCountByStores(List.of(storeA, storeB, storeC));
+
+        assertSoftly(softly -> {
+            softly.assertThat(result).hasSize(2);
+            softly.assertThat(result.get(0).storeId()).isEqualTo(storeA.getId());
+            softly.assertThat(result.get(0).reviewCount()).isEqualTo(2);
+            softly.assertThat(result.get(1).storeId()).isEqualTo(storeB.getId());
+            softly.assertThat(result.get(1).reviewCount()).isEqualTo(1);
+        });
+    }
 
     @Nested
     class 멤버의_리뷰_목록_페이징_조회_시 {

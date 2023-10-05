@@ -15,20 +15,20 @@ class MemberToFollowingsDtoTest {
 
     @Test
     void 팔로잉_하는_상황이면_true를_반환한다() {
-        List<FollowerAndFollowingDto> followerAndFollowingDtos = List.of(
-                new FollowerAndFollowingDto(1L, 2L)
-        );
-        MemberToFollowingsDto memberToFollowingsDto = new MemberToFollowingsDto(new HashSet<>(followerAndFollowingDtos));
+        List<FollowerAndFollowingDto> followerAndFollowingDtos =
+                List.of(new FollowerAndFollowingDto(1L, 2L));
+        MemberToFollowingsDto memberToFollowingsDto =
+                new MemberToFollowingsDto(new HashSet<>(followerAndFollowingDtos));
 
         assertThat(memberToFollowingsDto.isFollowing(1L, 2L)).isTrue();
     }
 
     @Test
     void 팔로잉_하지_않는_상황이면_false를_반환한다() {
-        List<FollowerAndFollowingDto> followerAndFollowingDtos = List.of(
-                new FollowerAndFollowingDto(1L, 2L)
-        );
-        MemberToFollowingsDto memberToFollowingsDto = new MemberToFollowingsDto(new HashSet<>(followerAndFollowingDtos));
+        List<FollowerAndFollowingDto> followerAndFollowingDtos =
+                List.of(new FollowerAndFollowingDto(1L, 2L));
+        MemberToFollowingsDto memberToFollowingsDto =
+                new MemberToFollowingsDto(new HashSet<>(followerAndFollowingDtos));
 
         assertThat(memberToFollowingsDto.isFollowing(1L, 3L)).isFalse();
     }

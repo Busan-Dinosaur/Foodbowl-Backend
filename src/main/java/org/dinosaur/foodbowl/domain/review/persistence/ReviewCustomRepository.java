@@ -16,6 +16,9 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
+import org.dinosaur.foodbowl.domain.review.persistence.dto.QStoreReviewCountDto;
+import org.dinosaur.foodbowl.domain.review.persistence.dto.StoreReviewCountDto;
+import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.global.util.PointUtils;
 import org.springframework.stereotype.Repository;
 
@@ -24,6 +27,20 @@ import org.springframework.stereotype.Repository;
 public class ReviewCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
+
+    public List<StoreReviewCountDto> findReviewCountByStores(List<Store> stores) {
+        return jpaQueryFactory.select(
+                        new QStoreReviewCountDto(
+                                store.id,
+                                review.count()
+                        )
+                )
+                .from(review)
+                .innerJoin(review.store, store)
+                .where(store.in(stores))
+                .groupBy(store.id)
+                .fetch();
+    }
 
     public List<Review> findPaginationReviewsByMemberInMapBound(
             Long memberId,
