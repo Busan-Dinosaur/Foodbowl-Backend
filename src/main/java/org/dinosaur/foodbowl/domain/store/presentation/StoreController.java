@@ -55,6 +55,20 @@ public class StoreController implements StoreControllerDocs {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/bookmarks")
+    public ResponseEntity<StoreMapBoundResponses> getStoresByBookmarkInMapBounds(
+            @RequestParam(name = "x") BigDecimal x,
+            @RequestParam(name = "y") BigDecimal y,
+            @RequestParam(name = "deltaX") @Positive(message = "경도 증가값은 0이상의 양수만 가능합니다.") BigDecimal deltaX,
+            @RequestParam(name = "deltaY") @Positive(message = "위도 증가값은 0이상의 양수만 가능합니다.") BigDecimal deltaY,
+            @Auth Member loginMember
+    ) {
+        MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(x, y, deltaX, deltaY);
+        StoreMapBoundResponses response =
+                storeService.getStoresByBookmarkInMapBounds(mapCoordinateRequest, loginMember);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/followings")
     public ResponseEntity<StoreMapBoundResponses> getStoresByFollowingInMapBounds(
             @RequestParam(name = "x") BigDecimal x,
