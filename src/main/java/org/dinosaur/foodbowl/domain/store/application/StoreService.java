@@ -74,8 +74,18 @@ public class StoreService {
                         )
                         .stream()
                         .toList();
-
         return StoreSearchResponses.from(searchResponses);
+    }
+
+    @Transactional(readOnly = true)
+    public StoreMapBoundResponses getStoresByBookmarkInMapBounds(
+            MapCoordinateRequest mapCoordinateRequest,
+            Member loginMember
+    ) {
+        MapCoordinateBoundDto mapCoordinateBoundDto = convertToMapCoordinateBound(mapCoordinateRequest);
+        List<Store> stores =
+                storeCustomService.getStoresByBookmarkInMapBounds(loginMember.getId(), mapCoordinateBoundDto);
+        return convertToStoreMapBoundResponses(stores, loginMember);
     }
 
     @Transactional(readOnly = true)
@@ -86,9 +96,7 @@ public class StoreService {
         MapCoordinateBoundDto mapCoordinateBoundDto = convertToMapCoordinateBound(mapCoordinateRequest);
         List<Store> stores =
                 storeCustomService.getStoresByFollowingInMapBounds(loginMember.getId(), mapCoordinateBoundDto);
-        StoreToReviewCountDto storeToReviewCountDto = reviewCustomService.getReviewCountByStores(stores);
-        Set<Store> bookmarkStores = bookmarkQueryService.getBookmarkStoresByMember(loginMember);
-        return StoreMapBoundResponses.of(stores, storeToReviewCountDto, bookmarkStores);
+        return convertToStoreMapBoundResponses(stores, loginMember);
     }
 
     private MapCoordinateBoundDto convertToMapCoordinateBound(MapCoordinateRequest mapCoordinateRequest) {
@@ -98,6 +106,12 @@ public class StoreService {
                 mapCoordinateRequest.deltaX(),
                 mapCoordinateRequest.deltaY()
         );
+    }
+
+    private StoreMapBoundResponses convertToStoreMapBoundResponses(List<Store> stores, Member member) {
+        StoreToReviewCountDto storeToReviewCountDto = reviewCustomService.getReviewCountByStores(stores);
+        Set<Store> bookmarkStores = bookmarkQueryService.getBookmarkStoresByMember(member);
+        return StoreMapBoundResponses.of(stores, storeToReviewCountDto, bookmarkStores);
     }
 
     @Transactional
@@ -125,7 +139,6 @@ public class StoreService {
         Category category = categoryRepository.findById(categoryType.getId());
         Point coordinate = PointUtils.generate(storeCreateDto.storeX(), storeCreateDto.storeY());
         Address address = Address.of(storeCreateDto.address(), coordinate);
-
         return Store.builder()
                 .locationId(storeCreateDto.locationId())
                 .storeName(storeCreateDto.storeName())
@@ -145,7 +158,6 @@ public class StoreService {
     ) {
         School school = schoolService.findByName(schoolName)
                 .orElseGet(() -> schoolService.save(schoolName, schoolAddress, schoolX, schoolY));
-
         storeSchoolService.save(store, school);
     }
 }
