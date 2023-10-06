@@ -1,5 +1,6 @@
 package org.dinosaur.foodbowl.domain.store.persistence;
 
+import static org.dinosaur.foodbowl.domain.bookmark.domain.QBookmark.bookmark;
 import static org.dinosaur.foodbowl.domain.follow.domain.QFollow.follow;
 import static org.dinosaur.foodbowl.domain.member.domain.QMember.member;
 import static org.dinosaur.foodbowl.domain.review.domain.QReview.review;
@@ -26,6 +27,49 @@ import org.springframework.stereotype.Repository;
 public class StoreCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
+
+    public List<StoreSearchResponse> search(String name, double x, double y, int size) {
+        return jpaQueryFactory.select(
+                        new QStoreSearchResponse(
+                                store.id,
+                                store.storeName,
+                                calculateDistance(x, y),
+                                review.id.count()
+                        )
+                )
+                .from(store)
+                .leftJoin(review).on(review.store.id.eq(store.id))
+                .where(store.storeName.contains(name))
+                .groupBy(store.id)
+                .orderBy(calculateDistance(x, y).asc())
+                .limit(size)
+                .offset(0)
+                .fetch();
+    }
+
+    private NumberExpression<Double> calculateDistance(double x, double y) {
+        StringTemplate point = Expressions.stringTemplate(
+                String.format("ST_PointFromText('POINT(%s %s)', %s)", y, x, PointUtils.getSrId())
+        );
+        return Expressions.numberTemplate(
+                Double.class,
+                "ST_Distance_Sphere({0}, {1})",
+                point,
+                store.address.coordinate
+        );
+    }
+
+    public List<Store> findStoresByBookmarkInMapBounds(Long memberId, MapCoordinateBoundDto mapCoordinateBoundDto) {
+        return jpaQueryFactory.selectDistinct(store)
+                .from(store)
+                .innerJoin(store.category, category).fetchJoin()
+                .innerJoin(bookmark).on(
+                        bookmark.store.eq(store),
+                        bookmark.member.id.eq(memberId)
+                )
+                .where(containsPolygon(mapCoordinateBoundDto))
+                .fetch();
+    }
 
     public List<Store> findStoresByFollowingInMapBounds(Long memberId, MapCoordinateBoundDto mapCoordinateBoundDto) {
         return jpaQueryFactory.selectDistinct(store)
@@ -71,37 +115,6 @@ public class StoreCustomRepository {
                 mapCoordinateBoundDto.topLeftPoint().getX(),
                 mapCoordinateBoundDto.downLeftPoint().getY(),
                 mapCoordinateBoundDto.downLeftPoint().getX()
-        );
-    }
-
-    public List<StoreSearchResponse> search(String name, double x, double y, int size) {
-        return jpaQueryFactory.select(
-                        new QStoreSearchResponse(
-                                store.id,
-                                store.storeName,
-                                calculateDistance(x, y),
-                                review.id.count()
-                        )
-                )
-                .from(store)
-                .leftJoin(review).on(review.store.id.eq(store.id))
-                .where(store.storeName.contains(name))
-                .groupBy(store.id)
-                .orderBy(calculateDistance(x, y).asc())
-                .limit(size)
-                .offset(0)
-                .fetch();
-    }
-
-    private NumberExpression<Double> calculateDistance(double x, double y) {
-        StringTemplate point = Expressions.stringTemplate(
-                String.format("ST_PointFromText('POINT(%s %s)', %s)", y, x, PointUtils.getSrId())
-        );
-        return Expressions.numberTemplate(
-                Double.class,
-                "ST_Distance_Sphere({0}, {1})",
-                point,
-                store.address.coordinate
         );
     }
 }
