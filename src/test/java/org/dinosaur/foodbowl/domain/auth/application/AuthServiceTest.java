@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @SuppressWarnings("NonAsciiCharacters")
 class AuthServiceTest extends IntegrationTest {
@@ -86,6 +87,21 @@ class AuthServiceTest extends IntegrationTest {
                 softly.assertThat(memberRepository.findById(Long.valueOf(memberId))).isPresent();
             });
         }
+    }
+
+    @Test
+    void 로그아웃을_수행하면_저장소의_갱신_토큰을_삭제한다() {
+        Member member = memberTestPersister.builder()
+                .socialType(SocialType.APPLE)
+                .socialId("1234")
+                .email("email@email.com")
+                .save();
+        redisTemplate.opsForValue().set("1", "refreshToken", 10000, TimeUnit.MILLISECONDS);
+        ReflectionTestUtils.setField(member, "id", 1L);
+
+        authService.logout(member);
+
+        assertThat(redisTemplate.opsForValue().get("1")).isNull();
     }
 
     @Nested
