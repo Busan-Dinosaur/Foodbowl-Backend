@@ -9,6 +9,7 @@ import java.util.List;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.dto.request.MapCoordinateRequest;
 import org.dinosaur.foodbowl.domain.store.application.dto.StoreCreateDto;
+import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.StoreSchool;
 import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
@@ -147,6 +148,99 @@ class StoreServiceTest extends IntegrationTest {
     }
 
     @Nested
+    class 멤버의_리뷰가_존재하는_가게_목록_조회_시 {
+
+        @Test
+        void 존재하지_않은_멤버라면_예외를_던진다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            reviewTestPersister.builder().member(member).store(store).save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            assertThatThrownBy(() -> storeService.getStoresByMemberInMapBounds(-1L, mapCoordinateRequest, member))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
+
+        @Test
+        void 가게_리뷰_수도_함께_조회한다() {
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            reviewTestPersister.builder().member(member).store(store).save();
+            reviewTestPersister.builder().member(writer).store(store).save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            StoreMapBoundResponses response =
+                    storeService.getStoresByMemberInMapBounds(member.getId(), mapCoordinateRequest, member);
+
+            List<StoreMapBoundResponse> result = response.stores();
+            assertSoftly(softly -> {
+                softly.assertThat(result).hasSize(1);
+                softly.assertThat(result.get(0).id()).isEqualTo(store.getId());
+                softly.assertThat(result.get(0).name()).isEqualTo(store.getStoreName());
+                softly.assertThat(result.get(0).categoryName()).isEqualTo(store.getCategory().getName());
+                softly.assertThat(result.get(0).addressName()).isEqualTo(store.getAddress().getAddressName());
+                softly.assertThat(result.get(0).url()).isEqualTo(store.getStoreUrl());
+                softly.assertThat(result.get(0).x()).isEqualTo(store.getAddress().getCoordinate().getX());
+                softly.assertThat(result.get(0).y()).isEqualTo(store.getAddress().getCoordinate().getY());
+                softly.assertThat(result.get(0).reviewCount()).isEqualTo(2);
+                softly.assertThat(result.get(0).isBookmarked()).isFalse();
+            });
+        }
+
+        @Test
+        void 북마크한_가게는_북마크_여부가_TRUE_이다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            reviewTestPersister.builder().member(member).store(store).save();
+            bookmarkTestPersister.builder().member(member).store(store).save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            StoreMapBoundResponses response =
+                    storeService.getStoresByMemberInMapBounds(member.getId(), mapCoordinateRequest, member);
+
+            List<StoreMapBoundResponse> result = response.stores();
+            assertSoftly(softly -> {
+                softly.assertThat(result).hasSize(1);
+                softly.assertThat(result.get(0).isBookmarked()).isTrue();
+            });
+        }
+
+        @Test
+        void 일치하는_가게가_없으면_빈_리스트를_반환한다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            StoreMapBoundResponses response =
+                    storeService.getStoresByMemberInMapBounds(member.getId(), mapCoordinateRequest, member);
+
+            assertThat(response.stores()).isEmpty();
+        }
+    }
+
+    @Nested
     class 북마크한_가게_목록_조회_시 {
 
         @Test
@@ -215,8 +309,7 @@ class StoreServiceTest extends IntegrationTest {
 
             StoreMapBoundResponses response = storeService.getStoresByBookmarkInMapBounds(mapCoordinateRequest, member);
 
-            List<StoreMapBoundResponse> result = response.stores();
-            assertThat(result).isEmpty();
+            assertThat(response.stores()).isEmpty();
         }
     }
 
@@ -293,6 +386,102 @@ class StoreServiceTest extends IntegrationTest {
 
             StoreMapBoundResponses response =
                     storeService.getStoresByFollowingInMapBounds(mapCoordinateRequest, member);
+
+            assertThat(response.stores()).isEmpty();
+        }
+    }
+
+    @Nested
+    class 학교_근처_가게_목록_조회_시 {
+
+        @Test
+        void 존재하지_않은_학교라면_예외를_던진다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            assertThatThrownBy(() -> storeService.getStoresBySchoolInMapBounds(-1L, mapCoordinateRequest, member))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("존재하지 않는 학교입니다.");
+        }
+
+        @Test
+        void 가게_리뷰_수도_함께_조회한다() {
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            School school = schoolTestPersister.builder().save();
+            storeSchoolTestPersister.builder().store(store).school(school).save();
+            reviewTestPersister.builder().member(writer).store(store).save();
+            reviewTestPersister.builder().member(member).store(store).save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            StoreMapBoundResponses response =
+                    storeService.getStoresBySchoolInMapBounds(school.getId(), mapCoordinateRequest, member);
+
+            List<StoreMapBoundResponse> result = response.stores();
+            assertSoftly(softly -> {
+                softly.assertThat(result).hasSize(1);
+                softly.assertThat(result.get(0).id()).isEqualTo(store.getId());
+                softly.assertThat(result.get(0).name()).isEqualTo(store.getStoreName());
+                softly.assertThat(result.get(0).categoryName()).isEqualTo(store.getCategory().getName());
+                softly.assertThat(result.get(0).addressName()).isEqualTo(store.getAddress().getAddressName());
+                softly.assertThat(result.get(0).url()).isEqualTo(store.getStoreUrl());
+                softly.assertThat(result.get(0).x()).isEqualTo(store.getAddress().getCoordinate().getX());
+                softly.assertThat(result.get(0).y()).isEqualTo(store.getAddress().getCoordinate().getY());
+                softly.assertThat(result.get(0).reviewCount()).isEqualTo(2);
+                softly.assertThat(result.get(0).isBookmarked()).isFalse();
+            });
+        }
+
+        @Test
+        void 북마크한_가게는_북마크_여부가_TRUE_이다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            School school = schoolTestPersister.builder().save();
+            storeSchoolTestPersister.builder().store(store).school(school).save();
+            bookmarkTestPersister.builder().member(member).store(store).save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            StoreMapBoundResponses response =
+                    storeService.getStoresBySchoolInMapBounds(school.getId(), mapCoordinateRequest, member);
+
+            List<StoreMapBoundResponse> result = response.stores();
+            assertSoftly(softly -> {
+                softly.assertThat(result).hasSize(1);
+                softly.assertThat(result.get(0).isBookmarked()).isTrue();
+            });
+        }
+
+        @Test
+        void 일치하는_가게가_없으면_빈_리스트를_반환한다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            School school = schoolTestPersister.builder().save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            StoreMapBoundResponses response =
+                    storeService.getStoresBySchoolInMapBounds(school.getId(), mapCoordinateRequest, member);
 
             assertThat(response.stores()).isEmpty();
         }
