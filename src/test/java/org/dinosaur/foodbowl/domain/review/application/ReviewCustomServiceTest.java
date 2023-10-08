@@ -20,6 +20,16 @@ class ReviewCustomServiceTest extends IntegrationTest {
     private ReviewCustomService reviewCustomService;
 
     @Test
+    void 가게에_해당하는_리뷰를_조회한다() {
+        Store store = storeTestPersister.builder().save();
+        Review review = reviewTestPersister.builder().store(store).save();
+
+        List<Review> reviews = reviewCustomService.getReviewsByStore(store.getId(), null, 10);
+
+        assertThat(reviews).containsExactly(review);
+    }
+
+    @Test
     void 북마크한_가게_리뷰_목록을_범위를_통해_조회한다() {
         Member member = memberTestPersister.builder().save();
         Store store = storeTestPersister.builder().save();

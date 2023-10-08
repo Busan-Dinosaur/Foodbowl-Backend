@@ -19,6 +19,7 @@ import org.dinosaur.foodbowl.domain.review.dto.request.MapCoordinateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
+import org.dinosaur.foodbowl.domain.review.dto.response.StoreReviewResponse;
 import org.dinosaur.foodbowl.domain.review.exception.ReviewExceptionType;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
 import org.dinosaur.foodbowl.domain.store.application.StoreService;
@@ -48,6 +49,32 @@ public class ReviewService {
     private final ReviewPhotoCustomService reviewPhotoCustomService;
     private final FollowCustomService followCustomService;
     private final BookmarkQueryService bookmarkQueryService;
+
+    @Transactional(readOnly = true)
+    public StoreReviewResponse getReviewByStore(
+            Long storeId,
+            Long lastReviewId,
+            int pageSize,
+            DeviceCoordinateRequest deviceCoordinateRequest,
+            Member loginMember
+    ) {
+        Store store = storeService.findById(storeId);
+        List<Review> reviews = reviewCustomService.getReviewsByStore(store.getId(), lastReviewId, pageSize);
+
+        MemberToFollowerCountDto memberToFollowerCountDto =
+                followCustomService.getFollowerCountByMembers(getWriters(reviews));
+
+        ReviewToPhotoPathDto reviewToPhotoPathDto = reviewPhotoCustomService.getPhotoPathByReviews(reviews);
+
+        return StoreReviewResponse.of(
+                store,
+                reviews,
+                reviewToPhotoPathDto,
+                memberToFollowerCountDto,
+                deviceCoordinateRequest,
+                bookmarkQueryService.isBookmarkStoreByMember(loginMember, store)
+        );
+    }
 
     @Transactional(readOnly = true)
     public ReviewPageResponse getReviewsByBookmarkInMapBounds(
