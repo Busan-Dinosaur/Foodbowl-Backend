@@ -5,6 +5,7 @@ import static org.dinosaur.foodbowl.domain.member.domain.vo.RoleType.ROLE_회원
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -205,6 +206,148 @@ class StoreControllerTest extends PresentationTest {
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("errorCode").value("CLIENT-101"))
                     .andExpect(jsonPath("message").value(containsString("조회 크기는 1이상만 가능합니다.")));
+        }
+    }
+
+    @Nested
+    class 멤버의_리뷰가_존재하는_가게_목록_조회_시 {
+
+        private final String accessToken = jwtTokenProvider.createAccessToken(1L, ROLE_회원);
+
+        @Test
+        void 정상적인_요청이라면_200_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            StoreMapBoundResponses response = mockStoreMapBoundResponses();
+            given(storeService.getStoresByMemberInMapBounds(
+                    anyLong(),
+                    any(MapCoordinateRequest.class),
+                    any(Member.class))
+            ).willReturn(response);
+
+            MvcResult mvcResult = mockMvc.perform(get("/v1/stores/members")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("memberId", "1")
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.1212")
+                            .param("deltaY", "3.1212"))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+            StoreMapBoundResponses result = objectMapper.readValue(jsonResponse, StoreMapBoundResponses.class);
+            assertThat(result).usingRecursiveComparison().isEqualTo(response);
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 멤버ID가_양수가_아니라면_400_응답을_반환한다(String memberId) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/stores/members")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("memberId", memberId)
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.1212")
+                            .param("deltaY", "3.1212"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("멤버 ID는 양수만 가능합니다.")));
+        }
+
+        @Test
+        void 경도가_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/stores/members")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("memberId", "1")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void 위도가_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/stores/members")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("memberId", "1")
+                            .param("x", "123.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void 경도_증가값이_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/stores/members")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("memberId", "1")
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaY", "3.12"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void 위도_증가값이_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/stores/members")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("memberId", "1")
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 경도_증가값이_0이상의_양수가_아니라면_400_응답을_반환한다(String deltaX) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/stores/members")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("memberId", "1")
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", deltaX)
+                            .param("deltaY", "3.12"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("경도 증가값은 0이상의 양수만 가능합니다.")));
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 위도_증가값이_0이상의_양수가_아니라면_400_응답을_반환한다(String deltaY) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/stores/members")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("memberId", "1")
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", deltaY))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("위도 증가값은 0이상의 양수만 가능합니다.")));
         }
     }
 
@@ -425,6 +568,148 @@ class StoreControllerTest extends PresentationTest {
 
             mockMvc.perform(get("/v1/stores/followings")
                             .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", deltaY))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("위도 증가값은 0이상의 양수만 가능합니다.")));
+        }
+    }
+
+    @Nested
+    class 학교_근거_가게_목록_조회_시 {
+
+        private final String accessToken = jwtTokenProvider.createAccessToken(1L, ROLE_회원);
+
+        @Test
+        void 정상적인_요청이라면_200_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            StoreMapBoundResponses response = mockStoreMapBoundResponses();
+            given(storeService.getStoresBySchoolInMapBounds(
+                    anyLong(),
+                    any(MapCoordinateRequest.class),
+                    any(Member.class))
+            ).willReturn(response);
+
+            MvcResult mvcResult = mockMvc.perform(get("/v1/stores/schools")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("schoolId", "1")
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.1212")
+                            .param("deltaY", "3.1212"))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+            StoreMapBoundResponses result = objectMapper.readValue(jsonResponse, StoreMapBoundResponses.class);
+            assertThat(result).usingRecursiveComparison().isEqualTo(response);
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 학교ID가_양수가_아니라면_400_응답을_반환한다(String schoolId) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/stores/schools")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("schoolId", schoolId)
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.1212")
+                            .param("deltaY", "3.1212"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("학교 ID는 양수만 가능합니다.")));
+        }
+
+        @Test
+        void 경도가_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/stores/schools")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("schoolId", "1")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void 위도가_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/stores/schools")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("schoolId", "1")
+                            .param("x", "123.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void 경도_증가값이_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/stores/schools")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("schoolId", "1")
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaY", "3.12"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void 위도_증가값이_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/stores/schools")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("schoolId", "1")
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 경도_증가값이_0이상의_양수가_아니라면_400_응답을_반환한다(String deltaX) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/stores/schools")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("schoolId", "1")
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", deltaX)
+                            .param("deltaY", "3.12"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("경도 증가값은 0이상의 양수만 가능합니다.")));
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 위도_증가값이_0이상의_양수가_아니라면_400_응답을_반환한다(String deltaY) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/stores/schools")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("schoolId", "1")
                             .param("x", "123.3636")
                             .param("y", "32.3636")
                             .param("deltaX", "3.12")
