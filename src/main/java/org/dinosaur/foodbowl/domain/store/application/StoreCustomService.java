@@ -15,6 +15,11 @@ public class StoreCustomService {
     private final StoreCustomRepository storeCustomRepository;
 
     @Transactional(readOnly = true)
+    public List<Store> getStoresByMemberInMapBounds(Long memberId, MapCoordinateBoundDto mapCoordinateBoundDto) {
+        return storeCustomRepository.findStoresByMemberInMapBounds(memberId, mapCoordinateBoundDto);
+    }
+
+    @Transactional(readOnly = true)
     public List<Store> getStoresByBookmarkInMapBounds(Long memberId, MapCoordinateBoundDto mapCoordinateBoundDto) {
         return storeCustomRepository.findStoresByBookmarkInMapBounds(memberId, mapCoordinateBoundDto);
     }
@@ -22,5 +27,10 @@ public class StoreCustomService {
     @Transactional(readOnly = true)
     public List<Store> getStoresByFollowingInMapBounds(Long memberId, MapCoordinateBoundDto mapCoordinateBoundDto) {
         return storeCustomRepository.findStoresByFollowingInMapBounds(memberId, mapCoordinateBoundDto);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Store> getStoresBySchoolInMapBounds(Long schoolId, MapCoordinateBoundDto mapCoordinateBoundDto) {
+        return storeCustomRepository.findStoresBySchoolInMapBounds(schoolId, mapCoordinateBoundDto);
     }
 }
