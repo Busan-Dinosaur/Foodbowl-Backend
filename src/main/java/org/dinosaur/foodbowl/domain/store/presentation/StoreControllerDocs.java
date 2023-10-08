@@ -24,53 +24,24 @@ import org.springframework.http.ResponseEntity;
 public interface StoreControllerDocs {
 
     @Operation(
-            summary = "팔로잉 하는 유저의 리뷰가 존재하는 가게 목록 범위 기반 조회",
-            description = """
-                    지도 중심의 경도(x), 위도(y)와 경도 증가값(deltaX), 위도 증가값(deltaY)을 통해 사각형 범위를 생성하여
-                                        
-                    해당 범위에 속한 팔로잉 하는 유저의 리뷰가 존재하는 가게 목록을 조회하는 기능입니다.
-                    """
+            summary = "카테고리 목록 조회",
+            description = "카테고리 목록을 조회한다."
     )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "팔로잉 하는 유저의 리뷰가 존재하는 가게 목록 범위 기반 조회 성공"
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = """
-                            1.지도 중심 경도가 존재하지 않은 경우
-                                                        
-                            2.지도 중심 위도가 존재하지 않은 경우
-                                                        
-                            3.지도 경도 증가값이 존재하지 않은 경우
-                                                        
-                            4.지도 경도 증가값이 양수가 아닌 경우
-                                                        
-                            5.지도 위도 증가값이 존재하지 않은 경우
-                                                        
-                            6.지도 위도 증가값이 양수가 아닌 경우
-                            """,
-                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
-            )
-    })
-    ResponseEntity<StoreMapBoundResponses> getStoresByFollowingInMapBounds(
-            @Parameter(description = "지도 중심 경도", example = "123.3636")
-            BigDecimal x,
+    @ApiResponse(
+            responseCode = "200",
+            description = "카테고리 목록 조회 성공"
+    )
+    ResponseEntity<CategoriesResponse> getCategories();
 
-            @Parameter(description = "지도 중심 위도", example = "32.3636")
-            BigDecimal y,
-
-            @Parameter(description = "지도 경도 증가값", example = "3.1212")
-            @Positive(message = "경도 증가값은 0이상의 양수만 가능합니다.")
-            BigDecimal deltaX,
-
-            @Parameter(description = "지도 위도 증가값", example = "3.1212")
-            @Positive(message = "위도 증가값은 0이상의 양수만 가능합니다.")
-            BigDecimal deltaY,
-
-            Member loginMember
-    );
+    @Operation(
+            summary = "학교 목록 조회",
+            description = "DB에 존재하는 학교 목록을 조회한다."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "학교 목록 조회 성공"
+    )
+    ResponseEntity<SchoolsResponse> getSchools();
 
     @Operation(
             summary = "가게 검색 결과 조회",
@@ -125,17 +96,101 @@ public interface StoreControllerDocs {
             @Max(value = 30, message = "최대 30개까지 조회가능합니다.") int size
     );
 
-    @Operation(summary = "카테고리 목록 조회", description = "카테고리 목록을 조회한다.")
-    @ApiResponse(
-            responseCode = "200",
-            description = "카테고리 목록 조회 성공"
+    @Operation(
+            summary = "북마크한 가게 목록 범위 기반 조회",
+            description = """
+                    지도 중심의 경도(x), 위도(y)와 경도 증가값(deltaX), 위도 증가값(deltaY)을 통해 사각형 범위를 생성하여
+                                        
+                    해당 범위에 속한 북마크한 가게 목록을 조회하는 기능입니다.
+                    """
     )
-    ResponseEntity<CategoriesResponse> getCategories();
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "북마크한 가게 목록 범위 기반 조회 성공"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = """
+                            1.지도 중심 경도가 존재하지 않은 경우
+                                                        
+                            2.지도 중심 위도가 존재하지 않은 경우
+                                                        
+                            3.지도 경도 증가값이 존재하지 않은 경우
+                                                        
+                            4.지도 경도 증가값이 양수가 아닌 경우
+                                                        
+                            5.지도 위도 증가값이 존재하지 않은 경우
+                                                        
+                            6.지도 위도 증가값이 양수가 아닌 경우
+                            """,
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            )
+    })
+    ResponseEntity<StoreMapBoundResponses> getStoresByBookmarkInMapBounds(
+            @Parameter(description = "지도 중심 경도", example = "123.3636")
+            BigDecimal x,
 
-    @Operation(summary = "학교 목록 조회", description = "DB에 존재하는 학교 목록을 조회한다.")
-    @ApiResponse(
-            responseCode = "200",
-            description = "학교 목록 조회 성공"
+            @Parameter(description = "지도 중심 위도", example = "32.3636")
+            BigDecimal y,
+
+            @Parameter(description = "지도 경도 증가값", example = "3.1212")
+            @Positive(message = "경도 증가값은 0이상의 양수만 가능합니다.")
+            BigDecimal deltaX,
+
+            @Parameter(description = "지도 위도 증가값", example = "3.1212")
+            @Positive(message = "위도 증가값은 0이상의 양수만 가능합니다.")
+            BigDecimal deltaY,
+
+            Member loginMember
+    );
+
+    @Operation(
+            summary = "팔로잉 하는 유저의 리뷰가 존재하는 가게 목록 범위 기반 조회",
+            description = """
+                    지도 중심의 경도(x), 위도(y)와 경도 증가값(deltaX), 위도 증가값(deltaY)을 통해 사각형 범위를 생성하여
+                                        
+                    해당 범위에 속한 팔로잉 하는 유저의 리뷰가 존재하는 가게 목록을 조회하는 기능입니다.
+                    """
     )
-    ResponseEntity<SchoolsResponse> getSchools();
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "팔로잉 하는 유저의 리뷰가 존재하는 가게 목록 범위 기반 조회 성공"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = """
+                            1.지도 중심 경도가 존재하지 않은 경우
+                                                        
+                            2.지도 중심 위도가 존재하지 않은 경우
+                                                        
+                            3.지도 경도 증가값이 존재하지 않은 경우
+                                                        
+                            4.지도 경도 증가값이 양수가 아닌 경우
+                                                        
+                            5.지도 위도 증가값이 존재하지 않은 경우
+                                                        
+                            6.지도 위도 증가값이 양수가 아닌 경우
+                            """,
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            )
+    })
+    ResponseEntity<StoreMapBoundResponses> getStoresByFollowingInMapBounds(
+            @Parameter(description = "지도 중심 경도", example = "123.3636")
+            BigDecimal x,
+
+            @Parameter(description = "지도 중심 위도", example = "32.3636")
+            BigDecimal y,
+
+            @Parameter(description = "지도 경도 증가값", example = "3.1212")
+            @Positive(message = "경도 증가값은 0이상의 양수만 가능합니다.")
+            BigDecimal deltaX,
+
+            @Parameter(description = "지도 위도 증가값", example = "3.1212")
+            @Positive(message = "위도 증가값은 0이상의 양수만 가능합니다.")
+            BigDecimal deltaY,
+
+            Member loginMember
+    );
 }
