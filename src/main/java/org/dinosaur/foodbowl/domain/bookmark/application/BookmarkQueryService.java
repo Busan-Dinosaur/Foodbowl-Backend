@@ -25,4 +25,10 @@ public class BookmarkQueryService {
                 .map(Bookmark::getStore)
                 .collect(toSet());
     }
+
+    @Transactional(readOnly = true)
+    public boolean isBookmarkStoreByMember(Member member, Store store) {
+        return bookmarkRepository.findByMemberAndStore(member, store)
+                .isPresent();
+    }
 }
