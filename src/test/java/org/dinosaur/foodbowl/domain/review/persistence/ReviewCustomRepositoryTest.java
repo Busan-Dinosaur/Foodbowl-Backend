@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.domain.review.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -19,6 +20,90 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
 
     @Autowired
     private ReviewCustomRepository reviewCustomRepository;
+
+    @Nested
+    class 가게_리뷰_목록_페이징_조회_시 {
+
+        @Test
+        void 정상적으로_조회한다() {
+            Store store = storeTestPersister.builder().save();
+            Review reviewA = reviewTestPersister.builder().store(store).save();
+            Review reviewB = reviewTestPersister.builder().store(store).save();
+            Review reviewC = reviewTestPersister.builder().store(store).save();
+
+            List<Review> reviews = reviewCustomRepository.findPaginationReviewsByStore(
+                    store.getId(),
+                    null,
+                    10
+            );
+
+            assertThat(reviews).containsExactly(reviewC, reviewB, reviewA);
+        }
+
+        @Test
+        void 마지막_리뷰ID가_NULL이_아닐때_마지막_리뷰ID보다_작은_리뷰는_조회한다() {
+            Store store = storeTestPersister.builder().save();
+            Review reviewA = reviewTestPersister.builder().store(store).save();
+            Review reviewB = reviewTestPersister.builder().store(store).save();
+
+            List<Review> reviews = reviewCustomRepository.findPaginationReviewsByStore(
+                    store.getId(),
+                    reviewB.getId() + 1,
+                    10
+            );
+
+            assertThat(reviews).containsExactly(reviewB, reviewA);
+        }
+
+        @Test
+        void 마지막_리뷰ID가_NULL이_아닐때_마지막_리뷰ID보다_큰_리뷰는_조회하지_않는다() {
+            Store store = storeTestPersister.builder().save();
+            Review reviewA = reviewTestPersister.builder().store(store).save();
+            Review reviewB = reviewTestPersister.builder().store(store).save();
+
+            List<Review> reviews = reviewCustomRepository.findPaginationReviewsByStore(
+                    store.getId(),
+                    reviewA.getId() + 1,
+                    10
+            );
+
+            assertSoftly(softly -> {
+                softly.assertThat(reviews).containsExactly(reviewA);
+                softly.assertThat(reviews).doesNotContain(reviewB);
+            });
+        }
+
+        @Test
+        void 리뷰ID를_내림차순으로_조회한다() {
+            Store store = storeTestPersister.builder().save();
+            Review reviewA = reviewTestPersister.builder().store(store).save();
+            Review reviewB = reviewTestPersister.builder().store(store).save();
+
+            List<Review> result = reviewCustomRepository.findPaginationReviewsByStore(
+                    store.getId(),
+                    null,
+                    10
+            );
+
+            assertThat(result).containsExactly(reviewB, reviewA);
+        }
+
+        @Test
+        void 페이지_크기만큼_조회한다() {
+            Store store = storeTestPersister.builder().save();
+            Review reviewA = reviewTestPersister.builder().store(store).save();
+            Review reviewB = reviewTestPersister.builder().store(store).save();
+            Review reviewC = reviewTestPersister.builder().store(store).save();
+
+            List<Review> result = reviewCustomRepository.findPaginationReviewsByStore(
+                    store.getId(),
+                    null,
+                    2
+            );
+
+            assertThat(result).containsExactly(reviewC, reviewB);
+        }
+    }
 
     @Nested
     class 북마크한_가게_리뷰_목록_페이징_조회_시 {

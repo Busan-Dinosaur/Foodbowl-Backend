@@ -25,6 +25,22 @@ public class ReviewCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
+    public List<Review> findPaginationReviewsByStore(
+            Long storeId,
+            Long lastReviewId,
+            int pageSize
+    ) {
+        return jpaQueryFactory.select(review)
+                .from(review)
+                .where(
+                        review.store.id.eq(storeId),
+                        ltLastReviewId(lastReviewId)
+                )
+                .orderBy(review.id.desc())
+                .limit(pageSize)
+                .fetch();
+    }
+
     public List<Review> findPaginationReviewsByBookmarkInMapBounds(
             Long memberId,
             Long lastReviewId,
