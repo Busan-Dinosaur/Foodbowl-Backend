@@ -8,10 +8,8 @@ import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.dto.request.MapCoordinateRequest;
-import org.dinosaur.foodbowl.domain.store.application.SchoolService;
 import org.dinosaur.foodbowl.domain.store.application.StoreService;
 import org.dinosaur.foodbowl.domain.store.dto.response.CategoriesResponse;
-import org.dinosaur.foodbowl.domain.store.dto.response.SchoolsResponse;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreMapBoundResponses;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchResponses;
 import org.dinosaur.foodbowl.global.presentation.Auth;
@@ -29,17 +27,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class StoreController implements StoreControllerDocs {
 
     private final StoreService storeService;
-    private final SchoolService schoolService;
 
     @GetMapping("/categories")
     public ResponseEntity<CategoriesResponse> getCategories() {
         CategoriesResponse response = storeService.getCategories();
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/schools")
-    public ResponseEntity<SchoolsResponse> getSchools() {
-        SchoolsResponse response = schoolService.getSchools();
         return ResponseEntity.ok(response);
     }
 

@@ -14,7 +14,6 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.store.dto.response.CategoriesResponse;
-import org.dinosaur.foodbowl.domain.store.dto.response.SchoolsResponse;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreMapBoundResponses;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchResponses;
 import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
@@ -32,16 +31,6 @@ public interface StoreControllerDocs {
             description = "카테고리 목록 조회 성공"
     )
     ResponseEntity<CategoriesResponse> getCategories();
-
-    @Operation(
-            summary = "학교 목록 조회",
-            description = "DB에 존재하는 학교 목록을 조회한다."
-    )
-    @ApiResponse(
-            responseCode = "200",
-            description = "학교 목록 조회 성공"
-    )
-    ResponseEntity<SchoolsResponse> getSchools();
 
     @Operation(
             summary = "가게 검색 결과 조회",
