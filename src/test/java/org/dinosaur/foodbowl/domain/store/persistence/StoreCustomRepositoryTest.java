@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
+import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchResponse;
@@ -60,6 +61,63 @@ class StoreCustomRepositoryTest extends PersistenceTest {
                 "서울시 서초구 방배동 1234",
                 PointUtils.generate(new BigDecimal(x), new BigDecimal(y))
         );
+    }
+
+    @Nested
+    class 멤버의_리뷰가_작성된_가게_목록_범위_조회_시 {
+
+        @Test
+        void 멤버의_리뷰가_작성된_가게는_조회한다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            reviewTestPersister.builder().member(member).store(store).save();
+            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            List<Store> result =
+                    storeCustomRepository.findStoresByMemberInMapBounds(member.getId(), mapCoordinateBoundDto);
+
+            assertThat(result).contains(store);
+        }
+
+        @Test
+        void 멤버의_리뷰가_작성되지_않은_가게는_조회하지_않는다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            List<Store> result =
+                    storeCustomRepository.findStoresByMemberInMapBounds(member.getId(), mapCoordinateBoundDto);
+
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        void 폴리곤_영역에_경도와_위도가_속하지_않는_가게의_리뷰는_조회하지_않는다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            reviewTestPersister.builder().member(member).store(store).save();
+            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX() + 10),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY() + 10),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            List<Store> result =
+                    storeCustomRepository.findStoresByMemberInMapBounds(member.getId(), mapCoordinateBoundDto);
+
+            assertThat(result).isEmpty();
+        }
     }
 
     @Nested
@@ -199,6 +257,63 @@ class StoreCustomRepositoryTest extends PersistenceTest {
 
             List<Store> result =
                     storeCustomRepository.findStoresByFollowingInMapBounds(member.getId(), mapCoordinateBoundDto);
+
+            assertThat(result).isEmpty();
+        }
+    }
+
+    @Nested
+    class 학교_근처_가게_목록_범위_조회_시 {
+
+        @Test
+        void 학교_근처_가게는_조회한다() {
+            Store store = storeTestPersister.builder().save();
+            School school = schoolTestPersister.builder().save();
+            storeSchoolTestPersister.builder().store(store).school(school).save();
+            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            List<Store> result =
+                    storeCustomRepository.findStoresBySchoolInMapBounds(school.getId(), mapCoordinateBoundDto);
+
+            assertThat(result).contains(store);
+        }
+
+        @Test
+        void 학교_근처가_아닌_가게는_조회하지_않는다() {
+            Store store = storeTestPersister.builder().save();
+            School school = schoolTestPersister.builder().save();
+            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            List<Store> result =
+                    storeCustomRepository.findStoresBySchoolInMapBounds(school.getId(), mapCoordinateBoundDto);
+
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        void 폴리곤_영역에_경도와_위도가_속하지_않는_가게의_리뷰는_조회하지_않는다() {
+            Store store = storeTestPersister.builder().save();
+            School school = schoolTestPersister.builder().save();
+            storeSchoolTestPersister.builder().store(store).school(school).save();
+            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX() + 10),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY() + 10),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            List<Store> result =
+                    storeCustomRepository.findStoresBySchoolInMapBounds(school.getId(), mapCoordinateBoundDto);
 
             assertThat(result).isEmpty();
         }
