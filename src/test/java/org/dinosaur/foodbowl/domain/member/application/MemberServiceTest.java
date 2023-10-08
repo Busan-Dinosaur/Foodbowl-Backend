@@ -137,13 +137,15 @@ class MemberServiceTest extends IntegrationTest {
             assertSoftly(softly -> {
                 softly.assertThat(memberSearchResponses.get(0).memberId()).isEqualTo(memberB.getId());
                 softly.assertThat(memberSearchResponses.get(0).nickname()).isEqualTo(memberB.getNickname());
-                softly.assertThat(memberSearchResponses.get(0).profileImageUrl()).isEqualTo(memberB.getProfileImageUrl());
+                softly.assertThat(memberSearchResponses.get(0).profileImageUrl())
+                        .isEqualTo(memberB.getProfileImageUrl());
                 softly.assertThat(memberSearchResponses.get(0).followerCount()).isOne();
                 softly.assertThat(memberSearchResponses.get(0).isFollowing()).isTrue();
                 softly.assertThat(memberSearchResponses.get(0).isMe()).isFalse();
                 softly.assertThat(memberSearchResponses.get(1).memberId()).isEqualTo(memberA.getId());
                 softly.assertThat(memberSearchResponses.get(1).nickname()).isEqualTo(memberA.getNickname());
-                softly.assertThat(memberSearchResponses.get(1).profileImageUrl()).isEqualTo(memberA.getProfileImageUrl());
+                softly.assertThat(memberSearchResponses.get(1).profileImageUrl())
+                        .isEqualTo(memberA.getProfileImageUrl());
                 softly.assertThat(memberSearchResponses.get(1).followerCount()).isZero();
                 softly.assertThat(memberSearchResponses.get(1).isFollowing()).isFalse();
                 softly.assertThat(memberSearchResponses.get(1).isMe()).isFalse();
@@ -161,7 +163,8 @@ class MemberServiceTest extends IntegrationTest {
             assertSoftly(softly -> {
                 softly.assertThat(memberSearchResponses.get(0).memberId()).isEqualTo(member.getId());
                 softly.assertThat(memberSearchResponses.get(0).nickname()).isEqualTo(member.getNickname());
-                softly.assertThat(memberSearchResponses.get(0).profileImageUrl()).isEqualTo(member.getProfileImageUrl());
+                softly.assertThat(memberSearchResponses.get(0).profileImageUrl())
+                        .isEqualTo(member.getProfileImageUrl());
                 softly.assertThat(memberSearchResponses.get(0).followerCount()).isZero();
                 softly.assertThat(memberSearchResponses.get(0).isFollowing()).isFalse();
                 softly.assertThat(memberSearchResponses.get(0).isMe()).isTrue();

@@ -16,6 +16,9 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
+import org.dinosaur.foodbowl.domain.review.persistence.dto.QStoreReviewCountDto;
+import org.dinosaur.foodbowl.domain.review.persistence.dto.StoreReviewCountDto;
+import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.global.util.PointUtils;
 import org.springframework.stereotype.Repository;
 
@@ -24,6 +27,41 @@ import org.springframework.stereotype.Repository;
 public class ReviewCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
+
+    public List<StoreReviewCountDto> findReviewCountByStores(List<Store> stores) {
+        return jpaQueryFactory.select(
+                        new QStoreReviewCountDto(
+                                store.id,
+                                review.count()
+                        )
+                )
+                .from(review)
+                .innerJoin(review.store, store)
+                .where(store.in(stores))
+                .groupBy(store.id)
+                .fetch();
+    }
+
+    public List<Review> findPaginationReviewsByMemberInMapBound(
+            Long memberId,
+            Long lastReviewId,
+            MapCoordinateBoundDto mapCoordinateBoundDto,
+            int pageSize
+    ) {
+        return jpaQueryFactory.selectDistinct(review)
+                .from(review)
+                .innerJoin(review.store, store).fetchJoin()
+                .innerJoin(review.member, member).fetchJoin()
+                .innerJoin(store.category, category).fetchJoin()
+                .where(
+                        ltLastReviewId(lastReviewId),
+                        member.id.eq(memberId),
+                        containsPolygon(mapCoordinateBoundDto)
+                )
+                .orderBy(review.id.desc())
+                .limit(pageSize)
+                .fetch();
+    }
 
     public List<Review> findPaginationReviewsByStore(
             Long storeId,
@@ -76,10 +114,12 @@ public class ReviewCustomRepository {
                 .innerJoin(review.store, store).fetchJoin()
                 .innerJoin(review.member, member).fetchJoin()
                 .innerJoin(store.category, category).fetchJoin()
-                .innerJoin(follow).on(review.member.id.eq(follow.following.id))
+                .innerJoin(follow).on(
+                        review.member.id.eq(follow.following.id),
+                        follow.follower.id.eq(followerId)
+                )
                 .where(
                         ltLastReviewId(lastReviewId),
-                        follow.follower.id.eq(followerId),
                         containsPolygon(mapCoordinateBoundDto)
                 )
                 .orderBy(review.id.desc())

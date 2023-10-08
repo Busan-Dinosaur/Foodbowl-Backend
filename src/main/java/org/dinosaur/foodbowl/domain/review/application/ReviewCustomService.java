@@ -3,8 +3,11 @@ package org.dinosaur.foodbowl.domain.review.application;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
+import org.dinosaur.foodbowl.domain.review.application.dto.StoreToReviewCountDto;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewCustomRepository;
+import org.dinosaur.foodbowl.domain.review.persistence.dto.StoreReviewCountDto;
+import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +16,27 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReviewCustomService {
 
     private final ReviewCustomRepository reviewCustomRepository;
+
+    @Transactional(readOnly = true)
+    public StoreToReviewCountDto getReviewCountByStores(List<Store> stores) {
+        List<StoreReviewCountDto> storeReviewCounts = reviewCustomRepository.findReviewCountByStores(stores);
+        return StoreToReviewCountDto.from(storeReviewCounts);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Review> getReviewsByMemberInMapBounds(
+            Long memberId,
+            Long lastReviewId,
+            MapCoordinateBoundDto mapCoordinateBoundDto,
+            int pageSize
+    ) {
+        return reviewCustomRepository.findPaginationReviewsByMemberInMapBound(
+                memberId,
+                lastReviewId,
+                mapCoordinateBoundDto,
+                pageSize
+        );
+    }
 
     @Transactional(readOnly = true)
     public List<Review> getReviewsByStore(

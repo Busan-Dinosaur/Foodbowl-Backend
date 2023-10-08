@@ -29,7 +29,7 @@ public record MemberSearchResponse(
             Member loginMember,
             long followerCount,
             boolean isFollowing
-            ) {
+    ) {
         return new MemberSearchResponse(
                 member.getId(),
                 member.getNickname(),
