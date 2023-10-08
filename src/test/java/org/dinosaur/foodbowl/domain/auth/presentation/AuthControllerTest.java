@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -11,9 +12,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.dinosaur.foodbowl.domain.auth.application.AuthService;
+import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.AppleLoginRequest;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.RenewTokenRequest;
 import org.dinosaur.foodbowl.domain.auth.dto.response.TokenResponse;
+import org.dinosaur.foodbowl.domain.member.domain.Member;
+import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
 import org.dinosaur.foodbowl.test.PresentationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -35,6 +39,9 @@ class AuthControllerTest extends PresentationTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @MockBean
     private AuthService authService;
@@ -70,6 +77,17 @@ class AuthControllerTest extends PresentationTest {
                     .andExpect(jsonPath("$.errorCode").value("CLIENT-100"))
                     .andExpect(jsonPath("$.message", containsString("애플 토큰이 존재하지 않습니다.")));
         }
+    }
+
+    @Test
+    void 로그아웃에_성공하면_204_응답을_반환한다() throws Exception {
+        mockingAuthMemberInResolver();
+        willDoNothing().given(authService).logout(any(Member.class));
+
+        mockMvc.perform(post("/v1/auth/logout")
+                        .header(AUTHORIZATION, BEARER + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원)))
+                .andDo(print())
+                .andExpect(status().isNoContent());
     }
 
     @Nested

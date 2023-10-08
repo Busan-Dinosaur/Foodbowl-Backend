@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.AppleLoginRequest;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.RenewTokenRequest;
 import org.dinosaur.foodbowl.domain.auth.dto.response.TokenResponse;
+import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
 import org.springframework.http.ResponseEntity;
 
@@ -33,6 +34,16 @@ public interface AuthControllerDocs {
             )
     })
     ResponseEntity<TokenResponse> appleLogin(AppleLoginRequest appleLoginRequest);
+
+    @Operation(
+            summary = "로그아웃",
+            description = "로그아웃을 수행하면 서버에 저장된 갱신 토큰을 삭제한다."
+    )
+    @ApiResponse(
+            responseCode = "204",
+            description = "로그아웃 성공"
+    )
+    ResponseEntity<Void> logout(Member loginMember);
 
     @Operation(summary = "인증 토큰 갱신", description = "갱신 토큰을 통해 인증 토큰을 갱신한다.")
     @ApiResponses({
