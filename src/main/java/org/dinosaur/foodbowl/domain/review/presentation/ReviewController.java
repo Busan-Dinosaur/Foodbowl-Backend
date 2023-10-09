@@ -140,6 +140,7 @@ public class ReviewController implements ReviewControllerDocs {
     @GetMapping("/stores")
     public ResponseEntity<StoreReviewResponse> getReviewsByStore(
             @RequestParam(name = "storeId") @Positive(message = "가게 ID는 양수만 가능합니다.") Long storeId,
+            @RequestParam(name = "filter", defaultValue = "ALL") String filter,
             @RequestParam(name = "lastReviewId", required = false) @Positive(message = "리뷰 ID는 양수만 가능합니다.") Long lastReviewId,
             @RequestParam(name = "pageSize", defaultValue = "10") @Positive(message = "페이지 크기는 양수만 가능합니다.") int pageSize,
             @RequestParam(name = "deviceX") BigDecimal deviceX,
@@ -149,6 +150,7 @@ public class ReviewController implements ReviewControllerDocs {
         DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(deviceX, deviceY);
         StoreReviewResponse storeReviewResponse = reviewService.getReviewByStore(
                 storeId,
+                filter,
                 lastReviewId,
                 pageSize,
                 deviceCoordinateRequest,

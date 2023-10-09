@@ -116,9 +116,17 @@ public interface ReviewControllerDocs {
     );
 
     @Operation(
-            summary = "가게 리뷰 페이징 조회",
+            summary = "가게 리뷰 필터링 페이징 조회",
             description = """
                     특정 가게에 해당하는 리뷰를 조회합니다.
+                    
+                    가게에 해당하는 '모든' 리뷰를 조회하거나, 필터링 조건을 사용해 '친구들' 리뷰만 모아볼 수 있습니다.
+                    
+                    요청 예시: /v1/reviews/stores?filter=FRIEND
+                    
+                    요청 파라미터: filter (필수 값이 아닙니다. 해당 파라미터 없이 요청 시 모든 결과가 반환됩니다.)
+                    
+                    서버에서 허용하는 요청 파라미터 값 : FRIEND
                                         
                     디바이스 경도(deviceX), 디바이스 위도(deviceY)를 통해 디바이스와 가게 사이의 거리를 계산합니다.
                                         
@@ -153,6 +161,8 @@ public interface ReviewControllerDocs {
                             5.페이지 크기가 양수가 아닌 경우
                                                         
                             6.마지막 리뷰 ID가 양수가 아닌 경우
+                            
+                            7.일치하는 필터링 조건이 아닌 경우
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
@@ -161,6 +171,9 @@ public interface ReviewControllerDocs {
             @Parameter(description = "가게 ID", example = "1")
             @Positive(message = "가게 ID는 양수만 가능합니다.")
             Long storeId,
+
+            @Parameter(description = "리뷰 필터", example = "FRIEND")
+            String filter,
 
             @Parameter(description = "이전 조회의 마지막 리뷰 ID(첫 조회 시에는 파라미터 요청 X)", example = "1")
             @Positive(message = "리뷰 ID는 양수만 가능합니다.")

@@ -334,7 +334,7 @@ class ReviewControllerTest extends PresentationTest {
         private final String accessToken = jwtTokenProvider.createAccessToken(1L, ROLE_회원);
 
         @Test
-        void 정상적인_요청이라면_200_응답을_반환한다() throws Exception {
+        void 필터링_조건_없이_200_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
             StoreReviewResponse response = new StoreReviewResponse(
                     new ReviewStoreResponse(
@@ -367,6 +367,7 @@ class ReviewControllerTest extends PresentationTest {
             given(reviewService.getReviewByStore(
                     anyLong(),
                     any(),
+                    any(),
                     anyInt(),
                     any(DeviceCoordinateRequest.class),
                     any(Member.class)
@@ -375,6 +376,62 @@ class ReviewControllerTest extends PresentationTest {
             MvcResult mvcResult = mockMvc.perform(get("/v1/reviews/stores")
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .param("storeId", "1")
+                            .param("pageSize", "20")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "35.324"))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+            StoreReviewResponse result = objectMapper.readValue(jsonResponse, StoreReviewResponse.class);
+            assertThat(result).usingRecursiveComparison().isEqualTo(response);
+        }
+
+        @Test
+        void 필터링_조건과_함께_200_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            StoreReviewResponse response = new StoreReviewResponse(
+                    new ReviewStoreResponse(
+                            1L,
+                            "한식",
+                            "김밥나라",
+                            "서울시 송파구 잠실동 124길 12",
+                            210.1245,
+                            false
+                    ),
+                    List.of(
+                            new StoreReviewContentResponse(
+                                    new ReviewWriterResponse(
+                                            1L,
+                                            "그레이",
+                                            "https://static.image.com",
+                                            10
+                                    ),
+                                    new ReviewContentResponse(
+                                            1L,
+                                            "맛있어요",
+                                            List.of("https://static.image1.com"),
+                                            LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS),
+                                            LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+                                    )
+                            )
+                    ),
+                    new ReviewPageInfo(1L, 1L, 1)
+            );
+            given(reviewService.getReviewByStore(
+                    anyLong(),
+                    any(),
+                    any(),
+                    anyInt(),
+                    any(DeviceCoordinateRequest.class),
+                    any(Member.class)
+            )).willReturn(response);
+
+            MvcResult mvcResult = mockMvc.perform(get("/v1/reviews/stores")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("storeId", "1")
+                            .param("filter", "FRIEND")
                             .param("pageSize", "20")
                             .param("deviceX", "123.3636")
                             .param("deviceY", "35.324"))
