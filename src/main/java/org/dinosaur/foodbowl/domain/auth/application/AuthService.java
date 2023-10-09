@@ -73,6 +73,11 @@ public class AuthService {
     }
 
     @Transactional
+    public void logout(Member loginMember) {
+        redisTemplate.delete(String.valueOf(loginMember.getId()));
+    }
+
+    @Transactional
     public TokenResponse renewToken(RenewTokenRequest renewTokenRequest) {
         String memberId = jwtTokenProvider.extractSubject(renewTokenRequest.accessToken());
         String savedRefreshToken = (String) redisTemplate.opsForValue().get(memberId);
