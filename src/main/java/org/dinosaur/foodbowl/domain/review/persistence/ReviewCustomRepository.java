@@ -76,7 +76,7 @@ public class ReviewCustomRepository {
                 .from(review)
                 .innerJoin(review.member, member).fetchJoin();
 
-        setFollowFilterIfExists(jpaQuery, memberId, reviewFilter);
+        setReviewFilterIfExists(jpaQuery, memberId, reviewFilter);
         return
                 jpaQuery.where(
                         review.store.id.eq(storeId),
@@ -87,7 +87,7 @@ public class ReviewCustomRepository {
                 .fetch();
     }
 
-    private void setFollowFilterIfExists(JPAQuery<Review> jpaQuery, Long memberId, ReviewFilter reviewFilter) {
+    private void setReviewFilterIfExists(JPAQuery<Review> jpaQuery, Long memberId, ReviewFilter reviewFilter) {
         if (reviewFilter == ReviewFilter.ALL) {
             return;
         }
