@@ -70,6 +70,7 @@ public class ReviewCustomRepository {
     ) {
         return jpaQueryFactory.select(review)
                 .from(review)
+                .innerJoin(review.member, member).fetchJoin()
                 .where(
                         review.store.id.eq(storeId),
                         ltLastReviewId(lastReviewId)
