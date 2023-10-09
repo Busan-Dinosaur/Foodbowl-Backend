@@ -26,12 +26,15 @@ import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
+import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
 import org.dinosaur.foodbowl.global.util.PointUtils;
 import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.dinosaur.foodbowl.test.file.FileTestUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -229,7 +232,7 @@ class ReviewServiceTest extends IntegrationTest {
     class 가게에_해당하는_리뷰_목록_페이징_조회_시 {
 
         @Test
-        void 정상적으로_조회한다() {
+        void 모든_리뷰를_조회한다() {
             Member member = memberTestPersister.builder().save();
             Store store = storeTestPersister.builder().save();
             Review reviewA = reviewTestPersister.builder().store(store).content("맛있어요").save();
@@ -241,6 +244,7 @@ class ReviewServiceTest extends IntegrationTest {
 
             StoreReviewResponse storeReviewResponse = reviewService.getReviewByStore(
                     store.getId(),
+                    "ALL",
                     null,
                     10,
                     deviceCoordinateRequest,
@@ -264,6 +268,42 @@ class ReviewServiceTest extends IntegrationTest {
         }
 
         @Test
+        void 팔로워_리뷰만_조회한다() {
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            followTestPersister.builder().follower(member).following(writer).save();
+            Review reviewA = reviewTestPersister.builder().store(store).member(writer).content("맛있어요").save();
+            Review reviewB = reviewTestPersister.builder().store(store).content("맛없어요").save();
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            StoreReviewResponse storeReviewResponse = reviewService.getReviewByStore(
+                    store.getId(),
+                    "FRIEND",
+                    null,
+                    10,
+                    deviceCoordinateRequest,
+                    member
+            );
+
+            ReviewStoreResponse reviewStoreResponse = storeReviewResponse.reviewStoreResponse();
+            List<StoreReviewContentResponse> reviewContentResponses = storeReviewResponse.storeReviewContentResponses();
+            ReviewPageInfo reviewPageInfo = storeReviewResponse.page();
+            assertSoftly(softly -> {
+                softly.assertThat(reviewStoreResponse.id()).isEqualTo(store.getId());
+                softly.assertThat(reviewContentResponses).hasSize(1);
+                softly.assertThat(reviewContentResponses.get(0).review().id()).isEqualTo(reviewA.getId());
+                softly.assertThat(reviewContentResponses.get(0).review().content()).isEqualTo(reviewA.getContent());
+                softly.assertThat(reviewPageInfo.size()).isEqualTo(1);
+                softly.assertThat(reviewPageInfo.firstId()).isEqualTo(reviewA.getId());
+                softly.assertThat(reviewPageInfo.lastId()).isEqualTo(reviewA.getId());
+            });
+        }
+
+        @Test
         void 가게_정보도_함께_조회한다() {
             Member member = memberTestPersister.builder().save();
             Store store = storeTestPersister.builder().save();
@@ -275,6 +315,7 @@ class ReviewServiceTest extends IntegrationTest {
 
             StoreReviewResponse storeReviewResponse = reviewService.getReviewByStore(
                     store.getId(),
+                    "ALL",
                     null,
                     10,
                     deviceCoordinateRequest,
@@ -307,6 +348,7 @@ class ReviewServiceTest extends IntegrationTest {
 
             StoreReviewResponse storeReviewResponse = reviewService.getReviewByStore(
                     store.getId(),
+                    "ALL",
                     null,
                     10,
                     deviceCoordinateRequest,
@@ -336,6 +378,7 @@ class ReviewServiceTest extends IntegrationTest {
 
             StoreReviewResponse storeReviewResponse = reviewService.getReviewByStore(
                     store.getId(),
+                    "ALL",
                     null,
                     10,
                     deviceCoordinateRequest,
@@ -358,12 +401,29 @@ class ReviewServiceTest extends IntegrationTest {
         void 해당_가게가_존재하지_않으면_예외가_발생한다() {
             assertThatThrownBy(() -> reviewService.getReviewByStore(
                     -1L,
+                    "ALL",
                     null,
                     10,
                     null,
                     null))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("일치하는 가게를 찾을 수 없습니다.");
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"", " ", "test", "all", "friend"})
+        void 일치하는_리뷰_필터링_조건이_없으면_예외가_발생한다(String reviewFilter) {
+            Store store = storeTestPersister.builder().save();
+
+            assertThatThrownBy(() -> reviewService.getReviewByStore(
+                    store.getId(),
+                    reviewFilter,
+                    null,
+                    10,
+                    null,
+                    null))
+                    .isInstanceOf(InvalidArgumentException.class)
+                    .hasMessage("일치하는 리뷰 필터링 조건이 없습니다.");
         }
     }
 

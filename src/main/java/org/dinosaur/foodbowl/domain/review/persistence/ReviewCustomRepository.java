@@ -11,11 +11,13 @@ import static org.dinosaur.foodbowl.domain.store.domain.QStoreSchool.storeSchool
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
+import org.dinosaur.foodbowl.domain.review.domain.vo.ReviewFilter;
 import org.dinosaur.foodbowl.domain.review.persistence.dto.QStoreReviewCountDto;
 import org.dinosaur.foodbowl.domain.review.persistence.dto.StoreReviewCountDto;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
@@ -65,19 +67,34 @@ public class ReviewCustomRepository {
 
     public List<Review> findPaginationReviewsByStore(
             Long storeId,
+            ReviewFilter reviewFilter,
+            Long memberId,
             Long lastReviewId,
             int pageSize
     ) {
-        return jpaQueryFactory.select(review)
+        JPAQuery<Review> jpaQuery = jpaQueryFactory.select(review)
                 .from(review)
-                .innerJoin(review.member, member).fetchJoin()
-                .where(
+                .innerJoin(review.member, member).fetchJoin();
+
+        setFollowFilterIfExists(jpaQuery, memberId, reviewFilter);
+        return
+                jpaQuery.where(
                         review.store.id.eq(storeId),
                         ltLastReviewId(lastReviewId)
                 )
                 .orderBy(review.id.desc())
                 .limit(pageSize)
                 .fetch();
+    }
+
+    private void setFollowFilterIfExists(JPAQuery<Review> jpaQuery, Long memberId, ReviewFilter reviewFilter) {
+        if (reviewFilter == ReviewFilter.ALL) {
+            return;
+        }
+        jpaQuery.innerJoin(follow).on(
+                review.member.id.eq(follow.following.id),
+                follow.follower.id.eq(memberId)
+        );
     }
 
     public List<Review> findPaginationReviewsByBookmarkInMapBounds(

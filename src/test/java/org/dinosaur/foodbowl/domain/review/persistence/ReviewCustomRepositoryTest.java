@@ -8,6 +8,7 @@ import java.util.List;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
+import org.dinosaur.foodbowl.domain.review.domain.vo.ReviewFilter;
 import org.dinosaur.foodbowl.domain.review.persistence.dto.StoreReviewCountDto;
 import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
@@ -211,6 +212,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
 
         @Test
         void 정상적으로_조회한다() {
+            Member loginMember = memberTestPersister.builder().save();
             Store store = storeTestPersister.builder().save();
             Review reviewA = reviewTestPersister.builder().store(store).save();
             Review reviewB = reviewTestPersister.builder().store(store).save();
@@ -218,6 +220,8 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
 
             List<Review> reviews = reviewCustomRepository.findPaginationReviewsByStore(
                     store.getId(),
+                    ReviewFilter.ALL,
+                    loginMember.getId(),
                     null,
                     10
             );
@@ -226,13 +230,42 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
         }
 
         @Test
+        void 친구_필터링이_있으면_팔로워_리뷰만_조회한다() {
+            Member loginMember = memberTestPersister.builder().save();
+            Member gray = memberTestPersister.builder().save();
+            Member dazzle = memberTestPersister.builder().save();
+            followTestPersister.builder().follower(loginMember).following(gray).save();
+            Store store = storeTestPersister.builder().save();
+            Review reviewA = reviewTestPersister.builder().member(gray).store(store).save();
+            Review reviewB = reviewTestPersister.builder().member(gray).store(store).save();
+            Review reviewC = reviewTestPersister.builder().member(dazzle).store(store).save();
+
+            List<Review> reviews = reviewCustomRepository.findPaginationReviewsByStore(
+                    store.getId(),
+                    ReviewFilter.FRIEND,
+                    loginMember.getId(),
+                    null,
+                    10
+            );
+
+            assertSoftly(softly -> {
+                softly.assertThat(reviews).containsExactly(reviewB, reviewA);
+                softly.assertThat(reviews).doesNotContain(reviewC);
+            });
+
+        }
+
+        @Test
         void 마지막_리뷰ID가_NULL이_아닐때_마지막_리뷰ID보다_작은_리뷰는_조회한다() {
+            Member loginMember = memberTestPersister.builder().save();
             Store store = storeTestPersister.builder().save();
             Review reviewA = reviewTestPersister.builder().store(store).save();
             Review reviewB = reviewTestPersister.builder().store(store).save();
 
             List<Review> reviews = reviewCustomRepository.findPaginationReviewsByStore(
                     store.getId(),
+                    ReviewFilter.ALL,
+                    loginMember.getId(),
                     reviewB.getId() + 1,
                     10
             );
@@ -242,12 +275,15 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
 
         @Test
         void 마지막_리뷰ID가_NULL이_아닐때_마지막_리뷰ID보다_큰_리뷰는_조회하지_않는다() {
+            Member loginMember = memberTestPersister.builder().save();
             Store store = storeTestPersister.builder().save();
             Review reviewA = reviewTestPersister.builder().store(store).save();
             Review reviewB = reviewTestPersister.builder().store(store).save();
 
             List<Review> reviews = reviewCustomRepository.findPaginationReviewsByStore(
                     store.getId(),
+                    ReviewFilter.ALL,
+                    loginMember.getId(),
                     reviewA.getId() + 1,
                     10
             );
@@ -260,12 +296,15 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
 
         @Test
         void 리뷰ID를_내림차순으로_조회한다() {
+            Member loginMember = memberTestPersister.builder().save();
             Store store = storeTestPersister.builder().save();
             Review reviewA = reviewTestPersister.builder().store(store).save();
             Review reviewB = reviewTestPersister.builder().store(store).save();
 
             List<Review> result = reviewCustomRepository.findPaginationReviewsByStore(
                     store.getId(),
+                    ReviewFilter.ALL,
+                    loginMember.getId(),
                     null,
                     10
             );
@@ -275,6 +314,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
 
         @Test
         void 페이지_크기만큼_조회한다() {
+            Member loginMember = memberTestPersister.builder().save();
             Store store = storeTestPersister.builder().save();
             Review reviewA = reviewTestPersister.builder().store(store).save();
             Review reviewB = reviewTestPersister.builder().store(store).save();
@@ -282,6 +322,8 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
 
             List<Review> result = reviewCustomRepository.findPaginationReviewsByStore(
                     store.getId(),
+                    ReviewFilter.ALL,
+                    loginMember.getId(),
                     null,
                     2
             );

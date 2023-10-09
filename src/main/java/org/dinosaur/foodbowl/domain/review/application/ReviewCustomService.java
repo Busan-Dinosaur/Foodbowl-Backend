@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
 import org.dinosaur.foodbowl.domain.review.application.dto.StoreToReviewCountDto;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
+import org.dinosaur.foodbowl.domain.review.domain.vo.ReviewFilter;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewCustomRepository;
 import org.dinosaur.foodbowl.domain.review.persistence.dto.StoreReviewCountDto;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
@@ -41,11 +42,15 @@ public class ReviewCustomService {
     @Transactional(readOnly = true)
     public List<Review> getReviewsByStore(
             Long storeId,
+            ReviewFilter reviewFilter,
+            Long memberId,
             Long lastReviewId,
             int pageSize
     ) {
         return reviewCustomRepository.findPaginationReviewsByStore(
                 storeId,
+                reviewFilter,
+                memberId,
                 lastReviewId,
                 pageSize
         );

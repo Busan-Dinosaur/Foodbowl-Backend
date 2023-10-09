@@ -14,6 +14,7 @@ import org.dinosaur.foodbowl.domain.photo.domain.Photo;
 import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
 import org.dinosaur.foodbowl.domain.review.application.dto.ReviewToPhotoPathDto;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
+import org.dinosaur.foodbowl.domain.review.domain.vo.ReviewFilter;
 import org.dinosaur.foodbowl.domain.review.dto.request.DeviceCoordinateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.MapCoordinateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
@@ -72,13 +73,20 @@ public class ReviewService {
     @Transactional(readOnly = true)
     public StoreReviewResponse getReviewByStore(
             Long storeId,
+            String filter,
             Long lastReviewId,
             int pageSize,
             DeviceCoordinateRequest deviceCoordinateRequest,
             Member loginMember
     ) {
         Store store = storeService.findById(storeId);
-        List<Review> reviews = reviewCustomService.getReviewsByStore(store.getId(), lastReviewId, pageSize);
+        List<Review> reviews = reviewCustomService.getReviewsByStore(
+                store.getId(),
+                ReviewFilter.from(filter),
+                loginMember.getId(),
+                lastReviewId,
+                pageSize
+        );
 
         MemberToFollowerCountDto memberToFollowerCountDto =
                 followCustomService.getFollowerCountByMembers(getWriters(reviews));
