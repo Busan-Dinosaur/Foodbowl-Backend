@@ -9,6 +9,8 @@ import org.dinosaur.foodbowl.domain.bookmark.application.BookmarkQueryService;
 import org.dinosaur.foodbowl.domain.follow.application.FollowCustomService;
 import org.dinosaur.foodbowl.domain.follow.application.dto.MemberToFollowerCountDto;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
+import org.dinosaur.foodbowl.domain.member.exception.MemberExceptionType;
+import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
 import org.dinosaur.foodbowl.domain.photo.application.PhotoService;
 import org.dinosaur.foodbowl.domain.photo.domain.Photo;
 import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
@@ -39,6 +41,7 @@ public class ReviewService {
 
     private static final int REVIEW_PHOTO_MAX_SIZE = 4;
 
+    private final MemberRepository memberRepository;
     private final ReviewRepository reviewRepository;
     private final SchoolRepository schoolRepository;
     private final StoreService storeService;
@@ -58,9 +61,11 @@ public class ReviewService {
             int pageSize,
             Member loginMember
     ) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
         MapCoordinateBoundDto mapCoordinateBoundDto = convertToMapCoordinateBound(mapCoordinateRequest);
         List<Review> reviews = reviewCustomService.getReviewsByMemberInMapBounds(
-                memberId,
+                member.getId(),
                 lastReviewId,
                 mapCoordinateBoundDto,
                 pageSize

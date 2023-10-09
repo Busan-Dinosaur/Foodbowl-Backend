@@ -30,6 +30,11 @@ public class TestQuerydslConfig {
     }
 
     @Bean
+    public MemberCustomRepository memberCustomRepository() {
+        return new MemberCustomRepository(jpaQueryFactory());
+    }
+
+    @Bean
     public ReviewCustomRepository reviewCustomRepository() {
         return new ReviewCustomRepository(jpaQueryFactory());
     }
@@ -42,10 +47,5 @@ public class TestQuerydslConfig {
     @Bean
     public StoreCustomRepository storeCustomRepository() {
         return new StoreCustomRepository(jpaQueryFactory());
-    }
-
-    @Bean
-    public MemberCustomRepository memberCustomRepository() {
-        return new MemberCustomRepository(jpaQueryFactory());
     }
 }

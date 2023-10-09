@@ -8,10 +8,8 @@ import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.dto.request.MapCoordinateRequest;
-import org.dinosaur.foodbowl.domain.store.application.SchoolService;
 import org.dinosaur.foodbowl.domain.store.application.StoreService;
 import org.dinosaur.foodbowl.domain.store.dto.response.CategoriesResponse;
-import org.dinosaur.foodbowl.domain.store.dto.response.SchoolsResponse;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreMapBoundResponses;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchResponses;
 import org.dinosaur.foodbowl.global.presentation.Auth;
@@ -29,17 +27,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class StoreController implements StoreControllerDocs {
 
     private final StoreService storeService;
-    private final SchoolService schoolService;
 
     @GetMapping("/categories")
     public ResponseEntity<CategoriesResponse> getCategories() {
         CategoriesResponse response = storeService.getCategories();
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/schools")
-    public ResponseEntity<SchoolsResponse> getSchools() {
-        SchoolsResponse response = schoolService.getSchools();
         return ResponseEntity.ok(response);
     }
 
@@ -52,6 +43,21 @@ public class StoreController implements StoreControllerDocs {
             @Max(value = 30, message = "최대 30개까지 조회가능합니다.") int size
     ) {
         StoreSearchResponses response = storeService.search(name, x, y, size);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/members")
+    public ResponseEntity<StoreMapBoundResponses> getStoresByMemberInMapBounds(
+            @RequestParam(name = "memberId") @Positive(message = "멤버 ID는 양수만 가능합니다.") Long memberId,
+            @RequestParam(name = "x") BigDecimal x,
+            @RequestParam(name = "y") BigDecimal y,
+            @RequestParam(name = "deltaX") @Positive(message = "경도 증가값은 0이상의 양수만 가능합니다.") BigDecimal deltaX,
+            @RequestParam(name = "deltaY") @Positive(message = "위도 증가값은 0이상의 양수만 가능합니다.") BigDecimal deltaY,
+            @Auth Member loginMember
+    ) {
+        MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(x, y, deltaX, deltaY);
+        StoreMapBoundResponses response =
+                storeService.getStoresByMemberInMapBounds(memberId, mapCoordinateRequest, loginMember);
         return ResponseEntity.ok(response);
     }
 
@@ -80,6 +86,21 @@ public class StoreController implements StoreControllerDocs {
         MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(x, y, deltaX, deltaY);
         StoreMapBoundResponses response =
                 storeService.getStoresByFollowingInMapBounds(mapCoordinateRequest, loginMember);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/schools")
+    public ResponseEntity<StoreMapBoundResponses> getStoresBySchoolInMapBounds(
+            @RequestParam(name = "schoolId") @Positive(message = "학교 ID는 양수만 가능합니다.") Long schoolId,
+            @RequestParam(name = "x") BigDecimal x,
+            @RequestParam(name = "y") BigDecimal y,
+            @RequestParam(name = "deltaX") @Positive(message = "경도 증가값은 0이상의 양수만 가능합니다.") BigDecimal deltaX,
+            @RequestParam(name = "deltaY") @Positive(message = "위도 증가값은 0이상의 양수만 가능합니다.") BigDecimal deltaY,
+            @Auth Member loginMember
+    ) {
+        MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(x, y, deltaX, deltaY);
+        StoreMapBoundResponses response =
+                storeService.getStoresBySchoolInMapBounds(schoolId, mapCoordinateRequest, loginMember);
         return ResponseEntity.ok(response);
     }
 }
