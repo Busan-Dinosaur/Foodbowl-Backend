@@ -414,14 +414,16 @@ class StoreServiceTest extends IntegrationTest {
         void 가게_리뷰_수도_함께_조회한다() {
             Member member = memberTestPersister.builder().save();
             Member writer = memberTestPersister.builder().save();
-            Store store = storeTestPersister.builder().save();
+            Store storeA = storeTestPersister.builder().save();
+            Store storeB = storeTestPersister.builder().save();
             School school = schoolTestPersister.builder().save();
-            storeSchoolTestPersister.builder().store(store).school(school).save();
-            reviewTestPersister.builder().member(writer).store(store).save();
-            reviewTestPersister.builder().member(member).store(store).save();
+            storeSchoolTestPersister.builder().store(storeA).school(school).save();
+            storeSchoolTestPersister.builder().store(storeB).school(school).save();
+            reviewTestPersister.builder().member(writer).store(storeA).save();
+            reviewTestPersister.builder().member(member).store(storeA).save();
             MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
-                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
-                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(storeA.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(storeA.getAddress().getCoordinate().getY()),
                     BigDecimal.valueOf(1),
                     BigDecimal.valueOf(1)
             );
@@ -431,16 +433,25 @@ class StoreServiceTest extends IntegrationTest {
 
             List<StoreMapBoundResponse> result = response.stores();
             assertSoftly(softly -> {
-                softly.assertThat(result).hasSize(1);
-                softly.assertThat(result.get(0).id()).isEqualTo(store.getId());
-                softly.assertThat(result.get(0).name()).isEqualTo(store.getStoreName());
-                softly.assertThat(result.get(0).categoryName()).isEqualTo(store.getCategory().getName());
-                softly.assertThat(result.get(0).addressName()).isEqualTo(store.getAddress().getAddressName());
-                softly.assertThat(result.get(0).url()).isEqualTo(store.getStoreUrl());
-                softly.assertThat(result.get(0).x()).isEqualTo(store.getAddress().getCoordinate().getX());
-                softly.assertThat(result.get(0).y()).isEqualTo(store.getAddress().getCoordinate().getY());
+                softly.assertThat(result).hasSize(2);
+                softly.assertThat(result.get(0).id()).isEqualTo(storeA.getId());
+                softly.assertThat(result.get(0).name()).isEqualTo(storeA.getStoreName());
+                softly.assertThat(result.get(0).categoryName()).isEqualTo(storeA.getCategory().getName());
+                softly.assertThat(result.get(0).addressName()).isEqualTo(storeA.getAddress().getAddressName());
+                softly.assertThat(result.get(0).url()).isEqualTo(storeA.getStoreUrl());
+                softly.assertThat(result.get(0).x()).isEqualTo(storeA.getAddress().getCoordinate().getX());
+                softly.assertThat(result.get(0).y()).isEqualTo(storeA.getAddress().getCoordinate().getY());
                 softly.assertThat(result.get(0).reviewCount()).isEqualTo(2);
                 softly.assertThat(result.get(0).isBookmarked()).isFalse();
+                softly.assertThat(result.get(1).id()).isEqualTo(storeB.getId());
+                softly.assertThat(result.get(1).name()).isEqualTo(storeB.getStoreName());
+                softly.assertThat(result.get(1).categoryName()).isEqualTo(storeB.getCategory().getName());
+                softly.assertThat(result.get(1).addressName()).isEqualTo(storeB.getAddress().getAddressName());
+                softly.assertThat(result.get(1).url()).isEqualTo(storeB.getStoreUrl());
+                softly.assertThat(result.get(1).x()).isEqualTo(storeB.getAddress().getCoordinate().getX());
+                softly.assertThat(result.get(1).y()).isEqualTo(storeB.getAddress().getCoordinate().getY());
+                softly.assertThat(result.get(1).reviewCount()).isEqualTo(0);
+                softly.assertThat(result.get(1).isBookmarked()).isFalse();
             });
         }
 
