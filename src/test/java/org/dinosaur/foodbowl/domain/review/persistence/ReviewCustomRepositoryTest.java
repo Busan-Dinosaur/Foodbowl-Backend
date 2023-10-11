@@ -252,7 +252,30 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
                 softly.assertThat(reviews).containsExactly(reviewB, reviewA);
                 softly.assertThat(reviews).doesNotContain(reviewC);
             });
+        }
 
+        @Test
+        void 전체_필터링이_있으면_모든_리뷰를_조회한다() {
+            Member loginMember = memberTestPersister.builder().save();
+            Member gray = memberTestPersister.builder().save();
+            Member dazzle = memberTestPersister.builder().save();
+            followTestPersister.builder().follower(loginMember).following(gray).save();
+            Store store = storeTestPersister.builder().save();
+            Review reviewA = reviewTestPersister.builder().member(gray).store(store).save();
+            Review reviewB = reviewTestPersister.builder().member(gray).store(store).save();
+            Review reviewC = reviewTestPersister.builder().member(dazzle).store(store).save();
+
+            List<Review> reviews = reviewCustomRepository.findPaginationReviewsByStore(
+                    store.getId(),
+                    ReviewFilter.ALL,
+                    loginMember.getId(),
+                    null,
+                    10
+            );
+
+            assertSoftly(softly -> {
+                softly.assertThat(reviews).containsExactly(reviewC, reviewB, reviewA);
+            });
         }
 
         @Test
