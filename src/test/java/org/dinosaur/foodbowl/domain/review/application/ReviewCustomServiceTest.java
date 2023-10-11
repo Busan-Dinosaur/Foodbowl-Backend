@@ -73,7 +73,8 @@ class ReviewCustomServiceTest extends IntegrationTest {
                 ReviewFilter.ALL,
                 1L,
                 null,
-                10);
+                10
+        );
 
         assertThat(reviews).containsExactly(review);
     }

@@ -148,7 +148,7 @@ public class ReviewController implements ReviewControllerDocs {
             @Auth Member loginMember
     ) {
         DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(deviceX, deviceY);
-        StoreReviewResponse storeReviewResponse = reviewService.getReviewByStore(
+        StoreReviewResponse storeReviewResponse = reviewService.getReviewsByStore(
                 storeId,
                 filter,
                 lastReviewId,

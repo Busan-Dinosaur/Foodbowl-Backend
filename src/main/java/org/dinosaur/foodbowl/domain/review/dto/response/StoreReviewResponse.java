@@ -9,6 +9,7 @@ import org.dinosaur.foodbowl.domain.review.dto.request.DeviceCoordinateRequest;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.global.util.PointUtils;
 
+@Schema(description = "가게 리뷰 조회 응답")
 public record StoreReviewResponse(
         @Schema(description = "가게 정보")
         ReviewStoreResponse reviewStoreResponse,
@@ -19,6 +20,7 @@ public record StoreReviewResponse(
         @Schema(description = "리뷰 페이지 정보")
         ReviewPageInfo page
 ) {
+
     public static StoreReviewResponse of(
             Store store,
             List<Review> reviews,
@@ -27,13 +29,13 @@ public record StoreReviewResponse(
             DeviceCoordinateRequest deviceCoordinateRequest,
             boolean isBookmark
     ) {
-        ReviewStoreResponse reviewStoreResponse = getReviewStoreResponse(
+        ReviewStoreResponse reviewStoreResponse = convertReviewStoreResponse(
                 store,
                 deviceCoordinateRequest,
                 isBookmark
         );
 
-        List<StoreReviewContentResponse> storeReviewContentResponses = getStoreReviewContentResponses(
+        List<StoreReviewContentResponse> storeReviewContentResponses = convertStoreReviewContentResponses(
                 reviews,
                 reviewToPhotoPathDto,
                 memberToFollowerCountDto
@@ -47,7 +49,7 @@ public record StoreReviewResponse(
         );
     }
 
-    private static List<StoreReviewContentResponse> getStoreReviewContentResponses(
+    private static List<StoreReviewContentResponse> convertStoreReviewContentResponses(
             List<Review> reviews,
             ReviewToPhotoPathDto reviewToPhotoPathDto,
             MemberToFollowerCountDto memberToFollowerCountDto
@@ -62,7 +64,7 @@ public record StoreReviewResponse(
                 .toList();
     }
 
-    private static ReviewStoreResponse getReviewStoreResponse(
+    private static ReviewStoreResponse convertReviewStoreResponse(
             Store store,
             DeviceCoordinateRequest deviceCoordinateRequest,
             boolean isBookmark

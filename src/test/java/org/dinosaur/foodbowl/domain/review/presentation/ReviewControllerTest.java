@@ -364,7 +364,7 @@ class ReviewControllerTest extends PresentationTest {
                     ),
                     new ReviewPageInfo(1L, 1L, 1)
             );
-            given(reviewService.getReviewByStore(
+            given(reviewService.getReviewsByStore(
                     anyLong(),
                     any(),
                     any(),
@@ -419,7 +419,7 @@ class ReviewControllerTest extends PresentationTest {
                     ),
                     new ReviewPageInfo(1L, 1L, 1)
             );
-            given(reviewService.getReviewByStore(
+            given(reviewService.getReviewsByStore(
                     anyLong(),
                     any(),
                     any(),

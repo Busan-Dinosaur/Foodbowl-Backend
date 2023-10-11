@@ -77,6 +77,11 @@ public interface ReviewControllerDocs {
                             12.페이지 크기가 양수가 아닌 경우
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "존재하지 않는 가게인 경우",
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
     ResponseEntity<ReviewPageResponse> getReviewsByMemberInMapBounds(
@@ -126,7 +131,7 @@ public interface ReviewControllerDocs {
                     
                     요청 파라미터: filter (필수 값이 아닙니다. 해당 파라미터 없이 요청 시 모든 결과가 반환됩니다.)
                     
-                    서버에서 허용하는 요청 파라미터 값 : FRIEND
+                    서버에서 허용하는 요청 파라미터 값 : ALL(모든), FRIEND(친구만)
                                         
                     디바이스 경도(deviceX), 디바이스 위도(deviceY)를 통해 디바이스와 가게 사이의 거리를 계산합니다.
                                         

@@ -242,7 +242,7 @@ class ReviewServiceTest extends IntegrationTest {
                     BigDecimal.valueOf(1)
             );
 
-            StoreReviewResponse storeReviewResponse = reviewService.getReviewByStore(
+            StoreReviewResponse storeReviewResponse = reviewService.getReviewsByStore(
                     store.getId(),
                     "ALL",
                     null,
@@ -280,7 +280,7 @@ class ReviewServiceTest extends IntegrationTest {
                     BigDecimal.valueOf(1)
             );
 
-            StoreReviewResponse storeReviewResponse = reviewService.getReviewByStore(
+            StoreReviewResponse storeReviewResponse = reviewService.getReviewsByStore(
                     store.getId(),
                     "FRIEND",
                     null,
@@ -313,7 +313,7 @@ class ReviewServiceTest extends IntegrationTest {
                     BigDecimal.valueOf(1)
             );
 
-            StoreReviewResponse storeReviewResponse = reviewService.getReviewByStore(
+            StoreReviewResponse storeReviewResponse = reviewService.getReviewsByStore(
                     store.getId(),
                     "ALL",
                     null,
@@ -346,7 +346,7 @@ class ReviewServiceTest extends IntegrationTest {
                     BigDecimal.valueOf(1)
             );
 
-            StoreReviewResponse storeReviewResponse = reviewService.getReviewByStore(
+            StoreReviewResponse storeReviewResponse = reviewService.getReviewsByStore(
                     store.getId(),
                     "ALL",
                     null,
@@ -376,7 +376,7 @@ class ReviewServiceTest extends IntegrationTest {
                     BigDecimal.valueOf(1)
             );
 
-            StoreReviewResponse storeReviewResponse = reviewService.getReviewByStore(
+            StoreReviewResponse storeReviewResponse = reviewService.getReviewsByStore(
                     store.getId(),
                     "ALL",
                     null,
@@ -399,7 +399,7 @@ class ReviewServiceTest extends IntegrationTest {
 
         @Test
         void 해당_가게가_존재하지_않으면_예외가_발생한다() {
-            assertThatThrownBy(() -> reviewService.getReviewByStore(
+            assertThatThrownBy(() -> reviewService.getReviewsByStore(
                     -1L,
                     "ALL",
                     null,
@@ -415,7 +415,7 @@ class ReviewServiceTest extends IntegrationTest {
         void 일치하는_리뷰_필터링_조건이_없으면_예외가_발생한다(String reviewFilter) {
             Store store = storeTestPersister.builder().save();
 
-            assertThatThrownBy(() -> reviewService.getReviewByStore(
+            assertThatThrownBy(() -> reviewService.getReviewsByStore(
                     store.getId(),
                     reviewFilter,
                     null,

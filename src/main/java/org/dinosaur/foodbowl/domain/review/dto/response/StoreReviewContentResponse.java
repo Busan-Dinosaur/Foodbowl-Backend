@@ -6,6 +6,7 @@ import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.application.dto.ReviewToPhotoPathDto;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
 
+@Schema(description = "가게 리뷰 단건 응답")
 public record StoreReviewContentResponse(
         @Schema(description = "리뷰 작성자 응답")
         ReviewWriterResponse writer,
@@ -13,6 +14,7 @@ public record StoreReviewContentResponse(
         @Schema(description = "리뷰 본문 응답")
         ReviewContentResponse review
 ) {
+
     public static StoreReviewContentResponse of(
             Review review,
             Member member,

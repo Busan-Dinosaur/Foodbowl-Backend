@@ -71,7 +71,7 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public StoreReviewResponse getReviewByStore(
+    public StoreReviewResponse getReviewsByStore(
             Long storeId,
             String filter,
             Long lastReviewId,
@@ -90,9 +90,7 @@ public class ReviewService {
 
         MemberToFollowerCountDto memberToFollowerCountDto =
                 followCustomService.getFollowerCountByMembers(getWriters(reviews));
-
         ReviewToPhotoPathDto reviewToPhotoPathDto = reviewPhotoCustomService.getPhotoPathByReviews(reviews);
-
         return StoreReviewResponse.of(
                 store,
                 reviews,
