@@ -77,11 +77,6 @@ public interface ReviewControllerDocs {
                             12.페이지 크기가 양수가 아닌 경우
                             """,
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "존재하지 않는 가게인 경우",
-                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
     ResponseEntity<ReviewPageResponse> getReviewsByMemberInMapBounds(
@@ -124,16 +119,14 @@ public interface ReviewControllerDocs {
             summary = "가게 리뷰 필터링 페이징 조회",
             description = """
                     특정 가게에 해당하는 리뷰를 조회합니다.
-                    
-                    가게에 해당하는 '모든' 리뷰를 조회하거나, 필터링 조건을 사용해 '친구들' 리뷰만 모아볼 수 있습니다.
-                    
-                    요청 예시: /v1/reviews/stores?filter=FRIEND
-                    
-                    요청 파라미터: filter (필수 값이 아닙니다. 해당 파라미터 없이 요청 시 모든 결과가 반환됩니다.)
-                    
-                    서버에서 허용하는 요청 파라미터 값 : ALL(모든), FRIEND(친구만)
                                         
-                    디바이스 경도(deviceX), 디바이스 위도(deviceY)를 통해 디바이스와 가게 사이의 거리를 계산합니다.
+                    가게에 해당하는 '모든' 리뷰를 조회하거나, 필터링 조건을 사용해 '친구들' 리뷰만 모아볼 수 있습니다.
+                                        
+                    요청 예시: /v1/reviews/stores?filter=FRIEND
+                                        
+                    검색 필터링 요청 파라미터: filter (필수 값이 아닙니다. 해당 파라미터 없이 요청 시 모든 결과가 반환됩니다.)
+                                        
+                    서버에서 허용하는 요청 파라미터 값 : ALL(모든), FRIEND(친구만)
                                         
                     조회 성능을 높이기 위해 NO OFFSET 페이징으로 구현하였기에 페이지 번호 대신 마지막 리뷰 ID를 요청값으로 받습니다.
                                         
@@ -144,7 +137,6 @@ public interface ReviewControllerDocs {
                     해당 리뷰 ID보다 작은, 다시 말해서 요청으로 보낸 리뷰 이전에 작성된 리뷰부터 조회하게 됩니다.
                                         
                     페이지 크기(응답할 리뷰 개수)는 파라미터로 보내지 않으면 기본적으로 10개로 동작하게 되어있습니다.
-                                        
                     """
     )
     @ApiResponses({
@@ -158,17 +150,18 @@ public interface ReviewControllerDocs {
                             1.가게 ID가 양수가 아닌 경우
                                                         
                             2.가게 ID가 존재하지 않는 경우
-                                                      
-                            3.디바이스 경도가 존재하지 않은 경우
                                                         
-                            4.디바이스 위도가 존재하지 않은 경우
+                            3.페이지 크기가 양수가 아닌 경우
                                                         
-                            5.페이지 크기가 양수가 아닌 경우
+                            4.마지막 리뷰 ID가 양수가 아닌 경우
                                                         
-                            6.마지막 리뷰 ID가 양수가 아닌 경우
-                            
-                            7.일치하는 필터링 조건이 아닌 경우
+                            5.일치하는 필터링 조건이 아닌 경우
                             """,
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "존재하지 않는 가게인 경우",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
@@ -187,12 +180,6 @@ public interface ReviewControllerDocs {
             @Parameter(description = "페이지 크기", example = "10")
             @Positive(message = "페이지 크기는 양수만 가능합니다.")
             int pageSize,
-
-            @Parameter(description = "사용자 경도", example = "123.3636")
-            BigDecimal deviceX,
-
-            @Parameter(description = "사용자 위도", example = "32.3636")
-            BigDecimal deviceY,
 
             Member loginMember
     );
