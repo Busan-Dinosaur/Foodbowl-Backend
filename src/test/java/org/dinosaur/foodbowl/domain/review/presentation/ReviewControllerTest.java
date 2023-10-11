@@ -337,14 +337,6 @@ class ReviewControllerTest extends PresentationTest {
         void 필터링_조건_없이_200_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
             StoreReviewResponse response = new StoreReviewResponse(
-                    new ReviewStoreResponse(
-                            1L,
-                            "한식",
-                            "김밥나라",
-                            "서울시 송파구 잠실동 124길 12",
-                            210.1245,
-                            false
-                    ),
                     List.of(
                             new StoreReviewContentResponse(
                                     new ReviewWriterResponse(
@@ -369,7 +361,6 @@ class ReviewControllerTest extends PresentationTest {
                     any(),
                     any(),
                     anyInt(),
-                    any(DeviceCoordinateRequest.class),
                     any(Member.class)
             )).willReturn(response);
 
@@ -392,14 +383,6 @@ class ReviewControllerTest extends PresentationTest {
         void 필터링_조건과_함께_200_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
             StoreReviewResponse response = new StoreReviewResponse(
-                    new ReviewStoreResponse(
-                            1L,
-                            "한식",
-                            "김밥나라",
-                            "서울시 송파구 잠실동 124길 12",
-                            210.1245,
-                            false
-                    ),
                     List.of(
                             new StoreReviewContentResponse(
                                     new ReviewWriterResponse(
@@ -424,7 +407,6 @@ class ReviewControllerTest extends PresentationTest {
                     any(),
                     any(),
                     anyInt(),
-                    any(DeviceCoordinateRequest.class),
                     any(Member.class)
             )).willReturn(response);
 
@@ -485,30 +467,6 @@ class ReviewControllerTest extends PresentationTest {
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .param("deviceX", "123.12412")
                             .param("deviceY", "32.3636"))
-                    .andDo(print())
-                    .andExpect(status().isBadRequest());
-        }
-
-        @Test
-        void 디바이스_경도가_존재하지_않으면_400_응답을_반환한다() throws Exception {
-            mockingAuthMemberInResolver();
-
-            mockMvc.perform(get("/v1/reviews/stores")
-                            .header(AUTHORIZATION, BEARER + accessToken)
-                            .param("storeId", "1")
-                            .param("deviceY", "32.3636"))
-                    .andDo(print())
-                    .andExpect(status().isBadRequest());
-        }
-
-        @Test
-        void 디바이스_위도가_존재하지_않으면_400_응답을_반환한다() throws Exception {
-            mockingAuthMemberInResolver();
-
-            mockMvc.perform(get("/v1/reviews/stores")
-                            .header(AUTHORIZATION, BEARER + accessToken)
-                            .param("storeId", "1")
-                            .param("deviceX", "123.3636"))
                     .andDo(print())
                     .andExpect(status().isBadRequest());
         }

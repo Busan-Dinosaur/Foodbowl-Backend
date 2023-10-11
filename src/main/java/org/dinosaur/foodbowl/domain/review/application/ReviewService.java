@@ -76,7 +76,6 @@ public class ReviewService {
             String filter,
             Long lastReviewId,
             int pageSize,
-            DeviceCoordinateRequest deviceCoordinateRequest,
             Member loginMember
     ) {
         Store store = storeService.findById(storeId);
@@ -92,12 +91,9 @@ public class ReviewService {
                 followCustomService.getFollowerCountByMembers(getWriters(reviews));
         ReviewToPhotoPathDto reviewToPhotoPathDto = reviewPhotoCustomService.getPhotoPathByReviews(reviews);
         return StoreReviewResponse.of(
-                store,
                 reviews,
                 reviewToPhotoPathDto,
-                memberToFollowerCountDto,
-                deviceCoordinateRequest,
-                bookmarkQueryService.isBookmarkStoreByMember(loginMember, store)
+                memberToFollowerCountDto
         );
     }
 

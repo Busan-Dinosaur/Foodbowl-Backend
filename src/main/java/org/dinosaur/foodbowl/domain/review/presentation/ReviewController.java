@@ -143,17 +143,13 @@ public class ReviewController implements ReviewControllerDocs {
             @RequestParam(name = "filter", defaultValue = "ALL") String filter,
             @RequestParam(name = "lastReviewId", required = false) @Positive(message = "리뷰 ID는 양수만 가능합니다.") Long lastReviewId,
             @RequestParam(name = "pageSize", defaultValue = "10") @Positive(message = "페이지 크기는 양수만 가능합니다.") int pageSize,
-            @RequestParam(name = "deviceX") BigDecimal deviceX,
-            @RequestParam(name = "deviceY") BigDecimal deviceY,
             @Auth Member loginMember
     ) {
-        DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(deviceX, deviceY);
         StoreReviewResponse storeReviewResponse = reviewService.getReviewsByStore(
                 storeId,
                 filter,
                 lastReviewId,
                 pageSize,
-                deviceCoordinateRequest,
                 loginMember
         );
         return ResponseEntity.ok(storeReviewResponse);

@@ -18,7 +18,6 @@ import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageInfo;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewResponse;
-import org.dinosaur.foodbowl.domain.review.dto.response.ReviewStoreResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.StoreReviewContentResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.StoreReviewResponse;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
@@ -237,25 +236,18 @@ class ReviewServiceTest extends IntegrationTest {
             Store store = storeTestPersister.builder().save();
             Review reviewA = reviewTestPersister.builder().store(store).content("맛있어요").save();
             Review reviewB = reviewTestPersister.builder().store(store).content("맛없어요").save();
-            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
-                    BigDecimal.valueOf(1),
-                    BigDecimal.valueOf(1)
-            );
 
             StoreReviewResponse storeReviewResponse = reviewService.getReviewsByStore(
                     store.getId(),
                     "ALL",
                     null,
                     10,
-                    deviceCoordinateRequest,
                     member
             );
 
-            ReviewStoreResponse reviewStoreResponse = storeReviewResponse.reviewStoreResponse();
             List<StoreReviewContentResponse> reviewContentResponses = storeReviewResponse.storeReviewContentResponses();
             ReviewPageInfo reviewPageInfo = storeReviewResponse.page();
             assertSoftly(softly -> {
-                softly.assertThat(reviewStoreResponse.id()).isEqualTo(store.getId());
                 softly.assertThat(reviewContentResponses).hasSize(2);
                 softly.assertThat(reviewContentResponses.get(0).review().id()).isEqualTo(reviewB.getId());
                 softly.assertThat(reviewContentResponses.get(0).review().content()).isEqualTo(reviewB.getContent());
@@ -275,61 +267,24 @@ class ReviewServiceTest extends IntegrationTest {
             followTestPersister.builder().follower(member).following(writer).save();
             Review reviewA = reviewTestPersister.builder().store(store).member(writer).content("맛있어요").save();
             Review reviewB = reviewTestPersister.builder().store(store).content("맛없어요").save();
-            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
-                    BigDecimal.valueOf(1),
-                    BigDecimal.valueOf(1)
-            );
 
             StoreReviewResponse storeReviewResponse = reviewService.getReviewsByStore(
                     store.getId(),
                     "FRIEND",
                     null,
                     10,
-                    deviceCoordinateRequest,
                     member
             );
 
-            ReviewStoreResponse reviewStoreResponse = storeReviewResponse.reviewStoreResponse();
             List<StoreReviewContentResponse> reviewContentResponses = storeReviewResponse.storeReviewContentResponses();
             ReviewPageInfo reviewPageInfo = storeReviewResponse.page();
             assertSoftly(softly -> {
-                softly.assertThat(reviewStoreResponse.id()).isEqualTo(store.getId());
                 softly.assertThat(reviewContentResponses).hasSize(1);
                 softly.assertThat(reviewContentResponses.get(0).review().id()).isEqualTo(reviewA.getId());
                 softly.assertThat(reviewContentResponses.get(0).review().content()).isEqualTo(reviewA.getContent());
                 softly.assertThat(reviewPageInfo.size()).isEqualTo(1);
                 softly.assertThat(reviewPageInfo.firstId()).isEqualTo(reviewA.getId());
                 softly.assertThat(reviewPageInfo.lastId()).isEqualTo(reviewA.getId());
-            });
-        }
-
-        @Test
-        void 가게_정보도_함께_조회한다() {
-            Member member = memberTestPersister.builder().save();
-            Store store = storeTestPersister.builder().save();
-            Review review = reviewTestPersister.builder().store(store).save();
-            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
-                    BigDecimal.valueOf(1),
-                    BigDecimal.valueOf(1)
-            );
-
-            StoreReviewResponse storeReviewResponse = reviewService.getReviewsByStore(
-                    store.getId(),
-                    "ALL",
-                    null,
-                    10,
-                    deviceCoordinateRequest,
-                    member
-            );
-
-            assertSoftly(softly -> {
-                softly.assertThat(storeReviewResponse.reviewStoreResponse().id()).isEqualTo(store.getId());
-                softly.assertThat(storeReviewResponse.reviewStoreResponse().name()).isEqualTo(store.getStoreName());
-                softly.assertThat(storeReviewResponse.reviewStoreResponse().addressName())
-                        .isEqualTo(store.getAddress().getAddressName());
-                softly.assertThat(storeReviewResponse.reviewStoreResponse().categoryName())
-                        .isEqualTo(store.getCategory().getName());
-                softly.assertThat(storeReviewResponse.reviewStoreResponse().isBookmarked()).isEqualTo(false);
             });
         }
 
@@ -341,17 +296,12 @@ class ReviewServiceTest extends IntegrationTest {
             Review review = reviewTestPersister.builder().member(writer).store(store).save();
             followTestPersister.builder().following(writer).save();
             followTestPersister.builder().following(writer).save();
-            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
-                    BigDecimal.valueOf(1),
-                    BigDecimal.valueOf(1)
-            );
 
             StoreReviewResponse storeReviewResponse = reviewService.getReviewsByStore(
                     store.getId(),
                     "ALL",
                     null,
                     10,
-                    deviceCoordinateRequest,
                     member
             );
 
@@ -371,17 +321,12 @@ class ReviewServiceTest extends IntegrationTest {
             Review review = reviewTestPersister.builder().store(store).save();
             ReviewPhoto reviewPhotoA = reviewPhotoTestPersister.builder().review(review).save();
             ReviewPhoto reviewPhotoB = reviewPhotoTestPersister.builder().review(review).save();
-            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
-                    BigDecimal.valueOf(1),
-                    BigDecimal.valueOf(1)
-            );
 
             StoreReviewResponse storeReviewResponse = reviewService.getReviewsByStore(
                     store.getId(),
                     "ALL",
                     null,
                     10,
-                    deviceCoordinateRequest,
                     member
             );
 
@@ -404,8 +349,8 @@ class ReviewServiceTest extends IntegrationTest {
                     "ALL",
                     null,
                     10,
-                    null,
-                    null))
+                    null
+            ))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("일치하는 가게를 찾을 수 없습니다.");
         }
@@ -420,8 +365,8 @@ class ReviewServiceTest extends IntegrationTest {
                     reviewFilter,
                     null,
                     10,
-                    null,
-                    null))
+                    null
+            ))
                     .isInstanceOf(InvalidArgumentException.class)
                     .hasMessage("일치하는 리뷰 필터링 조건이 없습니다.");
         }
