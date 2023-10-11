@@ -7,6 +7,8 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.bookmark.application.BookmarkQueryService;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
+import org.dinosaur.foodbowl.domain.member.exception.MemberExceptionType;
+import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
 import org.dinosaur.foodbowl.domain.review.application.ReviewCustomService;
 import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
 import org.dinosaur.foodbowl.domain.review.application.dto.StoreToReviewCountDto;
@@ -21,8 +23,10 @@ import org.dinosaur.foodbowl.domain.store.dto.response.CategoriesResponse;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreMapBoundResponses;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchResponse;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchResponses;
+import org.dinosaur.foodbowl.domain.store.exception.SchoolExceptionType;
 import org.dinosaur.foodbowl.domain.store.exception.StoreExceptionType;
 import org.dinosaur.foodbowl.domain.store.persistence.CategoryRepository;
+import org.dinosaur.foodbowl.domain.store.persistence.SchoolRepository;
 import org.dinosaur.foodbowl.domain.store.persistence.StoreCustomRepository;
 import org.dinosaur.foodbowl.domain.store.persistence.StoreRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
@@ -36,8 +40,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class StoreService {
 
+    private final MemberRepository memberRepository;
     private final StoreRepository storeRepository;
     private final StoreCustomRepository storeCustomRepository;
+    private final SchoolRepository schoolRepository;
     private final CategoryRepository categoryRepository;
     private final SchoolService schoolService;
     private final StoreSchoolService storeSchoolService;
@@ -78,6 +84,20 @@ public class StoreService {
     }
 
     @Transactional(readOnly = true)
+    public StoreMapBoundResponses getStoresByMemberInMapBounds(
+            Long memberId,
+            MapCoordinateRequest mapCoordinateRequest,
+            Member loginMember
+    ) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+        MapCoordinateBoundDto mapCoordinateBoundDto = convertToMapCoordinateBound(mapCoordinateRequest);
+        List<Store> stores =
+                storeCustomService.getStoresByMemberInMapBounds(member.getId(), mapCoordinateBoundDto);
+        return convertToStoreMapBoundResponses(stores, loginMember);
+    }
+
+    @Transactional(readOnly = true)
     public StoreMapBoundResponses getStoresByBookmarkInMapBounds(
             MapCoordinateRequest mapCoordinateRequest,
             Member loginMember
@@ -96,6 +116,20 @@ public class StoreService {
         MapCoordinateBoundDto mapCoordinateBoundDto = convertToMapCoordinateBound(mapCoordinateRequest);
         List<Store> stores =
                 storeCustomService.getStoresByFollowingInMapBounds(loginMember.getId(), mapCoordinateBoundDto);
+        return convertToStoreMapBoundResponses(stores, loginMember);
+    }
+
+    @Transactional(readOnly = true)
+    public StoreMapBoundResponses getStoresBySchoolInMapBounds(
+            Long schoolId,
+            MapCoordinateRequest mapCoordinateRequest,
+            Member loginMember
+    ) {
+        School school = schoolRepository.findById(schoolId)
+                .orElseThrow(() -> new NotFoundException(SchoolExceptionType.NOT_FOUND));
+        MapCoordinateBoundDto mapCoordinateBoundDto = convertToMapCoordinateBound(mapCoordinateRequest);
+        List<Store> stores =
+                storeCustomService.getStoresBySchoolInMapBounds(school.getId(), mapCoordinateBoundDto);
         return convertToStoreMapBoundResponses(stores, loginMember);
     }
 

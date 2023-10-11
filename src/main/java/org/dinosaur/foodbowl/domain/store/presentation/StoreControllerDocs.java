@@ -14,7 +14,6 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.store.dto.response.CategoriesResponse;
-import org.dinosaur.foodbowl.domain.store.dto.response.SchoolsResponse;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreMapBoundResponses;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchResponses;
 import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
@@ -32,16 +31,6 @@ public interface StoreControllerDocs {
             description = "카테고리 목록 조회 성공"
     )
     ResponseEntity<CategoriesResponse> getCategories();
-
-    @Operation(
-            summary = "학교 목록 조회",
-            description = "DB에 존재하는 학교 목록을 조회한다."
-    )
-    @ApiResponse(
-            responseCode = "200",
-            description = "학교 목록 조회 성공"
-    )
-    ResponseEntity<SchoolsResponse> getSchools();
 
     @Operation(
             summary = "가게 검색 결과 조회",
@@ -94,6 +83,68 @@ public interface StoreControllerDocs {
             @Parameter(description = "검색 최대 결과 수", example = "15")
             @Positive(message = "조회 크기는 1이상만 가능합니다.")
             @Max(value = 30, message = "최대 30개까지 조회가능합니다.") int size
+    );
+
+    @Operation(
+            summary = "멤버 리뷰가 존재하는 가게 목록 범위 기반 조회",
+            description = """
+                    지도 중심의 경도(x), 위도(y)와 경도 증가값(deltaX), 위도 증가값(deltaY)을 통해 사각형 범위를 생성하여
+                                        
+                    해당 범위에 속한 멤버 리뷰가 존재하는 가게 목록을 조회하는 기능입니다.
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "멤버 리뷰가 존재하는 가게 목록 범위 기반 조회 성공"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = """
+                            1.멤버 ID가 존재하지 않은 경우
+                                                        
+                            2.멤버 ID가 양수가 아닌 경우
+                                                        
+                            3.지도 중심 경도가 존재하지 않은 경우
+                                                        
+                            4.지도 중심 위도가 존재하지 않은 경우
+                                                        
+                            5.지도 경도 증가값이 존재하지 않은 경우
+                                                        
+                            6.지도 경도 증가값이 양수가 아닌 경우
+                                                        
+                            7.지도 위도 증가값이 존재하지 않은 경우
+                                                        
+                            8.지도 위도 증가값이 양수가 아닌 경우
+                            """,
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "멤버가 존재하지 않은 경우",
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            )
+    })
+    ResponseEntity<StoreMapBoundResponses> getStoresByMemberInMapBounds(
+            @Parameter(description = "멤버 ID", example = "1")
+            @Positive(message = "멤버 ID는 양수만 가능합니다.")
+            Long memberId,
+
+            @Parameter(description = "지도 중심 경도", example = "123.3636")
+            BigDecimal x,
+
+            @Parameter(description = "지도 중심 위도", example = "32.3636")
+            BigDecimal y,
+
+            @Parameter(description = "지도 경도 증가값", example = "3.1212")
+            @Positive(message = "경도 증가값은 0이상의 양수만 가능합니다.")
+            BigDecimal deltaX,
+
+            @Parameter(description = "지도 위도 증가값", example = "3.1212")
+            @Positive(message = "위도 증가값은 0이상의 양수만 가능합니다.")
+            BigDecimal deltaY,
+
+            Member loginMember
     );
 
     @Operation(
@@ -177,6 +228,68 @@ public interface StoreControllerDocs {
             )
     })
     ResponseEntity<StoreMapBoundResponses> getStoresByFollowingInMapBounds(
+            @Parameter(description = "지도 중심 경도", example = "123.3636")
+            BigDecimal x,
+
+            @Parameter(description = "지도 중심 위도", example = "32.3636")
+            BigDecimal y,
+
+            @Parameter(description = "지도 경도 증가값", example = "3.1212")
+            @Positive(message = "경도 증가값은 0이상의 양수만 가능합니다.")
+            BigDecimal deltaX,
+
+            @Parameter(description = "지도 위도 증가값", example = "3.1212")
+            @Positive(message = "위도 증가값은 0이상의 양수만 가능합니다.")
+            BigDecimal deltaY,
+
+            Member loginMember
+    );
+
+    @Operation(
+            summary = "학교 근처 가게 목록 범위 기반 조회",
+            description = """
+                    지도 중심의 경도(x), 위도(y)와 경도 증가값(deltaX), 위도 증가값(deltaY)을 통해 사각형 범위를 생성하여
+                                        
+                    해당 범위에 속한 학교 근처 가게 목록을 조회하는 기능입니다.
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "학교 근처 가게 목록 범위 기반 조회 성공"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = """
+                            1.학교 ID가 존재하지 않은 경우
+                                                        
+                            2.학교 ID가 양수가 아닌 경우
+                                                        
+                            3.지도 중심 경도가 존재하지 않은 경우
+                                                        
+                            4.지도 중심 위도가 존재하지 않은 경우
+                                                        
+                            5.지도 경도 증가값이 존재하지 않은 경우
+                                                        
+                            6.지도 경도 증가값이 양수가 아닌 경우
+                                                        
+                            7.지도 위도 증가값이 존재하지 않은 경우
+                                                        
+                            8.지도 위도 증가값이 양수가 아닌 경우
+                            """,
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "학교가 존재하지 않은 경우",
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            )
+    })
+    ResponseEntity<StoreMapBoundResponses> getStoresBySchoolInMapBounds(
+            @Parameter(description = "학교 ID", example = "1")
+            @Positive(message = "학교 ID는 양수만 가능합니다.")
+            Long schoolId,
+
             @Parameter(description = "지도 중심 경도", example = "123.3636")
             BigDecimal x,
 

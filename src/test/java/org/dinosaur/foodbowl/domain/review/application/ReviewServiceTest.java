@@ -53,6 +53,33 @@ class ReviewServiceTest extends IntegrationTest {
     class 멤버_리뷰_목록_페이징_조회_시 {
 
         @Test
+        void 존재하지_않은_멤버라면_예외를_던진다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            assertThatThrownBy(() -> reviewService.getReviewsByMemberInMapBounds(
+                    -1L,
+                    null,
+                    mapCoordinateRequest,
+                    deviceCoordinateRequest,
+                    10,
+                    member
+            ))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
+
+        @Test
         void 리뷰_작성자의_팔로워_수도_함께_조회한다() {
             Member member = memberTestPersister.builder().save();
             Member writer = memberTestPersister.builder().save();

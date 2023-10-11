@@ -6,6 +6,7 @@ import static org.dinosaur.foodbowl.domain.member.domain.QMember.member;
 import static org.dinosaur.foodbowl.domain.review.domain.QReview.review;
 import static org.dinosaur.foodbowl.domain.store.domain.QCategory.category;
 import static org.dinosaur.foodbowl.domain.store.domain.QStore.store;
+import static org.dinosaur.foodbowl.domain.store.domain.QStoreSchool.storeSchool;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -59,6 +60,18 @@ public class StoreCustomRepository {
         );
     }
 
+    public List<Store> findStoresByMemberInMapBounds(Long memberId, MapCoordinateBoundDto mapCoordinateBoundDto) {
+        return jpaQueryFactory.selectDistinct(store)
+                .from(store)
+                .innerJoin(store.category, category).fetchJoin()
+                .innerJoin(review).on(
+                        review.store.eq(store),
+                        review.member.id.eq(memberId)
+                )
+                .where(containsPolygon(mapCoordinateBoundDto))
+                .fetch();
+    }
+
     public List<Store> findStoresByBookmarkInMapBounds(Long memberId, MapCoordinateBoundDto mapCoordinateBoundDto) {
         return jpaQueryFactory.selectDistinct(store)
                 .from(store)
@@ -80,6 +93,18 @@ public class StoreCustomRepository {
                 .innerJoin(follow).on(
                         review.member.id.eq(follow.following.id),
                         follow.follower.id.eq(memberId)
+                )
+                .where(containsPolygon(mapCoordinateBoundDto))
+                .fetch();
+    }
+
+    public List<Store> findStoresBySchoolInMapBounds(Long schoolId, MapCoordinateBoundDto mapCoordinateBoundDto) {
+        return jpaQueryFactory.selectDistinct(store)
+                .from(store)
+                .innerJoin(store.category, category).fetchJoin()
+                .innerJoin(storeSchool).on(
+                        storeSchool.store.eq(store),
+                        storeSchool.school.id.eq(schoolId)
                 )
                 .where(containsPolygon(mapCoordinateBoundDto))
                 .fetch();

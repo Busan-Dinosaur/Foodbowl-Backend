@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
+import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,23 @@ class StoreCustomServiceTest extends IntegrationTest {
 
     @Autowired
     private StoreCustomService storeCustomService;
+
+    @Test
+    void 멤버가_작성한_리뷰가_존재하는_가게_목록을_범위를_통해_조회한다() {
+        Member member = memberTestPersister.builder().save();
+        Store store = storeTestPersister.builder().save();
+        reviewTestPersister.builder().member(member).store(store).save();
+        MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                BigDecimal.valueOf(1),
+                BigDecimal.valueOf(1)
+        );
+
+        List<Store> result = storeCustomService.getStoresByMemberInMapBounds(member.getId(), mapCoordinateBoundDto);
+
+        assertThat(result).contains(store);
+    }
 
     @Test
     void 북마크한_가게_목록을_범위를_통해_조회한다() {
@@ -51,5 +69,22 @@ class StoreCustomServiceTest extends IntegrationTest {
         List<Store> result = storeCustomService.getStoresByFollowingInMapBounds(member.getId(), mapCoordinateBoundDto);
 
         assertThat(result).containsExactly(store);
+    }
+
+    @Test
+    void 학교_근거의_가게_목록을_범위를_통해_조회한다() {
+        Store store = storeTestPersister.builder().save();
+        School school = schoolTestPersister.builder().save();
+        storeSchoolTestPersister.builder().store(store).school(school).save();
+        MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                BigDecimal.valueOf(1),
+                BigDecimal.valueOf(1)
+        );
+
+        List<Store> result = storeCustomService.getStoresBySchoolInMapBounds(school.getId(), mapCoordinateBoundDto);
+
+        assertThat(result).contains(store);
     }
 }
