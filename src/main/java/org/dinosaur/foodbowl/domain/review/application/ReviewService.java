@@ -16,11 +16,13 @@ import org.dinosaur.foodbowl.domain.photo.domain.Photo;
 import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
 import org.dinosaur.foodbowl.domain.review.application.dto.ReviewToPhotoPathDto;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
+import org.dinosaur.foodbowl.domain.review.domain.vo.ReviewFilter;
 import org.dinosaur.foodbowl.domain.review.dto.request.DeviceCoordinateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.MapCoordinateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
+import org.dinosaur.foodbowl.domain.review.dto.response.StoreReviewResponse;
 import org.dinosaur.foodbowl.domain.review.exception.ReviewExceptionType;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
 import org.dinosaur.foodbowl.domain.store.application.StoreService;
@@ -71,6 +73,33 @@ public class ReviewService {
                 pageSize
         );
         return convertToReviewPageResponse(loginMember, reviews, deviceCoordinateRequest);
+    }
+
+    @Transactional(readOnly = true)
+    public StoreReviewResponse getReviewsByStore(
+            Long storeId,
+            String filter,
+            Long lastReviewId,
+            int pageSize,
+            Member loginMember
+    ) {
+        Store store = storeService.findById(storeId);
+        List<Review> reviews = reviewCustomService.getReviewsByStore(
+                store.getId(),
+                ReviewFilter.from(filter),
+                loginMember.getId(),
+                lastReviewId,
+                pageSize
+        );
+
+        MemberToFollowerCountDto memberToFollowerCountDto =
+                followCustomService.getFollowerCountByMembers(getWriters(reviews));
+        ReviewToPhotoPathDto reviewToPhotoPathDto = reviewPhotoCustomService.getPhotoPathByReviews(reviews);
+        return StoreReviewResponse.of(
+                reviews,
+                reviewToPhotoPathDto,
+                memberToFollowerCountDto
+        );
     }
 
     @Transactional(readOnly = true)

@@ -9,6 +9,7 @@ import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
 import org.dinosaur.foodbowl.domain.review.application.dto.StoreToReviewCountDto;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
+import org.dinosaur.foodbowl.domain.review.domain.vo.ReviewFilter;
 import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.test.IntegrationTest;
@@ -60,6 +61,22 @@ class ReviewCustomServiceTest extends IntegrationTest {
         );
 
         assertThat(result).containsExactly(review);
+    }
+
+    @Test
+    void 가게에_해당하는_리뷰를_조회한다() {
+        Store store = storeTestPersister.builder().save();
+        Review review = reviewTestPersister.builder().store(store).save();
+
+        List<Review> reviews = reviewCustomService.getReviewsByStore(
+                store.getId(),
+                ReviewFilter.ALL,
+                1L,
+                null,
+                10
+        );
+
+        assertThat(reviews).containsExactly(review);
     }
 
     @Test

@@ -13,6 +13,7 @@ import org.dinosaur.foodbowl.domain.review.dto.request.MapCoordinateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
+import org.dinosaur.foodbowl.domain.review.dto.response.StoreReviewResponse;
 import org.dinosaur.foodbowl.global.presentation.Auth;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -134,6 +135,24 @@ public class ReviewController implements ReviewControllerDocs {
                 loginMember
         );
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/stores")
+    public ResponseEntity<StoreReviewResponse> getReviewsByStore(
+            @RequestParam(name = "storeId") @Positive(message = "가게 ID는 양수만 가능합니다.") Long storeId,
+            @RequestParam(name = "filter", defaultValue = "ALL") String filter,
+            @RequestParam(name = "lastReviewId", required = false) @Positive(message = "리뷰 ID는 양수만 가능합니다.") Long lastReviewId,
+            @RequestParam(name = "pageSize", defaultValue = "10") @Positive(message = "페이지 크기는 양수만 가능합니다.") int pageSize,
+            @Auth Member loginMember
+    ) {
+        StoreReviewResponse storeReviewResponse = reviewService.getReviewsByStore(
+                storeId,
+                filter,
+                lastReviewId,
+                pageSize,
+                loginMember
+        );
+        return ResponseEntity.ok(storeReviewResponse);
     }
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})

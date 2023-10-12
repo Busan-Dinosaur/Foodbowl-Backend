@@ -15,19 +15,25 @@ import org.dinosaur.foodbowl.domain.review.dto.request.DeviceCoordinateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.MapCoordinateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
+import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageInfo;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewResponse;
+import org.dinosaur.foodbowl.domain.review.dto.response.StoreReviewContentResponse;
+import org.dinosaur.foodbowl.domain.review.dto.response.StoreReviewResponse;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
 import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
+import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
 import org.dinosaur.foodbowl.global.util.PointUtils;
 import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.dinosaur.foodbowl.test.file.FileTestUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -245,6 +251,151 @@ class ReviewServiceTest extends IntegrationTest {
                 softly.assertThat(Math.round(result.get(0).store().distance() / 10) * 10).isEqualTo(130);
                 softly.assertThat(result.get(0).store().isBookmarked()).isFalse();
             });
+        }
+    }
+
+    @Nested
+    class 가게에_해당하는_리뷰_목록_페이징_조회_시 {
+
+        @Test
+        void 모든_리뷰를_조회한다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            Review reviewA = reviewTestPersister.builder().store(store).content("맛있어요").save();
+            Review reviewB = reviewTestPersister.builder().store(store).content("맛없어요").save();
+
+            StoreReviewResponse storeReviewResponse = reviewService.getReviewsByStore(
+                    store.getId(),
+                    "ALL",
+                    null,
+                    10,
+                    member
+            );
+
+            List<StoreReviewContentResponse> reviewContentResponses = storeReviewResponse.storeReviewContentResponses();
+            ReviewPageInfo reviewPageInfo = storeReviewResponse.page();
+            assertSoftly(softly -> {
+                softly.assertThat(reviewContentResponses).hasSize(2);
+                softly.assertThat(reviewContentResponses.get(0).review().id()).isEqualTo(reviewB.getId());
+                softly.assertThat(reviewContentResponses.get(0).review().content()).isEqualTo(reviewB.getContent());
+                softly.assertThat(reviewContentResponses.get(1).review().id()).isEqualTo(reviewA.getId());
+                softly.assertThat(reviewContentResponses.get(1).review().content()).isEqualTo(reviewA.getContent());
+                softly.assertThat(reviewPageInfo.size()).isEqualTo(2);
+                softly.assertThat(reviewPageInfo.firstId()).isEqualTo(reviewB.getId());
+                softly.assertThat(reviewPageInfo.lastId()).isEqualTo(reviewA.getId());
+            });
+        }
+
+        @Test
+        void 팔로워_리뷰만_조회한다() {
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            followTestPersister.builder().follower(member).following(writer).save();
+            Review reviewA = reviewTestPersister.builder().store(store).member(writer).content("맛있어요").save();
+            Review reviewB = reviewTestPersister.builder().store(store).content("맛없어요").save();
+
+            StoreReviewResponse storeReviewResponse = reviewService.getReviewsByStore(
+                    store.getId(),
+                    "FRIEND",
+                    null,
+                    10,
+                    member
+            );
+
+            List<StoreReviewContentResponse> reviewContentResponses = storeReviewResponse.storeReviewContentResponses();
+            ReviewPageInfo reviewPageInfo = storeReviewResponse.page();
+            assertSoftly(softly -> {
+                softly.assertThat(reviewContentResponses).hasSize(1);
+                softly.assertThat(reviewContentResponses.get(0).review().id()).isEqualTo(reviewA.getId());
+                softly.assertThat(reviewContentResponses.get(0).review().content()).isEqualTo(reviewA.getContent());
+                softly.assertThat(reviewPageInfo.size()).isEqualTo(1);
+                softly.assertThat(reviewPageInfo.firstId()).isEqualTo(reviewA.getId());
+                softly.assertThat(reviewPageInfo.lastId()).isEqualTo(reviewA.getId());
+            });
+        }
+
+        @Test
+        void 리뷰_작성자의_팔로워_수도_함께_조회한다() {
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            Review review = reviewTestPersister.builder().member(writer).store(store).save();
+            followTestPersister.builder().following(writer).save();
+            followTestPersister.builder().following(writer).save();
+
+            StoreReviewResponse storeReviewResponse = reviewService.getReviewsByStore(
+                    store.getId(),
+                    "ALL",
+                    null,
+                    10,
+                    member
+            );
+
+            List<StoreReviewContentResponse> result = storeReviewResponse.storeReviewContentResponses();
+            assertSoftly(softly -> {
+                softly.assertThat(result).hasSize(1);
+                softly.assertThat(result.get(0).writer().id()).isEqualTo(writer.getId());
+                softly.assertThat(result.get(0).writer().nickname()).isEqualTo(writer.getNickname());
+                softly.assertThat(result.get(0).writer().followerCount()).isEqualTo(2);
+            });
+        }
+
+        @Test
+        void 리뷰의_사진_목록도_함께_조회한다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            Review review = reviewTestPersister.builder().store(store).save();
+            ReviewPhoto reviewPhotoA = reviewPhotoTestPersister.builder().review(review).save();
+            ReviewPhoto reviewPhotoB = reviewPhotoTestPersister.builder().review(review).save();
+
+            StoreReviewResponse storeReviewResponse = reviewService.getReviewsByStore(
+                    store.getId(),
+                    "ALL",
+                    null,
+                    10,
+                    member
+            );
+
+            List<StoreReviewContentResponse> result = storeReviewResponse.storeReviewContentResponses();
+            assertSoftly(softly -> {
+                softly.assertThat(result).hasSize(1);
+                softly.assertThat(result.get(0).review().id()).isEqualTo(review.getId());
+                softly.assertThat(result.get(0).review().content()).isEqualTo(review.getContent());
+                softly.assertThat(result.get(0).review().imagePaths())
+                        .containsExactly(reviewPhotoA.getPhoto().getPath(), reviewPhotoB.getPhoto().getPath());
+                softly.assertThat(result.get(0).review().createdAt()).isEqualTo(review.getCreatedAt());
+                softly.assertThat(result.get(0).review().updatedAt()).isEqualTo(review.getUpdatedAt());
+            });
+        }
+
+        @Test
+        void 해당_가게가_존재하지_않으면_예외가_발생한다() {
+            assertThatThrownBy(() -> reviewService.getReviewsByStore(
+                    -1L,
+                    "ALL",
+                    null,
+                    10,
+                    null
+            ))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("일치하는 가게를 찾을 수 없습니다.");
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"", " ", "test", "all", "friend"})
+        void 일치하는_리뷰_필터링_조건이_없으면_예외가_발생한다(String reviewFilter) {
+            Store store = storeTestPersister.builder().save();
+
+            assertThatThrownBy(() -> reviewService.getReviewsByStore(
+                    store.getId(),
+                    reviewFilter,
+                    null,
+                    10,
+                    null
+            ))
+                    .isInstanceOf(InvalidArgumentException.class)
+                    .hasMessage("일치하는 리뷰 필터링 조건이 없습니다.");
         }
     }
 

@@ -37,6 +37,8 @@ import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewStoreResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewWriterResponse;
+import org.dinosaur.foodbowl.domain.review.dto.response.StoreReviewContentResponse;
+import org.dinosaur.foodbowl.domain.review.dto.response.StoreReviewResponse;
 import org.dinosaur.foodbowl.test.PresentationTest;
 import org.dinosaur.foodbowl.test.file.FileTestUtils;
 import org.junit.jupiter.api.Nested;
@@ -316,6 +318,167 @@ class ReviewControllerTest extends PresentationTest {
                             .param("y", "32.3636")
                             .param("deltaX", "3.12")
                             .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636")
+                            .param("pageSize", pageSize))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("페이지 크기는 양수만 가능합니다.")));
+        }
+    }
+
+    @Nested
+    class 가게에_해당하는_리뷰_페이징_조회_시 {
+
+        private final String accessToken = jwtTokenProvider.createAccessToken(1L, ROLE_회원);
+
+        @Test
+        void 필터링_조건_없이_200_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            StoreReviewResponse response = new StoreReviewResponse(
+                    List.of(
+                            new StoreReviewContentResponse(
+                                    new ReviewWriterResponse(
+                                            1L,
+                                            "그레이",
+                                            "https://static.image.com",
+                                            10
+                                    ),
+                                    new ReviewContentResponse(
+                                            1L,
+                                            "맛있어요",
+                                            List.of("https://static.image1.com"),
+                                            LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS),
+                                            LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+                                    )
+                            )
+                    ),
+                    new ReviewPageInfo(1L, 1L, 1)
+            );
+            given(reviewService.getReviewsByStore(
+                    anyLong(),
+                    any(),
+                    any(),
+                    anyInt(),
+                    any(Member.class)
+            )).willReturn(response);
+
+            MvcResult mvcResult = mockMvc.perform(get("/v1/reviews/stores")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("storeId", "1")
+                            .param("pageSize", "20")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "35.324"))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+            StoreReviewResponse result = objectMapper.readValue(jsonResponse, StoreReviewResponse.class);
+            assertThat(result).usingRecursiveComparison().isEqualTo(response);
+        }
+
+        @Test
+        void 필터링_조건과_함께_200_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            StoreReviewResponse response = new StoreReviewResponse(
+                    List.of(
+                            new StoreReviewContentResponse(
+                                    new ReviewWriterResponse(
+                                            1L,
+                                            "그레이",
+                                            "https://static.image.com",
+                                            10
+                                    ),
+                                    new ReviewContentResponse(
+                                            1L,
+                                            "맛있어요",
+                                            List.of("https://static.image1.com"),
+                                            LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS),
+                                            LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+                                    )
+                            )
+                    ),
+                    new ReviewPageInfo(1L, 1L, 1)
+            );
+            given(reviewService.getReviewsByStore(
+                    anyLong(),
+                    any(),
+                    any(),
+                    anyInt(),
+                    any(Member.class)
+            )).willReturn(response);
+
+            MvcResult mvcResult = mockMvc.perform(get("/v1/reviews/stores")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("storeId", "1")
+                            .param("filter", "FRIEND")
+                            .param("pageSize", "20")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "35.324"))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+            StoreReviewResponse result = objectMapper.readValue(jsonResponse, StoreReviewResponse.class);
+            assertThat(result).usingRecursiveComparison().isEqualTo(response);
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 가게_ID가_양수가_아니라면_400_응답을_반환한다(String storeId) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/stores")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("storeId", storeId)
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("가게 ID는 양수만 가능합니다.")));
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 마지막_리뷰ID가_양수가_아니라면_400_응답을_반환한다(String lastReviewId) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/stores")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("storeId", "1")
+                            .param("lastReviewId", lastReviewId)
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("리뷰 ID는 양수만 가능합니다.")));
+        }
+
+        @Test
+        void 가게_ID가_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/stores")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("deviceX", "123.12412")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 페이지_크기가_양수가_아니라면_400_응답을_반환한다(String pageSize) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/stores")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("storeId", "1")
                             .param("deviceX", "123.3636")
                             .param("deviceY", "32.3636")
                             .param("pageSize", pageSize))
