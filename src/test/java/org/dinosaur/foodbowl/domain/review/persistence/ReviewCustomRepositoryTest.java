@@ -273,9 +273,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
                     10
             );
 
-            assertSoftly(softly -> {
-                softly.assertThat(reviews).containsExactly(reviewC, reviewB, reviewA);
-            });
+            assertThat(reviews).containsExactly(reviewC, reviewB, reviewA);
         }
 
         @Test
