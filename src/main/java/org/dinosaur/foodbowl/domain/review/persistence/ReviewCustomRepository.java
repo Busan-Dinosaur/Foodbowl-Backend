@@ -77,8 +77,7 @@ public class ReviewCustomRepository {
                 .innerJoin(review.member, member).fetchJoin();
 
         setReviewFilterIfExists(jpaQuery, memberId, reviewFilter);
-        return
-                jpaQuery.where(
+        return jpaQuery.where(
                         review.store.id.eq(storeId),
                         ltLastReviewId(lastReviewId)
                 )
