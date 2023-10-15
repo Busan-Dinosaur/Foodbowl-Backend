@@ -19,8 +19,8 @@ public record ReviewPageInfo(
     public static ReviewPageInfo from(List<Review> reviews) {
         int size = reviews.size();
         return new ReviewPageInfo(
-                reviews.get(0).getId(),
-                reviews.get(size - 1).getId(),
+                size == 0 ? null : reviews.get(0).getId(),
+                size == 0 ? null : reviews.get(size - 1).getId(),
                 size
         );
     }

@@ -252,6 +252,39 @@ class ReviewServiceTest extends IntegrationTest {
                 softly.assertThat(result.get(0).store().isBookmarked()).isFalse();
             });
         }
+
+        @Test
+        void 일치하는_리뷰가_없으면_빈_리스트를_반환한다() {
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            ReviewPageResponse response = reviewService.getReviewsByMemberInMapBounds(
+                    writer.getId(),
+                    null,
+                    mapCoordinateRequest,
+                    deviceCoordinateRequest,
+                    10,
+                    member
+            );
+
+            assertSoftly(softly -> {
+                softly.assertThat(response.reviews()).isEmpty();
+                softly.assertThat(response.page().firstId()).isNull();
+                softly.assertThat(response.page().lastId()).isNull();
+                softly.assertThat(response.page().size()).isZero();
+            });
+        }
     }
 
     @Nested
