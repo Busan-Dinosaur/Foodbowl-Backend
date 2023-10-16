@@ -92,4 +92,10 @@ public class MemberController implements MemberControllerDocs {
         memberService.deleteProfileImage(loginMember);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/deactivate")
+    public ResponseEntity<Void> deactivate(@Auth Member loginMember) {
+        memberService.deactivate(loginMember);
+        return ResponseEntity.noContent().build();
+    }
 }

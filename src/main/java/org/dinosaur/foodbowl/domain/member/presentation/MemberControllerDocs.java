@@ -207,4 +207,14 @@ public interface MemberControllerDocs {
             )
     })
     ResponseEntity<Void> deleteProfileImage(Member loginMember);
+
+    @Operation(
+            summary = "회원 탈퇴",
+            description = "회원과 연관된 데이터를 모두 삭제한다."
+    )
+    @ApiResponse(
+            responseCode = "204",
+            description = "회원 탈퇴 성공"
+    )
+    ResponseEntity<Void> deactivate(Member loginMember);
 }
