@@ -62,4 +62,15 @@ class BookmarkRepositoryTest extends PersistenceTest {
 
         assertThat(bookmarkRepository.findByMemberAndStore(member, store)).isEmpty();
     }
+
+    @Test
+    void 멤버의_북마크를_모두_삭제한다() {
+        Member member = memberTestPersister.builder().save();
+        bookmarkTestPersister.builder().member(member).save();
+        bookmarkTestPersister.builder().member(member).save();
+
+        bookmarkRepository.deleteByMember(member);
+
+        assertThat(bookmarkRepository.findByMember(member)).isEmpty();
+    }
 }
