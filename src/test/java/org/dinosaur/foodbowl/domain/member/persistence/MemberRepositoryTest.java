@@ -95,4 +95,20 @@ class MemberRepositoryTest extends PersistenceTest {
 
         assertThat(saveMember.getId()).isNotNull();
     }
+
+    @Test
+    void 회원을_삭제한다() {
+        Member member = Member.builder()
+                .email("foodBowl@gmail.com")
+                .socialId("foodBowlId")
+                .socialType(SocialType.APPLE)
+                .nickname("foodbowl")
+                .introduction("안녕하세요")
+                .build();
+        Member saveMember = memberRepository.save(member);
+
+        memberRepository.delete(saveMember);
+
+        assertThat(memberRepository.findById(saveMember.getId())).isNotPresent();
+    }
 }
