@@ -14,6 +14,7 @@ import org.dinosaur.foodbowl.domain.member.domain.MemberThumbnail;
 import org.dinosaur.foodbowl.domain.member.domain.vo.Introduction;
 import org.dinosaur.foodbowl.domain.member.domain.vo.Nickname;
 import org.dinosaur.foodbowl.domain.member.dto.request.UpdateProfileRequest;
+import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileImageResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberSearchResponses;
 import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
@@ -99,7 +100,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateProfileImage(MultipartFile image, Member loginMember) {
+    public MemberProfileImageResponse updateProfileImage(MultipartFile image, Member loginMember) {
         memberThumbnailRepository.findByMember(loginMember)
                 .ifPresent(this::deleteMemberThumbnail);
         Thumbnail thumbnail = thumbnailService.save(image);
@@ -108,6 +109,7 @@ public class MemberService {
                 .thumbnail(thumbnail)
                 .build();
         memberThumbnailRepository.save(memberThumbnail);
+        return new MemberProfileImageResponse(thumbnail.getPath());
     }
 
     private void deleteMemberThumbnail(MemberThumbnail memberThumbnail) {

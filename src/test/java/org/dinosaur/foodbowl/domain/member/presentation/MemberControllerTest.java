@@ -24,6 +24,7 @@ import org.dinosaur.foodbowl.domain.member.application.MemberService;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
 import org.dinosaur.foodbowl.domain.member.dto.request.UpdateProfileRequest;
+import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileImageResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberSearchResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberSearchResponses;
@@ -319,16 +320,22 @@ class MemberControllerTest extends PresentationTest {
         private final String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
 
         @Test
-        void 프로필_이미지_수정에_성공하면_204_응답을_반환한다() throws Exception {
+        void 프로필_이미지_수정에_성공하면_200_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
             MockMultipartFile file = (MockMultipartFile) FileTestUtils.generateMultiPartFile("image");
-            willDoNothing().given(memberService).updateProfileImage(any(MultipartFile.class), any(Member.class));
+            MemberProfileImageResponse expected = new MemberProfileImageResponse("http://justdoeat.shop/image.png");
+            given(memberService.updateProfileImage(any(MultipartFile.class), any(Member.class))).willReturn(expected);
 
-            mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/members/profile/image")
+            MvcResult mvcResult = mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/members/profile/image")
                             .file(file)
                             .header(AUTHORIZATION, BEARER + accessToken))
                     .andDo(print())
-                    .andExpect(status().isNoContent());
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            String jsonResponse = mvcResult.getResponse().getContentAsString();
+            MemberProfileImageResponse result = objectMapper.readValue(jsonResponse, MemberProfileImageResponse.class);
+            assertThat(result).usingRecursiveComparison().isEqualTo(expected);
         }
 
         @Test
