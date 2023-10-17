@@ -34,6 +34,15 @@ logging:
   level:
     org.hibernate.orm.jdbc.bind: trace
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
+  metrics:
+    tags:
+      application: ${APPLICATION_NAME}
+
 springdoc:
   swagger-ui:
     enabled: ${SWAGGER_ENABLE}
