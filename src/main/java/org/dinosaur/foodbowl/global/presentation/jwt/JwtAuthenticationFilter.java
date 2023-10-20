@@ -12,7 +12,6 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtConstant;
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
-import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtUser;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
