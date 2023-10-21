@@ -12,6 +12,7 @@ import org.dinosaur.foodbowl.global.config.SecurityConfig;
 import org.dinosaur.foodbowl.global.presentation.jwt.JwtAuthorizationExtractor;
 import org.dinosaur.foodbowl.global.presentation.security.CustomAccessDeniedHandler;
 import org.dinosaur.foodbowl.global.presentation.security.CustomAuthenticationEntryPoint;
+import org.dinosaur.foodbowl.test.config.TestPropertyConfig;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.Import;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @Import(value = {
         SecurityConfig.class,
+        TestPropertyConfig.class,
         JwtTokenProvider.class,
         JwtAuthorizationExtractor.class,
         CustomAccessDeniedHandler.class,
