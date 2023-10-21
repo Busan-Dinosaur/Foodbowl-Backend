@@ -123,7 +123,8 @@ jacocoTestReport {
                             '**/*Filter*',
                             '**/*ArgumentResolver*',
                             '**/*Handler*',
-                            '**/*EntryPoint*'
+                            '**/*EntryPoint*',
+                            "**/*Const"
                     ] + Qdomains)
                 })
         )
@@ -165,7 +166,8 @@ jacocoTestCoverageVerification {
                     '*.*Filter',
                     '*.*ArgumentResolver',
                     '*.*Handler',
-                    '*.*EntryPoint'
+                    '*.*EntryPoint',
+                    '*.*Const'
             ] + Qdomains
         }
     }
