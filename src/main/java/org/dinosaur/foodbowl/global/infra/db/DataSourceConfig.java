@@ -1,8 +1,8 @@
 package org.dinosaur.foodbowl.global.infra.db;
 
-import static org.dinosaur.foodbowl.global.infra.db.DataSourceType.Key.REPLICA_NAME;
-import static org.dinosaur.foodbowl.global.infra.db.DataSourceType.Key.ROUTING_NAME;
-import static org.dinosaur.foodbowl.global.infra.db.DataSourceType.Key.SOURCE_NAME;
+import static org.dinosaur.foodbowl.global.infra.db.DataSourceType.DataSourceConst.REPLICA_NAME;
+import static org.dinosaur.foodbowl.global.infra.db.DataSourceType.DataSourceConst.ROUTING_NAME;
+import static org.dinosaur.foodbowl.global.infra.db.DataSourceType.DataSourceConst.SOURCE_NAME;
 
 import java.util.Map;
 import javax.sql.DataSource;
