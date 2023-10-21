@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.global.infra.db;
 
-import static org.dinosaur.foodbowl.global.infra.db.DataSourceType.Key.*;
+import static org.dinosaur.foodbowl.global.infra.db.DataSourceType.Key.REPLICA_NAME;
+import static org.dinosaur.foodbowl.global.infra.db.DataSourceType.Key.SOURCE_NAME;
 
 public enum DataSourceType {
 
