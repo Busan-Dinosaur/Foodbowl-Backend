@@ -302,6 +302,7 @@ class ReviewServiceTest extends IntegrationTest {
                     "ALL",
                     null,
                     10,
+                    new DeviceCoordinateRequest(BigDecimal.valueOf(124.124), BigDecimal.valueOf(37.41424)),
                     member
             );
 
@@ -333,6 +334,7 @@ class ReviewServiceTest extends IntegrationTest {
                     "FRIEND",
                     null,
                     10,
+                    new DeviceCoordinateRequest(BigDecimal.valueOf(124.124), BigDecimal.valueOf(37.41424)),
                     member
             );
 
@@ -362,6 +364,7 @@ class ReviewServiceTest extends IntegrationTest {
                     "ALL",
                     null,
                     10,
+                    new DeviceCoordinateRequest(BigDecimal.valueOf(124.124), BigDecimal.valueOf(37.41424)),
                     member
             );
 
@@ -387,6 +390,7 @@ class ReviewServiceTest extends IntegrationTest {
                     "ALL",
                     null,
                     10,
+                    new DeviceCoordinateRequest(BigDecimal.valueOf(124.124), BigDecimal.valueOf(37.41424)),
                     member
             );
 
@@ -409,6 +413,7 @@ class ReviewServiceTest extends IntegrationTest {
                     "ALL",
                     null,
                     10,
+                    null,
                     null
             ))
                     .isInstanceOf(NotFoundException.class)
@@ -425,6 +430,7 @@ class ReviewServiceTest extends IntegrationTest {
                     reviewFilter,
                     null,
                     10,
+                    null,
                     null
             ))
                     .isInstanceOf(InvalidArgumentException.class)
