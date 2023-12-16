@@ -18,6 +18,7 @@ import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageInfo;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewResponse;
+import org.dinosaur.foodbowl.domain.review.dto.response.ReviewStoreResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.StoreReviewContentResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.StoreReviewResponse;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
@@ -307,6 +308,7 @@ class ReviewServiceTest extends IntegrationTest {
             );
 
             List<StoreReviewContentResponse> reviewContentResponses = storeReviewResponse.storeReviewContentResponses();
+            ReviewStoreResponse reviewStoreResponse = storeReviewResponse.reviewStoreResponse();
             ReviewPageInfo reviewPageInfo = storeReviewResponse.page();
             assertSoftly(softly -> {
                 softly.assertThat(reviewContentResponses).hasSize(2);
@@ -317,6 +319,9 @@ class ReviewServiceTest extends IntegrationTest {
                 softly.assertThat(reviewPageInfo.size()).isEqualTo(2);
                 softly.assertThat(reviewPageInfo.firstId()).isEqualTo(reviewB.getId());
                 softly.assertThat(reviewPageInfo.lastId()).isEqualTo(reviewA.getId());
+                softly.assertThat(reviewStoreResponse.id()).isEqualTo(store.getId());
+                softly.assertThat(reviewStoreResponse.name()).isEqualTo(store.getStoreName());
+                softly.assertThat(reviewStoreResponse.addressName()).isEqualTo(store.getAddress().getAddressName());
             });
         }
 
