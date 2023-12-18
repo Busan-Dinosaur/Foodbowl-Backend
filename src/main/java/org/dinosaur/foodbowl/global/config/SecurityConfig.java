@@ -1,23 +1,28 @@
 package org.dinosaur.foodbowl.global.config;
 
-import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.global.presentation.jwt.JwtAuthenticationFilter;
+import org.dinosaur.foodbowl.global.presentation.security.ActuatorProperties;
 import org.dinosaur.foodbowl.global.presentation.security.CustomAccessDeniedHandler;
 import org.dinosaur.foodbowl.global.presentation.security.CustomAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-@RequiredArgsConstructor
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
@@ -36,12 +41,36 @@ public class SecurityConfig {
             "/swagger-ui/**"
     };
 
+    private final ActuatorProperties actuatorProperties;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    public SecurityConfig(
+            ActuatorProperties actuatorProperties,
+            CustomAccessDeniedHandler customAccessDeniedHandler,
+            CustomAuthenticationEntryPoint customAuthenticationEntryPoint,
+            JwtAuthenticationFilter jwtAuthenticationFilter
+    ) {
+        this.actuatorProperties = actuatorProperties;
+        this.customAccessDeniedHandler = customAccessDeniedHandler;
+        this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    @Order(0)
+    public SecurityFilterChain actuatorFilterChain(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher(actuatorProperties.pattern())
+                .httpBasic(Customizer.withDefaults());
+
+        return http.build();
+    }
+
+    @Bean
+    @Order(1)
+    public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests()
                 .requestMatchers(SWAGGER_URL).permitAll()
@@ -63,6 +92,15 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService() {
+        UserDetails user = User.withUsername(actuatorProperties.user())
+                .password(passwordEncoder().encode(actuatorProperties.password()))
+                .roles(actuatorProperties.role())
+                .build();
+        return new InMemoryUserDetailsManager(user);
     }
 
     @Bean

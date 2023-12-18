@@ -1,8 +1,7 @@
-package org.dinosaur.foodbowl.domain.auth.application.jwt;
+package org.dinosaur.foodbowl.global.presentation.jwt;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,7 +17,7 @@ public class JwtUser implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roleNames.stream()
                 .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
