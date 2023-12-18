@@ -1,9 +1,15 @@
 spring:
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${DATASOURCE_URL}
-    username: ${DATASOURCE_USERNAME}
-    password: ${DATASOURCE_PASSWORD}
+    source:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: ${SOURCE_DATABASE_URL}
+      username: ${SOURCE_DATABASE_USERNAME}
+      password: ${SOURCE_DATABASE_PASSWORD}
+    replica:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: ${REPLICA_DATABASE_URL}
+      username: ${REPLICA_DATABASE_USERNAME}
+      password: ${REPLICA_DATABASE_PASSWORD}
 
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
@@ -38,6 +44,24 @@ springdoc:
   swagger-ui:
     enabled: ${SWAGGER_ENABLE}
 
+management:
+  endpoint:
+    health:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: health, prometheus
+      base-path: ${ACTUATOR_BASE_PATH}
+  metrics:
+    tags:
+      application: ${ACTUATOR_APP_TAG}
+  server:
+    port: ${ACTUATOR_SERVER_PORT}
+
 openapi:
   dev_url: ${OPENAPI_DEV_URL}
 
@@ -54,3 +78,9 @@ oauth:
 
 file:
   dir: ${FILE_PATH}
+
+monitor:
+  pattern: ${MONITOR_PATTERN}
+  user: ${MONITOR_USER}
+  password: ${MONITOR_PASSWORD}
+  role: ${MONITOR_ROLE}
