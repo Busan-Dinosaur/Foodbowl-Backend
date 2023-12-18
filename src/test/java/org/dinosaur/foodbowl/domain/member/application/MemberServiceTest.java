@@ -14,6 +14,7 @@ import org.dinosaur.foodbowl.domain.member.domain.MemberThumbnail;
 import org.dinosaur.foodbowl.domain.member.domain.Role;
 import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
 import org.dinosaur.foodbowl.domain.member.dto.request.UpdateProfileRequest;
+import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileImageResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberSearchResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberSearchResponses;
@@ -275,12 +276,13 @@ class MemberServiceTest extends IntegrationTest {
             Member member = memberTestPersister.builder().save();
             MultipartFile multipartFile = FileTestUtils.generateMultiPartFile("image");
 
-            memberService.updateProfileImage(multipartFile, member);
+            MemberProfileImageResponse response = memberService.updateProfileImage(multipartFile, member);
 
             Optional<MemberThumbnail> memberThumbnail = memberThumbnailRepository.findByMember(member);
             assertSoftly(softly -> {
                 softly.assertThat(memberThumbnail).isPresent();
-                softly.assertThat(new File(memberThumbnail.get().getThumbnail().getPath())).exists();
+                softly.assertThat(memberThumbnail.get().getThumbnail().getPath()).isEqualTo(response.profileImageUrl());
+                softly.assertThat(new File(response.profileImageUrl())).exists();
             });
             FileTestUtils.cleanUp();
         }
@@ -293,12 +295,13 @@ class MemberServiceTest extends IntegrationTest {
             memberThumbnailTestPersister.builder().member(member).thumbnail(thumbnail).save();
 
             MultipartFile newFile = FileTestUtils.generateMultiPartFile("image");
-            memberService.updateProfileImage(newFile, member);
+            MemberProfileImageResponse response = memberService.updateProfileImage(newFile, member);
 
             Optional<MemberThumbnail> memberThumbnail = memberThumbnailRepository.findByMember(member);
             assertSoftly(softly -> {
                 softly.assertThat(memberThumbnail).isPresent();
-                softly.assertThat(new File(memberThumbnail.get().getThumbnail().getPath())).exists();
+                softly.assertThat(memberThumbnail.get().getThumbnail().getPath()).isEqualTo(response.profileImageUrl());
+                softly.assertThat(new File(response.profileImageUrl())).exists();
                 softly.assertThat(new File(thumbnail.getPath())).doesNotExist();
             });
             FileTestUtils.cleanUp();

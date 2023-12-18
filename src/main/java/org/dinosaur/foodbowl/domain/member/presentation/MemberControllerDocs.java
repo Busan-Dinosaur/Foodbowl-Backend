@@ -14,6 +14,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.dto.request.UpdateProfileRequest;
+import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileImageResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberSearchResponses;
 import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
@@ -163,7 +164,7 @@ public interface MemberControllerDocs {
     )
     @ApiResponses({
             @ApiResponse(
-                    responseCode = "204",
+                    responseCode = "200",
                     description = "프로필 이미지 수정 성공"
             ),
             @ApiResponse(
@@ -178,7 +179,7 @@ public interface MemberControllerDocs {
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
-    ResponseEntity<Void> updateProfileImage(
+    ResponseEntity<MemberProfileImageResponse> updateProfileImage(
             @Parameter(description = "수정할 프로필 이미지")
             MultipartFile thumbnail,
 
