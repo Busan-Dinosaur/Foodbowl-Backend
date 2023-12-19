@@ -181,6 +181,12 @@ public interface ReviewControllerDocs {
             @Positive(message = "페이지 크기는 양수만 가능합니다.")
             int pageSize,
 
+            @Parameter(description = "사용자 경도", example = "123.3636")
+            BigDecimal deviceX,
+
+            @Parameter(description = "사용자 위도", example = "32.3636")
+            BigDecimal deviceY,
+
             Member loginMember
     );
 

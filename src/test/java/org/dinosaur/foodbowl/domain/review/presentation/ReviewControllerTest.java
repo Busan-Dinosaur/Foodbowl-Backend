@@ -337,6 +337,14 @@ class ReviewControllerTest extends PresentationTest {
         void 필터링_조건_없이_200_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
             StoreReviewResponse response = new StoreReviewResponse(
+                    new ReviewStoreResponse(
+                            1L,
+                            "한식",
+                            "바다회사랑",
+                            "서울시 마포구 동교로 123",
+                            3.12414,
+                            true
+                    ),
                     List.of(
                             new StoreReviewContentResponse(
                                     new ReviewWriterResponse(
@@ -361,6 +369,7 @@ class ReviewControllerTest extends PresentationTest {
                     any(),
                     any(),
                     anyInt(),
+                    any(DeviceCoordinateRequest.class),
                     any(Member.class)
             )).willReturn(response);
 
@@ -383,6 +392,14 @@ class ReviewControllerTest extends PresentationTest {
         void 필터링_조건과_함께_200_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
             StoreReviewResponse response = new StoreReviewResponse(
+                    new ReviewStoreResponse(
+                            1L,
+                            "한식",
+                            "바다회사랑",
+                            "서울시 마포구 동교로 123",
+                            3.12414,
+                            true
+                    ),
                     List.of(
                             new StoreReviewContentResponse(
                                     new ReviewWriterResponse(
@@ -407,6 +424,7 @@ class ReviewControllerTest extends PresentationTest {
                     any(),
                     any(),
                     anyInt(),
+                    any(DeviceCoordinateRequest.class),
                     any(Member.class)
             )).willReturn(response);
 
