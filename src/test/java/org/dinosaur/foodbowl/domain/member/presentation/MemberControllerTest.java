@@ -64,7 +64,6 @@ class MemberControllerTest extends PresentationTest {
     @MockBean
     private MemberService memberService;
 
-
     @Nested
     class 프로필_조회_시 {
 
@@ -358,6 +357,18 @@ class MemberControllerTest extends PresentationTest {
         String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
 
         mockMvc.perform(delete("/v1/members/profile/image")
+                        .header(AUTHORIZATION, BEARER + accessToken))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void 회원_탈퇴에_성공하면_204_응답을_반환한다() throws Exception {
+        mockingAuthMemberInResolver();
+        willDoNothing().given(memberService).deactivate(any(Member.class));
+        String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
+
+        mockMvc.perform(delete("/v1/members/deactivate")
                         .header(AUTHORIZATION, BEARER + accessToken))
                 .andDo(print())
                 .andExpect(status().isNoContent());
