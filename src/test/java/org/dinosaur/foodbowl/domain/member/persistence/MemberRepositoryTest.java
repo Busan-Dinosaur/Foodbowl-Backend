@@ -109,6 +109,6 @@ class MemberRepositoryTest extends PersistenceTest {
 
         memberRepository.delete(saveMember);
 
-        assertThat(memberRepository.findById(saveMember.getId())).isNotPresent();
+        assertThat(memberRepository.findById(saveMember.getId())).isEmpty();
     }
 }
