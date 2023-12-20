@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.domain.member.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -8,15 +9,23 @@ import java.io.File;
 import java.util.List;
 import java.util.Optional;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
+import org.dinosaur.foodbowl.domain.member.domain.MemberRole;
 import org.dinosaur.foodbowl.domain.member.domain.MemberThumbnail;
+import org.dinosaur.foodbowl.domain.member.domain.Role;
+import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
 import org.dinosaur.foodbowl.domain.member.dto.request.UpdateProfileRequest;
+import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileImageResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberSearchResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberSearchResponses;
 import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
+import org.dinosaur.foodbowl.domain.member.persistence.MemberRoleRepository;
 import org.dinosaur.foodbowl.domain.member.persistence.MemberThumbnailRepository;
+import org.dinosaur.foodbowl.domain.photo.application.PhotoService;
 import org.dinosaur.foodbowl.domain.photo.application.ThumbnailService;
+import org.dinosaur.foodbowl.domain.photo.domain.Photo;
 import org.dinosaur.foodbowl.domain.photo.domain.Thumbnail;
+import org.dinosaur.foodbowl.domain.review.domain.Review;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.FileException;
 import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
@@ -35,10 +44,16 @@ class MemberServiceTest extends IntegrationTest {
     private MemberService memberService;
 
     @Autowired
-    private ThumbnailService thumbnailService;
+    private MemberRoleRepository memberRoleRepository;
 
     @Autowired
     private MemberThumbnailRepository memberThumbnailRepository;
+
+    @Autowired
+    private PhotoService photoService;
+
+    @Autowired
+    private ThumbnailService thumbnailService;
 
     @Nested
     class 프로필_조회_시 {
@@ -261,12 +276,13 @@ class MemberServiceTest extends IntegrationTest {
             Member member = memberTestPersister.builder().save();
             MultipartFile multipartFile = FileTestUtils.generateMultiPartFile("image");
 
-            memberService.updateProfileImage(multipartFile, member);
+            MemberProfileImageResponse response = memberService.updateProfileImage(multipartFile, member);
 
             Optional<MemberThumbnail> memberThumbnail = memberThumbnailRepository.findByMember(member);
             assertSoftly(softly -> {
                 softly.assertThat(memberThumbnail).isPresent();
-                softly.assertThat(new File(memberThumbnail.get().getThumbnail().getPath())).exists();
+                softly.assertThat(memberThumbnail.get().getThumbnail().getPath()).isEqualTo(response.profileImageUrl());
+                softly.assertThat(new File(response.profileImageUrl())).exists();
             });
             FileTestUtils.cleanUp();
         }
@@ -279,12 +295,13 @@ class MemberServiceTest extends IntegrationTest {
             memberThumbnailTestPersister.builder().member(member).thumbnail(thumbnail).save();
 
             MultipartFile newFile = FileTestUtils.generateMultiPartFile("image");
-            memberService.updateProfileImage(newFile, member);
+            MemberProfileImageResponse response = memberService.updateProfileImage(newFile, member);
 
             Optional<MemberThumbnail> memberThumbnail = memberThumbnailRepository.findByMember(member);
             assertSoftly(softly -> {
                 softly.assertThat(memberThumbnail).isPresent();
-                softly.assertThat(new File(memberThumbnail.get().getThumbnail().getPath())).exists();
+                softly.assertThat(memberThumbnail.get().getThumbnail().getPath()).isEqualTo(response.profileImageUrl());
+                softly.assertThat(new File(response.profileImageUrl())).exists();
                 softly.assertThat(new File(thumbnail.getPath())).doesNotExist();
             });
             FileTestUtils.cleanUp();
@@ -329,5 +346,36 @@ class MemberServiceTest extends IntegrationTest {
             });
             FileTestUtils.cleanUp();
         }
+    }
+
+    @Test
+    void 회원_탈퇴를_한다() {
+        Member member = memberTestPersister.builder().save();
+        followTestPersister.builder().follower(member).save();
+        Role role = Role.builder()
+                .id(RoleType.ROLE_회원.getId())
+                .roleType(RoleType.ROLE_회원)
+                .build();
+        MemberRole memberRole = MemberRole.builder()
+                .member(member)
+                .role(role)
+                .build();
+        memberRoleRepository.save(memberRole);
+        MultipartFile thumbnailFile = FileTestUtils.generateMultiPartFile("image");
+        Thumbnail thumbnail = thumbnailService.save(thumbnailFile);
+        memberThumbnailTestPersister.builder().member(member).thumbnail(thumbnail).save();
+        bookmarkTestPersister.builder().member(member).save();
+        blameTestPersister.builder().member(member).save();
+        MultipartFile reviewPhotoFile = FileTestUtils.generateMultiPartFile("image");
+        Photo photo = photoService.save(reviewPhotoFile, "1");
+        Review review = reviewTestPersister.builder().member(member).save();
+        reviewPhotoTestPersister.builder().review(review).photo(photo).save();
+
+        assertThatNoException().isThrownBy(() -> memberService.deactivate(member));
+        assertSoftly(softly -> {
+            softly.assertThat(new File(thumbnail.getPath())).doesNotExist();
+            softly.assertThat(new File(photo.getPath())).doesNotExist();
+        });
+        FileTestUtils.cleanUp();
     }
 }

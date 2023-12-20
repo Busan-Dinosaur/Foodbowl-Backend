@@ -51,6 +51,20 @@ class ReviewRepositoryTest extends PersistenceTest {
     }
 
     @Test
+    void 멤버의_리뷰_목록을_조회한다() {
+        Member member = memberTestPersister.builder().save();
+        Store store = storeTestPersister.builder().save();
+        Review review = Review.builder()
+                .member(member)
+                .store(store)
+                .content("정말 맛있습니다.")
+                .build();
+        Review saveReview = reviewRepository.save(review);
+
+        assertThat(reviewRepository.findAllByMember(member)).containsExactly(saveReview);
+    }
+
+    @Test
     void 리뷰를_저장한다() {
         Member member = memberTestPersister.builder().save();
         Store store = storeTestPersister.builder().save();
@@ -79,5 +93,21 @@ class ReviewRepositoryTest extends PersistenceTest {
         reviewRepository.delete(saveReview);
 
         assertThat(reviewRepository.findById(saveReview.getId())).isEmpty();
+    }
+
+    @Test
+    void 멤버의_리뷰_목록을_모두_삭제한다() {
+        Member member = memberTestPersister.builder().save();
+        Store store = storeTestPersister.builder().save();
+        Review review = Review.builder()
+                .member(member)
+                .store(store)
+                .content("정말 맛있습니다.")
+                .build();
+        reviewRepository.save(review);
+
+        reviewRepository.deleteByMember(member);
+
+        assertThat(reviewRepository.findAllByMember(member)).isEmpty();
     }
 }

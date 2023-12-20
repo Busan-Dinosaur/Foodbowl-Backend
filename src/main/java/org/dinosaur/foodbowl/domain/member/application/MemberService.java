@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.dinosaur.foodbowl.domain.blame.domain.vo.BlameTarget;
+import org.dinosaur.foodbowl.domain.blame.persistence.BlameRepository;
+import org.dinosaur.foodbowl.domain.bookmark.persistence.BookmarkRepository;
 import org.dinosaur.foodbowl.domain.follow.application.FollowCustomService;
 import org.dinosaur.foodbowl.domain.follow.application.dto.MemberToFollowerCountDto;
 import org.dinosaur.foodbowl.domain.follow.application.dto.MemberToFollowingsDto;
@@ -14,14 +17,22 @@ import org.dinosaur.foodbowl.domain.member.domain.MemberThumbnail;
 import org.dinosaur.foodbowl.domain.member.domain.vo.Introduction;
 import org.dinosaur.foodbowl.domain.member.domain.vo.Nickname;
 import org.dinosaur.foodbowl.domain.member.dto.request.UpdateProfileRequest;
+import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileImageResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberSearchResponses;
 import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
 import org.dinosaur.foodbowl.domain.member.exception.MemberExceptionType;
 import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
+import org.dinosaur.foodbowl.domain.member.persistence.MemberRoleRepository;
 import org.dinosaur.foodbowl.domain.member.persistence.MemberThumbnailRepository;
+import org.dinosaur.foodbowl.domain.photo.application.PhotoService;
 import org.dinosaur.foodbowl.domain.photo.application.ThumbnailService;
+import org.dinosaur.foodbowl.domain.photo.domain.Photo;
 import org.dinosaur.foodbowl.domain.photo.domain.Thumbnail;
+import org.dinosaur.foodbowl.domain.review.domain.Review;
+import org.dinosaur.foodbowl.domain.review.domain.ReviewPhoto;
+import org.dinosaur.foodbowl.domain.review.persistence.ReviewPhotoCustomRepository;
+import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
 import org.springframework.stereotype.Service;
@@ -33,11 +44,18 @@ import org.springframework.web.multipart.MultipartFile;
 public class MemberService {
 
     private final ThumbnailService thumbnailService;
-    private final MemberRepository memberRepository;
+    private final PhotoService photoService;
     private final MemberCustomService memberCustomService;
     private final FollowCustomService followCustomService;
+
+    private final MemberRepository memberRepository;
+    private final MemberRoleRepository memberRoleRepository;
     private final MemberThumbnailRepository memberThumbnailRepository;
     private final FollowRepository followRepository;
+    private final BookmarkRepository bookmarkRepository;
+    private final BlameRepository blameRepository;
+    private final ReviewRepository reviewRepository;
+    private final ReviewPhotoCustomRepository reviewPhotoCustomRepository;
 
     @Transactional(readOnly = true)
     public MemberProfileResponse getProfile(Long memberId, Member loginMember) {
@@ -99,7 +117,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateProfileImage(MultipartFile image, Member loginMember) {
+    public MemberProfileImageResponse updateProfileImage(MultipartFile image, Member loginMember) {
         memberThumbnailRepository.findByMember(loginMember)
                 .ifPresent(this::deleteMemberThumbnail);
         Thumbnail thumbnail = thumbnailService.save(image);
@@ -108,6 +126,7 @@ public class MemberService {
                 .thumbnail(thumbnail)
                 .build();
         memberThumbnailRepository.save(memberThumbnail);
+        return new MemberProfileImageResponse(thumbnail.getPath());
     }
 
     private void deleteMemberThumbnail(MemberThumbnail memberThumbnail) {
@@ -119,5 +138,39 @@ public class MemberService {
     public void deleteProfileImage(Member loginMember) {
         memberThumbnailRepository.findByMember(loginMember)
                 .ifPresent(this::deleteMemberThumbnail);
+    }
+
+    @Transactional
+    public void deactivate(Member loginMember) {
+        deleteMemberDetails(loginMember);
+        deleteMemberActivity(loginMember);
+        memberRepository.delete(loginMember);
+    }
+
+    private void deleteMemberDetails(Member member) {
+        followRepository.deleteByMember(member);
+        memberRoleRepository.deleteByMember(member);
+        memberThumbnailRepository.findByMember(member)
+                .ifPresent(this::deleteMemberThumbnail);
+    }
+
+    private void deleteMemberActivity(Member member) {
+        bookmarkRepository.deleteByMember(member);
+        blameRepository.deleteByMember(member.getId(), BlameTarget.MEMBER);
+        deleteMemberReviews(member);
+    }
+
+    private void deleteMemberReviews(Member member) {
+        List<Review> reviews = reviewRepository.findAllByMember(member);
+        List<ReviewPhoto> reviewPhotos = reviewPhotoCustomRepository.findAllReviewPhotosInReviews(reviews);
+        reviewPhotoCustomRepository.deleteAllByReviews(reviews);
+        photoService.deleteAll(getPhotos(reviewPhotos));
+        reviewRepository.deleteByMember(member);
+    }
+
+    private List<Photo> getPhotos(List<ReviewPhoto> reviewPhotos) {
+        return reviewPhotos.stream()
+                .map(ReviewPhoto::getPhoto)
+                .toList();
     }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.photo.domain.Photo;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
+import org.dinosaur.foodbowl.domain.review.domain.ReviewPhoto;
 import org.dinosaur.foodbowl.domain.review.persistence.dto.QReviewPhotoPathDto;
 import org.dinosaur.foodbowl.domain.review.persistence.dto.ReviewPhotoPathDto;
 import org.springframework.stereotype.Repository;
@@ -32,6 +33,13 @@ public class ReviewPhotoCustomRepository {
                 .fetch();
     }
 
+    public List<ReviewPhoto> findAllReviewPhotosInReviews(List<Review> reviews) {
+        return jpaQueryFactory.selectFrom(reviewPhoto)
+                .innerJoin(reviewPhoto.photo, photo)
+                .where(reviewPhoto.review.in(reviews))
+                .fetch();
+    }
+
     public long deleteAllByReview(Review review) {
         return jpaQueryFactory.delete(reviewPhoto)
                 .where(reviewPhoto.review.eq(review))
@@ -41,6 +49,12 @@ public class ReviewPhotoCustomRepository {
     public long deleteByReviewAndPhotos(Review review, List<Photo> photos) {
         return jpaQueryFactory.delete(reviewPhoto)
                 .where(reviewPhoto.review.eq(review).and(reviewPhoto.photo.in(photos)))
+                .execute();
+    }
+
+    public long deleteAllByReviews(List<Review> reviews) {
+        return jpaQueryFactory.delete(reviewPhoto)
+                .where(reviewPhoto.review.in(reviews))
                 .execute();
     }
 }

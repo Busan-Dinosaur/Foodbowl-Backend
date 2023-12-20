@@ -129,4 +129,36 @@ class FollowRepositoryTest extends PersistenceTest {
 
         assertThat(result).isEqualTo(2);
     }
+
+    @Nested
+    class 멤버의_팔로우_데이터_삭제_시 {
+
+        @Test
+        void 팔로잉_목록을_삭제한다() {
+            Member member = memberTestPersister.builder().save();
+            Follow followA = followTestPersister.builder().follower(member).save();
+            Follow followB = followTestPersister.builder().follower(member).save();
+
+            followRepository.deleteByMember(member);
+
+            assertSoftly(softly -> {
+                softly.assertThat(followRepository.findById(followA.getId())).isNotPresent();
+                softly.assertThat(followRepository.findById(followB.getId())).isNotPresent();
+            });
+        }
+
+        @Test
+        void 팔로우_목록을_삭제한다() {
+            Member member = memberTestPersister.builder().save();
+            Follow followA = followTestPersister.builder().following(member).save();
+            Follow followB = followTestPersister.builder().following(member).save();
+
+            followRepository.deleteByMember(member);
+
+            assertSoftly(softly -> {
+                softly.assertThat(followRepository.findById(followA.getId())).isNotPresent();
+                softly.assertThat(followRepository.findById(followB.getId())).isNotPresent();
+            });
+        }
+    }
 }

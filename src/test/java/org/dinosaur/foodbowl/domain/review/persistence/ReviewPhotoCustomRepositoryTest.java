@@ -37,6 +37,19 @@ class ReviewPhotoCustomRepositoryTest extends PersistenceTest {
     }
 
     @Test
+    void 리뷰_목록에_존재하는_리뷰_사진_목록을_조회한다() {
+        Review reviewA = reviewTestPersister.builder().save();
+        Review reviewB = reviewTestPersister.builder().save();
+        ReviewPhoto reviewPhotoA = reviewPhotoTestPersister.builder().review(reviewA).save();
+        ReviewPhoto reviewPhotoB = reviewPhotoTestPersister.builder().review(reviewB).save();
+
+        List<ReviewPhoto> reviewPhotos =
+                reviewPhotoCustomRepository.findAllReviewPhotosInReviews(List.of(reviewA, reviewB));
+
+        assertThat(reviewPhotos).containsExactly(reviewPhotoA, reviewPhotoB);
+    }
+
+    @Test
     void 리뷰_사진_엔티티를_삭제한다() {
         Review review = reviewTestPersister.builder().save();
         reviewPhotoTestPersister.builder().review(review).save();
@@ -67,6 +80,22 @@ class ReviewPhotoCustomRepositoryTest extends PersistenceTest {
             softly.assertThat(reviewPhotoRepository.findAllByReview(review)).containsExactly(reviewPhoto);
             softly.assertThat(reviewPhotoRepository.findAllByReview(review))
                     .doesNotContain(deleteReviewPhotoA, deleteReviewPhotoB);
+        });
+    }
+
+    @Test
+    void 리뷰_목록의_리뷰_사진을_모두_삭제한다() {
+        Review reviewA = reviewTestPersister.builder().save();
+        Review reviewB = reviewTestPersister.builder().save();
+        reviewPhotoTestPersister.builder().review(reviewA).save();
+        reviewPhotoTestPersister.builder().review(reviewB).save();
+
+        long count = reviewPhotoCustomRepository.deleteAllByReviews(List.of(reviewA, reviewB));
+
+        assertSoftly(softly -> {
+            softly.assertThat(count).isEqualTo(2);
+            softly.assertThat(reviewPhotoCustomRepository.findAllReviewPhotosInReviews(List.of(reviewA, reviewB)))
+                    .isEmpty();
         });
     }
 }

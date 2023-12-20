@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.member.application.MemberService;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.dto.request.UpdateProfileRequest;
+import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileImageResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberSearchResponses;
 import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
@@ -79,17 +80,23 @@ public class MemberController implements MemberControllerDocs {
     }
 
     @PatchMapping(value = "/profile/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> updateProfileImage(
+    public ResponseEntity<MemberProfileImageResponse> updateProfileImage(
             @RequestPart(name = "image") MultipartFile image,
             @Auth Member loginMember
     ) {
-        memberService.updateProfileImage(image, loginMember);
-        return ResponseEntity.noContent().build();
+        MemberProfileImageResponse response = memberService.updateProfileImage(image, loginMember);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping(value = "/profile/image")
     public ResponseEntity<Void> deleteProfileImage(@Auth Member loginMember) {
         memberService.deleteProfileImage(loginMember);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/deactivate")
+    public ResponseEntity<Void> deactivate(@Auth Member loginMember) {
+        memberService.deactivate(loginMember);
         return ResponseEntity.noContent().build();
     }
 }

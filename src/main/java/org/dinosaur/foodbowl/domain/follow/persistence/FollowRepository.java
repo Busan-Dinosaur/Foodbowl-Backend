@@ -5,6 +5,7 @@ import org.dinosaur.foodbowl.domain.follow.domain.Follow;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
@@ -26,4 +27,8 @@ public interface FollowRepository extends Repository<Follow, Long> {
     Follow save(Follow follow);
 
     void delete(Follow follow);
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("delete from Follow f where f.following = :member or f.follower = :member")
+    void deleteByMember(@Param("member") Member member);
 }

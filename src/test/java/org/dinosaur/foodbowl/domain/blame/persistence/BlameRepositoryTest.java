@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.domain.blame.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.Optional;
 import org.dinosaur.foodbowl.domain.blame.domain.Blame;
@@ -67,6 +68,54 @@ class BlameRepositoryTest extends PersistenceTest {
                     blameRepository.findByMemberAndTargetIdAndBlameTarget(member, target.getId(), BlameTarget.REVIEW);
 
             assertThat(blame).isNotPresent();
+        }
+    }
+
+    @Nested
+    class 멤버의_신고_데이터_삭제_시 {
+
+        @Test
+        void 신고_목록을_삭제한다() {
+            Member member = memberTestPersister.builder().save();
+            blameTestPersister.builder().member(member).targetId(1L).blameTarget(BlameTarget.REVIEW).save();
+            blameTestPersister.builder().member(member).targetId(2L).blameTarget(BlameTarget.MEMBER).save();
+
+            blameRepository.deleteByMember(member.getId(), BlameTarget.MEMBER);
+
+            assertSoftly(softly -> {
+                softly.assertThat(blameRepository.findByMemberAndTargetIdAndBlameTarget(member, 1L, BlameTarget.REVIEW))
+                        .isNotPresent();
+                softly.assertThat(blameRepository.findByMemberAndTargetIdAndBlameTarget(member, 2L, BlameTarget.MEMBER))
+                        .isNotPresent();
+            });
+        }
+
+        @Test
+        void 신고_당한_목록을_삭제한다() {
+            Member member = memberTestPersister.builder().save();
+            Member blamerA = memberTestPersister.builder().save();
+            Member blamerB = memberTestPersister.builder().save();
+            blameTestPersister.builder().member(blamerA).targetId(member.getId()).blameTarget(BlameTarget.MEMBER);
+            blameTestPersister.builder().member(blamerB).targetId(member.getId()).blameTarget(BlameTarget.MEMBER);
+
+            blameRepository.deleteByMember(member.getId(), BlameTarget.MEMBER);
+
+            assertSoftly(softly -> {
+                softly.assertThat(
+                        blameRepository.findByMemberAndTargetIdAndBlameTarget(
+                                blamerA,
+                                member.getId(),
+                                BlameTarget.MEMBER
+                        )
+                ).isNotPresent();
+                softly.assertThat(
+                        blameRepository.findByMemberAndTargetIdAndBlameTarget(
+                                blamerB,
+                                member.getId(),
+                                BlameTarget.MEMBER
+                        )
+                ).isNotPresent();
+            });
         }
     }
 }
