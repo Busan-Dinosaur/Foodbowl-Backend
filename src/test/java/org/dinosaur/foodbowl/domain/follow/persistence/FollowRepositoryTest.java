@@ -130,6 +130,20 @@ class FollowRepositoryTest extends PersistenceTest {
         assertThat(result).isEqualTo(2);
     }
 
+    @Test
+    void 팔로워_수를_조회한다() {
+        Member following = memberTestPersister.builder().save();
+        Member followerA = memberTestPersister.builder().save();
+        Member followerB = memberTestPersister.builder().save();
+
+        followTestPersister.builder().following(following).follower(followerA).save();
+        followTestPersister.builder().following(following).follower(followerB).save();
+
+        long result = followRepository.countByFollowing(following);
+
+        assertThat(result).isEqualTo(2);
+    }
+
     @Nested
     class 멤버의_팔로우_데이터_삭제_시 {
 
