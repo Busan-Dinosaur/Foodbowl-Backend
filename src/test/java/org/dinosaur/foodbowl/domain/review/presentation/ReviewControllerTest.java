@@ -72,6 +72,86 @@ class ReviewControllerTest extends PresentationTest {
     private ReviewService reviewService;
 
     @Nested
+    class 리뷰_단건_조회_시 {
+
+        private final String accessToken = jwtTokenProvider.createAccessToken(1L, ROLE_회원);
+
+        @Test
+        void 정상적인_요청이라면_200_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            ReviewResponse reviewResponse = new ReviewResponse(
+                    new ReviewWriterResponse(
+                            1L,
+                            "gray",
+                            "http://photo.image.url",
+                            10
+                    ),
+                    new ReviewContentResponse(
+                            1L,
+                            "맛없어요",
+                            List.of("http://image.url.com"),
+                            LocalDateTime.now(),
+                            LocalDateTime.now()
+                    ),
+                    new ReviewStoreResponse(
+                            1L,
+                            "한식",
+                            "김밥천국",
+                            "서울시 종로구 익선동 1234",
+                            12.1234,
+                            false
+                    )
+            );
+            given(reviewService.getReview(any(Long.class), any(Member.class), any(DeviceCoordinateRequest.class)))
+                    .willReturn(reviewResponse);
+
+            mockMvc.perform(get("/v1/reviews/{id}", 1L)
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isOk());
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 리뷰ID가_양수가_아니라면_400_응답을_반환한다(String reviewId) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/{id}", reviewId)
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("리뷰 ID는 양수만 가능합니다.")));
+        }
+
+        @Test
+        void 디바이스_경도가_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/{id}", 1L)
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void 디바이스_위도가_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/{id}", 1L)
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("deviceX", "123.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
     class 멤버_리뷰_페이징_조회_시 {
 
         private final String accessToken = jwtTokenProvider.createAccessToken(1L, ROLE_회원);
