@@ -4,14 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
-import org.dinosaur.foodbowl.domain.member.domain.MemberThumbnail;
 import org.dinosaur.foodbowl.domain.photo.domain.Photo;
-import org.dinosaur.foodbowl.domain.photo.domain.Thumbnail;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
 import org.dinosaur.foodbowl.domain.review.domain.ReviewPhoto;
 import org.dinosaur.foodbowl.domain.review.dto.request.DeviceCoordinateRequest;
@@ -68,7 +65,11 @@ class ReviewServiceTest extends IntegrationTest {
                     BigDecimal.valueOf(1)
             );
 
-            ReviewResponse reviewResponse = reviewService.getReview(review.getId(), loginMember, deviceCoordinateRequest);
+            ReviewResponse reviewResponse = reviewService.getReview(
+                    review.getId(),
+                    loginMember,
+                    deviceCoordinateRequest
+            );
 
             assertSoftly(softly -> {
                 softly.assertThat(reviewResponse.store().id()).isEqualTo(store.getId());
@@ -97,7 +98,11 @@ class ReviewServiceTest extends IntegrationTest {
                     BigDecimal.valueOf(1)
             );
 
-            ReviewResponse reviewResponse = reviewService.getReview(review.getId(), loginMember, deviceCoordinateRequest);
+            ReviewResponse reviewResponse = reviewService.getReview(
+                    review.getId(),
+                    loginMember,
+                    deviceCoordinateRequest
+            );
 
             assertSoftly(softly -> {
                 softly.assertThat(reviewResponse.store().id()).isEqualTo(store.getId());
@@ -126,7 +131,11 @@ class ReviewServiceTest extends IntegrationTest {
                     BigDecimal.valueOf(1)
             );
 
-            ReviewResponse reviewResponse = reviewService.getReview(review.getId(), loginMember, deviceCoordinateRequest);
+            ReviewResponse reviewResponse = reviewService.getReview(
+                    review.getId(),
+                    loginMember,
+                    deviceCoordinateRequest
+            );
 
             assertSoftly(softly -> {
                 softly.assertThat(reviewResponse.store().id()).isEqualTo(store.getId());

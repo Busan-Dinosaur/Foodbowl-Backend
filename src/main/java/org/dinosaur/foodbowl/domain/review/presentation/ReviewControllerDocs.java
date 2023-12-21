@@ -29,9 +29,9 @@ public interface ReviewControllerDocs {
             summary = "단건 리뷰 주회",
             description = """
                     단건 리뷰를 조회합니다.
-                    
+                                        
                     리뷰 작성자, 리뷰 본문, 리뷰 가게 정보를 응답으로 반환합니다.
-                    
+                                        
                     리뷰 목록 조회 결과에서 리뷰 하나의 응답 데이터와 동일합니다.
                     """
     )

@@ -30,7 +30,7 @@ public record ReviewResponse(
             BigDecimal deviceX,
             BigDecimal deviceY,
             boolean isBookmarked
-            ) {
+    ) {
         return new ReviewResponse(
                 ReviewWriterResponse.of(
                         review.getMember(),

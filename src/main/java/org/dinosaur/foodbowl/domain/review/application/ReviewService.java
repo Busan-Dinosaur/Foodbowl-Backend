@@ -24,7 +24,6 @@ import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewResponse;
-import org.dinosaur.foodbowl.domain.review.dto.response.ReviewWriterResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.StoreReviewResponse;
 import org.dinosaur.foodbowl.domain.review.exception.ReviewExceptionType;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
@@ -75,7 +74,7 @@ public class ReviewService {
                 deviceCoordinateRequest.deviceX(),
                 deviceCoordinateRequest.deviceY(),
                 bookmarkQueryService.isBookmarkStoreByMember(loginMember, review.getStore())
-                );
+        );
     }
 
     @Transactional(readOnly = true)
