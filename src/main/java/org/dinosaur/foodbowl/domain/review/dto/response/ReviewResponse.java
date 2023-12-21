@@ -2,8 +2,10 @@ package org.dinosaur.foodbowl.domain.review.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 import org.dinosaur.foodbowl.domain.follow.application.dto.MemberToFollowerCountDto;
+import org.dinosaur.foodbowl.domain.photo.domain.Photo;
 import org.dinosaur.foodbowl.domain.review.application.dto.ReviewToPhotoPathDto;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
@@ -20,6 +22,36 @@ public record ReviewResponse(
         @Schema(description = "리뷰 가게 응답")
         ReviewStoreResponse store
 ) {
+
+    public static ReviewResponse of(
+            Review review,
+            long memberFollowCount,
+            List<Photo> reviewPhotos,
+            BigDecimal deviceX,
+            BigDecimal deviceY,
+            boolean isBookmarked
+            ) {
+        return new ReviewResponse(
+                ReviewWriterResponse.of(
+                        review.getMember(),
+                        memberFollowCount
+                ),
+                ReviewContentResponse.of(
+                        review,
+                        reviewPhotos.stream()
+                                .map(Photo::getPath)
+                                .toList()
+                ),
+                ReviewStoreResponse.of(
+                        review.getStore(),
+                        PointUtils.calculateDistance(
+                                PointUtils.generate(deviceX, deviceY),
+                                review.getStore().getAddress().getCoordinate()
+                        ),
+                        isBookmarked
+                )
+        );
+    }
 
     public static ReviewResponse of(
             Review review,
