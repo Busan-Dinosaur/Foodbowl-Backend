@@ -16,6 +16,7 @@ import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
+import org.dinosaur.foodbowl.domain.review.dto.response.ReviewResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.StoreReviewResponse;
 import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,54 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "리뷰", description = "리뷰 API")
 public interface ReviewControllerDocs {
+
+    @Operation(
+            summary = "단건 리뷰 주회",
+            description = """
+                    단건 리뷰를 조회합니다.
+                    
+                    리뷰 작성자, 리뷰 본문, 리뷰 가게 정보를 응답으로 반환합니다.
+                    
+                    리뷰 목록 조회 결과에서 리뷰 하나의 응답 데이터와 동일합니다.
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "단건 리뷰 조회 성공"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = """
+                            1.리뷰 ID가 양수가 아닌 경우
+                                                        
+                            2.디바이스 경도가 존재하지 않는 경우
+                                                        
+                            3.디바이스 위도가 존재하지 않는 경우
+                            """,
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = """
+                            1.일치하는 리뷰가 존재하지 않는 경우
+                            """,
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            )
+    })
+    ResponseEntity<ReviewResponse> read(
+            @Parameter(description = "리뷰 ID", example = "1")
+            @Positive(message = "리뷰 ID는 양수만 가능합니다.")
+            Long reviewId,
+
+            @Parameter(description = "사용자 경도", example = "123.3636")
+            BigDecimal deviceX,
+
+            @Parameter(description = "사용자 위도", example = "32.3636")
+            BigDecimal deviceY,
+
+            Member loginMember
+    );
 
     @Operation(
             summary = "멤버의 리뷰 목록 범위 기반 페이징 조회",
