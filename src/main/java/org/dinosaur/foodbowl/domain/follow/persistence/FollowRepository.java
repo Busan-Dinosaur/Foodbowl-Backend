@@ -24,7 +24,7 @@ public interface FollowRepository extends Repository<Follow, Long> {
 
     long countByFollower(Member follower);
 
-    long countByFollowing(Member follower);
+    long countByFollowing(Member following);
 
     Follow save(Follow follow);
 
