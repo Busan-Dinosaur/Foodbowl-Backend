@@ -161,7 +161,7 @@ public class ReviewController implements ReviewControllerDocs {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReviewResponse> read(
+    public ResponseEntity<ReviewResponse> getReview(
             @PathVariable("id") @Positive(message = "리뷰 ID는 양수만 가능합니다.") Long reviewId,
             @RequestParam(name = "deviceX") BigDecimal deviceX,
             @RequestParam(name = "deviceY") BigDecimal deviceY,

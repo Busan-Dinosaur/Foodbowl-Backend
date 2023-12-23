@@ -26,7 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface ReviewControllerDocs {
 
     @Operation(
-            summary = "단건 리뷰 주회",
+            summary = "단건 리뷰 조회",
             description = """
                     단건 리뷰를 조회합니다.
                                         
@@ -59,7 +59,7 @@ public interface ReviewControllerDocs {
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
-    ResponseEntity<ReviewResponse> read(
+    ResponseEntity<ReviewResponse> getReview(
             @Parameter(description = "리뷰 ID", example = "1")
             @Positive(message = "리뷰 ID는 양수만 가능합니다.")
             Long reviewId,
