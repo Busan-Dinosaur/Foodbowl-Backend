@@ -51,6 +51,120 @@ class ReviewServiceTest extends IntegrationTest {
     private ReviewRepository reviewRepository;
 
     @Nested
+    class 리뷰_단건_조회_시 {
+
+        @Test
+        void 가게_북마크_여부를_함께_조회한다() {
+            Member loginMember = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
+            bookmarkTestPersister.builder().member(loginMember).store(store).save();
+            Review review = reviewTestPersister.builder().member(writer).store(store).content("꿀맛이에요").save();
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            ReviewResponse reviewResponse = reviewService.getReview(
+                    review.getId(),
+                    loginMember,
+                    deviceCoordinateRequest
+            );
+
+            assertSoftly(softly -> {
+                softly.assertThat(reviewResponse.store().id()).isEqualTo(store.getId());
+                softly.assertThat(reviewResponse.store().isBookmarked()).isTrue();
+                softly.assertThat(reviewResponse.review().content()).isEqualTo(review.getContent());
+                softly.assertThat(reviewResponse.review().imagePaths()).isEmpty();
+                softly.assertThat(reviewResponse.writer().id()).isEqualTo(writer.getId());
+                softly.assertThat(reviewResponse.writer().nickname()).isEqualTo(writer.getNickname());
+                softly.assertThat(reviewResponse.writer().followerCount()).isEqualTo(0);
+            });
+        }
+
+        @Test
+        void 리뷰_작성자_팔로워_수를_함께_조회한다() {
+            Member loginMember = memberTestPersister.builder().save();
+            Member memberA = memberTestPersister.builder().save();
+            Member memberB = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
+            bookmarkTestPersister.builder().member(loginMember).store(store).save();
+            followTestPersister.builder().follower(memberA).following(writer).save();
+            followTestPersister.builder().follower(memberB).following(writer).save();
+            Review review = reviewTestPersister.builder().member(writer).store(store).content("꿀맛이에요").save();
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            ReviewResponse reviewResponse = reviewService.getReview(
+                    review.getId(),
+                    loginMember,
+                    deviceCoordinateRequest
+            );
+
+            assertSoftly(softly -> {
+                softly.assertThat(reviewResponse.store().id()).isEqualTo(store.getId());
+                softly.assertThat(reviewResponse.store().isBookmarked()).isTrue();
+                softly.assertThat(reviewResponse.review().content()).isEqualTo(review.getContent());
+                softly.assertThat(reviewResponse.review().imagePaths()).isEmpty();
+                softly.assertThat(reviewResponse.writer().id()).isEqualTo(writer.getId());
+                softly.assertThat(reviewResponse.writer().nickname()).isEqualTo(writer.getNickname());
+                softly.assertThat(reviewResponse.writer().followerCount()).isEqualTo(2);
+            });
+        }
+
+        @Test
+        void 리뷰_사진을_함께_조회한다() {
+            Member loginMember = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
+            bookmarkTestPersister.builder().member(loginMember).store(store).save();
+            Review review = reviewTestPersister.builder().member(writer).store(store).content("꿀맛이에요").save();
+            Photo photoA = photoTestPersister.builder().save();
+            Photo photoB = photoTestPersister.builder().save();
+            ReviewPhoto reviewPhotoA = reviewPhotoTestPersister.builder().review(review).photo(photoA).save();
+            ReviewPhoto reviewPhotoB = reviewPhotoTestPersister.builder().review(review).photo(photoB).save();
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            ReviewResponse reviewResponse = reviewService.getReview(
+                    review.getId(),
+                    loginMember,
+                    deviceCoordinateRequest
+            );
+
+            assertSoftly(softly -> {
+                softly.assertThat(reviewResponse.store().id()).isEqualTo(store.getId());
+                softly.assertThat(reviewResponse.store().isBookmarked()).isTrue();
+                softly.assertThat(reviewResponse.review().content()).isEqualTo(review.getContent());
+                softly.assertThat(reviewResponse.review().imagePaths())
+                        .containsExactly(reviewPhotoA.getPhoto().getPath(), reviewPhotoB.getPhoto().getPath());
+                softly.assertThat(reviewResponse.writer().id()).isEqualTo(writer.getId());
+                softly.assertThat(reviewResponse.writer().nickname()).isEqualTo(writer.getNickname());
+                softly.assertThat(reviewResponse.writer().followerCount()).isEqualTo(0);
+            });
+        }
+
+        @Test
+        void 존재하지_않는_리뷰이면_예외를_던진다() {
+            Long wrongReviewId = -1L;
+            Member member = memberTestPersister.builder().save();
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            assertThatThrownBy(() -> reviewService.getReview(wrongReviewId, member, deviceCoordinateRequest))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("일치하는 리뷰를 찾을 수 없습니다.");
+        }
+    }
+
+    @Nested
     class 멤버_리뷰_목록_페이징_조회_시 {
 
         @Test

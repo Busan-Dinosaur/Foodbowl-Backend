@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.bookmark.application.BookmarkQueryService;
 import org.dinosaur.foodbowl.domain.follow.application.FollowCustomService;
 import org.dinosaur.foodbowl.domain.follow.application.dto.MemberToFollowerCountDto;
+import org.dinosaur.foodbowl.domain.follow.persistence.FollowRepository;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.exception.MemberExceptionType;
 import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
@@ -22,6 +23,7 @@ import org.dinosaur.foodbowl.domain.review.dto.request.MapCoordinateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
+import org.dinosaur.foodbowl.domain.review.dto.response.ReviewResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.StoreReviewResponse;
 import org.dinosaur.foodbowl.domain.review.exception.ReviewExceptionType;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
@@ -46,6 +48,7 @@ public class ReviewService {
     private final MemberRepository memberRepository;
     private final ReviewRepository reviewRepository;
     private final SchoolRepository schoolRepository;
+    private final FollowRepository followRepository;
     private final StoreService storeService;
     private final PhotoService photoService;
     private final ReviewPhotoService reviewPhotoService;
@@ -53,6 +56,26 @@ public class ReviewService {
     private final ReviewPhotoCustomService reviewPhotoCustomService;
     private final FollowCustomService followCustomService;
     private final BookmarkQueryService bookmarkQueryService;
+
+    @Transactional(readOnly = true)
+    public ReviewResponse getReview(
+            Long reviewId,
+            Member loginMember,
+            DeviceCoordinateRequest deviceCoordinateRequest
+    ) {
+        Review review = reviewRepository.findWithStoreAndMemberById(reviewId)
+                .orElseThrow(() -> new NotFoundException(ReviewExceptionType.NOT_FOUND));
+        List<Photo> reviewPhotos = reviewPhotoService.findPhotos(review);
+
+        return ReviewResponse.of(
+                review,
+                followRepository.countByFollowing(review.getMember()),
+                reviewPhotos,
+                deviceCoordinateRequest.deviceX(),
+                deviceCoordinateRequest.deviceY(),
+                bookmarkQueryService.isBookmarkStoreByMember(loginMember, review.getStore())
+        );
+    }
 
     @Transactional(readOnly = true)
     public ReviewPageResponse getReviewsByMemberInMapBounds(
