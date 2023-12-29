@@ -6,6 +6,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import java.math.BigDecimal;
 import java.util.List;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
+import org.dinosaur.foodbowl.domain.photo.domain.Photo;
 import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
 import org.dinosaur.foodbowl.domain.review.application.dto.StoreToReviewCountDto;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
@@ -147,5 +148,17 @@ class ReviewCustomServiceTest extends IntegrationTest {
         );
 
         assertThat(result).containsExactly(review);
+    }
+
+    @Test
+    void 사진이_있는_리뷰_피드를_조회한다() {
+        Store store = storeTestPersister.builder().save();
+        Photo photo = photoTestPersister.builder().save();
+        Review review = reviewTestPersister.builder().store(store).save();
+        reviewPhotoTestPersister.builder().review(review).photo(photo).save();
+
+        List<Review> reviews = reviewCustomService.getReviewFeeds(null, 10);
+
+        assertThat(reviews).containsExactly(review);
     }
 }
