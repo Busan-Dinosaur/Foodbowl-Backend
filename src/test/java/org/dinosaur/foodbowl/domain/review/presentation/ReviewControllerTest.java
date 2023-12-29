@@ -32,6 +32,8 @@ import org.dinosaur.foodbowl.domain.review.dto.request.MapCoordinateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewContentResponse;
+import org.dinosaur.foodbowl.domain.review.dto.response.ReviewFeedPageResponse;
+import org.dinosaur.foodbowl.domain.review.dto.response.ReviewFeedResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageInfo;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewResponse;
@@ -144,6 +146,89 @@ class ReviewControllerTest extends PresentationTest {
             mockingAuthMemberInResolver();
 
             mockMvc.perform(get("/v1/reviews/{id}", 1L)
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("deviceX", "123.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    class 리뷰_피드_조회_시 {
+
+        private final String accessToken = jwtTokenProvider.createAccessToken(1L, ROLE_회원);
+
+        @Test
+        void 정상적인_요청이라면_200_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            ReviewFeedPageResponse reviewFeedPageResponse = new ReviewFeedPageResponse(
+                    List.of(
+                            new ReviewFeedResponse(
+                                    "https://static.image.test/image1.jpg",
+                                    new ReviewWriterResponse(1L, "hello", "image.png", 0L),
+                                    new ReviewContentResponse(
+                                            1L,
+                                            "content",
+                                            List.of("image.png"),
+                                            LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS),
+                                            LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+                                    ),
+                                    new ReviewStoreResponse(
+                                            1L,
+                                            "카페",
+                                            "가게",
+                                            "가게주소",
+                                            100.13,
+                                            false
+                                    )
+                            )
+                    ),
+                    new ReviewPageInfo(10L, 1L, 10)
+            );
+            given(reviewService.getReviewFeeds(any(Long.class), anyInt(), any(DeviceCoordinateRequest.class), any(Member.class)))
+                    .willReturn(reviewFeedPageResponse);
+
+            mockMvc.perform(get("/v1/reviews/feeds")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("lastReviewId", "1")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isOk());
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 리뷰ID가_양수가_아니라면_400_응답을_반환한다(String lastReviewId) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/feeds")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("lastReviewId", lastReviewId)
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("리뷰 ID는 양수만 가능합니다.")));
+        }
+
+        @Test
+        void 디바이스_경도가_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/feeds")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void 디바이스_위도가_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/feeds")
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .param("deviceX", "123.3636"))
                     .andDo(print())
