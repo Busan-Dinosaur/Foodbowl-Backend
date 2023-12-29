@@ -6,6 +6,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import java.math.BigDecimal;
 import java.util.List;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
+import org.dinosaur.foodbowl.domain.photo.domain.Photo;
 import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
 import org.dinosaur.foodbowl.domain.review.domain.vo.ReviewFilter;
@@ -43,6 +44,44 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
             softly.assertThat(result.get(1).storeId()).isEqualTo(storeB.getId());
             softly.assertThat(result.get(1).reviewCount()).isEqualTo(1);
         });
+    }
+
+    @Nested
+    class 사진이_포함된_리뷰_조회_시 {
+
+        @Test
+        void 최신_순서로_페이징_조회한다() {
+            Member writer = memberTestPersister.builder().save();
+            Store storeA = storeTestPersister.builder().save();
+            Store storeB = storeTestPersister.builder().save();
+            Review reviewA = reviewTestPersister.builder().member(writer).store(storeA).save();
+            Review reviewB = reviewTestPersister.builder().member(writer).store(storeA).save();
+            Review reviewC = reviewTestPersister.builder().member(writer).store(storeB).save();
+            Photo photoA = photoTestPersister.builder().save();
+            Photo photoB = photoTestPersister.builder().save();
+            Photo photoC = photoTestPersister.builder().save();
+            reviewPhotoTestPersister.builder().review(reviewB).photo(photoA).save();
+            reviewPhotoTestPersister.builder().review(reviewC).photo(photoB).save();
+            reviewPhotoTestPersister.builder().review(reviewC).photo(photoC).save();
+
+            List<Review> reviews = reviewCustomRepository.findPaginationReviewsHavingPhoto(null, 10);
+
+            assertThat(reviews).containsExactly(reviewC, reviewB);
+        }
+
+        @Test
+        void 사진이_없는_경우_조회하지_않는다() {
+            Member writer = memberTestPersister.builder().save();
+            Store storeA = storeTestPersister.builder().save();
+            Store storeB = storeTestPersister.builder().save();
+            Review reviewA = reviewTestPersister.builder().member(writer).store(storeA).save();
+            Review reviewB = reviewTestPersister.builder().member(writer).store(storeA).save();
+            Review reviewC = reviewTestPersister.builder().member(writer).store(storeB).save();
+
+            List<Review> reviews = reviewCustomRepository.findPaginationReviewsHavingPhoto(null, 10);
+
+            assertThat(reviews).doesNotContain(reviewC, reviewB, reviewA);
+        }
     }
 
     @Nested
