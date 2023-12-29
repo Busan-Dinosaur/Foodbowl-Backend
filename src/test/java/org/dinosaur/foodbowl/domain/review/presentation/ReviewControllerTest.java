@@ -234,6 +234,23 @@ class ReviewControllerTest extends PresentationTest {
                     .andDo(print())
                     .andExpect(status().isBadRequest());
         }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 페이지_크기가_양수가_아니라면_400_응답을_반환한다(String pageSize) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/feeds")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("lastReviewId", "1")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636")
+                            .param("pageSize", pageSize))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("페이지 크기는 양수만 가능합니다.")));
+        }
     }
 
     @Nested
