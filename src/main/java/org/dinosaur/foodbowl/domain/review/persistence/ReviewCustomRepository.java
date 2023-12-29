@@ -4,7 +4,7 @@ import static org.dinosaur.foodbowl.domain.bookmark.domain.QBookmark.bookmark;
 import static org.dinosaur.foodbowl.domain.follow.domain.QFollow.follow;
 import static org.dinosaur.foodbowl.domain.member.domain.QMember.member;
 import static org.dinosaur.foodbowl.domain.review.domain.QReview.review;
-import static org.dinosaur.foodbowl.domain.review.domain.QReviewPhoto.*;
+import static org.dinosaur.foodbowl.domain.review.domain.QReviewPhoto.reviewPhoto;
 import static org.dinosaur.foodbowl.domain.store.domain.QCategory.category;
 import static org.dinosaur.foodbowl.domain.store.domain.QStore.store;
 import static org.dinosaur.foodbowl.domain.store.domain.QStoreSchool.storeSchool;

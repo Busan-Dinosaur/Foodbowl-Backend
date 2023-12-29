@@ -185,7 +185,12 @@ class ReviewControllerTest extends PresentationTest {
                     ),
                     new ReviewPageInfo(10L, 1L, 10)
             );
-            given(reviewService.getReviewFeeds(any(Long.class), anyInt(), any(DeviceCoordinateRequest.class), any(Member.class)))
+            given(reviewService.getReviewFeeds(
+                    any(Long.class),
+                    anyInt(),
+                    any(DeviceCoordinateRequest.class),
+                    any(Member.class))
+            )
                     .willReturn(reviewFeedPageResponse);
 
             mockMvc.perform(get("/v1/reviews/feeds")
