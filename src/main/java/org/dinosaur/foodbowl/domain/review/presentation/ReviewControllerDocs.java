@@ -13,13 +13,17 @@ import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.List;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
+import org.dinosaur.foodbowl.domain.review.dto.request.DeviceCoordinateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
+import org.dinosaur.foodbowl.domain.review.dto.response.ReviewFeedPageResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.StoreReviewResponse;
 import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
+import org.dinosaur.foodbowl.global.presentation.Auth;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "리뷰", description = "리뷰 API")
@@ -69,6 +73,59 @@ public interface ReviewControllerDocs {
 
             @Parameter(description = "사용자 위도", example = "32.3636")
             BigDecimal deviceY,
+
+            Member loginMember
+    );
+
+    @Operation(
+            summary = "리뷰 피드 조회",
+            description = """
+                    리뷰를 피드를 조회합니다.
+                    
+                    피드에서 조회되는 리뷰는, 사진이 포함된 리뷰만 조회됩니다.
+                    
+                    기존 리뷰 목록 조회와 동일한 응답에 리뷰 썸네일 필드(reviewFeedThumbnail)를 추가했습니다.
+                    
+                    피드 조회 결과는 최신 피드(리뷰) 순서대로 반환합니다.
+                    
+                    기존 페이징 조회와 다르게, 피드 조회 페이징의 pageSize default 값은 20입니다.
+                    
+                    피드 화면에서 기본으로 15개 이상의 리뷰가 한번에 보이기 때문에 20으로 설정했습니다.
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "리뷰 피드 조회 성공"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = """
+                            1.리뷰 ID가 양수가 아닌 경우
+                                                        
+                            2.디바이스 경도가 존재하지 않는 경우
+                                                        
+                            3.디바이스 위도가 존재하지 않는 경우
+                            
+                            4.페이지 크기가 양수가 아닌 경우
+                            """,
+                    content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+            )
+    })
+    ResponseEntity<ReviewFeedPageResponse> getReviewFeeds(
+            @Parameter(description = "리뷰 ID", example = "1")
+            @Positive(message = "리뷰 ID는 양수만 가능합니다.")
+            Long lastReviewId,
+
+            @Parameter(description = "사용자 경도", example = "123.3636")
+            BigDecimal deviceX,
+
+            @Parameter(description = "사용자 위도", example = "32.3636")
+            BigDecimal deviceY,
+
+            @Parameter(description = "페이지 크기", example = "10")
+            @Positive(message = "페이지 크기는 양수만 가능합니다.")
+            int pageSize,
 
             Member loginMember
     );
