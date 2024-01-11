@@ -9,8 +9,9 @@ import org.dinosaur.foodbowl.domain.review.domain.Review;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.global.util.PointUtils;
 
+@Schema(description = "리뷰 피드 응답")
 public record ReviewFeedResponse(
-        @Schema(description = "리뷰 피드 썸네일 응답")
+        @Schema(description = "리뷰 피드 썸네일 응답", example = "https://image.food.com/1.jpg")
         String reviewFeedThumbnail,
 
         @Schema(description = "리뷰 작성자 응답")
