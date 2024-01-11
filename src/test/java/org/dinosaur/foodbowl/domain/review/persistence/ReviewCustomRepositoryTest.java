@@ -80,7 +80,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
 
             List<Review> reviews = reviewCustomRepository.findPaginationReviewsHavingPhoto(null, 10);
 
-            assertThat(reviews).doesNotContain(reviewC, reviewB, reviewA);
+            assertThat(reviews).isEmpty();
         }
     }
 

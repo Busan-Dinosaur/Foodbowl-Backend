@@ -25,10 +25,7 @@ public class ReviewCustomService {
     }
 
     @Transactional(readOnly = true)
-    public List<Review> getReviewFeeds(
-            Long lastReviewId,
-            int pageSize
-    ) {
+    public List<Review> getReviewFeeds(Long lastReviewId, int pageSize) {
         return reviewCustomRepository.findPaginationReviewsHavingPhoto(lastReviewId, pageSize);
     }
 
