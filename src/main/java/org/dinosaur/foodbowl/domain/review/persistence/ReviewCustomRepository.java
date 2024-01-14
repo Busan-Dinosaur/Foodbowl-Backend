@@ -4,6 +4,7 @@ import static org.dinosaur.foodbowl.domain.bookmark.domain.QBookmark.bookmark;
 import static org.dinosaur.foodbowl.domain.follow.domain.QFollow.follow;
 import static org.dinosaur.foodbowl.domain.member.domain.QMember.member;
 import static org.dinosaur.foodbowl.domain.review.domain.QReview.review;
+import static org.dinosaur.foodbowl.domain.review.domain.QReviewPhoto.reviewPhoto;
 import static org.dinosaur.foodbowl.domain.store.domain.QCategory.category;
 import static org.dinosaur.foodbowl.domain.store.domain.QStore.store;
 import static org.dinosaur.foodbowl.domain.store.domain.QStoreSchool.storeSchool;
@@ -29,6 +30,23 @@ import org.springframework.stereotype.Repository;
 public class ReviewCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
+
+    public List<Review> findPaginationReviewsHavingPhoto(Long lastReviewId, int pageSize) {
+        return jpaQueryFactory.selectDistinct(review)
+                .from(review)
+                .innerJoin(review.store, store).fetchJoin()
+                .innerJoin(review.member, member).fetchJoin()
+                .innerJoin(store.category, category).fetchJoin()
+                .innerJoin(reviewPhoto).on(
+                        review.id.eq(reviewPhoto.review.id)
+                )
+                .where(
+                        ltLastReviewId(lastReviewId)
+                )
+                .orderBy(review.id.desc())
+                .limit(pageSize)
+                .fetch();
+    }
 
     public List<StoreReviewCountDto> findReviewCountByStores(List<Store> stores) {
         return jpaQueryFactory.select(

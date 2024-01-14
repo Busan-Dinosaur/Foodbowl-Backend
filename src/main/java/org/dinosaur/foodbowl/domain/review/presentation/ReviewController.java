@@ -12,6 +12,7 @@ import org.dinosaur.foodbowl.domain.review.dto.request.DeviceCoordinateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.MapCoordinateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
+import org.dinosaur.foodbowl.domain.review.dto.response.ReviewFeedPageResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.StoreReviewResponse;
@@ -62,6 +63,24 @@ public class ReviewController implements ReviewControllerDocs {
                 loginMember
         );
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/feeds")
+    public ResponseEntity<ReviewFeedPageResponse> getReviewFeeds(
+            @RequestParam(name = "lastReviewId", required = false) @Positive(message = "리뷰 ID는 양수만 가능합니다.") Long lastReviewId,
+            @RequestParam(name = "deviceX") BigDecimal deviceX,
+            @RequestParam(name = "deviceY") BigDecimal deviceY,
+            @RequestParam(name = "pageSize", defaultValue = "20") @Positive(message = "페이지 크기는 양수만 가능합니다.") int pageSize,
+            @Auth Member loginMember
+    ) {
+        DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(deviceX, deviceY);
+        ReviewFeedPageResponse reviewFeedPageResponse = reviewService.getReviewFeeds(
+                lastReviewId,
+                pageSize,
+                deviceCoordinateRequest,
+                loginMember
+        );
+        return ResponseEntity.ok(reviewFeedPageResponse);
     }
 
     @GetMapping("/bookmarks")

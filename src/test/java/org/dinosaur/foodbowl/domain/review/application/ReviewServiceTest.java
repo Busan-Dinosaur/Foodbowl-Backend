@@ -15,6 +15,8 @@ import org.dinosaur.foodbowl.domain.review.dto.request.DeviceCoordinateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.MapCoordinateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
+import org.dinosaur.foodbowl.domain.review.dto.response.ReviewFeedPageResponse;
+import org.dinosaur.foodbowl.domain.review.dto.response.ReviewFeedResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageInfo;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewResponse;
@@ -161,6 +163,64 @@ class ReviewServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> reviewService.getReview(wrongReviewId, member, deviceCoordinateRequest))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("일치하는 리뷰를 찾을 수 없습니다.");
+        }
+    }
+
+    @Nested
+    class 리뷰_피드_조회_시 {
+
+        @Test
+        void 사진이_포함된_리뷰를_조회한다() {
+            Member writer = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            bookmarkTestPersister.builder().store(store).member(writer).save();
+            Review reviewA = reviewTestPersister.builder().member(writer).store(store).content("맛도리").save();
+            Photo photoA = photoTestPersister.builder().save();
+            Photo photoB = photoTestPersister.builder().save();
+            reviewPhotoTestPersister.builder().review(reviewA).photo(photoA).save();
+            reviewPhotoTestPersister.builder().review(reviewA).photo(photoB).save();
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            ReviewFeedPageResponse reviewFeedPageResponse = reviewService.getReviewFeeds(
+                    null,
+                    10,
+                    deviceCoordinateRequest,
+                    writer
+            );
+
+            List<ReviewFeedResponse> reviewFeedResponses = reviewFeedPageResponse.reviewFeedResponses();
+            assertSoftly(softly -> {
+                softly.assertThat(reviewFeedResponses.size()).isOne();
+                softly.assertThat(reviewFeedResponses.get(0).review().id()).isEqualTo(reviewA.getId());
+                softly.assertThat(reviewFeedResponses.get(0).review().content()).isEqualTo("맛도리");
+                softly.assertThat(reviewFeedResponses.get(0).reviewFeedThumbnail()).isEqualTo(photoA.getPath());
+                softly.assertThat(reviewFeedResponses.get(0).writer().id()).isEqualTo(writer.getId());
+                softly.assertThat(reviewFeedResponses.get(0).store().id()).isEqualTo(store.getId());
+                softly.assertThat(reviewFeedResponses.get(0).store().isBookmarked()).isTrue();
+            });
+        }
+
+        @Test
+        void 사진이_포함된_리뷰가_없으면_빈_값을_반환한다() {
+            Member writer = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            Review review = reviewTestPersister.builder().member(writer).store(store).content("사진 없는 리뷰").save();
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            ReviewFeedPageResponse reviewFeedPageResponse = reviewService.getReviewFeeds(
+                    null,
+                    10,
+                    deviceCoordinateRequest,
+                    writer
+            );
+
+            assertThat(reviewFeedPageResponse.reviewFeedResponses()).isEmpty();
         }
     }
 
