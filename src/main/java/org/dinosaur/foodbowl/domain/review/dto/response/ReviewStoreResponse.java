@@ -17,6 +17,9 @@ public record ReviewStoreResponse(
         @Schema(description = "가게 주소", example = "부산광역시 금정구 40-4")
         String addressName,
 
+        @Schema(description = "가게 URL", example = "map.kakao.stores/1")
+        String storeUrl,
+
         @Schema(description = "디바이스와 가게와의 거리(m)", example = "511.1313")
         double distance,
 
@@ -30,6 +33,7 @@ public record ReviewStoreResponse(
                 store.getCategory().getName(),
                 store.getStoreName(),
                 store.getAddress().getAddressName(),
+                store.getStoreUrl(),
                 distance,
                 isBookmarked
         );
