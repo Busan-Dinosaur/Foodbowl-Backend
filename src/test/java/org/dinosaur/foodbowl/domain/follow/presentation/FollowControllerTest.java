@@ -390,7 +390,8 @@ class FollowControllerTest extends PresentationTest {
                             "http://justdoeat.shop/static/images/profile.png",
                             "coby5502",
                             20,
-                            true
+                            true,
+                            false
                     )),
                     true,
                     true,

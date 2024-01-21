@@ -146,26 +146,32 @@ class FollowServiceTest extends IntegrationTest {
             Member followerA = memberTestPersister.builder().save();
             Member followerB = memberTestPersister.builder().save();
 
+            followTestPersister.builder().following(following).follower(member).save();
             followTestPersister.builder().following(following).follower(followerA).save();
             followTestPersister.builder().following(following).follower(followerB).save();
             followTestPersister.builder().following(followerA).follower(member).save();
 
             PageResponse<OtherUserFollowerResponse> response =
-                    followService.getOtherUserFollowers(following.getId(), 0, 2, member);
+                    followService.getOtherUserFollowers(following.getId(), 0, 10, member);
 
             assertSoftly(softly -> {
-                softly.assertThat(response.content()).hasSize(2);
+                softly.assertThat(response.content()).hasSize(3);
                 softly.assertThat(response.content().get(0).memberId()).isEqualTo(followerB.getId());
                 softly.assertThat(response.content().get(0).nickname()).isEqualTo(followerB.getNickname());
                 softly.assertThat(response.content().get(0).isFollowing()).isFalse();
+                softly.assertThat(response.content().get(0).isMe()).isFalse();
                 softly.assertThat(response.content().get(1).memberId()).isEqualTo(followerA.getId());
                 softly.assertThat(response.content().get(1).nickname()).isEqualTo(followerA.getNickname());
                 softly.assertThat(response.content().get(1).isFollowing()).isTrue();
+                softly.assertThat(response.content().get(1).isMe()).isFalse();
+                softly.assertThat(response.content().get(2).memberId()).isEqualTo(member.getId());
+                softly.assertThat(response.content().get(2).nickname()).isEqualTo(member.getNickname());
+                softly.assertThat(response.content().get(2).isMe()).isTrue();
                 softly.assertThat(response.isFirst()).isTrue();
                 softly.assertThat(response.isLast()).isTrue();
                 softly.assertThat(response.hasNext()).isFalse();
                 softly.assertThat(response.currentPage()).isEqualTo(0);
-                softly.assertThat(response.currentSize()).isEqualTo(2);
+                softly.assertThat(response.currentSize()).isEqualTo(10);
             });
         }
 

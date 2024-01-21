@@ -87,7 +87,11 @@ public class FollowService {
                 .map(Follow::getFollower)
                 .map(follower -> {
                     Optional<Follow> follow = followRepository.findByFollowingAndFollower(follower, loginMember);
-                    return OtherUserFollowerResponse.of(follower, follow.isPresent());
+                    return OtherUserFollowerResponse.of(
+                            follower,
+                            follow.isPresent(),
+                            Objects.equals(loginMember, follower)
+                    );
                 });
         return PageResponse.from(followers);
     }
