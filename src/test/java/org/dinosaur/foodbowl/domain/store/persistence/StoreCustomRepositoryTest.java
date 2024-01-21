@@ -2,14 +2,17 @@ package org.dinosaur.foodbowl.domain.store.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.dinosaur.foodbowl.domain.store.domain.vo.CategoryType.*;
 
 import java.math.BigDecimal;
 import java.util.List;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
+import org.dinosaur.foodbowl.domain.store.domain.Category;
 import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
+import org.dinosaur.foodbowl.domain.store.domain.vo.CategoryType;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchResponse;
 import org.dinosaur.foodbowl.global.util.PointUtils;
 import org.dinosaur.foodbowl.test.PersistenceTest;
@@ -42,7 +45,8 @@ class StoreCustomRepositoryTest extends PersistenceTest {
                 .save();
         Store storeD = storeTestPersister.builder()
                 .address(createAddress(x + 0.04, y))
-                .storeName("김밥세상").save();
+                .storeName("김밥세상")
+                .save();
 
         List<StoreSearchResponse> responses = storeCustomRepository.search(name, x, y, 10);
 
@@ -53,6 +57,8 @@ class StoreCustomRepositoryTest extends PersistenceTest {
             assertThat(responseStoreIds).containsExactly(storeB.getId(), storeD.getId(), storeA.getId());
             assertThat(responseStoreIds).hasSize(3);
             assertThat(responseStoreIds).doesNotContain(storeC.getId());
+            assertThat(responses.get(0).category()).isEqualTo(카페.name());
+            assertThat(responses.get(0).address()).isEqualTo("서울시 서초구 방배동 1234");
         });
     }
 

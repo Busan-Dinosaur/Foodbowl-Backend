@@ -11,6 +11,12 @@ public record StoreSearchResponse(
         @Schema(description = "가게 이름", example = "김밥나라 부산대점")
         String storeName,
 
+        @Schema(description = "가게 주소", example = "부산시 금정구 장전동 부산대학로 31")
+        String address,
+
+        @Schema(description = "카테고리", example = "한식")
+        String category,
+
         @Schema(description = "사용자로 부터 거리(단위: 미터)", example = "1250.234")
         double distance,
 
