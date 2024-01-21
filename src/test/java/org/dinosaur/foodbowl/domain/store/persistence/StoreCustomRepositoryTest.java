@@ -2,17 +2,15 @@ package org.dinosaur.foodbowl.domain.store.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.dinosaur.foodbowl.domain.store.domain.vo.CategoryType.*;
+import static org.dinosaur.foodbowl.domain.store.domain.vo.CategoryType.카페;
 
 import java.math.BigDecimal;
 import java.util.List;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
-import org.dinosaur.foodbowl.domain.store.domain.Category;
 import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
-import org.dinosaur.foodbowl.domain.store.domain.vo.CategoryType;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchResponse;
 import org.dinosaur.foodbowl.global.util.PointUtils;
 import org.dinosaur.foodbowl.test.PersistenceTest;
