@@ -54,7 +54,11 @@ public class FollowService {
                 .map(Follow::getFollowing)
                 .map(following -> {
                     Optional<Follow> follow = followRepository.findByFollowingAndFollower(following, loginMember);
-                    return OtherUserFollowingResponse.of(following, follow.isPresent());
+                    return OtherUserFollowingResponse.of(
+                            following,
+                            follow.isPresent(),
+                            Objects.equals(loginMember, following)
+                    );
                 });
         return PageResponse.from(followings);
     }
@@ -83,7 +87,11 @@ public class FollowService {
                 .map(Follow::getFollower)
                 .map(follower -> {
                     Optional<Follow> follow = followRepository.findByFollowingAndFollower(follower, loginMember);
-                    return OtherUserFollowerResponse.of(follower, follow.isPresent());
+                    return OtherUserFollowerResponse.of(
+                            follower,
+                            follow.isPresent(),
+                            Objects.equals(loginMember, follower)
+                    );
                 });
         return PageResponse.from(followers);
     }

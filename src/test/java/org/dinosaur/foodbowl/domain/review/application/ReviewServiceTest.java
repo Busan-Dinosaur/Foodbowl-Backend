@@ -76,6 +76,7 @@ class ReviewServiceTest extends IntegrationTest {
             assertSoftly(softly -> {
                 softly.assertThat(reviewResponse.store().id()).isEqualTo(store.getId());
                 softly.assertThat(reviewResponse.store().isBookmarked()).isTrue();
+                softly.assertThat(reviewResponse.store().storeUrl()).isEqualTo(store.getStoreUrl());
                 softly.assertThat(reviewResponse.review().content()).isEqualTo(review.getContent());
                 softly.assertThat(reviewResponse.review().imagePaths()).isEmpty();
                 softly.assertThat(reviewResponse.writer().id()).isEqualTo(writer.getId());
@@ -199,6 +200,7 @@ class ReviewServiceTest extends IntegrationTest {
                 softly.assertThat(reviewFeedResponses.get(0).reviewFeedThumbnail()).isEqualTo(photoA.getPath());
                 softly.assertThat(reviewFeedResponses.get(0).writer().id()).isEqualTo(writer.getId());
                 softly.assertThat(reviewFeedResponses.get(0).store().id()).isEqualTo(store.getId());
+                softly.assertThat(reviewFeedResponses.get(0).store().storeUrl()).isEqualTo(store.getStoreUrl());
                 softly.assertThat(reviewFeedResponses.get(0).store().isBookmarked()).isTrue();
             });
         }
@@ -496,6 +498,7 @@ class ReviewServiceTest extends IntegrationTest {
                 softly.assertThat(reviewStoreResponse.id()).isEqualTo(store.getId());
                 softly.assertThat(reviewStoreResponse.name()).isEqualTo(store.getStoreName());
                 softly.assertThat(reviewStoreResponse.addressName()).isEqualTo(store.getAddress().getAddressName());
+                softly.assertThat(reviewStoreResponse.storeUrl()).isEqualTo(store.getStoreUrl());
                 softly.assertThat(reviewStoreResponse.isBookmarked()).isFalse();
             });
         }

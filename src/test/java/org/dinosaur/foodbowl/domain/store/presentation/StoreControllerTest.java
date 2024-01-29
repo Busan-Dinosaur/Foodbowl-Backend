@@ -82,7 +82,14 @@ class StoreControllerTest extends PresentationTest {
         @Test
         void 검색_키워드를_포함하는_검색_결과와_200_응답을_반환한다() throws Exception {
             StoreSearchResponses response = StoreSearchResponses.from(
-                    List.of(new StoreSearchResponse(1L, "김밥나라", 1250, 10))
+                    List.of(new StoreSearchResponse(
+                            1L,
+                            "김밥나라",
+                            "서울시 강남구 강남로",
+                            "한식",
+                            1250,
+                            10)
+                    )
             );
             given(storeService.search(anyString(), any(BigDecimal.class), any(BigDecimal.class), anyInt()))
                     .willReturn(response);

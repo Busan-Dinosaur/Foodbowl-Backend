@@ -100,6 +100,7 @@ class ReviewControllerTest extends PresentationTest {
                             "한식",
                             "김밥천국",
                             "서울시 종로구 익선동 1234",
+                            "stores.kakao.com",
                             12.1234,
                             false
                     )
@@ -178,6 +179,7 @@ class ReviewControllerTest extends PresentationTest {
                                             "카페",
                                             "가게",
                                             "가게주소",
+                                            "stores.kakao.com",
                                             100.13,
                                             false
                                     )
@@ -282,6 +284,7 @@ class ReviewControllerTest extends PresentationTest {
                                             "카페",
                                             "가게",
                                             "가게주소",
+                                            "stores.kakao.com",
                                             100.13,
                                             false
                                     )
@@ -529,6 +532,7 @@ class ReviewControllerTest extends PresentationTest {
                             "한식",
                             "바다회사랑",
                             "서울시 마포구 동교로 123",
+                            "stores.kakao.com",
                             3.12414,
                             true
                     ),
@@ -584,6 +588,7 @@ class ReviewControllerTest extends PresentationTest {
                             "한식",
                             "바다회사랑",
                             "서울시 마포구 동교로 123",
+                            "stores.kakao.com",
                             3.12414,
                             true
                     ),
@@ -718,6 +723,7 @@ class ReviewControllerTest extends PresentationTest {
                                             "카페",
                                             "가게",
                                             "가게주소",
+                                            "stores.kakao.com",
                                             100.13,
                                             false
                                     )
@@ -943,6 +949,7 @@ class ReviewControllerTest extends PresentationTest {
                                             "카페",
                                             "가게",
                                             "가게주소",
+                                            "stores.kakao.com",
                                             100.13,
                                             false
                                     )
@@ -1168,6 +1175,7 @@ class ReviewControllerTest extends PresentationTest {
                                             "카페",
                                             "가게",
                                             "가게주소",
+                                            "stores.kakao.com",
                                             100.13,
                                             false
                                     )

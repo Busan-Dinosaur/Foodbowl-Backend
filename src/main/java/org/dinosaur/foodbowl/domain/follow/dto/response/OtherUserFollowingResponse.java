@@ -18,16 +18,20 @@ public record OtherUserFollowingResponse(
         int followerCount,
 
         @Schema(description = "팔로잉 여부", example = "true")
-        boolean isFollowing
+        boolean isFollowing,
+
+        @Schema(description = "본인(사용자) 여부", example = "true")
+        boolean isMe
 ) {
 
-    public static OtherUserFollowingResponse of(Member following, boolean isFollowing) {
+    public static OtherUserFollowingResponse of(Member following, boolean isFollowing, boolean isMe) {
         return new OtherUserFollowingResponse(
                 following.getId(),
                 following.getProfileImageUrl(),
                 following.getNickname(),
                 following.getFollowerCount(),
-                isFollowing
+                isFollowing,
+                isMe
         );
     }
 }

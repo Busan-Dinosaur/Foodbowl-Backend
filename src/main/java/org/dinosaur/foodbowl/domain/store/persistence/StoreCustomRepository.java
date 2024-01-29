@@ -34,12 +34,15 @@ public class StoreCustomRepository {
                         new QStoreSearchResponse(
                                 store.id,
                                 store.storeName,
+                                store.address.addressName,
+                                store.category.categoryType.stringValue(),
                                 calculateDistance(x, y),
                                 review.id.count()
                         )
                 )
                 .from(store)
                 .leftJoin(review).on(review.store.id.eq(store.id))
+                .innerJoin(store.category, category)
                 .where(store.storeName.contains(name))
                 .groupBy(store.id)
                 .orderBy(calculateDistance(x, y).asc())
