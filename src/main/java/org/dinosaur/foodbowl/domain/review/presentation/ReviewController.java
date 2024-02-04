@@ -15,6 +15,7 @@ import org.dinosaur.foodbowl.domain.review.dto.response.ReviewFeedPageResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.StoreReviewResponse;
+import org.dinosaur.foodbowl.domain.store.domain.vo.CategoryType;
 import org.dinosaur.foodbowl.global.presentation.Auth;
 import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.springframework.http.MediaType;
@@ -142,15 +143,18 @@ public class ReviewController implements ReviewControllerDocs {
             @RequestParam(name = "deviceX") BigDecimal deviceX,
             @RequestParam(name = "deviceY") BigDecimal deviceY,
             @RequestParam(name = "pageSize", defaultValue = "10") @Positive(message = "페이지 크기는 양수만 가능합니다.") int pageSize,
+            @RequestParam(name = "category", required = false) String category,
             @Auth LoginMember loginMember
     ) {
         MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(x, y, deltaX, deltaY);
         DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(deviceX, deviceY);
+        CategoryType categoryType = CategoryType.of(category);
         ReviewPageResponse response = reviewService.getReviewsBySchoolInMapBounds(
                 schoolId,
                 lastReviewId,
                 mapCoordinateRequest,
                 deviceCoordinateRequest,
+                categoryType,
                 pageSize,
                 loginMember
         );

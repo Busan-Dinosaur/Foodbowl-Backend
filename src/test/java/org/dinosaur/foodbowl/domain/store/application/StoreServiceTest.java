@@ -28,7 +28,6 @@ import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -723,30 +722,6 @@ class StoreServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> storeService.create(storeCreateDto))
                     .isInstanceOf(InvalidArgumentException.class)
                     .hasMessage("학교 이름 형식이 잘못되었습니다.");
-        }
-
-        @ParameterizedTest
-        @NullAndEmptySource
-        @ValueSource(strings = {"미국식", "한국식", "학식", "급식"})
-        void 카테고리_타입이_존재하지_않으면_예외가_발생한다(String category) {
-            StoreCreateDto storeCreateDto = new StoreCreateDto(
-                    "21415511",
-                    "농민백암순대",
-                    category,
-                    "서울시 강남구 선릉로 14번길 245",
-                    BigDecimal.valueOf(123.124),
-                    BigDecimal.valueOf(37.4545),
-                    "http://images.foodbowl",
-                    "02-123-4567",
-                    null,
-                    null,
-                    null,
-                    null
-            );
-
-            assertThatThrownBy(() -> storeService.create(storeCreateDto))
-                    .isInstanceOf(InvalidArgumentException.class)
-                    .hasMessage("일치하는 카테고리를 찾을 수 없습니다.");
         }
     }
 

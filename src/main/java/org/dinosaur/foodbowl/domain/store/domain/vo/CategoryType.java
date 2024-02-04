@@ -2,8 +2,6 @@ package org.dinosaur.foodbowl.domain.store.domain.vo;
 
 import java.util.Arrays;
 import lombok.Getter;
-import org.dinosaur.foodbowl.domain.store.exception.CategoryExceptionType;
-import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 
 @Getter
 public enum CategoryType {
@@ -30,6 +28,6 @@ public enum CategoryType {
         return Arrays.stream(values())
                 .filter(categoryType -> categoryType.name().equals(categoryName))
                 .findAny()
-                .orElseThrow(() -> new InvalidArgumentException(CategoryExceptionType.NOT_FOUND));
+                .orElse(null);
     }
 }

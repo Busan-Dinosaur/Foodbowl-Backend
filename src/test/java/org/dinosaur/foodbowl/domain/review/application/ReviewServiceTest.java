@@ -1127,6 +1127,7 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
+                    null,
                     10,
                     new LoginMember(member.getId())
             ))
@@ -1155,6 +1156,7 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
+                    null,
                     10,
                     new LoginMember(-1L)
             ))
@@ -1188,6 +1190,7 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
+                    null,
                     10,
                     new LoginMember(member.getId())
             );
@@ -1226,6 +1229,7 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
+                    null,
                     10,
                     new LoginMember(member.getId())
             );
@@ -1276,6 +1280,7 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
+                    null,
                     10,
                     new LoginMember(member.getId())
             );
@@ -1325,6 +1330,7 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
+                    null,
                     10,
                     new LoginMember(member.getId())
             );

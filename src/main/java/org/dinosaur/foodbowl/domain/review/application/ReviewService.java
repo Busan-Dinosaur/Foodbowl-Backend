@@ -32,6 +32,7 @@ import org.dinosaur.foodbowl.domain.store.application.StoreService;
 import org.dinosaur.foodbowl.domain.store.application.dto.StoreCreateDto;
 import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
+import org.dinosaur.foodbowl.domain.store.domain.vo.CategoryType;
 import org.dinosaur.foodbowl.domain.store.exception.SchoolExceptionType;
 import org.dinosaur.foodbowl.domain.store.persistence.SchoolRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
@@ -221,6 +222,7 @@ public class ReviewService {
             Long lastReviewId,
             MapCoordinateRequest mapCoordinateRequest,
             DeviceCoordinateRequest deviceCoordinateRequest,
+            CategoryType categoryType,
             int pageSize,
             LoginMember loginMember
     ) {
@@ -234,6 +236,7 @@ public class ReviewService {
                 school.getId(),
                 lastReviewId,
                 mapCoordinateBoundDto,
+                categoryType,
                 pageSize
         );
         return convertToReviewPageResponse(viewer, reviews, deviceCoordinateRequest);
