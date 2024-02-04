@@ -35,6 +35,7 @@ import org.dinosaur.foodbowl.domain.review.persistence.ReviewPhotoCustomReposito
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -58,35 +59,42 @@ public class MemberService {
     private final ReviewPhotoCustomRepository reviewPhotoCustomRepository;
 
     @Transactional(readOnly = true)
-    public MemberProfileResponse getProfile(Long memberId, Member loginMember) {
+    public MemberProfileResponse getProfile(Long memberId, LoginMember loginMember) {
         Member member = memberRepository.findByIdWithThumbnail(memberId)
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+        Member viewer = memberRepository.findById(loginMember.id())
                 .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
 
         long followingCount = followRepository.countByFollower(member);
-        if (Objects.equals(member, loginMember)) {
+        if (Objects.equals(member, viewer)) {
             return MemberProfileResponse.of(member, (int) followingCount, true, false);
         }
 
-        Optional<Follow> follow = followRepository.findByFollowingAndFollower(member, loginMember);
+        Optional<Follow> follow = followRepository.findByFollowingAndFollower(member, viewer);
         return MemberProfileResponse.of(member, (int) followingCount, false, follow.isPresent());
     }
 
     @Transactional(readOnly = true)
-    public MemberProfileResponse getMyProfile(Member loginMember) {
-        long followingCount = followRepository.countByFollower(loginMember);
-        return MemberProfileResponse.of(loginMember, (int) followingCount, true, false);
+    public MemberProfileResponse getMyProfile(LoginMember loginMember) {
+        Member member = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+
+        long followingCount = followRepository.countByFollower(member);
+        return MemberProfileResponse.of(member, (int) followingCount, true, false);
     }
 
     @Transactional(readOnly = true)
-    public MemberSearchResponses search(String name, int size, Member loginMember) {
+    public MemberSearchResponses search(String name, int size, LoginMember loginMember) {
+        Member viewer = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
         List<Member> members = memberCustomService.search(name, size);
 
         MemberToFollowerCountDto followerCountByMembers = followCustomService.getFollowerCountByMembers(members);
-        MemberToFollowingsDto followingsByMember = followCustomService.getFollowInMembers(members, loginMember);
+        MemberToFollowingsDto followingsByMember = followCustomService.getFollowInMembers(members, viewer);
 
         return MemberSearchResponses.of(
                 members,
-                loginMember,
+                viewer,
                 followerCountByMembers,
                 followingsByMember
         );
@@ -99,14 +107,17 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateProfile(UpdateProfileRequest updateProfileRequest, Member loginMember) {
+    public void updateProfile(UpdateProfileRequest updateProfileRequest, LoginMember loginMember) {
+        Member member = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+
         Nickname nickname = new Nickname(updateProfileRequest.nickname());
         Introduction introduction = new Introduction(updateProfileRequest.introduction());
 
-        if (!loginMember.hasNickname(nickname)) {
+        if (!member.hasNickname(nickname)) {
             validateExistNickname(nickname);
         }
-        loginMember.updateProfile(nickname, introduction);
+        member.updateProfile(nickname, introduction);
     }
 
     private void validateExistNickname(Nickname nickname) {
@@ -117,12 +128,15 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberProfileImageResponse updateProfileImage(MultipartFile image, Member loginMember) {
-        memberThumbnailRepository.findByMember(loginMember)
+    public MemberProfileImageResponse updateProfileImage(MultipartFile image, LoginMember loginMember) {
+        Member member = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+
+        memberThumbnailRepository.findByMember(member)
                 .ifPresent(this::deleteMemberThumbnail);
         Thumbnail thumbnail = thumbnailService.save(image);
         MemberThumbnail memberThumbnail = MemberThumbnail.builder()
-                .member(loginMember)
+                .member(member)
                 .thumbnail(thumbnail)
                 .build();
         memberThumbnailRepository.save(memberThumbnail);
@@ -135,16 +149,22 @@ public class MemberService {
     }
 
     @Transactional
-    public void deleteProfileImage(Member loginMember) {
-        memberThumbnailRepository.findByMember(loginMember)
+    public void deleteProfileImage(LoginMember loginMember) {
+        Member member = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+
+        memberThumbnailRepository.findByMember(member)
                 .ifPresent(this::deleteMemberThumbnail);
     }
 
     @Transactional
-    public void deactivate(Member loginMember) {
-        deleteMemberDetails(loginMember);
-        deleteMemberActivity(loginMember);
-        memberRepository.delete(loginMember);
+    public void deactivate(LoginMember loginMember) {
+        Member member = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+
+        deleteMemberDetails(member);
+        deleteMemberActivity(member);
+        memberRepository.delete(member);
     }
 
     private void deleteMemberDetails(Member member) {

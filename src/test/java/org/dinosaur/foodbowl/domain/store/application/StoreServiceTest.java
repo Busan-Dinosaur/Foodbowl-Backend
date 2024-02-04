@@ -22,6 +22,7 @@ import org.dinosaur.foodbowl.domain.store.persistence.StoreSchoolRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.dinosaur.foodbowl.global.util.PointUtils;
 import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.junit.jupiter.api.Nested;
@@ -162,7 +163,12 @@ class StoreServiceTest extends IntegrationTest {
                     BigDecimal.valueOf(1)
             );
 
-            assertThatThrownBy(() -> storeService.getStoresByMemberInMapBounds(-1L, mapCoordinateRequest, member))
+            assertThatThrownBy(() ->
+                    storeService.getStoresByMemberInMapBounds(
+                            -1L,
+                            mapCoordinateRequest,
+                            new LoginMember(member.getId())
+                    ))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("등록되지 않은 회원입니다.");
         }
@@ -181,8 +187,11 @@ class StoreServiceTest extends IntegrationTest {
                     BigDecimal.valueOf(1)
             );
 
-            StoreMapBoundResponses response =
-                    storeService.getStoresByMemberInMapBounds(member.getId(), mapCoordinateRequest, member);
+            StoreMapBoundResponses response = storeService.getStoresByMemberInMapBounds(
+                    member.getId(),
+                    mapCoordinateRequest,
+                    new LoginMember(member.getId())
+            );
 
             List<StoreMapBoundResponse> result = response.stores();
             assertSoftly(softly -> {
@@ -212,8 +221,11 @@ class StoreServiceTest extends IntegrationTest {
                     BigDecimal.valueOf(1)
             );
 
-            StoreMapBoundResponses response =
-                    storeService.getStoresByMemberInMapBounds(member.getId(), mapCoordinateRequest, member);
+            StoreMapBoundResponses response = storeService.getStoresByMemberInMapBounds(
+                    member.getId(),
+                    mapCoordinateRequest,
+                    new LoginMember(member.getId())
+            );
 
             List<StoreMapBoundResponse> result = response.stores();
             assertSoftly(softly -> {
@@ -233,8 +245,11 @@ class StoreServiceTest extends IntegrationTest {
                     BigDecimal.valueOf(1)
             );
 
-            StoreMapBoundResponses response =
-                    storeService.getStoresByMemberInMapBounds(member.getId(), mapCoordinateRequest, member);
+            StoreMapBoundResponses response = storeService.getStoresByMemberInMapBounds(
+                    member.getId(),
+                    mapCoordinateRequest,
+                    new LoginMember(member.getId())
+            );
 
             assertThat(response.stores()).isEmpty();
         }
@@ -258,7 +273,8 @@ class StoreServiceTest extends IntegrationTest {
                     BigDecimal.valueOf(1)
             );
 
-            StoreMapBoundResponses response = storeService.getStoresByBookmarkInMapBounds(mapCoordinateRequest, member);
+            StoreMapBoundResponses response =
+                    storeService.getStoresByBookmarkInMapBounds(mapCoordinateRequest, new LoginMember(member.getId()));
 
             List<StoreMapBoundResponse> result = response.stores();
             assertSoftly(softly -> {
@@ -287,7 +303,8 @@ class StoreServiceTest extends IntegrationTest {
                     BigDecimal.valueOf(1)
             );
 
-            StoreMapBoundResponses response = storeService.getStoresByBookmarkInMapBounds(mapCoordinateRequest, member);
+            StoreMapBoundResponses response =
+                    storeService.getStoresByBookmarkInMapBounds(mapCoordinateRequest, new LoginMember(member.getId()));
 
             List<StoreMapBoundResponse> result = response.stores();
             assertSoftly(softly -> {
@@ -307,7 +324,8 @@ class StoreServiceTest extends IntegrationTest {
                     BigDecimal.valueOf(1)
             );
 
-            StoreMapBoundResponses response = storeService.getStoresByBookmarkInMapBounds(mapCoordinateRequest, member);
+            StoreMapBoundResponses response =
+                    storeService.getStoresByBookmarkInMapBounds(mapCoordinateRequest, new LoginMember(member.getId()));
 
             assertThat(response.stores()).isEmpty();
         }
@@ -332,7 +350,7 @@ class StoreServiceTest extends IntegrationTest {
             );
 
             StoreMapBoundResponses response =
-                    storeService.getStoresByFollowingInMapBounds(mapCoordinateRequest, member);
+                    storeService.getStoresByFollowingInMapBounds(mapCoordinateRequest, new LoginMember(member.getId()));
 
             List<StoreMapBoundResponse> result = response.stores();
             assertSoftly(softly -> {
@@ -365,7 +383,7 @@ class StoreServiceTest extends IntegrationTest {
             );
 
             StoreMapBoundResponses response =
-                    storeService.getStoresByFollowingInMapBounds(mapCoordinateRequest, member);
+                    storeService.getStoresByFollowingInMapBounds(mapCoordinateRequest, new LoginMember(member.getId()));
 
             List<StoreMapBoundResponse> result = response.stores();
             assertSoftly(softly -> {
@@ -385,7 +403,7 @@ class StoreServiceTest extends IntegrationTest {
             );
 
             StoreMapBoundResponses response =
-                    storeService.getStoresByFollowingInMapBounds(mapCoordinateRequest, member);
+                    storeService.getStoresByFollowingInMapBounds(mapCoordinateRequest, new LoginMember(member.getId()));
 
             assertThat(response.stores()).isEmpty();
         }
@@ -405,7 +423,12 @@ class StoreServiceTest extends IntegrationTest {
                     BigDecimal.valueOf(1)
             );
 
-            assertThatThrownBy(() -> storeService.getStoresBySchoolInMapBounds(-1L, mapCoordinateRequest, member))
+            assertThatThrownBy(() ->
+                    storeService.getStoresBySchoolInMapBounds(
+                            -1L,
+                            mapCoordinateRequest,
+                            new LoginMember(member.getId())
+                    ))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("존재하지 않는 학교입니다.");
         }
@@ -428,8 +451,11 @@ class StoreServiceTest extends IntegrationTest {
                     BigDecimal.valueOf(1)
             );
 
-            StoreMapBoundResponses response =
-                    storeService.getStoresBySchoolInMapBounds(school.getId(), mapCoordinateRequest, member);
+            StoreMapBoundResponses response = storeService.getStoresBySchoolInMapBounds(
+                    school.getId(),
+                    mapCoordinateRequest,
+                    new LoginMember(member.getId())
+            );
 
             List<StoreMapBoundResponse> result = response.stores();
             assertSoftly(softly -> {
@@ -469,8 +495,11 @@ class StoreServiceTest extends IntegrationTest {
                     BigDecimal.valueOf(1)
             );
 
-            StoreMapBoundResponses response =
-                    storeService.getStoresBySchoolInMapBounds(school.getId(), mapCoordinateRequest, member);
+            StoreMapBoundResponses response = storeService.getStoresBySchoolInMapBounds(
+                    school.getId(),
+                    mapCoordinateRequest,
+                    new LoginMember(member.getId())
+            );
 
             List<StoreMapBoundResponse> result = response.stores();
             assertSoftly(softly -> {
@@ -491,8 +520,11 @@ class StoreServiceTest extends IntegrationTest {
                     BigDecimal.valueOf(1)
             );
 
-            StoreMapBoundResponses response =
-                    storeService.getStoresBySchoolInMapBounds(school.getId(), mapCoordinateRequest, member);
+            StoreMapBoundResponses response = storeService.getStoresBySchoolInMapBounds(
+                    school.getId(),
+                    mapCoordinateRequest,
+                    new LoginMember(member.getId())
+            );
 
             assertThat(response.stores()).isEmpty();
         }

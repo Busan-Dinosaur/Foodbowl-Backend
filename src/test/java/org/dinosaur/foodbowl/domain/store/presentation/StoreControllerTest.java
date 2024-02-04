@@ -18,7 +18,6 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
-import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.dto.request.MapCoordinateRequest;
 import org.dinosaur.foodbowl.domain.store.application.StoreService;
 import org.dinosaur.foodbowl.domain.store.dto.response.CategoriesResponse;
@@ -27,6 +26,7 @@ import org.dinosaur.foodbowl.domain.store.dto.response.StoreMapBoundResponse;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreMapBoundResponses;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchResponse;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchResponses;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.dinosaur.foodbowl.test.PresentationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -228,7 +228,7 @@ class StoreControllerTest extends PresentationTest {
             given(storeService.getStoresByMemberInMapBounds(
                     anyLong(),
                     any(MapCoordinateRequest.class),
-                    any(Member.class))
+                    any(LoginMember.class))
             ).willReturn(response);
 
             MvcResult mvcResult = mockMvc.perform(get("/v1/stores/members")
@@ -367,7 +367,7 @@ class StoreControllerTest extends PresentationTest {
         void 정상적인_요청이라면_200_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
             StoreMapBoundResponses response = mockStoreMapBoundResponses();
-            given(storeService.getStoresByBookmarkInMapBounds(any(MapCoordinateRequest.class), any(Member.class)))
+            given(storeService.getStoresByBookmarkInMapBounds(any(MapCoordinateRequest.class), any(LoginMember.class)))
                     .willReturn(response);
 
             MvcResult mvcResult = mockMvc.perform(get("/v1/stores/bookmarks")
@@ -481,7 +481,7 @@ class StoreControllerTest extends PresentationTest {
         void 정상적인_요청이라면_200_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
             StoreMapBoundResponses response = mockStoreMapBoundResponses();
-            given(storeService.getStoresByFollowingInMapBounds(any(MapCoordinateRequest.class), any(Member.class)))
+            given(storeService.getStoresByFollowingInMapBounds(any(MapCoordinateRequest.class), any(LoginMember.class)))
                     .willReturn(response);
 
             MvcResult mvcResult = mockMvc.perform(get("/v1/stores/followings")
@@ -598,7 +598,7 @@ class StoreControllerTest extends PresentationTest {
             given(storeService.getStoresBySchoolInMapBounds(
                     anyLong(),
                     any(MapCoordinateRequest.class),
-                    any(Member.class))
+                    any(LoginMember.class))
             ).willReturn(response);
 
             MvcResult mvcResult = mockMvc.perform(get("/v1/stores/schools")

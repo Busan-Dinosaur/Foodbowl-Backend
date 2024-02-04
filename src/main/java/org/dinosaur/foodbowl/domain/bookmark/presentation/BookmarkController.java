@@ -3,8 +3,8 @@ package org.dinosaur.foodbowl.domain.bookmark.presentation;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.bookmark.application.BookmarkService;
-import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.global.presentation.Auth;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,18 +24,18 @@ public class BookmarkController implements BookmarkControllerDocs {
     @PostMapping
     public ResponseEntity<Void> create(
             @RequestParam @Positive(message = "가게 ID는 양수만 가능합니다.") Long storeId,
-            @Auth Member member
+            @Auth LoginMember loginMember
     ) {
-        bookmarkService.save(storeId, member);
+        bookmarkService.save(storeId, loginMember);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping
     public ResponseEntity<Void> delete(
             @RequestParam @Positive(message = "가게 ID는 양수만 가능합니다.") Long storeId,
-            @Auth Member member
+            @Auth LoginMember loginMember
     ) {
-        bookmarkService.delete(storeId, member);
+        bookmarkService.delete(storeId, loginMember);
         return ResponseEntity.noContent().build();
     }
 }

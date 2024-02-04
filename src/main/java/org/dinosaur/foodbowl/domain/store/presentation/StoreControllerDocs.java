@@ -12,11 +12,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
-import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.store.dto.response.CategoriesResponse;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreMapBoundResponses;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchResponses;
 import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.springframework.http.ResponseEntity;
 
 @Tag(name = "가게", description = "가게 API")
@@ -144,7 +144,7 @@ public interface StoreControllerDocs {
             @Positive(message = "위도 증가값은 0이상의 양수만 가능합니다.")
             BigDecimal deltaY,
 
-            Member loginMember
+            LoginMember loginMember
     );
 
     @Operation(
@@ -193,7 +193,7 @@ public interface StoreControllerDocs {
             @Positive(message = "위도 증가값은 0이상의 양수만 가능합니다.")
             BigDecimal deltaY,
 
-            Member loginMember
+            LoginMember loginMember
     );
 
     @Operation(
@@ -242,7 +242,7 @@ public interface StoreControllerDocs {
             @Positive(message = "위도 증가값은 0이상의 양수만 가능합니다.")
             BigDecimal deltaY,
 
-            Member loginMember
+            LoginMember loginMember
     );
 
     @Operation(
@@ -304,6 +304,6 @@ public interface StoreControllerDocs {
             @Positive(message = "위도 증가값은 0이상의 양수만 가능합니다.")
             BigDecimal deltaY,
 
-            Member loginMember
+            LoginMember loginMember
     );
 }

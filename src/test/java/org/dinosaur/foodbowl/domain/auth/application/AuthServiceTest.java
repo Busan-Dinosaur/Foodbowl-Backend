@@ -19,6 +19,7 @@ import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
 import org.dinosaur.foodbowl.domain.member.domain.vo.SocialType;
 import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
 import org.dinosaur.foodbowl.global.exception.AuthenticationException;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
@@ -99,7 +100,7 @@ class AuthServiceTest extends IntegrationTest {
         redisTemplate.opsForValue().set("1", "refreshToken", 10000, TimeUnit.MILLISECONDS);
         ReflectionTestUtils.setField(member, "id", 1L);
 
-        authService.logout(member);
+        authService.logout(new LoginMember(member.getId()));
 
         assertThat(redisTemplate.opsForValue().get("1")).isNull();
     }

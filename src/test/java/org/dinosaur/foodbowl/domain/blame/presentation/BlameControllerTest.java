@@ -13,8 +13,8 @@ import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.blame.application.BlameService;
 import org.dinosaur.foodbowl.domain.blame.domain.vo.BlameTarget;
 import org.dinosaur.foodbowl.domain.blame.dto.request.BlameRequest;
-import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.dinosaur.foodbowl.test.PresentationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -52,7 +52,7 @@ class BlameControllerTest extends PresentationTest {
         void 정상적인_요청이라면_200_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
             BlameRequest request = new BlameRequest(1L, BlameTarget.MEMBER.name(), "부적절한 닉네임");
-            willDoNothing().given(blameService).blame(any(BlameRequest.class), any(Member.class));
+            willDoNothing().given(blameService).blame(any(BlameRequest.class), any(LoginMember.class));
 
             mockMvc.perform(post("/v1/blames")
                             .header(AUTHORIZATION, BEARER + accessToken)

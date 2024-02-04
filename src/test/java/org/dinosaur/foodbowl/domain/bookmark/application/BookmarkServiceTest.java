@@ -8,6 +8,7 @@ import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -30,7 +31,7 @@ class BookmarkServiceTest extends IntegrationTest {
             Store store = storeTestPersister.builder().save();
             Member member = memberTestPersister.builder().save();
 
-            bookmarkService.save(store.getId(), member);
+            bookmarkService.save(store.getId(), new LoginMember(member.getId()));
 
             assertThat(bookmarkRepository.findByMemberAndStore(member, store)).isPresent();
         }
@@ -39,7 +40,7 @@ class BookmarkServiceTest extends IntegrationTest {
         void 가게가_존재하지_않으면_예외가_발생한다() {
             Member member = memberTestPersister.builder().save();
 
-            assertThatThrownBy(() -> bookmarkService.save(-1L, member))
+            assertThatThrownBy(() -> bookmarkService.save(-1L, new LoginMember(member.getId())))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("일치하는 가게를 찾을 수 없습니다.");
         }
@@ -48,9 +49,9 @@ class BookmarkServiceTest extends IntegrationTest {
         void 이미_북마크에_추가된_가게라면_예외가_발생한다() {
             Store store = storeTestPersister.builder().save();
             Member member = memberTestPersister.builder().save();
-            bookmarkService.save(store.getId(), member);
+            bookmarkService.save(store.getId(), new LoginMember(member.getId()));
 
-            assertThatThrownBy(() -> bookmarkService.save(store.getId(), member))
+            assertThatThrownBy(() -> bookmarkService.save(store.getId(), new LoginMember(member.getId())))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("이미 북마크에 추가된 가게입니다.");
         }
@@ -63,9 +64,9 @@ class BookmarkServiceTest extends IntegrationTest {
         void 북마크_삭제에_성공하면_북마크가_삭제된다() {
             Store store = storeTestPersister.builder().save();
             Member member = memberTestPersister.builder().save();
-            bookmarkService.save(store.getId(), member);
+            bookmarkService.save(store.getId(), new LoginMember(member.getId()));
 
-            bookmarkService.delete(store.getId(), member);
+            bookmarkService.delete(store.getId(), new LoginMember(member.getId()));
 
             assertThat(bookmarkRepository.findByMemberAndStore(member, store)).isEmpty();
         }
@@ -74,7 +75,7 @@ class BookmarkServiceTest extends IntegrationTest {
         void 가게가_존재하지_않으면_예외가_발생한다() {
             Member member = memberTestPersister.builder().save();
 
-            assertThatThrownBy(() -> bookmarkService.delete(-1L, member))
+            assertThatThrownBy(() -> bookmarkService.delete(-1L, new LoginMember(member.getId())))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("일치하는 가게를 찾을 수 없습니다.");
         }
@@ -84,7 +85,7 @@ class BookmarkServiceTest extends IntegrationTest {
             Store store = storeTestPersister.builder().save();
             Member member = memberTestPersister.builder().save();
 
-            assertThatThrownBy(() -> bookmarkService.delete(store.getId(), member))
+            assertThatThrownBy(() -> bookmarkService.delete(store.getId(), new LoginMember(member.getId())))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("해당 가게는 사용자의 북마크에 추가되어 있지 않습니다.");
         }

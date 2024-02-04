@@ -10,6 +10,7 @@ import org.dinosaur.foodbowl.domain.review.domain.Review;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -30,7 +31,7 @@ class BlameServiceTest extends IntegrationTest {
             Member target = memberTestPersister.builder().save();
             BlameRequest request = new BlameRequest(target.getId(), BlameTarget.MEMBER.name(), "부적절한 닉네임");
 
-            assertThatNoException().isThrownBy(() -> blameService.blame(request, loginMember));
+            assertThatNoException().isThrownBy(() -> blameService.blame(request, new LoginMember(loginMember.getId())));
         }
 
         @Test
@@ -39,7 +40,7 @@ class BlameServiceTest extends IntegrationTest {
             Member target = memberTestPersister.builder().save();
             BlameRequest request = new BlameRequest(target.getId(), "HELLO", "부적절한 닉네임");
 
-            assertThatThrownBy(() -> blameService.blame(request, loginMember))
+            assertThatThrownBy(() -> blameService.blame(request, new LoginMember(loginMember.getId())))
                     .isInstanceOf(InvalidArgumentException.class)
                     .hasMessage("존재하지 않는 신고 타입입니다.");
         }
@@ -50,7 +51,7 @@ class BlameServiceTest extends IntegrationTest {
             Long invalidMemberId = loginMember.getId() + 1;
             BlameRequest request = new BlameRequest(invalidMemberId, BlameTarget.MEMBER.name(), "부적절한 닉네임");
 
-            assertThatThrownBy(() -> blameService.blame(request, loginMember))
+            assertThatThrownBy(() -> blameService.blame(request, new LoginMember(loginMember.getId())))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("존재하지 않는 신고 대상입니다.");
         }
@@ -60,7 +61,7 @@ class BlameServiceTest extends IntegrationTest {
             Member loginMember = memberTestPersister.builder().save();
             BlameRequest request = new BlameRequest(1L, BlameTarget.REVIEW.name(), "부적절한 리뷰 내용");
 
-            assertThatThrownBy(() -> blameService.blame(request, loginMember))
+            assertThatThrownBy(() -> blameService.blame(request, new LoginMember(loginMember.getId())))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("존재하지 않는 신고 대상입니다.");
         }
@@ -70,7 +71,7 @@ class BlameServiceTest extends IntegrationTest {
             Member loginMember = memberTestPersister.builder().save();
             BlameRequest request = new BlameRequest(loginMember.getId(), BlameTarget.MEMBER.name(), "부적절한 닉네임");
 
-            assertThatThrownBy(() -> blameService.blame(request, loginMember))
+            assertThatThrownBy(() -> blameService.blame(request, new LoginMember(loginMember.getId())))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("본인을 신고할 수 없습니다.");
         }
@@ -81,7 +82,7 @@ class BlameServiceTest extends IntegrationTest {
             Review review = reviewTestPersister.builder().member(loginMember).save();
             BlameRequest request = new BlameRequest(review.getId(), BlameTarget.REVIEW.name(), "부적절한 닉네임");
 
-            assertThatThrownBy(() -> blameService.blame(request, loginMember))
+            assertThatThrownBy(() -> blameService.blame(request, new LoginMember(loginMember.getId())))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("본인을 신고할 수 없습니다.");
         }
@@ -91,9 +92,9 @@ class BlameServiceTest extends IntegrationTest {
             Member loginMember = memberTestPersister.builder().save();
             Member target = memberTestPersister.builder().save();
             BlameRequest request = new BlameRequest(target.getId(), BlameTarget.MEMBER.name(), "부적절한 닉네임");
-            blameService.blame(request, loginMember);
+            blameService.blame(request, new LoginMember(loginMember.getId()));
 
-            assertThatThrownBy(() -> blameService.blame(request, loginMember))
+            assertThatThrownBy(() -> blameService.blame(request, new LoginMember(loginMember.getId())))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("신고 대상에 대한 신고 이력이 존재합니다.");
         }

@@ -16,8 +16,8 @@ import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.AppleLoginRequest;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.RenewTokenRequest;
 import org.dinosaur.foodbowl.domain.auth.dto.response.TokenResponse;
-import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.dinosaur.foodbowl.test.PresentationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -82,7 +82,7 @@ class AuthControllerTest extends PresentationTest {
     @Test
     void 로그아웃에_성공하면_204_응답을_반환한다() throws Exception {
         mockingAuthMemberInResolver();
-        willDoNothing().given(authService).logout(any(Member.class));
+        willDoNothing().given(authService).logout(any(LoginMember.class));
 
         mockMvc.perform(post("/v1/auth/logout")
                         .header(AUTHORIZATION, BEARER + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원)))
