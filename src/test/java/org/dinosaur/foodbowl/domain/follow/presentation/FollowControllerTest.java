@@ -24,8 +24,8 @@ import org.dinosaur.foodbowl.domain.follow.dto.response.FollowerResponse;
 import org.dinosaur.foodbowl.domain.follow.dto.response.FollowingResponse;
 import org.dinosaur.foodbowl.domain.follow.dto.response.OtherUserFollowerResponse;
 import org.dinosaur.foodbowl.domain.follow.dto.response.OtherUserFollowingResponse;
-import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.global.common.response.PageResponse;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.dinosaur.foodbowl.test.PresentationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -75,7 +75,7 @@ class FollowControllerTest extends PresentationTest {
                     0,
                     1
             );
-            given(followService.getFollowings(anyInt(), anyInt(), any(Member.class))).willReturn(response);
+            given(followService.getFollowings(anyInt(), anyInt(), any(LoginMember.class))).willReturn(response);
 
             MvcResult mvcResult = mockMvc.perform(get("/v1/follows/followings")
                             .header(AUTHORIZATION, BEARER + accessToken)
@@ -174,7 +174,7 @@ class FollowControllerTest extends PresentationTest {
                     0,
                     1
             );
-            given(followService.getOtherUserFollowings(anyLong(), anyInt(), anyInt(), any(Member.class)))
+            given(followService.getOtherUserFollowings(anyLong(), anyInt(), anyInt(), any(LoginMember.class)))
                     .willReturn(response);
 
             MvcResult mvcResult = mockMvc.perform(get("/v1/follows/{memberId}/followings", 1L)
@@ -300,7 +300,7 @@ class FollowControllerTest extends PresentationTest {
                     0,
                     1
             );
-            given(followService.getFollowers(anyInt(), anyInt(), any(Member.class))).willReturn(response);
+            given(followService.getFollowers(anyInt(), anyInt(), any(LoginMember.class))).willReturn(response);
 
             MvcResult mvcResult = mockMvc.perform(get("/v1/follows/followers")
                             .header(AUTHORIZATION, BEARER + accessToken)
@@ -399,7 +399,7 @@ class FollowControllerTest extends PresentationTest {
                     0,
                     1
             );
-            given(followService.getOtherUserFollowers(anyLong(), anyInt(), anyInt(), any(Member.class)))
+            given(followService.getOtherUserFollowers(anyLong(), anyInt(), anyInt(), any(LoginMember.class)))
                     .willReturn(response);
 
             MvcResult mvcResult = mockMvc.perform(get("/v1/follows/{memberId}/followers", 1L)
@@ -512,7 +512,7 @@ class FollowControllerTest extends PresentationTest {
         void 팔로우를_수행하면_200_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
             willDoNothing().given(followService)
-                    .follow(anyLong(), any(Member.class));
+                    .follow(anyLong(), any(LoginMember.class));
 
             mockMvc.perform(post("/v1/follows/{memberId}/follow", 1L)
                             .header(AUTHORIZATION, BEARER + accessToken))
@@ -554,7 +554,7 @@ class FollowControllerTest extends PresentationTest {
         void 언팔로우를_수행하면_204_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
             willDoNothing().given(followService)
-                    .unfollow(anyLong(), any(Member.class));
+                    .unfollow(anyLong(), any(LoginMember.class));
 
             mockMvc.perform(delete("/v1/follows/{memberId}/unfollow", 1L)
                             .header(AUTHORIZATION, BEARER + accessToken))
@@ -596,7 +596,7 @@ class FollowControllerTest extends PresentationTest {
         void 팔로워_삭제를_수행하면_204_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
             willDoNothing().given(followService)
-                    .follow(anyLong(), any(Member.class));
+                    .follow(anyLong(), any(LoginMember.class));
 
             mockMvc.perform(delete("/v1/follows/followers/{memberId}", 1L)
                             .header(AUTHORIZATION, BEARER + accessToken))

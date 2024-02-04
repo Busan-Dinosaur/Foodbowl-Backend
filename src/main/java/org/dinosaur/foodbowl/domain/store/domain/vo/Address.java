@@ -45,6 +45,23 @@ public class Address {
     @Column(name = "coordinate", columnDefinition = "geometry(Point, 4326)")
     private Point coordinate;
 
+    @Builder
+    private Address(
+            String addressName,
+            String region1depthName,
+            String region2depthName,
+            String region3depthName,
+            String roadName,
+            Point coordinate
+    ) {
+        this.addressName = addressName;
+        this.region1depthName = region1depthName;
+        this.region2depthName = region2depthName;
+        this.region3depthName = region3depthName;
+        this.roadName = roadName;
+        this.coordinate = coordinate;
+    }
+
     public static Address of(String storeAddress, Point coordinate) {
         if (storeAddress == null) {
             throw new InvalidArgumentException(StoreExceptionType.ADDRESS_NOT_FOUND);
@@ -63,22 +80,5 @@ public class Address {
                 .roadName(roadName)
                 .coordinate(coordinate)
                 .build();
-    }
-
-    @Builder
-    private Address(
-            String addressName,
-            String region1depthName,
-            String region2depthName,
-            String region3depthName,
-            String roadName,
-            Point coordinate
-    ) {
-        this.addressName = addressName;
-        this.region1depthName = region1depthName;
-        this.region2depthName = region2depthName;
-        this.region3depthName = region3depthName;
-        this.roadName = roadName;
-        this.coordinate = coordinate;
     }
 }

@@ -30,6 +30,7 @@ import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.dinosaur.foodbowl.global.util.PointUtils;
 import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.dinosaur.foodbowl.test.file.FileTestUtils;
@@ -69,7 +70,7 @@ class ReviewServiceTest extends IntegrationTest {
 
             ReviewResponse reviewResponse = reviewService.getReview(
                     review.getId(),
-                    loginMember,
+                    new LoginMember(loginMember.getId()),
                     deviceCoordinateRequest
             );
 
@@ -103,7 +104,7 @@ class ReviewServiceTest extends IntegrationTest {
 
             ReviewResponse reviewResponse = reviewService.getReview(
                     review.getId(),
-                    loginMember,
+                    new LoginMember(loginMember.getId()),
                     deviceCoordinateRequest
             );
 
@@ -136,7 +137,7 @@ class ReviewServiceTest extends IntegrationTest {
 
             ReviewResponse reviewResponse = reviewService.getReview(
                     review.getId(),
-                    loginMember,
+                    new LoginMember(loginMember.getId()),
                     deviceCoordinateRequest
             );
 
@@ -161,9 +162,32 @@ class ReviewServiceTest extends IntegrationTest {
                     BigDecimal.valueOf(1)
             );
 
-            assertThatThrownBy(() -> reviewService.getReview(wrongReviewId, member, deviceCoordinateRequest))
+            assertThatThrownBy(() ->
+                    reviewService.getReview(
+                            wrongReviewId,
+                            new LoginMember(member.getId()),
+                            deviceCoordinateRequest
+                    ))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("일치하는 리뷰를 찾을 수 없습니다.");
+        }
+
+        @Test
+        void 등록되지_않은_회원의_단건_리뷰_조회라면_예외를_던진다() {
+            Review review = reviewTestPersister.builder().save();
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            assertThatThrownBy(() ->
+                    reviewService.getReview(
+                            review.getId(),
+                            new LoginMember(-1L),
+                            deviceCoordinateRequest
+                    ))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
         }
     }
 
@@ -189,7 +213,7 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     10,
                     deviceCoordinateRequest,
-                    writer
+                    new LoginMember(writer.getId())
             );
 
             List<ReviewFeedResponse> reviewFeedResponses = reviewFeedPageResponse.reviewFeedResponses();
@@ -219,10 +243,28 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     10,
                     deviceCoordinateRequest,
-                    writer
+                    new LoginMember(writer.getId())
             );
 
             assertThat(reviewFeedPageResponse.reviewFeedResponses()).isEmpty();
+        }
+
+        @Test
+        void 등록되지_않은_회원의_리뷰_피드_조회라면_예외를_던진다() {
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            assertThatThrownBy(() ->
+                    reviewService.getReviewFeeds(
+                            null,
+                            10,
+                            deviceCoordinateRequest,
+                            new LoginMember(-1L)
+                    ))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
         }
     }
 
@@ -250,7 +292,34 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
-                    member
+                    new LoginMember(member.getId())
+            ))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
+
+        @Test
+        void 등록되지_않은_회원의_리뷰_목록_페이징_조회라면_예외를_던진다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            assertThatThrownBy(() -> reviewService.getReviewsByMemberInMapBounds(
+                    member.getId(),
+                    null,
+                    mapCoordinateRequest,
+                    deviceCoordinateRequest,
+                    10,
+                    new LoginMember(-1L)
             ))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("등록되지 않은 회원입니다.");
@@ -281,7 +350,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
-                    member
+                    new LoginMember(member.getId())
             );
 
             List<ReviewResponse> result = response.reviews();
@@ -318,7 +387,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
-                    member
+                    new LoginMember(member.getId())
             );
 
             List<ReviewResponse> result = response.reviews();
@@ -367,7 +436,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
-                    member
+                    new LoginMember(member.getId())
             );
 
             List<ReviewResponse> result = response.reviews();
@@ -415,7 +484,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
-                    member
+                    new LoginMember(member.getId())
             );
 
             List<ReviewResponse> result = response.reviews();
@@ -452,7 +521,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
-                    member
+                    new LoginMember(member.getId())
             );
 
             assertSoftly(softly -> {
@@ -480,7 +549,7 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     10,
                     new DeviceCoordinateRequest(BigDecimal.valueOf(124.124), BigDecimal.valueOf(37.41424)),
-                    member
+                    new LoginMember(member.getId())
             );
 
             List<StoreReviewContentResponse> reviewContentResponses = storeReviewResponse.storeReviewContentResponses();
@@ -517,7 +586,7 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     10,
                     new DeviceCoordinateRequest(BigDecimal.valueOf(124.124), BigDecimal.valueOf(37.41424)),
-                    member
+                    new LoginMember(member.getId())
             );
 
             List<StoreReviewContentResponse> reviewContentResponses = storeReviewResponse.storeReviewContentResponses();
@@ -554,7 +623,7 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     10,
                     new DeviceCoordinateRequest(BigDecimal.valueOf(124.124), BigDecimal.valueOf(37.41424)),
-                    member
+                    new LoginMember(member.getId())
             );
 
             List<StoreReviewContentResponse> reviewContentResponses = storeReviewResponse.storeReviewContentResponses();
@@ -584,7 +653,7 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     10,
                     new DeviceCoordinateRequest(BigDecimal.valueOf(124.124), BigDecimal.valueOf(37.41424)),
-                    member
+                    new LoginMember(member.getId())
             );
 
             List<StoreReviewContentResponse> result = storeReviewResponse.storeReviewContentResponses();
@@ -610,7 +679,7 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     10,
                     new DeviceCoordinateRequest(BigDecimal.valueOf(124.124), BigDecimal.valueOf(37.41424)),
-                    member
+                    new LoginMember(member.getId())
             );
 
             List<StoreReviewContentResponse> result = storeReviewResponse.storeReviewContentResponses();
@@ -639,10 +708,27 @@ class ReviewServiceTest extends IntegrationTest {
                     .hasMessage("일치하는 가게를 찾을 수 없습니다.");
         }
 
+        @Test
+        void 등록되지_않은_회원의_가게_리뷰_목록_페이징_조회라면_예외를_던진다() {
+            Store store = storeTestPersister.builder().save();
+
+            assertThatThrownBy(() -> reviewService.getReviewsByStore(
+                    store.getId(),
+                    "ALL",
+                    null,
+                    10,
+                    new DeviceCoordinateRequest(BigDecimal.valueOf(124.124), BigDecimal.valueOf(37.41424)),
+                    new LoginMember(-1L)
+            ))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
+
         @ParameterizedTest
         @ValueSource(strings = {"", " ", "test", "all", "friend"})
         void 일치하는_리뷰_필터링_조건이_없으면_예외가_발생한다(String reviewFilter) {
             Store store = storeTestPersister.builder().save();
+            Member member = memberTestPersister.builder().save();
 
             assertThatThrownBy(() -> reviewService.getReviewsByStore(
                     store.getId(),
@@ -650,7 +736,7 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     10,
                     null,
-                    null
+                    new LoginMember(member.getId())
             ))
                     .isInstanceOf(InvalidArgumentException.class)
                     .hasMessage("일치하는 리뷰 필터링 조건이 없습니다.");
@@ -685,7 +771,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
-                    member
+                    new LoginMember(member.getId())
             );
 
             List<ReviewResponse> result = response.reviews();
@@ -721,7 +807,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
-                    member
+                    new LoginMember(member.getId())
             );
 
             List<ReviewResponse> result = response.reviews();
@@ -771,7 +857,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
-                    member
+                    new LoginMember(member.getId())
             );
 
             List<ReviewResponse> result = response.reviews();
@@ -784,6 +870,41 @@ class ReviewServiceTest extends IntegrationTest {
                 softly.assertThat(Math.round(result.get(0).store().distance() / 10) * 10).isEqualTo(130);
                 softly.assertThat(result.get(0).store().isBookmarked()).isTrue();
             });
+        }
+
+        @Test
+        void 등록되지_않은_회원의_북마크_가게_목록_페이징_조회라면_예외를_던진다() {
+            Store store = storeTestPersister.builder()
+                    .address(
+                            Address.of(
+                                    "부산광역시 금정구 부산대학로63번길 2",
+                                    PointUtils.generate(
+                                            BigDecimal.valueOf(129.084180374589),
+                                            BigDecimal.valueOf(35.23159315706788)
+                                    )
+                            )
+                    )
+                    .save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(129.0842730512684),
+                    BigDecimal.valueOf(35.23038627521815)
+            );
+
+            assertThatThrownBy(() -> reviewService.getReviewsByBookmarkInMapBounds(
+                    null,
+                    mapCoordinateRequest,
+                    deviceCoordinateRequest,
+                    10,
+                    new LoginMember(-1L)
+            ))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
         }
     }
 
@@ -815,7 +936,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
-                    member
+                    new LoginMember(member.getId())
             );
 
             List<ReviewResponse> result = response.reviews();
@@ -852,7 +973,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
-                    member
+                    new LoginMember(member.getId())
             );
 
             List<ReviewResponse> result = response.reviews();
@@ -901,7 +1022,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
-                    member
+                    new LoginMember(member.getId())
             );
 
             List<ReviewResponse> result = response.reviews();
@@ -949,7 +1070,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
-                    member
+                    new LoginMember(member.getId())
             );
 
             List<ReviewResponse> result = response.reviews();
@@ -962,6 +1083,24 @@ class ReviewServiceTest extends IntegrationTest {
                 softly.assertThat(Math.round(result.get(0).store().distance() / 10) * 10).isEqualTo(130);
                 softly.assertThat(result.get(0).store().isBookmarked()).isFalse();
             });
+        }
+
+        @Test
+        void 등록되지_않은_회원의_팔로잉_멤버_리뷰_목록_페이징_조회라면_예외를_던진다() {
+            assertThatThrownBy(() -> reviewService.getReviewsByFollowingInMapBounds(
+                    null,
+                    new MapCoordinateRequest(
+                            BigDecimal.valueOf(1),
+                            BigDecimal.valueOf(1),
+                            BigDecimal.valueOf(1),
+                            BigDecimal.valueOf(1)
+                    ),
+                    new DeviceCoordinateRequest(BigDecimal.valueOf(1), BigDecimal.valueOf(1)),
+                    10,
+                    new LoginMember(-1L)
+            ))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
         }
     }
 
@@ -989,10 +1128,38 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
-                    member
+                    new LoginMember(member.getId())
             ))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("존재하지 않는 학교입니다.");
+        }
+
+        @Test
+        void 등록되지_않은_회원의_학교_근처_리뷰_목록_페이징_조회라면_예외를_던진다() {
+            Store store = storeTestPersister.builder().save();
+            School school = schoolTestPersister.builder().save();
+            storeSchoolTestPersister.builder().store(store).school(school).save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            assertThatThrownBy(() -> reviewService.getReviewsBySchoolInMapBounds(
+                    school.getId(),
+                    null,
+                    mapCoordinateRequest,
+                    deviceCoordinateRequest,
+                    10,
+                    new LoginMember(-1L)
+            ))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
         }
 
         @Test
@@ -1022,7 +1189,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
-                    member
+                    new LoginMember(member.getId())
             );
 
             List<ReviewResponse> result = response.reviews();
@@ -1060,7 +1227,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
-                    member
+                    new LoginMember(member.getId())
             );
 
             List<ReviewResponse> result = response.reviews();
@@ -1110,7 +1277,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
-                    member
+                    new LoginMember(member.getId())
             );
 
             List<ReviewResponse> result = response.reviews();
@@ -1159,7 +1326,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
-                    member
+                    new LoginMember(member.getId())
             );
 
             List<ReviewResponse> result = response.reviews();
@@ -1183,7 +1350,8 @@ class ReviewServiceTest extends IntegrationTest {
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
             Member member = memberTestPersister.builder().save();
 
-            Long reviewId = reviewService.create(reviewCreateRequest, null, member).getId();
+            Long reviewId = reviewService.create(reviewCreateRequest, null, new LoginMember(member.getId()))
+                    .getId();
 
             assertThat(reviewId).isNotNull();
         }
@@ -1194,7 +1362,8 @@ class ReviewServiceTest extends IntegrationTest {
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
             Member member = memberTestPersister.builder().save();
 
-            Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member).getId();
+            Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, new LoginMember(member.getId()))
+                    .getId();
 
             assertThat(reviewId).isNotNull();
             FileTestUtils.cleanUp();
@@ -1204,13 +1373,24 @@ class ReviewServiceTest extends IntegrationTest {
         void 이미_생성된_가게인_경우에도_정상적으로_저장한다() {
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
             Member member = memberTestPersister.builder().save();
-            reviewService.create(reviewCreateRequest, null, member);
+            reviewService.create(reviewCreateRequest, null, new LoginMember(member.getId()));
             ReviewCreateRequest otherReviewCreateRequest = generateReviewCreateRequest();
             Member otherMember = memberTestPersister.builder().save();
 
-            Long savedReviewId = reviewService.create(otherReviewCreateRequest, null, otherMember).getId();
+            Long savedReviewId =
+                    reviewService.create(otherReviewCreateRequest, null, new LoginMember(otherMember.getId()))
+                            .getId();
 
             assertThat(savedReviewId).isNotNull();
+        }
+
+        @Test
+        void 등록되지_않은_회원의_리뷰_저장이라면_예외를_던진다() {
+            ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
+
+            assertThatThrownBy(() -> reviewService.create(reviewCreateRequest, null, new LoginMember(-1L)))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
         }
 
         @Test
@@ -1219,7 +1399,8 @@ class ReviewServiceTest extends IntegrationTest {
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
             Member member = memberTestPersister.builder().save();
 
-            assertThatThrownBy(() -> reviewService.create(reviewCreateRequest, multipartFiles, member))
+            assertThatThrownBy(
+                    () -> reviewService.create(reviewCreateRequest, multipartFiles, new LoginMember(member.getId())))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("리뷰에 사진은 최대 4장까지 가능합니다.");
         }
@@ -1233,10 +1414,11 @@ class ReviewServiceTest extends IntegrationTest {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2, "images");
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
             Member member = memberTestPersister.builder().save();
-            Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member).getId();
+            Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, new LoginMember(member.getId()))
+                    .getId();
             ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(Collections.emptyList());
 
-            reviewService.update(reviewId, reviewUpdateRequest, null, member);
+            reviewService.update(reviewId, reviewUpdateRequest, null, new LoginMember(member.getId()));
 
             Review updateReview = reviewRepository.findById(reviewId).get();
             assertSoftly(softly -> {
@@ -1251,11 +1433,12 @@ class ReviewServiceTest extends IntegrationTest {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2, "images");
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
             Member member = memberTestPersister.builder().save();
-            Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member).getId();
+            Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, new LoginMember(member.getId()))
+                    .getId();
             ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(Collections.emptyList());
             List<MultipartFile> updateImages = FileTestUtils.generateMultipartFiles(2, "images");
 
-            reviewService.update(reviewId, reviewUpdateRequest, updateImages, member);
+            reviewService.update(reviewId, reviewUpdateRequest, updateImages, new LoginMember(member.getId()));
 
             Review updateReview = reviewRepository.findById(reviewId).get();
             int updatePhotoSize = multipartFiles.size() + updateImages.size();
@@ -1271,12 +1454,12 @@ class ReviewServiceTest extends IntegrationTest {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2, "images");
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
             Member member = memberTestPersister.builder().save();
-            Review review = reviewService.create(reviewCreateRequest, multipartFiles, member);
+            Review review = reviewService.create(reviewCreateRequest, multipartFiles, new LoginMember(member.getId()));
             List<Photo> reviewPhotos = reviewPhotoService.findPhotos(review);
             List<Long> deletePhotoIds = List.of(reviewPhotos.get(0).getId());
             ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(deletePhotoIds);
 
-            reviewService.update(review.getId(), reviewUpdateRequest, null, member);
+            reviewService.update(review.getId(), reviewUpdateRequest, null, new LoginMember(member.getId()));
 
             Review updateReview = reviewRepository.findById(review.getId()).get();
             int updatePhotoSize = multipartFiles.size() - deletePhotoIds.size();
@@ -1292,13 +1475,13 @@ class ReviewServiceTest extends IntegrationTest {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2, "images");
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
             Member member = memberTestPersister.builder().save();
-            Review review = reviewService.create(reviewCreateRequest, multipartFiles, member);
+            Review review = reviewService.create(reviewCreateRequest, multipartFiles, new LoginMember(member.getId()));
             List<Photo> reviewPhotos = reviewPhotoService.findPhotos(review);
             List<Long> deletePhotoIds = List.of(reviewPhotos.get(0).getId());
             ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(deletePhotoIds);
             List<MultipartFile> updateImages = FileTestUtils.generateMultipartFiles(2, "images");
 
-            reviewService.update(review.getId(), reviewUpdateRequest, updateImages, member);
+            reviewService.update(review.getId(), reviewUpdateRequest, updateImages, new LoginMember(member.getId()));
 
             Review updateReview = reviewRepository.findById(review.getId()).get();
             int updatePhotoSize = multipartFiles.size() + updateImages.size() - deletePhotoIds.size();
@@ -1314,9 +1497,29 @@ class ReviewServiceTest extends IntegrationTest {
             Member member = memberTestPersister.builder().save();
             ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(Collections.emptyList());
 
-            assertThatThrownBy(() -> reviewService.update(-1L, reviewUpdateRequest, null, member))
+            assertThatThrownBy(
+                    () -> reviewService.update(-1L, reviewUpdateRequest, null, new LoginMember(member.getId())))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("일치하는 리뷰를 찾을 수 없습니다.");
+        }
+
+        @Test
+        void 등록되지_않은_회원의_리뷰_수정이라면_예외를_던진다() {
+            ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
+            Member member = memberTestPersister.builder().save();
+            Long reviewId = reviewService.create(reviewCreateRequest, null, new LoginMember(member.getId()))
+                    .getId();
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(Collections.emptyList());
+
+            assertThatThrownBy(() ->
+                    reviewService.update(
+                            reviewId,
+                            reviewUpdateRequest,
+                            null,
+                            new LoginMember(-1L)
+                    ))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
         }
 
         @Test
@@ -1325,10 +1528,17 @@ class ReviewServiceTest extends IntegrationTest {
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
             Member member = memberTestPersister.builder().save();
             Member otherMember = memberTestPersister.builder().save();
-            Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member).getId();
+            Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, new LoginMember(member.getId()))
+                    .getId();
             ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(Collections.emptyList());
 
-            assertThatThrownBy(() -> reviewService.update(reviewId, reviewUpdateRequest, null, otherMember))
+            assertThatThrownBy(() ->
+                    reviewService.update(
+                            reviewId,
+                            reviewUpdateRequest,
+                            null,
+                            new LoginMember(otherMember.getId())
+                    ))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("본인이 작성한 리뷰가 아닙니다.");
         }
@@ -1338,11 +1548,18 @@ class ReviewServiceTest extends IntegrationTest {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2, "images");
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
             Member member = memberTestPersister.builder().save();
-            Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member).getId();
+            Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, new LoginMember(member.getId()))
+                    .getId();
             ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(List.of(-1L));
             List<MultipartFile> updateImages = FileTestUtils.generateMultipartFiles(3, "images");
 
-            assertThatThrownBy(() -> reviewService.update(reviewId, reviewUpdateRequest, updateImages, member))
+            assertThatThrownBy(() ->
+                    reviewService.update(
+                            reviewId,
+                            reviewUpdateRequest,
+                            updateImages,
+                            new LoginMember(member.getId())
+                    ))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("삭제하려는 사진이 현재 리뷰에 존재하지 않습니다.");
         }
@@ -1352,11 +1569,18 @@ class ReviewServiceTest extends IntegrationTest {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2, "images");
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
             Member member = memberTestPersister.builder().save();
-            Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member).getId();
+            Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, new LoginMember(member.getId()))
+                    .getId();
             ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(Collections.emptyList());
             List<MultipartFile> updateImages = FileTestUtils.generateMultipartFiles(3, "images");
 
-            assertThatThrownBy(() -> reviewService.update(reviewId, reviewUpdateRequest, updateImages, member))
+            assertThatThrownBy(() ->
+                    reviewService.update(
+                            reviewId,
+                            reviewUpdateRequest,
+                            updateImages,
+                            new LoginMember(member.getId())
+                    ))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("리뷰에 사진은 최대 4장까지 가능합니다.");
         }
@@ -1370,9 +1594,10 @@ class ReviewServiceTest extends IntegrationTest {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2, "images");
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
             Member member = memberTestPersister.builder().save();
-            Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member).getId();
+            Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, new LoginMember(member.getId()))
+                    .getId();
 
-            reviewService.delete(reviewId, member);
+            reviewService.delete(reviewId, new LoginMember(member.getId()));
 
             assertThat(reviewRepository.findById(reviewId)).isEmpty();
         }
@@ -1381,9 +1606,21 @@ class ReviewServiceTest extends IntegrationTest {
         void 등록된_리뷰가_아니면_예외를_던진다() {
             Member member = memberTestPersister.builder().save();
 
-            assertThatThrownBy(() -> reviewService.delete(-1L, member))
+            assertThatThrownBy(() -> reviewService.delete(-1L, new LoginMember(member.getId())))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("일치하는 리뷰를 찾을 수 없습니다.");
+        }
+
+        @Test
+        void 등록되지_않은_회원의_리뷰_삭제라면_예외를_던진다() {
+            ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
+            Member member = memberTestPersister.builder().save();
+            Long reviewId = reviewService.create(reviewCreateRequest, null, new LoginMember(member.getId()))
+                    .getId();
+
+            assertThatThrownBy(() -> reviewService.delete(reviewId, new LoginMember(-1L)))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
         }
 
         @Test
@@ -1392,9 +1629,10 @@ class ReviewServiceTest extends IntegrationTest {
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
             Member member = memberTestPersister.builder().save();
             Member otherMember = memberTestPersister.builder().save();
-            Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, member).getId();
+            Long reviewId = reviewService.create(reviewCreateRequest, multipartFiles, new LoginMember(member.getId()))
+                    .getId();
 
-            assertThatThrownBy(() -> reviewService.delete(reviewId, otherMember))
+            assertThatThrownBy(() -> reviewService.delete(reviewId, new LoginMember(otherMember.getId())))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("본인이 작성한 리뷰가 아닙니다.");
         }

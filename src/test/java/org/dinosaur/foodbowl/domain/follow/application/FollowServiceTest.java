@@ -16,6 +16,7 @@ import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.global.common.response.PageResponse;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.dinosaur.foodbowl.test.IntegrationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -30,32 +31,45 @@ class FollowServiceTest extends IntegrationTest {
     @Autowired
     private FollowRepository followRepository;
 
-    @Test
-    void 나의_팔로잉_목록을_페이징_조회한다() {
-        Member follower = memberTestPersister.builder().save();
-        Member followingA = memberTestPersister.builder().save();
-        Member followingB = memberTestPersister.builder().save();
+    @Nested
+    class 나의_팔로잉_목록_페이징_조회_시 {
 
-        Follow followA = followTestPersister.builder().following(followingA).follower(follower).save();
-        Follow followB = followTestPersister.builder().following(followingB).follower(follower).save();
+        @Test
+        void 나의_팔로잉_목록을_페이징_조회한다() {
+            Member follower = memberTestPersister.builder().save();
+            Member followingA = memberTestPersister.builder().save();
+            Member followingB = memberTestPersister.builder().save();
 
-        PageResponse<FollowingResponse> response = followService.getFollowings(0, 2, follower);
+            Follow followA = followTestPersister.builder().following(followingA).follower(follower).save();
+            Follow followB = followTestPersister.builder().following(followingB).follower(follower).save();
 
-        assertSoftly(softly -> {
-            softly.assertThat(response.content())
-                    .usingRecursiveComparison()
-                    .isEqualTo(
-                            List.of(
-                                    FollowingResponse.from(followB.getFollowing()),
-                                    FollowingResponse.from(followA.getFollowing())
-                            )
-                    );
-            softly.assertThat(response.isFirst()).isTrue();
-            softly.assertThat(response.isLast()).isTrue();
-            softly.assertThat(response.hasNext()).isFalse();
-            softly.assertThat(response.currentPage()).isEqualTo(0);
-            softly.assertThat(response.currentSize()).isEqualTo(2);
-        });
+            PageResponse<FollowingResponse> response = followService.getFollowings(0, 2,
+                    new LoginMember(follower.getId()));
+
+            assertSoftly(softly -> {
+                softly.assertThat(response.content())
+                        .usingRecursiveComparison()
+                        .isEqualTo(
+                                List.of(
+                                        FollowingResponse.from(followB.getFollowing()),
+                                        FollowingResponse.from(followA.getFollowing())
+                                )
+                        );
+                softly.assertThat(response.isFirst()).isTrue();
+                softly.assertThat(response.isLast()).isTrue();
+                softly.assertThat(response.hasNext()).isFalse();
+                softly.assertThat(response.currentPage()).isEqualTo(0);
+                softly.assertThat(response.currentSize()).isEqualTo(2);
+            });
+        }
+
+        @Test
+        void 등록되지_않은_회원의_팔로잉_목록_조회라면_예외를_던진다() {
+            assertThatThrownBy(
+                    () -> followService.getFollowings(0, 2, new LoginMember(-1L)))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
     }
 
     @Nested
@@ -74,7 +88,7 @@ class FollowServiceTest extends IntegrationTest {
             followTestPersister.builder().following(followingA).follower(member).save();
 
             PageResponse<OtherUserFollowingResponse> response =
-                    followService.getOtherUserFollowings(follower.getId(), 0, 10, member);
+                    followService.getOtherUserFollowings(follower.getId(), 0, 10, new LoginMember(member.getId()));
 
             assertSoftly(softly -> {
                 softly.assertThat(response.content()).hasSize(3);
@@ -102,38 +116,62 @@ class FollowServiceTest extends IntegrationTest {
         void 등록되지_않은_회원이라면_예외를_던진다() {
             Member loginMember = memberTestPersister.builder().save();
 
-            assertThatThrownBy(() -> followService.getOtherUserFollowings(-1L, 0, 2, loginMember))
+            assertThatThrownBy(
+                    () -> followService.getOtherUserFollowings(-1L, 0, 2, new LoginMember(loginMember.getId())))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
+
+        @Test
+        void 등록되지_않은_회원의_팔로잉_목록_조회라면_예외를_던진다() {
+            Member targetMember = memberTestPersister.builder().save();
+
+            assertThatThrownBy(
+                    () -> followService.getOtherUserFollowings(targetMember.getId(), 0, 2, new LoginMember(-1L)))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("등록되지 않은 회원입니다.");
         }
     }
 
-    @Test
-    void 나의_팔로워_목록을_페이징_조회한다() {
-        Member following = memberTestPersister.builder().save();
-        Member followerA = memberTestPersister.builder().save();
-        Member followerB = memberTestPersister.builder().save();
+    @Nested
+    class 나의_팔로워_목록_페이징_조회_시 {
 
-        Follow followA = followTestPersister.builder().following(following).follower(followerA).save();
-        Follow followB = followTestPersister.builder().following(following).follower(followerB).save();
+        @Test
+        void 나의_팔로워_목록을_페이징_조회한다() {
+            Member following = memberTestPersister.builder().save();
+            Member followerA = memberTestPersister.builder().save();
+            Member followerB = memberTestPersister.builder().save();
 
-        PageResponse<FollowerResponse> response = followService.getFollowers(0, 2, following);
+            Follow followA = followTestPersister.builder().following(following).follower(followerA).save();
+            Follow followB = followTestPersister.builder().following(following).follower(followerB).save();
 
-        assertSoftly(softly -> {
-            softly.assertThat(response.content())
-                    .usingRecursiveComparison()
-                    .isEqualTo(
-                            List.of(
-                                    FollowerResponse.from(followB.getFollower()),
-                                    FollowerResponse.from(followA.getFollower())
-                            )
-                    );
-            softly.assertThat(response.isFirst()).isTrue();
-            softly.assertThat(response.isLast()).isTrue();
-            softly.assertThat(response.hasNext()).isFalse();
-            softly.assertThat(response.currentPage()).isEqualTo(0);
-            softly.assertThat(response.currentSize()).isEqualTo(2);
-        });
+            PageResponse<FollowerResponse> response = followService.getFollowers(0, 2,
+                    new LoginMember(following.getId()));
+
+            assertSoftly(softly -> {
+                softly.assertThat(response.content())
+                        .usingRecursiveComparison()
+                        .isEqualTo(
+                                List.of(
+                                        FollowerResponse.from(followB.getFollower()),
+                                        FollowerResponse.from(followA.getFollower())
+                                )
+                        );
+                softly.assertThat(response.isFirst()).isTrue();
+                softly.assertThat(response.isLast()).isTrue();
+                softly.assertThat(response.hasNext()).isFalse();
+                softly.assertThat(response.currentPage()).isEqualTo(0);
+                softly.assertThat(response.currentSize()).isEqualTo(2);
+            });
+        }
+
+        @Test
+        void 등록되지_않은_회원의_팔로워_목록_조회라면_예외를_던진다() {
+            assertThatThrownBy(
+                    () -> followService.getFollowers(0, 2, new LoginMember(-1L)))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
     }
 
     @Nested
@@ -152,7 +190,7 @@ class FollowServiceTest extends IntegrationTest {
             followTestPersister.builder().following(followerA).follower(member).save();
 
             PageResponse<OtherUserFollowerResponse> response =
-                    followService.getOtherUserFollowers(following.getId(), 0, 10, member);
+                    followService.getOtherUserFollowers(following.getId(), 0, 10, new LoginMember(member.getId()));
 
             assertSoftly(softly -> {
                 softly.assertThat(response.content()).hasSize(3);
@@ -179,7 +217,18 @@ class FollowServiceTest extends IntegrationTest {
         void 등록되지_않은_회원이라면_예외를_던진다() {
             Member loginMember = memberTestPersister.builder().save();
 
-            assertThatThrownBy(() -> followService.getOtherUserFollowers(-1L, 0, 2, loginMember))
+            assertThatThrownBy(
+                    () -> followService.getOtherUserFollowers(-1L, 0, 2, new LoginMember(loginMember.getId())))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
+
+        @Test
+        void 등록되지_않은_회원의_팔로워_목록_조회라면_예외를_던진다() {
+            Member targetMember = memberTestPersister.builder().save();
+
+            assertThatThrownBy(
+                    () -> followService.getOtherUserFollowers(targetMember.getId(), 0, 2, new LoginMember(-1L)))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("등록되지 않은 회원입니다.");
         }
@@ -193,7 +242,7 @@ class FollowServiceTest extends IntegrationTest {
             Member loginMember = memberTestPersister.builder().save();
             Member other = memberTestPersister.builder().save();
 
-            followService.follow(other.getId(), loginMember);
+            followService.follow(other.getId(), new LoginMember(loginMember.getId()));
 
             Optional<Follow> follow = followRepository.findByFollowingAndFollower(other, loginMember);
             assertThat(follow).isPresent();
@@ -203,7 +252,18 @@ class FollowServiceTest extends IntegrationTest {
         void 등록되지_않은_회원이라면_예외를_던진다() {
             Member loginMember = memberTestPersister.builder().save();
 
-            assertThatThrownBy(() -> followService.follow(-1L, loginMember))
+            assertThatThrownBy(
+                    () -> followService.follow(-1L, new LoginMember(loginMember.getId())))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
+
+        @Test
+        void 등록되지_않은_회원의_팔로우_등록이라면_예외를_던진다() {
+            Member member = memberTestPersister.builder().save();
+
+            assertThatThrownBy(
+                    () -> followService.follow(member.getId(), new LoginMember(-1L)))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("등록되지 않은 회원입니다.");
         }
@@ -212,7 +272,8 @@ class FollowServiceTest extends IntegrationTest {
         void 자신을_팔로우한다면_예외를_던진다() {
             Member loginMember = memberTestPersister.builder().save();
 
-            assertThatThrownBy(() -> followService.follow(loginMember.getId(), loginMember))
+            assertThatThrownBy(
+                    () -> followService.follow(loginMember.getId(), new LoginMember(loginMember.getId())))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("본인을 팔로우할 수 없습니다.");
         }
@@ -226,7 +287,8 @@ class FollowServiceTest extends IntegrationTest {
                     .follower(loginMember)
                     .save();
 
-            assertThatThrownBy(() -> followService.follow(other.getId(), loginMember))
+            assertThatThrownBy(
+                    () -> followService.follow(other.getId(), new LoginMember(loginMember.getId())))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("이미 팔로우한 회원입니다.");
         }
@@ -244,7 +306,7 @@ class FollowServiceTest extends IntegrationTest {
                     .follower(loginMember)
                     .save();
 
-            followService.unfollow(followMember.getId(), loginMember);
+            followService.unfollow(followMember.getId(), new LoginMember(loginMember.getId()));
 
             assertThat(followRepository.findById(follow.getId())).isNotPresent();
         }
@@ -253,7 +315,18 @@ class FollowServiceTest extends IntegrationTest {
         void 등록되지_않은_회원이라면_에외를_던진다() {
             Member loginMember = memberTestPersister.builder().save();
 
-            assertThatThrownBy(() -> followService.unfollow(-1L, loginMember))
+            assertThatThrownBy(
+                    () -> followService.unfollow(-1L, new LoginMember(loginMember.getId())))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
+
+        @Test
+        void 등록되지_않은_회원의_팔로우_취소라면_예외를_던진다() {
+            Member member = memberTestPersister.builder().save();
+
+            assertThatThrownBy(
+                    () -> followService.unfollow(member.getId(), new LoginMember(-1L)))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("등록되지 않은 회원입니다.");
         }
@@ -263,7 +336,8 @@ class FollowServiceTest extends IntegrationTest {
             Member loginMember = memberTestPersister.builder().save();
             Member followMember = memberTestPersister.builder().save();
 
-            assertThatThrownBy(() -> followService.unfollow(followMember.getId(), loginMember))
+            assertThatThrownBy(
+                    () -> followService.unfollow(followMember.getId(), new LoginMember(loginMember.getId())))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("팔로우 하지 않은 회원입니다.");
         }
@@ -281,7 +355,7 @@ class FollowServiceTest extends IntegrationTest {
                     .follower(followMember)
                     .save();
 
-            followService.deleteFollower(followMember.getId(), loginMember);
+            followService.deleteFollower(followMember.getId(), new LoginMember(loginMember.getId()));
 
             assertThat(followRepository.findById(follow.getId())).isNotPresent();
         }
@@ -290,7 +364,18 @@ class FollowServiceTest extends IntegrationTest {
         void 등록되지_않은_회원이라면_예외를_던진다() {
             Member loginMember = memberTestPersister.builder().save();
 
-            assertThatThrownBy(() -> followService.deleteFollower(-1L, loginMember))
+            assertThatThrownBy(
+                    () -> followService.deleteFollower(-1L, new LoginMember(loginMember.getId())))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
+
+        @Test
+        void 등록되지_않은_회원의_팔로워_삭제라면_예외를_던진다() {
+            Member member = memberTestPersister.builder().save();
+
+            assertThatThrownBy(
+                    () -> followService.deleteFollower(member.getId(), new LoginMember(-1L)))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("등록되지 않은 회원입니다.");
         }
@@ -300,7 +385,8 @@ class FollowServiceTest extends IntegrationTest {
             Member loginMember = memberTestPersister.builder().save();
             Member followMember = memberTestPersister.builder().save();
 
-            assertThatThrownBy(() -> followService.deleteFollower(followMember.getId(), loginMember))
+            assertThatThrownBy(
+                    () -> followService.deleteFollower(followMember.getId(), new LoginMember(loginMember.getId())))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage("나를 팔로우 하지 않은 회원입니다.");
         }

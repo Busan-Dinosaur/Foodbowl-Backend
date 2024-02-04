@@ -6,8 +6,8 @@ import org.dinosaur.foodbowl.domain.auth.application.AuthService;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.AppleLoginRequest;
 import org.dinosaur.foodbowl.domain.auth.dto.reqeust.RenewTokenRequest;
 import org.dinosaur.foodbowl.domain.auth.dto.response.TokenResponse;
-import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.global.presentation.Auth;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,7 +28,7 @@ public class AuthController implements AuthControllerDocs {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@Auth Member loginMember) {
+    public ResponseEntity<Void> logout(@Auth LoginMember loginMember) {
         authService.logout(loginMember);
         return ResponseEntity.noContent().build();
     }

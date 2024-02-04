@@ -15,6 +15,7 @@ import org.dinosaur.foodbowl.domain.member.domain.vo.Nickname;
 import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
 import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
 import org.dinosaur.foodbowl.global.exception.AuthenticationException;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,8 +74,8 @@ public class AuthService {
     }
 
     @Transactional
-    public void logout(Member loginMember) {
-        redisTemplate.delete(String.valueOf(loginMember.getId()));
+    public void logout(LoginMember loginMember) {
+        redisTemplate.delete(String.valueOf(loginMember.id()));
     }
 
     @Transactional

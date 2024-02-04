@@ -24,7 +24,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
-import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.application.ReviewService;
 import org.dinosaur.foodbowl.domain.review.domain.Review;
 import org.dinosaur.foodbowl.domain.review.dto.request.DeviceCoordinateRequest;
@@ -41,6 +40,7 @@ import org.dinosaur.foodbowl.domain.review.dto.response.ReviewStoreResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewWriterResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.StoreReviewContentResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.StoreReviewResponse;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.dinosaur.foodbowl.test.PresentationTest;
 import org.dinosaur.foodbowl.test.file.FileTestUtils;
 import org.junit.jupiter.api.Nested;
@@ -105,7 +105,7 @@ class ReviewControllerTest extends PresentationTest {
                             false
                     )
             );
-            given(reviewService.getReview(any(Long.class), any(Member.class), any(DeviceCoordinateRequest.class)))
+            given(reviewService.getReview(any(Long.class), any(LoginMember.class), any(DeviceCoordinateRequest.class)))
                     .willReturn(reviewResponse);
 
             mockMvc.perform(get("/v1/reviews/{id}", 1L)
@@ -191,7 +191,7 @@ class ReviewControllerTest extends PresentationTest {
                     any(Long.class),
                     anyInt(),
                     any(DeviceCoordinateRequest.class),
-                    any(Member.class))
+                    any(LoginMember.class))
             )
                     .willReturn(reviewFeedPageResponse);
 
@@ -298,7 +298,7 @@ class ReviewControllerTest extends PresentationTest {
                     any(MapCoordinateRequest.class),
                     any(DeviceCoordinateRequest.class),
                     anyInt(),
-                    any(Member.class)
+                    any(LoginMember.class)
             )).willReturn(response);
 
             MvcResult mvcResult = mockMvc.perform(get("/v1/reviews/members")
@@ -561,7 +561,7 @@ class ReviewControllerTest extends PresentationTest {
                     any(),
                     anyInt(),
                     any(DeviceCoordinateRequest.class),
-                    any(Member.class)
+                    any(LoginMember.class)
             )).willReturn(response);
 
             MvcResult mvcResult = mockMvc.perform(get("/v1/reviews/stores")
@@ -617,7 +617,7 @@ class ReviewControllerTest extends PresentationTest {
                     any(),
                     anyInt(),
                     any(DeviceCoordinateRequest.class),
-                    any(Member.class)
+                    any(LoginMember.class)
             )).willReturn(response);
 
             MvcResult mvcResult = mockMvc.perform(get("/v1/reviews/stores")
@@ -736,7 +736,7 @@ class ReviewControllerTest extends PresentationTest {
                     any(MapCoordinateRequest.class),
                     any(DeviceCoordinateRequest.class),
                     anyInt(),
-                    any(Member.class)
+                    any(LoginMember.class)
             )).willReturn(response);
 
             MvcResult mvcResult = mockMvc.perform(get("/v1/reviews/bookmarks")
@@ -962,7 +962,7 @@ class ReviewControllerTest extends PresentationTest {
                     any(MapCoordinateRequest.class),
                     any(DeviceCoordinateRequest.class),
                     anyInt(),
-                    any(Member.class)
+                    any(LoginMember.class)
             )).willReturn(response);
 
             MvcResult mvcResult = mockMvc.perform(get("/v1/reviews/following")
@@ -1189,7 +1189,7 @@ class ReviewControllerTest extends PresentationTest {
                     any(MapCoordinateRequest.class),
                     any(DeviceCoordinateRequest.class),
                     anyInt(),
-                    any(Member.class)
+                    any(LoginMember.class)
             )).willReturn(response);
 
             MvcResult mvcResult = mockMvc.perform(get("/v1/reviews/schools")
@@ -1426,7 +1426,7 @@ class ReviewControllerTest extends PresentationTest {
             );
             MockMultipartFile multipartFile1 = (MockMultipartFile) FileTestUtils.generateMultiPartFile("images");
             MockMultipartFile multipartFile2 = (MockMultipartFile) FileTestUtils.generateMultiPartFile("images");
-            given(reviewService.create(any(ReviewCreateRequest.class), anyList(), any(Member.class)))
+            given(reviewService.create(any(ReviewCreateRequest.class), anyList(), any(LoginMember.class)))
                     .willReturn(Review.builder().content(reviewCreateRequest.reviewContent()).build());
 
             mockMvc.perform(multipart(HttpMethod.POST, "/v1/reviews")
@@ -1449,7 +1449,7 @@ class ReviewControllerTest extends PresentationTest {
                     "application/json",
                     objectMapper.writeValueAsBytes(reviewCreateRequest)
             );
-            given(reviewService.create(any(ReviewCreateRequest.class), any(), any(Member.class)))
+            given(reviewService.create(any(ReviewCreateRequest.class), any(), any(LoginMember.class)))
                     .willReturn(Review.builder().content(reviewCreateRequest.reviewContent()).build());
 
             mockMvc.perform(multipart("/v1/reviews")
@@ -1502,7 +1502,7 @@ class ReviewControllerTest extends PresentationTest {
                     objectMapper.writeValueAsBytes(reviewCreateRequest)
             );
             MockMultipartFile multipartFile = (MockMultipartFile) FileTestUtils.generateMultiPartFile("images");
-            given(reviewService.create(any(ReviewCreateRequest.class), anyList(), any(Member.class)))
+            given(reviewService.create(any(ReviewCreateRequest.class), anyList(), any(LoginMember.class)))
                     .willThrow(new MaxUploadSizeExceededException(5));
 
             mockMvc.perform(multipart("/v1/reviews")
@@ -1817,7 +1817,7 @@ class ReviewControllerTest extends PresentationTest {
                     objectMapper.writeValueAsBytes(reviewUpdateRequest)
             );
             willDoNothing().given(reviewService)
-                    .update(anyLong(), any(ReviewUpdateRequest.class), anyList(), any(Member.class));
+                    .update(anyLong(), any(ReviewUpdateRequest.class), anyList(), any(LoginMember.class));
 
             mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{reviewId}", 1L)
                             .file(request)
@@ -1839,7 +1839,7 @@ class ReviewControllerTest extends PresentationTest {
                     objectMapper.writeValueAsBytes(reviewUpdateRequest)
             );
             willDoNothing().given(reviewService)
-                    .update(anyLong(), any(ReviewUpdateRequest.class), anyList(), any(Member.class));
+                    .update(anyLong(), any(ReviewUpdateRequest.class), anyList(), any(LoginMember.class));
 
             mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/reviews/{reviewId}", 1L)
                             .file(request)
@@ -2000,7 +2000,7 @@ class ReviewControllerTest extends PresentationTest {
         @Test
         void 정상적으로_삭제되면_204_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
-            willDoNothing().given(reviewService).delete(anyLong(), any(Member.class));
+            willDoNothing().given(reviewService).delete(anyLong(), any(LoginMember.class));
 
             mockMvc.perform(delete("/v1/reviews/{reviewId}", 1L)
                             .header(AUTHORIZATION, BEARER + accessToken))

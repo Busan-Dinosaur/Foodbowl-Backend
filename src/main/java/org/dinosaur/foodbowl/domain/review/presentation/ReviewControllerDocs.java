@@ -12,7 +12,6 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.List;
-import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewFeedPageResponse;
@@ -20,6 +19,7 @@ import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.StoreReviewResponse;
 import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -71,7 +71,7 @@ public interface ReviewControllerDocs {
             @Parameter(description = "사용자 위도", example = "32.3636")
             BigDecimal deviceY,
 
-            Member loginMember
+            LoginMember loginMember
     );
 
     @Operation(
@@ -124,7 +124,7 @@ public interface ReviewControllerDocs {
             @Positive(message = "페이지 크기는 양수만 가능합니다.")
             int pageSize,
 
-            Member loginMember
+            LoginMember loginMember
     );
 
     @Operation(
@@ -215,7 +215,7 @@ public interface ReviewControllerDocs {
             @Positive(message = "페이지 크기는 양수만 가능합니다.")
             int pageSize,
 
-            Member loginMember
+            LoginMember loginMember
     );
 
     @Operation(
@@ -290,7 +290,7 @@ public interface ReviewControllerDocs {
             @Parameter(description = "사용자 위도", example = "32.3636")
             BigDecimal deviceY,
 
-            Member loginMember
+            LoginMember loginMember
     );
 
     @Operation(
@@ -373,7 +373,7 @@ public interface ReviewControllerDocs {
             @Positive(message = "페이지 크기는 양수만 가능합니다.")
             int pageSize,
 
-            Member loginMember
+            LoginMember loginMember
     );
 
     @Operation(
@@ -456,7 +456,7 @@ public interface ReviewControllerDocs {
             @Positive(message = "페이지 크기는 양수만 가능합니다.")
             int pageSize,
 
-            Member loginMember
+            LoginMember loginMember
     );
 
     @Operation(
@@ -552,7 +552,7 @@ public interface ReviewControllerDocs {
             @Positive(message = "페이지 크기는 양수만 가능합니다.")
             int pageSize,
 
-            Member loginMember
+            LoginMember loginMember
     );
 
     @Operation(summary = "리뷰 등록", description = "가게에 해당하는 리뷰를 등록합니다.")
@@ -586,7 +586,7 @@ public interface ReviewControllerDocs {
     ResponseEntity<Void> create(
             @Valid ReviewCreateRequest reviewCreateRequest,
             @Size(max = 4, message = "사진의 개수는 최대 4개까지 가능합니다.") List<MultipartFile> imageFiles,
-            Member member
+            LoginMember loginMember
     );
 
     @Operation(summary = "리뷰 수정",
@@ -638,7 +638,7 @@ public interface ReviewControllerDocs {
 
             @Size(max = 4, message = "사진의 개수는 최대 4개까지 가능합니다.") List<MultipartFile> imageFiles,
 
-            Member member
+            LoginMember loginMember
     );
 
     @Operation(summary = "리뷰 삭제", description = "사용자가 작성한 리뷰를 삭제합니다.")
@@ -669,6 +669,6 @@ public interface ReviewControllerDocs {
             @Positive(message = "리뷰 ID는 양수만 가능합니다.")
             Long reviewId,
 
-            Member member
+            LoginMember loginMember
     );
 }

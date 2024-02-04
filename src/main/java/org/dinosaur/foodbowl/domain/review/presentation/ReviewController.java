@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.application.ReviewService;
 import org.dinosaur.foodbowl.domain.review.dto.request.DeviceCoordinateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.MapCoordinateRequest;
@@ -17,6 +16,7 @@ import org.dinosaur.foodbowl.domain.review.dto.response.ReviewPageResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewResponse;
 import org.dinosaur.foodbowl.domain.review.dto.response.StoreReviewResponse;
 import org.dinosaur.foodbowl.global.presentation.Auth;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -50,7 +50,7 @@ public class ReviewController implements ReviewControllerDocs {
             @RequestParam(name = "deviceX") BigDecimal deviceX,
             @RequestParam(name = "deviceY") BigDecimal deviceY,
             @RequestParam(name = "pageSize", defaultValue = "10") @Positive(message = "페이지 크기는 양수만 가능합니다.") int pageSize,
-            @Auth Member loginMember
+            @Auth LoginMember loginMember
     ) {
         MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(x, y, deltaX, deltaY);
         DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(deviceX, deviceY);
@@ -71,7 +71,7 @@ public class ReviewController implements ReviewControllerDocs {
             @RequestParam(name = "deviceX") BigDecimal deviceX,
             @RequestParam(name = "deviceY") BigDecimal deviceY,
             @RequestParam(name = "pageSize", defaultValue = "20") @Positive(message = "페이지 크기는 양수만 가능합니다.") int pageSize,
-            @Auth Member loginMember
+            @Auth LoginMember loginMember
     ) {
         DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(deviceX, deviceY);
         ReviewFeedPageResponse reviewFeedPageResponse = reviewService.getReviewFeeds(
@@ -93,7 +93,7 @@ public class ReviewController implements ReviewControllerDocs {
             @RequestParam(name = "deviceX") BigDecimal deviceX,
             @RequestParam(name = "deviceY") BigDecimal deviceY,
             @RequestParam(name = "pageSize", defaultValue = "10") @Positive(message = "페이지 크기는 양수만 가능합니다.") int pageSize,
-            @Auth Member loginMember
+            @Auth LoginMember loginMember
     ) {
         MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(x, y, deltaX, deltaY);
         DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(deviceX, deviceY);
@@ -117,7 +117,7 @@ public class ReviewController implements ReviewControllerDocs {
             @RequestParam(name = "deviceX") BigDecimal deviceX,
             @RequestParam(name = "deviceY") BigDecimal deviceY,
             @RequestParam(name = "pageSize", defaultValue = "10") @Positive(message = "페이지 크기는 양수만 가능합니다.") int pageSize,
-            @Auth Member loginMember
+            @Auth LoginMember loginMember
     ) {
         MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(x, y, deltaX, deltaY);
         DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(deviceX, deviceY);
@@ -142,7 +142,7 @@ public class ReviewController implements ReviewControllerDocs {
             @RequestParam(name = "deviceX") BigDecimal deviceX,
             @RequestParam(name = "deviceY") BigDecimal deviceY,
             @RequestParam(name = "pageSize", defaultValue = "10") @Positive(message = "페이지 크기는 양수만 가능합니다.") int pageSize,
-            @Auth Member loginMember
+            @Auth LoginMember loginMember
     ) {
         MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(x, y, deltaX, deltaY);
         DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(deviceX, deviceY);
@@ -165,7 +165,7 @@ public class ReviewController implements ReviewControllerDocs {
             @RequestParam(name = "pageSize", defaultValue = "10") @Positive(message = "페이지 크기는 양수만 가능합니다.") int pageSize,
             @RequestParam(name = "deviceX") BigDecimal deviceX,
             @RequestParam(name = "deviceY") BigDecimal deviceY,
-            @Auth Member loginMember
+            @Auth LoginMember loginMember
     ) {
         DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(deviceX, deviceY);
         StoreReviewResponse storeReviewResponse = reviewService.getReviewsByStore(
@@ -184,10 +184,10 @@ public class ReviewController implements ReviewControllerDocs {
             @PathVariable("id") @Positive(message = "리뷰 ID는 양수만 가능합니다.") Long reviewId,
             @RequestParam(name = "deviceX") BigDecimal deviceX,
             @RequestParam(name = "deviceY") BigDecimal deviceY,
-            @Auth Member member
+            @Auth LoginMember loginMember
     ) {
         DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(deviceX, deviceY);
-        ReviewResponse reviewResponse = reviewService.getReview(reviewId, member, deviceCoordinateRequest);
+        ReviewResponse reviewResponse = reviewService.getReview(reviewId, loginMember, deviceCoordinateRequest);
         return ResponseEntity.ok(reviewResponse);
     }
 
@@ -196,9 +196,9 @@ public class ReviewController implements ReviewControllerDocs {
             @RequestPart(name = "request") @Valid ReviewCreateRequest reviewCreateRequest,
             @RequestPart(name = "images", required = false)
             @Size(max = 4, message = "사진의 개수는 최대 4개까지 가능합니다.") List<MultipartFile> imageFiles,
-            @Auth Member member
+            @Auth LoginMember loginMember
     ) {
-        reviewService.create(reviewCreateRequest, imageFiles, member);
+        reviewService.create(reviewCreateRequest, imageFiles, loginMember);
         return ResponseEntity.ok().build();
     }
 
@@ -211,18 +211,18 @@ public class ReviewController implements ReviewControllerDocs {
             @RequestPart(name = "request") @Valid ReviewUpdateRequest reviewUpdateRequest,
             @RequestPart(name = "images", required = false)
             @Size(max = 4, message = "사진의 개수는 최대 4개까지 가능합니다.") List<MultipartFile> imageFiles,
-            @Auth Member member
+            @Auth LoginMember loginMember
     ) {
-        reviewService.update(reviewId, reviewUpdateRequest, imageFiles, member);
+        reviewService.update(reviewId, reviewUpdateRequest, imageFiles, loginMember);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @PathVariable("id") @Positive(message = "리뷰 ID는 양수만 가능합니다.") Long reviewId,
-            @Auth Member member
+            @Auth LoginMember loginMember
     ) {
-        reviewService.delete(reviewId, member);
+        reviewService.delete(reviewId, loginMember);
         return ResponseEntity.noContent().build();
     }
 }

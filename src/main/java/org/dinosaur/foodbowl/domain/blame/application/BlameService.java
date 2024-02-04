@@ -12,10 +12,12 @@ import org.dinosaur.foodbowl.domain.blame.dto.request.BlameRequest;
 import org.dinosaur.foodbowl.domain.blame.exception.BlameExceptionType;
 import org.dinosaur.foodbowl.domain.blame.persistence.BlameRepository;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
+import org.dinosaur.foodbowl.domain.member.exception.MemberExceptionType;
 import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,11 +58,13 @@ public class BlameService {
     }
 
     @Transactional
-    public void blame(BlameRequest blameRequest, Member loginMember) {
+    public void blame(BlameRequest blameRequest, LoginMember loginMember) {
+        Member reporter = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
         BlameTarget blameTarget = BlameTarget.from(blameRequest.blameTarget());
-        validateBlame(blameTarget, blameRequest.targetId(), loginMember);
+        validateBlame(blameTarget, blameRequest.targetId(), reporter);
         Blame blame = Blame.builder()
-                .member(loginMember)
+                .member(reporter)
                 .targetId(blameRequest.targetId())
                 .blameTarget(blameTarget)
                 .description(blameRequest.description())

@@ -13,9 +13,9 @@ import org.dinosaur.foodbowl.domain.follow.dto.response.FollowerResponse;
 import org.dinosaur.foodbowl.domain.follow.dto.response.FollowingResponse;
 import org.dinosaur.foodbowl.domain.follow.dto.response.OtherUserFollowerResponse;
 import org.dinosaur.foodbowl.domain.follow.dto.response.OtherUserFollowingResponse;
-import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.global.common.response.PageResponse;
 import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.springframework.http.ResponseEntity;
 
 @Tag(name = "팔로우", description = "팔로우 API")
@@ -50,7 +50,7 @@ public interface FollowControllerDocs {
             @PositiveOrZero(message = "페이지 크기는 0이상만 가능합니다.")
             int size,
 
-            Member loginMember
+            LoginMember loginMember
     );
 
     @Operation(summary = "다른 회원 팔로잉 목록 조회", description = "정해진 개수만큼 다른 회원의 팔로잉 목록을 조회한다.")
@@ -95,7 +95,7 @@ public interface FollowControllerDocs {
             @PositiveOrZero(message = "페이지 크기는 0이상만 가능합니다.")
             int size,
 
-            Member loginMember
+            LoginMember loginMember
     );
 
     @Operation(summary = "팔로워 목록 조회", description = "정해진 개수만큼 팔로워 목록을 조회한다.")
@@ -127,7 +127,7 @@ public interface FollowControllerDocs {
             @PositiveOrZero(message = "페이지 크기는 0이상만 가능합니다.")
             int size,
 
-            Member loginMember
+            LoginMember loginMember
     );
 
     @Operation(summary = "다른 회원 팔로워 목록 조회", description = "정해진 개수만큼 다른 회원의 팔로워 목록을 조회한다.")
@@ -172,7 +172,7 @@ public interface FollowControllerDocs {
             @PositiveOrZero(message = "페이지 크기는 0이상만 가능합니다.")
             int size,
 
-            Member loginMember
+            LoginMember loginMember
     );
 
     @Operation(summary = "팔로우", description = "다른 회원에게 팔로우를 요청한다.")
@@ -205,7 +205,7 @@ public interface FollowControllerDocs {
             @Positive(message = "ID는 양수만 가능합니다.")
             Long targetMemberId,
 
-            Member loginMember
+            LoginMember loginMember
     );
 
     @Operation(summary = "언팔로우", description = "팔로우 되어있는 회원을 언팔로우한다.")
@@ -236,7 +236,7 @@ public interface FollowControllerDocs {
             @Positive(message = "ID는 양수만 가능합니다.")
             Long targetMemberId,
 
-            Member loginMember
+            LoginMember loginMember
     );
 
     @Operation(summary = "팔로워 삭제", description = "나를 팔로워 중인 회원의 팔로우를 삭제한다.")
@@ -267,6 +267,6 @@ public interface FollowControllerDocs {
             @Positive(message = "ID는 양수만 가능합니다.")
             Long targetMemberId,
 
-            Member loginMember
+            LoginMember loginMember
     );
 }

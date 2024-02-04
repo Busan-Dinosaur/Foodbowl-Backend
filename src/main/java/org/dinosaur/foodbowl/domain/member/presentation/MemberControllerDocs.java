@@ -12,14 +12,13 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
-import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.dto.request.UpdateProfileRequest;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileImageResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberSearchResponses;
 import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
 import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
-import org.dinosaur.foodbowl.global.presentation.Auth;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -52,7 +51,7 @@ public interface MemberControllerDocs {
             @PositiveOrZero(message = "회원 ID는 양수만 가능합니다.")
             Long memberId,
 
-            Member loginMember
+            LoginMember loginMember
     );
 
     @Operation(summary = "나의 프로필 조회", description = "나의 프로필을 조회한다.")
@@ -60,7 +59,7 @@ public interface MemberControllerDocs {
             responseCode = "200",
             description = "나의 프로필 조회 성공"
     )
-    ResponseEntity<MemberProfileResponse> getMyProfile(Member loginMember);
+    ResponseEntity<MemberProfileResponse> getMyProfile(LoginMember loginMember);
 
     @Operation(
             summary = "회원 검색",
@@ -103,7 +102,7 @@ public interface MemberControllerDocs {
             @Positive(message = "조회 크기는 1이상만 가능합니다.")
             @Max(value = 50, message = "최대 50개까지 조회가능합니다.") int size,
 
-            @Auth Member loginMember
+            LoginMember loginMember
     );
 
     @Operation(summary = "닉네임 존재 여부 확인", description = "닉네임이 존재하는지 여부를 확인한다.")
@@ -148,7 +147,7 @@ public interface MemberControllerDocs {
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
-    ResponseEntity<Void> updateProfile(@Valid UpdateProfileRequest updateProfileRequest, Member loginMember);
+    ResponseEntity<Void> updateProfile(@Valid UpdateProfileRequest updateProfileRequest, LoginMember loginMember);
 
     @Operation(
             summary = "프로필 이미지 수정",
@@ -183,7 +182,7 @@ public interface MemberControllerDocs {
             @Parameter(description = "수정할 프로필 이미지")
             MultipartFile thumbnail,
 
-            Member loginMember
+            LoginMember loginMember
     );
 
     @Operation(
@@ -207,7 +206,7 @@ public interface MemberControllerDocs {
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
-    ResponseEntity<Void> deleteProfileImage(Member loginMember);
+    ResponseEntity<Void> deleteProfileImage(LoginMember loginMember);
 
     @Operation(
             summary = "회원 탈퇴",
@@ -217,5 +216,5 @@ public interface MemberControllerDocs {
             responseCode = "204",
             description = "회원 탈퇴 성공"
     )
-    ResponseEntity<Void> deactivate(Member loginMember);
+    ResponseEntity<Void> deactivate(LoginMember loginMember);
 }

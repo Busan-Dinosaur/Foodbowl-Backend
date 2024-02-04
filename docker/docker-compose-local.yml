@@ -1,14 +1,28 @@
 version: "3.8"
 
 services:
-  db:
-    image: mysql:8.0.33
-    container_name: foodbowl-db
+  source:
+    image: foodbowl-db
+    container_name: foodbowl-source
     ports:
-      - "3306:3306"
-    environment:
-      - MYSQL_DATABASE=foodbowl
-      - MYSQL_ROOT_PASSWORD=admin
+      - 3306:3306
+    env_file:
+      - .env.source
+    volumes:
+      - ./mysql-source.cnf:/etc/mysql/conf.d/mysql.cnf
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+
+  replica:
+    image: foodbowl-db
+    container_name: foodbowl-replica
+    ports:
+      - 3307:3306
+    env_file:
+      - .env.replica
+    volumes:
+      - ./mysql-replica.cnf:/etc/mysql/conf.d/mysql.cnf
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
@@ -17,4 +31,4 @@ services:
     image: redis:7.0.12
     container_name: foodbowl-redis
     ports:
-      - "6379:6379"
+      - 6379:6379

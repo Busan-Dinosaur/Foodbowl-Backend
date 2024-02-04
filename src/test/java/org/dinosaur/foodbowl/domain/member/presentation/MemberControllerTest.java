@@ -21,7 +21,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.member.application.MemberService;
-import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
 import org.dinosaur.foodbowl.domain.member.dto.request.UpdateProfileRequest;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileImageResponse;
@@ -29,6 +28,7 @@ import org.dinosaur.foodbowl.domain.member.dto.response.MemberProfileResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberSearchResponse;
 import org.dinosaur.foodbowl.domain.member.dto.response.MemberSearchResponses;
 import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.dinosaur.foodbowl.test.PresentationTest;
 import org.dinosaur.foodbowl.test.file.FileTestUtils;
 import org.junit.jupiter.api.Nested;
@@ -82,7 +82,7 @@ class MemberControllerTest extends PresentationTest {
                     true,
                     false
             );
-            given(memberService.getProfile(anyLong(), any(Member.class))).willReturn(response);
+            given(memberService.getProfile(anyLong(), any(LoginMember.class))).willReturn(response);
 
             MvcResult mvcResult = mockMvc.perform(get("/v1/members/{memberId}/profile", 1L)
                             .header(AUTHORIZATION, BEARER + accessToken))
@@ -133,7 +133,7 @@ class MemberControllerTest extends PresentationTest {
                 true,
                 false
         );
-        given(memberService.getMyProfile(any(Member.class))).willReturn(response);
+        given(memberService.getMyProfile(any(LoginMember.class))).willReturn(response);
 
         MvcResult mvcResult = mockMvc.perform(get("/v1/members/me/profile")
                         .header(AUTHORIZATION, BEARER + jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원)))
@@ -157,7 +157,7 @@ class MemberControllerTest extends PresentationTest {
             MemberSearchResponses response = new MemberSearchResponses(
                     List.of(new MemberSearchResponse(1L, "gray", "https://image.com", 10, true, false))
             );
-            given(memberService.search(anyString(), anyInt(), any(Member.class)))
+            given(memberService.search(anyString(), anyInt(), any(LoginMember.class)))
                     .willReturn(response);
 
             MvcResult mvcResult = mockMvc.perform(get("/v1/members/search")
@@ -288,7 +288,7 @@ class MemberControllerTest extends PresentationTest {
         void 프로필_정보_수정에_성공하면_204_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
             UpdateProfileRequest request = new UpdateProfileRequest("coby5502", "동네 맛집 탐험을 좋아하는 아저씨에요.");
-            willDoNothing().given(memberService).updateProfile(any(UpdateProfileRequest.class), any(Member.class));
+            willDoNothing().given(memberService).updateProfile(any(UpdateProfileRequest.class), any(LoginMember.class));
 
             mockMvc.perform(patch("/v1/members/profile")
                             .header(AUTHORIZATION, BEARER + accessToken)
@@ -323,7 +323,8 @@ class MemberControllerTest extends PresentationTest {
             mockingAuthMemberInResolver();
             MockMultipartFile file = (MockMultipartFile) FileTestUtils.generateMultiPartFile("image");
             MemberProfileImageResponse expected = new MemberProfileImageResponse("http://justdoeat.shop/image.png");
-            given(memberService.updateProfileImage(any(MultipartFile.class), any(Member.class))).willReturn(expected);
+            given(memberService.updateProfileImage(any(MultipartFile.class), any(LoginMember.class))).willReturn(
+                    expected);
 
             MvcResult mvcResult = mockMvc.perform(multipart(HttpMethod.PATCH, "/v1/members/profile/image")
                             .file(file)
@@ -353,7 +354,7 @@ class MemberControllerTest extends PresentationTest {
     @Test
     void 프로필_이미지_삭제에_성공하면_204_응답을_반환한다() throws Exception {
         mockingAuthMemberInResolver();
-        willDoNothing().given(memberService).deleteProfileImage(any(Member.class));
+        willDoNothing().given(memberService).deleteProfileImage(any(LoginMember.class));
         String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
 
         mockMvc.perform(delete("/v1/members/profile/image")
@@ -365,7 +366,7 @@ class MemberControllerTest extends PresentationTest {
     @Test
     void 회원_탈퇴에_성공하면_204_응답을_반환한다() throws Exception {
         mockingAuthMemberInResolver();
-        willDoNothing().given(memberService).deactivate(any(Member.class));
+        willDoNothing().given(memberService).deactivate(any(LoginMember.class));
         String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
 
         mockMvc.perform(delete("/v1/members/deactivate")

@@ -12,8 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.bookmark.application.BookmarkService;
-import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.domain.vo.RoleType;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.dinosaur.foodbowl.test.PresentationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -45,7 +45,7 @@ class BookmarkControllerTest extends PresentationTest {
         @Test
         void 정상적으로_추가되면_200_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
-            willDoNothing().given(bookmarkService).save(anyLong(), any(Member.class));
+            willDoNothing().given(bookmarkService).save(anyLong(), any(LoginMember.class));
 
             mockMvc.perform(post("/v1/bookmarks")
                             .param("storeId", "1")
@@ -90,7 +90,7 @@ class BookmarkControllerTest extends PresentationTest {
         @Test
         void 정상적으로_삭제되면_204_응답을_반환한다() throws Exception {
             mockingAuthMemberInResolver();
-            willDoNothing().given(bookmarkService).delete(anyLong(), any(Member.class));
+            willDoNothing().given(bookmarkService).delete(anyLong(), any(LoginMember.class));
 
             mockMvc.perform(delete("/v1/bookmarks")
                             .param("storeId", "1")

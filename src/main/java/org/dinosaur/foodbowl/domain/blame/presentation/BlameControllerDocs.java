@@ -7,8 +7,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.dinosaur.foodbowl.domain.blame.dto.request.BlameRequest;
-import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.springframework.http.ResponseEntity;
 
 @Tag(name = "신고", description = "신고 API")
@@ -54,5 +54,5 @@ public interface BlameControllerDocs {
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
             )
     })
-    ResponseEntity<Void> blame(BlameRequest blameRequest, Member loginMember);
+    ResponseEntity<Void> blame(BlameRequest blameRequest, LoginMember loginMember);
 }

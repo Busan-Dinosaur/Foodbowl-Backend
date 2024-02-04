@@ -31,6 +31,7 @@ import org.dinosaur.foodbowl.domain.store.persistence.StoreCustomRepository;
 import org.dinosaur.foodbowl.domain.store.persistence.StoreRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.dinosaur.foodbowl.global.util.PointUtils;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
@@ -87,50 +88,62 @@ public class StoreService {
     public StoreMapBoundResponses getStoresByMemberInMapBounds(
             Long memberId,
             MapCoordinateRequest mapCoordinateRequest,
-            Member loginMember
+            LoginMember loginMember
     ) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+        Member viewer = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+
         MapCoordinateBoundDto mapCoordinateBoundDto = convertToMapCoordinateBound(mapCoordinateRequest);
         List<Store> stores =
                 storeCustomService.getStoresByMemberInMapBounds(member.getId(), mapCoordinateBoundDto);
-        return convertToStoreMapBoundResponses(stores, loginMember);
+        return convertToStoreMapBoundResponses(stores, viewer);
     }
 
     @Transactional(readOnly = true)
     public StoreMapBoundResponses getStoresByBookmarkInMapBounds(
             MapCoordinateRequest mapCoordinateRequest,
-            Member loginMember
+            LoginMember loginMember
     ) {
+        Member viewer = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+
         MapCoordinateBoundDto mapCoordinateBoundDto = convertToMapCoordinateBound(mapCoordinateRequest);
         List<Store> stores =
-                storeCustomService.getStoresByBookmarkInMapBounds(loginMember.getId(), mapCoordinateBoundDto);
-        return convertToStoreMapBoundResponses(stores, loginMember);
+                storeCustomService.getStoresByBookmarkInMapBounds(viewer.getId(), mapCoordinateBoundDto);
+        return convertToStoreMapBoundResponses(stores, viewer);
     }
 
     @Transactional(readOnly = true)
     public StoreMapBoundResponses getStoresByFollowingInMapBounds(
             MapCoordinateRequest mapCoordinateRequest,
-            Member loginMember
+            LoginMember loginMember
     ) {
+        Member viewer = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+
         MapCoordinateBoundDto mapCoordinateBoundDto = convertToMapCoordinateBound(mapCoordinateRequest);
         List<Store> stores =
-                storeCustomService.getStoresByFollowingInMapBounds(loginMember.getId(), mapCoordinateBoundDto);
-        return convertToStoreMapBoundResponses(stores, loginMember);
+                storeCustomService.getStoresByFollowingInMapBounds(viewer.getId(), mapCoordinateBoundDto);
+        return convertToStoreMapBoundResponses(stores, viewer);
     }
 
     @Transactional(readOnly = true)
     public StoreMapBoundResponses getStoresBySchoolInMapBounds(
             Long schoolId,
             MapCoordinateRequest mapCoordinateRequest,
-            Member loginMember
+            LoginMember loginMember
     ) {
         School school = schoolRepository.findById(schoolId)
                 .orElseThrow(() -> new NotFoundException(SchoolExceptionType.NOT_FOUND));
+        Member viewer = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+
         MapCoordinateBoundDto mapCoordinateBoundDto = convertToMapCoordinateBound(mapCoordinateRequest);
         List<Store> stores =
                 storeCustomService.getStoresBySchoolInMapBounds(school.getId(), mapCoordinateBoundDto);
-        return convertToStoreMapBoundResponses(stores, loginMember);
+        return convertToStoreMapBoundResponses(stores, viewer);
     }
 
     private MapCoordinateBoundDto convertToMapCoordinateBound(MapCoordinateRequest mapCoordinateRequest) {

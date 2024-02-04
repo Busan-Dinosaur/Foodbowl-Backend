@@ -8,8 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Positive;
-import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.springframework.http.ResponseEntity;
 
 @Tag(name = "북마크", description = "북마크 API")
@@ -43,7 +43,7 @@ public interface BookmarkControllerDocs {
             @Positive(message = "가게 ID는 양수만 가능합니다.")
             Long storeId,
 
-            Member member
+            LoginMember loginMember
     );
 
     @Operation(summary = "북마크 삭제", description = "가게를 사용자의 북마크에서 제거합니다.")
@@ -74,6 +74,6 @@ public interface BookmarkControllerDocs {
             @Positive(message = "가게 ID는 양수만 가능합니다.")
             Long storeId,
 
-            Member member
+            LoginMember loginMember
     );
 }

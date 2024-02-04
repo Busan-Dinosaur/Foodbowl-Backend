@@ -36,6 +36,7 @@ import org.dinosaur.foodbowl.domain.store.exception.SchoolExceptionType;
 import org.dinosaur.foodbowl.domain.store.persistence.SchoolRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
+import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -61,20 +62,22 @@ public class ReviewService {
     @Transactional(readOnly = true)
     public ReviewResponse getReview(
             Long reviewId,
-            Member loginMember,
+            LoginMember loginMember,
             DeviceCoordinateRequest deviceCoordinateRequest
     ) {
         Review review = reviewRepository.findWithStoreAndMemberById(reviewId)
                 .orElseThrow(() -> new NotFoundException(ReviewExceptionType.NOT_FOUND));
-        List<Photo> reviewPhotos = reviewPhotoService.findPhotos(review);
+        Member viewer = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
 
+        List<Photo> reviewPhotos = reviewPhotoService.findPhotos(review);
         return ReviewResponse.of(
                 review,
                 followRepository.countByFollowing(review.getMember()),
                 reviewPhotos,
                 deviceCoordinateRequest.deviceX(),
                 deviceCoordinateRequest.deviceY(),
-                bookmarkQueryService.isBookmarkStoreByMember(loginMember, review.getStore())
+                bookmarkQueryService.isBookmarkStoreByMember(viewer, review.getStore())
         );
     }
 
@@ -83,10 +86,13 @@ public class ReviewService {
             Long lastReviewId,
             int pageSize,
             DeviceCoordinateRequest deviceCoordinateRequest,
-            Member loginMember
+            LoginMember loginMember
     ) {
+        Member viewer = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+
         List<Review> reviews = reviewCustomService.getReviewFeeds(lastReviewId, pageSize);
-        return convertToReviewFeedResponse(reviews, loginMember, deviceCoordinateRequest);
+        return convertToReviewFeedResponse(reviews, viewer, deviceCoordinateRequest);
     }
 
     private ReviewFeedPageResponse convertToReviewFeedResponse(
@@ -116,10 +122,13 @@ public class ReviewService {
             MapCoordinateRequest mapCoordinateRequest,
             DeviceCoordinateRequest deviceCoordinateRequest,
             int pageSize,
-            Member loginMember
+            LoginMember loginMember
     ) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+        Member viewer = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+
         MapCoordinateBoundDto mapCoordinateBoundDto = convertToMapCoordinateBound(mapCoordinateRequest);
         List<Review> reviews = reviewCustomService.getReviewsByMemberInMapBounds(
                 member.getId(),
@@ -127,7 +136,7 @@ public class ReviewService {
                 mapCoordinateBoundDto,
                 pageSize
         );
-        return convertToReviewPageResponse(loginMember, reviews, deviceCoordinateRequest);
+        return convertToReviewPageResponse(viewer, reviews, deviceCoordinateRequest);
     }
 
     @Transactional(readOnly = true)
@@ -137,13 +146,16 @@ public class ReviewService {
             Long lastReviewId,
             int pageSize,
             DeviceCoordinateRequest deviceCoordinateRequest,
-            Member loginMember
+            LoginMember loginMember
     ) {
         Store store = storeService.findById(storeId);
+        Member viewer = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+
         List<Review> reviews = reviewCustomService.getReviewsByStore(
                 store.getId(),
                 ReviewFilter.from(filter),
-                loginMember.getId(),
+                viewer.getId(),
                 lastReviewId,
                 pageSize
         );
@@ -157,7 +169,7 @@ public class ReviewService {
                 reviewToPhotoPathDto,
                 memberToFollowerCountDto,
                 deviceCoordinateRequest,
-                bookmarkQueryService.isBookmarkStoreByMember(loginMember, store)
+                bookmarkQueryService.isBookmarkStoreByMember(viewer, store)
         );
     }
 
@@ -167,16 +179,19 @@ public class ReviewService {
             MapCoordinateRequest mapCoordinateRequest,
             DeviceCoordinateRequest deviceCoordinateRequest,
             int pageSize,
-            Member loginMember
+            LoginMember loginMember
     ) {
+        Member viewer = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+
         MapCoordinateBoundDto mapCoordinateBoundDto = convertToMapCoordinateBound(mapCoordinateRequest);
         List<Review> reviews = reviewCustomService.getReviewsByBookmarkInMapBounds(
-                loginMember.getId(),
+                viewer.getId(),
                 lastReviewId,
                 mapCoordinateBoundDto,
                 pageSize
         );
-        return convertToReviewPageResponse(loginMember, reviews, deviceCoordinateRequest);
+        return convertToReviewPageResponse(viewer, reviews, deviceCoordinateRequest);
     }
 
     @Transactional(readOnly = true)
@@ -185,16 +200,19 @@ public class ReviewService {
             MapCoordinateRequest mapCoordinateRequest,
             DeviceCoordinateRequest deviceCoordinateRequest,
             int pageSize,
-            Member loginMember
+            LoginMember loginMember
     ) {
+        Member viewer = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+
         MapCoordinateBoundDto mapCoordinateBoundDto = convertToMapCoordinateBound(mapCoordinateRequest);
         List<Review> reviews = reviewCustomService.getReviewsByFollowingInMapBounds(
-                loginMember.getId(),
+                viewer.getId(),
                 lastReviewId,
                 mapCoordinateBoundDto,
                 pageSize
         );
-        return convertToReviewPageResponse(loginMember, reviews, deviceCoordinateRequest);
+        return convertToReviewPageResponse(viewer, reviews, deviceCoordinateRequest);
     }
 
     @Transactional(readOnly = true)
@@ -204,10 +222,13 @@ public class ReviewService {
             MapCoordinateRequest mapCoordinateRequest,
             DeviceCoordinateRequest deviceCoordinateRequest,
             int pageSize,
-            Member loginMember
+            LoginMember loginMember
     ) {
         School school = schoolRepository.findById(schoolId)
                 .orElseThrow(() -> new NotFoundException(SchoolExceptionType.NOT_FOUND));
+        Member viewer = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+
         MapCoordinateBoundDto mapCoordinateBoundDto = convertToMapCoordinateBound(mapCoordinateRequest);
         List<Review> reviews = reviewCustomService.getReviewsBySchoolInMapBounds(
                 school.getId(),
@@ -215,7 +236,7 @@ public class ReviewService {
                 mapCoordinateBoundDto,
                 pageSize
         );
-        return convertToReviewPageResponse(loginMember, reviews, deviceCoordinateRequest);
+        return convertToReviewPageResponse(viewer, reviews, deviceCoordinateRequest);
     }
 
     private MapCoordinateBoundDto convertToMapCoordinateBound(MapCoordinateRequest mapCoordinateRequest) {
@@ -254,15 +275,21 @@ public class ReviewService {
     }
 
     @Transactional
-    public Review create(ReviewCreateRequest reviewCreateRequest, List<MultipartFile> imageFiles, Member member) {
+    public Review create(
+            ReviewCreateRequest reviewCreateRequest,
+            List<MultipartFile> imageFiles,
+            LoginMember loginMember
+    ) {
         StoreCreateDto storeCreateDto = convertStoreCreateDto(reviewCreateRequest);
         Store store = storeService.findByLocationId(reviewCreateRequest.locationId())
                 .orElseGet(() -> storeService.create(storeCreateDto));
+        Member writer = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
 
         Review review = reviewRepository.save(
                 Review.builder()
                         .store(store)
-                        .member(member)
+                        .member(writer)
                         .content(reviewCreateRequest.reviewContent())
                         .build()
         );
@@ -292,11 +319,13 @@ public class ReviewService {
             Long id,
             ReviewUpdateRequest reviewUpdateRequest,
             List<MultipartFile> imageFiles,
-            Member member
+            LoginMember loginMember
     ) {
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ReviewExceptionType.NOT_FOUND));
-        validateReviewOwner(member, review);
+        Member writer = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+        validateReviewOwner(writer, review);
 
         List<Photo> currentPhotos = reviewPhotoService.findPhotos(review);
         List<Long> deletePhotoIds = reviewUpdateRequest.deletePhotoIds();
@@ -347,10 +376,12 @@ public class ReviewService {
     }
 
     @Transactional
-    public void delete(Long id, Member member) {
+    public void delete(Long id, LoginMember loginMember) {
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ReviewExceptionType.NOT_FOUND));
-        validateReviewOwner(member, review);
+        Member writer = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+        validateReviewOwner(writer, review);
 
         List<Photo> photos = reviewPhotoService.findPhotos(review);
         reviewPhotoService.deleteByReviewAndPhoto(review, photos);

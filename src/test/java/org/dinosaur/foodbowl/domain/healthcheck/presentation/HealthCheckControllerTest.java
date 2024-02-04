@@ -48,7 +48,7 @@ class HealthCheckControllerTest extends PresentationTest {
         mockMvc.perform(get("/v1/health-check/auth")
                         .header(AUTHORIZATION, BEARER + jwtTokenProvider.createAccessToken(1L, ROLE_회원)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("good: " + member.getNickname()))
+                .andExpect(jsonPath("$.status").value("good: " + member.getId()))
                 .andDo(print());
     }
 }

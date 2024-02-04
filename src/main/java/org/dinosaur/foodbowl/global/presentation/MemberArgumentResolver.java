@@ -2,7 +2,6 @@ package org.dinosaur.foodbowl.global.presentation;
 
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.auth.exception.AuthExceptionType;
-import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.member.exception.MemberExceptionType;
 import org.dinosaur.foodbowl.domain.member.persistence.MemberRepository;
 import org.dinosaur.foodbowl.global.exception.AuthenticationException;
@@ -25,11 +24,11 @@ public class MemberArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.getParameterType().equals(Member.class) && parameter.hasParameterAnnotation(Auth.class);
+        return parameter.getParameterType().equals(LoginMember.class) && parameter.hasParameterAnnotation(Auth.class);
     }
 
     @Override
-    public Object resolveArgument(
+    public LoginMember resolveArgument(
             MethodParameter parameter,
             ModelAndViewContainer mavContainer,
             NativeWebRequest webRequest,
@@ -42,8 +41,11 @@ public class MemberArgumentResolver implements HandlerMethodArgumentResolver {
         }
         JwtUser jwtUser = (JwtUser) authentication.getPrincipal();
         Long memberId = parseToLong(jwtUser.getUsername());
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+        return new LoginMember(
+                memberRepository.findById(memberId)
+                        .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND))
+                        .getId()
+        );
     }
 
     private Long parseToLong(String memberId) {
