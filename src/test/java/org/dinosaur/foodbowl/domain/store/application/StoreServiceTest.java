@@ -174,6 +174,27 @@ class StoreServiceTest extends IntegrationTest {
         }
 
         @Test
+        void 등록되지_않은_회원의_멤버_리뷰가_존재하는_가게_목록_조회라면_예외를_던진다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            assertThatThrownBy(() ->
+                    storeService.getStoresByMemberInMapBounds(
+                            member.getId(),
+                            mapCoordinateRequest,
+                            new LoginMember(-1L)
+                    ))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
+
+        @Test
         void 가게_리뷰_수도_함께_조회한다() {
             Member member = memberTestPersister.builder().save();
             Member writer = memberTestPersister.builder().save();
@@ -329,6 +350,22 @@ class StoreServiceTest extends IntegrationTest {
 
             assertThat(response.stores()).isEmpty();
         }
+
+        @Test
+        void 등록되지_않은_회원의_북마크한_가게_목록_조회라면_예외를_던진다() {
+            Store store = storeTestPersister.builder().save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            assertThatThrownBy(
+                    () -> storeService.getStoresByBookmarkInMapBounds(mapCoordinateRequest, new LoginMember(-1L)))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
     }
 
     @Nested
@@ -407,6 +444,22 @@ class StoreServiceTest extends IntegrationTest {
 
             assertThat(response.stores()).isEmpty();
         }
+
+        @Test
+        void 등록되지_않은_회원의_팔로잉_유저의_리뷰가_존재하는_가게_목록_조회라면_예외를_던진다() {
+            Store store = storeTestPersister.builder().save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            assertThatThrownBy(
+                    () -> storeService.getStoresByFollowingInMapBounds(mapCoordinateRequest, new LoginMember(-1L)))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
     }
 
     @Nested
@@ -431,6 +484,28 @@ class StoreServiceTest extends IntegrationTest {
                     ))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("존재하지 않는 학교입니다.");
+        }
+
+        @Test
+        void 등록되지_않은_회원의_학교_근처_가게_목록_조회라면_예외를_던진다() {
+            Store store = storeTestPersister.builder().save();
+            School school = schoolTestPersister.builder().save();
+            storeSchoolTestPersister.builder().store(store).school(school).save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            assertThatThrownBy(() ->
+                    storeService.getStoresBySchoolInMapBounds(
+                            school.getId(),
+                            mapCoordinateRequest,
+                            new LoginMember(-1L)
+                    ))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
         }
 
         @Test

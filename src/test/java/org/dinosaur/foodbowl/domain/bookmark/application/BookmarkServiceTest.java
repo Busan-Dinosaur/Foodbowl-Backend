@@ -46,6 +46,15 @@ class BookmarkServiceTest extends IntegrationTest {
         }
 
         @Test
+        void 등록되지_회원의_북마크_추가라면_예외를_던진다() {
+            Store store = storeTestPersister.builder().save();
+
+            assertThatThrownBy(() -> bookmarkService.save(store.getId(), new LoginMember(-1L)))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
+
+        @Test
         void 이미_북마크에_추가된_가게라면_예외가_발생한다() {
             Store store = storeTestPersister.builder().save();
             Member member = memberTestPersister.builder().save();
@@ -78,6 +87,15 @@ class BookmarkServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> bookmarkService.delete(-1L, new LoginMember(member.getId())))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("일치하는 가게를 찾을 수 없습니다.");
+        }
+
+        @Test
+        void 등록되지_않은_회원의_북마크_삭제라면_예외를_던진다() {
+            Store store = storeTestPersister.builder().save();
+
+            assertThatThrownBy(() -> bookmarkService.delete(store.getId(), new LoginMember(-1L)))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
         }
 
         @Test

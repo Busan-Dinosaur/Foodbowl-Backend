@@ -171,6 +171,24 @@ class ReviewServiceTest extends IntegrationTest {
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("일치하는 리뷰를 찾을 수 없습니다.");
         }
+
+        @Test
+        void 등록되지_않은_회원의_단건_리뷰_조회라면_예외를_던진다() {
+            Review review = reviewTestPersister.builder().save();
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            assertThatThrownBy(() ->
+                    reviewService.getReview(
+                            review.getId(),
+                            new LoginMember(-1L),
+                            deviceCoordinateRequest
+                    ))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
     }
 
     @Nested
@@ -230,6 +248,24 @@ class ReviewServiceTest extends IntegrationTest {
 
             assertThat(reviewFeedPageResponse.reviewFeedResponses()).isEmpty();
         }
+
+        @Test
+        void 등록되지_않은_회원의_리뷰_피드_조회라면_예외를_던진다() {
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            assertThatThrownBy(() ->
+                    reviewService.getReviewFeeds(
+                            null,
+                            10,
+                            deviceCoordinateRequest,
+                            new LoginMember(-1L)
+                    ))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
     }
 
     @Nested
@@ -257,6 +293,33 @@ class ReviewServiceTest extends IntegrationTest {
                     deviceCoordinateRequest,
                     10,
                     new LoginMember(member.getId())
+            ))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
+
+        @Test
+        void 등록되지_않은_회원의_리뷰_목록_페이징_조회라면_예외를_던진다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            assertThatThrownBy(() -> reviewService.getReviewsByMemberInMapBounds(
+                    member.getId(),
+                    null,
+                    mapCoordinateRequest,
+                    deviceCoordinateRequest,
+                    10,
+                    new LoginMember(-1L)
             ))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("등록되지 않은 회원입니다.");
@@ -645,6 +708,22 @@ class ReviewServiceTest extends IntegrationTest {
                     .hasMessage("일치하는 가게를 찾을 수 없습니다.");
         }
 
+        @Test
+        void 등록되지_않은_회원의_가게_리뷰_목록_페이징_조회라면_예외를_던진다() {
+            Store store = storeTestPersister.builder().save();
+
+            assertThatThrownBy(() -> reviewService.getReviewsByStore(
+                    store.getId(),
+                    "ALL",
+                    null,
+                    10,
+                    new DeviceCoordinateRequest(BigDecimal.valueOf(124.124), BigDecimal.valueOf(37.41424)),
+                    new LoginMember(-1L)
+            ))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
+
         @ParameterizedTest
         @ValueSource(strings = {"", " ", "test", "all", "friend"})
         void 일치하는_리뷰_필터링_조건이_없으면_예외가_발생한다(String reviewFilter) {
@@ -791,6 +870,41 @@ class ReviewServiceTest extends IntegrationTest {
                 softly.assertThat(Math.round(result.get(0).store().distance() / 10) * 10).isEqualTo(130);
                 softly.assertThat(result.get(0).store().isBookmarked()).isTrue();
             });
+        }
+
+        @Test
+        void 등록되지_않은_회원의_북마크_가게_목록_페이징_조회라면_예외를_던진다() {
+            Store store = storeTestPersister.builder()
+                    .address(
+                            Address.of(
+                                    "부산광역시 금정구 부산대학로63번길 2",
+                                    PointUtils.generate(
+                                            BigDecimal.valueOf(129.084180374589),
+                                            BigDecimal.valueOf(35.23159315706788)
+                                    )
+                            )
+                    )
+                    .save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(129.0842730512684),
+                    BigDecimal.valueOf(35.23038627521815)
+            );
+
+            assertThatThrownBy(() -> reviewService.getReviewsByBookmarkInMapBounds(
+                    null,
+                    mapCoordinateRequest,
+                    deviceCoordinateRequest,
+                    10,
+                    new LoginMember(-1L)
+            ))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
         }
     }
 
@@ -970,6 +1084,24 @@ class ReviewServiceTest extends IntegrationTest {
                 softly.assertThat(result.get(0).store().isBookmarked()).isFalse();
             });
         }
+
+        @Test
+        void 등록되지_않은_회원의_팔로잉_멤버_리뷰_목록_페이징_조회라면_예외를_던진다() {
+            assertThatThrownBy(() -> reviewService.getReviewsByFollowingInMapBounds(
+                    null,
+                    new MapCoordinateRequest(
+                            BigDecimal.valueOf(1),
+                            BigDecimal.valueOf(1),
+                            BigDecimal.valueOf(1),
+                            BigDecimal.valueOf(1)
+                    ),
+                    new DeviceCoordinateRequest(BigDecimal.valueOf(1), BigDecimal.valueOf(1)),
+                    10,
+                    new LoginMember(-1L)
+            ))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
     }
 
     @Nested
@@ -1000,6 +1132,34 @@ class ReviewServiceTest extends IntegrationTest {
             ))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("존재하지 않는 학교입니다.");
+        }
+
+        @Test
+        void 등록되지_않은_회원의_학교_근처_리뷰_목록_페이징_조회라면_예외를_던진다() {
+            Store store = storeTestPersister.builder().save();
+            School school = schoolTestPersister.builder().save();
+            storeSchoolTestPersister.builder().store(store).school(school).save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            assertThatThrownBy(() -> reviewService.getReviewsBySchoolInMapBounds(
+                    school.getId(),
+                    null,
+                    mapCoordinateRequest,
+                    deviceCoordinateRequest,
+                    10,
+                    new LoginMember(-1L)
+            ))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
         }
 
         @Test
@@ -1225,6 +1385,15 @@ class ReviewServiceTest extends IntegrationTest {
         }
 
         @Test
+        void 등록되지_않은_회원의_리뷰_저장이라면_예외를_던진다() {
+            ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
+
+            assertThatThrownBy(() -> reviewService.create(reviewCreateRequest, null, new LoginMember(-1L)))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
+
+        @Test
         void 사진_개수가_최대_사진_개수를_초과하면_예외가_발생한다() {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(5, "images");
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
@@ -1335,6 +1504,25 @@ class ReviewServiceTest extends IntegrationTest {
         }
 
         @Test
+        void 등록되지_않은_회원의_리뷰_수정이라면_예외를_던진다() {
+            ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
+            Member member = memberTestPersister.builder().save();
+            Long reviewId = reviewService.create(reviewCreateRequest, null, new LoginMember(member.getId()))
+                    .getId();
+            ReviewUpdateRequest reviewUpdateRequest = generateReviewUpdateRequest(Collections.emptyList());
+
+            assertThatThrownBy(() ->
+                    reviewService.update(
+                            reviewId,
+                            reviewUpdateRequest,
+                            null,
+                            new LoginMember(-1L)
+                    ))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
+
+        @Test
         void 작성자가_아니면_예외가_발생한다() {
             List<MultipartFile> multipartFiles = FileTestUtils.generateMultipartFiles(2, "images");
             ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
@@ -1421,6 +1609,18 @@ class ReviewServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> reviewService.delete(-1L, new LoginMember(member.getId())))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("일치하는 리뷰를 찾을 수 없습니다.");
+        }
+
+        @Test
+        void 등록되지_않은_회원의_리뷰_삭제라면_예외를_던진다() {
+            ReviewCreateRequest reviewCreateRequest = generateReviewCreateRequest();
+            Member member = memberTestPersister.builder().save();
+            Long reviewId = reviewService.create(reviewCreateRequest, null, new LoginMember(member.getId()))
+                    .getId();
+
+            assertThatThrownBy(() -> reviewService.delete(reviewId, new LoginMember(-1L)))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
         }
 
         @Test

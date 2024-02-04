@@ -35,6 +35,16 @@ class BlameServiceTest extends IntegrationTest {
         }
 
         @Test
+        void 등록되지_않은_회원의_신고라면_예외를_던진다() {
+            Member target = memberTestPersister.builder().save();
+            BlameRequest request = new BlameRequest(target.getId(), "HELLO", "부적절한 닉네임");
+
+            assertThatThrownBy(() -> blameService.blame(request, new LoginMember(-1L)))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
+
+        @Test
         void 정상적이지_않은_신고_타입이라면_예외를_던진다() {
             Member loginMember = memberTestPersister.builder().save();
             Member target = memberTestPersister.builder().save();

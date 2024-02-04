@@ -118,25 +118,45 @@ class MemberServiceTest extends IntegrationTest {
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage("등록되지 않은 회원입니다.");
         }
+
+        @Test
+        void 등록되지_않은_회원의_프로필_조회라면_예외를_던진다() {
+            Member member = memberTestPersister.builder().save();
+
+            assertThatThrownBy(() -> memberService.getProfile(member.getId(), new LoginMember(-1L)))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
     }
 
-    @Test
-    void 나의_프로필을_조회한다() {
-        Member loginMember = memberTestPersister.builder().save();
-        Member otherMember = memberTestPersister.builder().save();
-        followTestPersister.builder().following(otherMember).follower(loginMember).save();
+    @Nested
+    class 나의_프로필_조회_시 {
 
-        MemberProfileResponse response = memberService.getMyProfile(new LoginMember(loginMember.getId()));
+        @Test
+        void 나의_프로필을_조회한다() {
+            Member loginMember = memberTestPersister.builder().save();
+            Member otherMember = memberTestPersister.builder().save();
+            followTestPersister.builder().following(otherMember).follower(loginMember).save();
 
-        assertSoftly(softly -> {
-            softly.assertThat(response.id()).isEqualTo(loginMember.getId());
-            softly.assertThat(response.nickname()).isEqualTo(loginMember.getNickname());
-            softly.assertThat(response.introduction()).isEqualTo(loginMember.getIntroduction());
-            softly.assertThat(response.followerCount()).isEqualTo(0);
-            softly.assertThat(response.followingCount()).isEqualTo(1);
-            softly.assertThat(response.isMyProfile()).isTrue();
-            softly.assertThat(response.isFollowing()).isFalse();
-        });
+            MemberProfileResponse response = memberService.getMyProfile(new LoginMember(loginMember.getId()));
+
+            assertSoftly(softly -> {
+                softly.assertThat(response.id()).isEqualTo(loginMember.getId());
+                softly.assertThat(response.nickname()).isEqualTo(loginMember.getNickname());
+                softly.assertThat(response.introduction()).isEqualTo(loginMember.getIntroduction());
+                softly.assertThat(response.followerCount()).isEqualTo(0);
+                softly.assertThat(response.followingCount()).isEqualTo(1);
+                softly.assertThat(response.isMyProfile()).isTrue();
+                softly.assertThat(response.isFollowing()).isFalse();
+            });
+        }
+
+        @Test
+        void 등록되지_않은_회원의_프로필_조회라면_예외를_던진다() {
+            assertThatThrownBy(() -> memberService.getMyProfile(new LoginMember(-1L)))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
     }
 
     @Nested
@@ -169,6 +189,15 @@ class MemberServiceTest extends IntegrationTest {
                 softly.assertThat(memberSearchResponses.get(1).isFollowing()).isFalse();
                 softly.assertThat(memberSearchResponses.get(1).isMe()).isFalse();
             });
+        }
+
+        @Test
+        void 등록되지_않은_회원의_회원_검색이라면_예외를_던진다() {
+            String name = "gray";
+
+            assertThatThrownBy(() -> memberService.search(name, 10, new LoginMember(-1L)))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
         }
 
         @Test
@@ -238,6 +267,15 @@ class MemberServiceTest extends IntegrationTest {
                 softly.assertThat(member.getNickname()).isEqualTo("hello");
                 softly.assertThat(member.getIntroduction()).isEqualTo("friend");
             });
+        }
+
+        @Test
+        void 등록되지_않은_회원의_프로필_정보_수정이라면_예외를_던진다() {
+            UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest("hello", "friend");
+
+            assertThatThrownBy(() -> memberService.updateProfile(updateProfileRequest, new LoginMember(-1L)))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
         }
 
         @Test
@@ -314,6 +352,15 @@ class MemberServiceTest extends IntegrationTest {
         }
 
         @Test
+        void 등록되지_않은_회원의_프로필_이미지_수정이라면_예외를_던진다() {
+            MultipartFile multipartFile = FileTestUtils.generateMultiPartFile("image");
+
+            assertThatThrownBy(() -> memberService.updateProfileImage(multipartFile, new LoginMember(-1L)))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
+
+        @Test
         void 요청_프로필_이미지가_없으면_예외를_던진다() {
             Member member = memberTestPersister.builder().save();
 
@@ -352,36 +399,54 @@ class MemberServiceTest extends IntegrationTest {
             });
             FileTestUtils.cleanUp();
         }
+
+        @Test
+        void 등록되지_않은_회원의_프로필_이미지_삭제라면_예외를_던진다() {
+            assertThatThrownBy(() -> memberService.deleteProfileImage(new LoginMember(-1L)))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
     }
 
-    @Test
-    void 회원_탈퇴를_한다() {
-        Member member = memberTestPersister.builder().save();
-        followTestPersister.builder().follower(member).save();
-        Role role = Role.builder()
-                .id(RoleType.ROLE_회원.getId())
-                .roleType(RoleType.ROLE_회원)
-                .build();
-        MemberRole memberRole = MemberRole.builder()
-                .member(member)
-                .role(role)
-                .build();
-        memberRoleRepository.save(memberRole);
-        MultipartFile thumbnailFile = FileTestUtils.generateMultiPartFile("image");
-        Thumbnail thumbnail = thumbnailService.save(thumbnailFile);
-        memberThumbnailTestPersister.builder().member(member).thumbnail(thumbnail).save();
-        bookmarkTestPersister.builder().member(member).save();
-        blameTestPersister.builder().member(member).save();
-        MultipartFile reviewPhotoFile = FileTestUtils.generateMultiPartFile("image");
-        Photo photo = photoService.save(reviewPhotoFile, "1");
-        Review review = reviewTestPersister.builder().member(member).save();
-        reviewPhotoTestPersister.builder().review(review).photo(photo).save();
+    @Nested
+    class 회원_탈퇴_시 {
 
-        assertThatNoException().isThrownBy(() -> memberService.deactivate(new LoginMember(member.getId())));
-        assertSoftly(softly -> {
-            softly.assertThat(new File(thumbnail.getPath())).doesNotExist();
-            softly.assertThat(new File(photo.getPath())).doesNotExist();
-        });
-        FileTestUtils.cleanUp();
+        @Test
+        void 회원_탈퇴를_한다() {
+            Member member = memberTestPersister.builder().save();
+            followTestPersister.builder().follower(member).save();
+            Role role = Role.builder()
+                    .id(RoleType.ROLE_회원.getId())
+                    .roleType(RoleType.ROLE_회원)
+                    .build();
+            MemberRole memberRole = MemberRole.builder()
+                    .member(member)
+                    .role(role)
+                    .build();
+            memberRoleRepository.save(memberRole);
+            MultipartFile thumbnailFile = FileTestUtils.generateMultiPartFile("image");
+            Thumbnail thumbnail = thumbnailService.save(thumbnailFile);
+            memberThumbnailTestPersister.builder().member(member).thumbnail(thumbnail).save();
+            bookmarkTestPersister.builder().member(member).save();
+            blameTestPersister.builder().member(member).save();
+            MultipartFile reviewPhotoFile = FileTestUtils.generateMultiPartFile("image");
+            Photo photo = photoService.save(reviewPhotoFile, "1");
+            Review review = reviewTestPersister.builder().member(member).save();
+            reviewPhotoTestPersister.builder().review(review).photo(photo).save();
+
+            assertThatNoException().isThrownBy(() -> memberService.deactivate(new LoginMember(member.getId())));
+            assertSoftly(softly -> {
+                softly.assertThat(new File(thumbnail.getPath())).doesNotExist();
+                softly.assertThat(new File(photo.getPath())).doesNotExist();
+            });
+            FileTestUtils.cleanUp();
+        }
+
+        @Test
+        void 등록되지_않은_회원의_회원_탈퇴라면_예외를_던진다() {
+            assertThatThrownBy(() -> memberService.deactivate(new LoginMember(-1L)))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
     }
 }
