@@ -51,6 +51,7 @@ public class ReviewController implements ReviewControllerDocs {
             @RequestParam(name = "deviceX") BigDecimal deviceX,
             @RequestParam(name = "deviceY") BigDecimal deviceY,
             @RequestParam(name = "pageSize", defaultValue = "10") @Positive(message = "페이지 크기는 양수만 가능합니다.") int pageSize,
+            @RequestParam(name = "category", required = false) String category,
             @Auth LoginMember loginMember
     ) {
         MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(x, y, deltaX, deltaY);
@@ -61,6 +62,7 @@ public class ReviewController implements ReviewControllerDocs {
                 mapCoordinateRequest,
                 deviceCoordinateRequest,
                 pageSize,
+                CategoryType.of(category),
                 loginMember
         );
         return ResponseEntity.ok(response);

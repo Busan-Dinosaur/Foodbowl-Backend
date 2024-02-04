@@ -35,13 +35,14 @@ public class ReviewCustomService {
             Long memberId,
             Long lastReviewId,
             MapCoordinateBoundDto mapCoordinateBoundDto,
+            CategoryType categoryType,
             int pageSize
     ) {
         return reviewCustomRepository.findPaginationReviewsByMemberInMapBound(
                 memberId,
                 lastReviewId,
                 mapCoordinateBoundDto,
-                null,
+                categoryType,
                 pageSize
         );
     }
