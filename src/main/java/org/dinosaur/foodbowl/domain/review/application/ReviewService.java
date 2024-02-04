@@ -203,6 +203,7 @@ public class ReviewService {
             MapCoordinateRequest mapCoordinateRequest,
             DeviceCoordinateRequest deviceCoordinateRequest,
             int pageSize,
+            CategoryType categoryType,
             LoginMember loginMember
     ) {
         Member viewer = memberRepository.findById(loginMember.id())
@@ -213,6 +214,7 @@ public class ReviewService {
                 viewer.getId(),
                 lastReviewId,
                 mapCoordinateBoundDto,
+                categoryType,
                 pageSize
         );
         return convertToReviewPageResponse(viewer, reviews, deviceCoordinateRequest);

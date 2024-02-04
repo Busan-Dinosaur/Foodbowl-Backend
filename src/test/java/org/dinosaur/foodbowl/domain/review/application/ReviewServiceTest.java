@@ -993,6 +993,45 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
+                    null,
+                    new LoginMember(member.getId())
+            );
+
+            List<ReviewResponse> result = response.reviews();
+            assertSoftly(softly -> {
+                softly.assertThat(result).hasSize(1);
+                softly.assertThat(result.get(0).writer().id()).isEqualTo(writer.getId());
+                softly.assertThat(result.get(0).writer().nickname()).isEqualTo(writer.getNickname());
+                softly.assertThat(result.get(0).writer().followerCount()).isEqualTo(2);
+            });
+        }
+
+        @Test
+        void 카테고리_필터링_조건을_적용해_조회한다() {
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
+            Member follower = memberTestPersister.builder().save();
+            followTestPersister.builder().following(writer).follower(member).save();
+            followTestPersister.builder().following(writer).follower(follower).save();
+            Store store = storeTestPersister.builder().save();
+            reviewTestPersister.builder().member(writer).store(store).save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            ReviewPageResponse response = reviewService.getReviewsByFollowingInMapBounds(
+                    null,
+                    mapCoordinateRequest,
+                    deviceCoordinateRequest,
+                    10,
+                    CategoryType.카페,
                     new LoginMember(member.getId())
             );
 
@@ -1030,6 +1069,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
+                    null,
                     new LoginMember(member.getId())
             );
 
@@ -1079,6 +1119,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
+                    null,
                     new LoginMember(member.getId())
             );
 
@@ -1127,6 +1168,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
+                    null,
                     new LoginMember(member.getId())
             );
 
@@ -1154,6 +1196,7 @@ class ReviewServiceTest extends IntegrationTest {
                     ),
                     new DeviceCoordinateRequest(BigDecimal.valueOf(1), BigDecimal.valueOf(1)),
                     10,
+                    null,
                     new LoginMember(-1L)
             ))
                     .isInstanceOf(NotFoundException.class)

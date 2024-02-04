@@ -1020,6 +1020,61 @@ class ReviewControllerTest extends PresentationTest {
                     any(MapCoordinateRequest.class),
                     any(DeviceCoordinateRequest.class),
                     anyInt(),
+                    any(CategoryType.class),
+                    any(LoginMember.class)
+            )).willReturn(response);
+
+            MvcResult mvcResult = mockMvc.perform(get("/v1/reviews/following")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("category", "한식")
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+            ReviewPageResponse result = objectMapper.readValue(jsonResponse, ReviewPageResponse.class);
+            assertThat(result).usingRecursiveComparison().isEqualTo(response);
+        }
+
+        @Test
+        void 카테고리_필터링_조건_없이_200_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            ReviewPageResponse response = new ReviewPageResponse(
+                    List.of(
+                            new ReviewResponse(
+                                    new ReviewWriterResponse(1L, "hello", "image.png", 0L),
+                                    new ReviewContentResponse(
+                                            1L,
+                                            "content",
+                                            List.of("image.png"),
+                                            LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS),
+                                            LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+                                    ),
+                                    new ReviewStoreResponse(
+                                            1L,
+                                            "카페",
+                                            "가게",
+                                            "가게주소",
+                                            "stores.kakao.com",
+                                            100.13,
+                                            false
+                                    )
+                            )
+                    ),
+                    new ReviewPageInfo(10L, 1L, 10)
+            );
+            given(reviewService.getReviewsByFollowingInMapBounds(
+                    any(),
+                    any(MapCoordinateRequest.class),
+                    any(DeviceCoordinateRequest.class),
+                    anyInt(),
+                    any(),
                     any(LoginMember.class)
             )).willReturn(response);
 

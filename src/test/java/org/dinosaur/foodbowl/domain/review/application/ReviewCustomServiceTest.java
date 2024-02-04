@@ -146,6 +146,32 @@ class ReviewCustomServiceTest extends IntegrationTest {
                 member.getId(),
                 null,
                 mapCoordinateBoundDto,
+                null,
+                10
+        );
+
+        assertThat(result).containsExactly(review);
+    }
+
+    @Test
+    void 팔로잉_하는_멤버의_리뷰_목록을_카테고리와_범위를_통해_조회한다() {
+        Member member = memberTestPersister.builder().save();
+        Member writer = memberTestPersister.builder().save();
+        followTestPersister.builder().following(writer).follower(member).save();
+        Store store = storeTestPersister.builder().save();
+        Review review = reviewTestPersister.builder().member(writer).store(store).save();
+        MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                BigDecimal.valueOf(1),
+                BigDecimal.valueOf(1)
+        );
+
+        List<Review> result = reviewCustomService.getReviewsByFollowingInMapBounds(
+                member.getId(),
+                null,
+                mapCoordinateBoundDto,
+                CategoryType.카페,
                 10
         );
 

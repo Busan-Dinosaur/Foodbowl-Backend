@@ -84,13 +84,14 @@ public class ReviewCustomService {
             Long followerId,
             Long lastReviewId,
             MapCoordinateBoundDto mapCoordinateBoundDto,
+            CategoryType categoryType,
             int pageSize
     ) {
         return reviewCustomRepository.findPaginationReviewsByFollowingInMapBounds(
                 followerId,
                 lastReviewId,
                 mapCoordinateBoundDto,
-                null,
+                categoryType,
                 pageSize
         );
     }
