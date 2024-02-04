@@ -41,6 +41,7 @@ public class ReviewCustomService {
                 memberId,
                 lastReviewId,
                 mapCoordinateBoundDto,
+                null,
                 pageSize
         );
     }

@@ -108,6 +108,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
                     writer.getId(),
                     review.getId() + 1,
                     mapCoordinateBoundDto,
+                    null,
                     10
             );
 
@@ -130,6 +131,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
                     writer.getId(),
                     review.getId() - 1,
                     mapCoordinateBoundDto,
+                    null,
                     10
             );
 
@@ -152,6 +154,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
                     writer.getId(),
                     null,
                     mapCoordinateBoundDto,
+                    null,
                     10
             );
 
@@ -175,6 +178,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
                     member.getId(),
                     null,
                     mapCoordinateBoundDto,
+                    null,
                     10
             );
 
@@ -197,6 +201,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
                     writer.getId(),
                     null,
                     mapCoordinateBoundDto,
+                    null,
                     10
             );
 
@@ -220,6 +225,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
                     writer.getId(),
                     null,
                     mapCoordinateBoundDto,
+                    null,
                     10
             );
 
@@ -244,10 +250,41 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
                     writer.getId(),
                     null,
                     mapCoordinateBoundDto,
+                    null,
                     2
             );
 
             assertThat(result).containsExactly(reviewC, reviewB);
+        }
+
+        @Test
+        void 카테고리_필터링을_적용해_조회한다() {
+            Category category = categoryRepository.findById(2L);
+            Member writer = memberTestPersister.builder().save();
+            Store storeA = storeTestPersister.builder().category(category).save();
+            Store storeB = storeTestPersister.builder().address(storeA.getAddress()).save();
+            Review reviewA = reviewTestPersister.builder().member(writer).store(storeA).save();
+            Review reviewB = reviewTestPersister.builder().member(writer).store(storeA).save();
+            Review reviewC = reviewTestPersister.builder().member(writer).store(storeB).save();
+            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                    BigDecimal.valueOf(storeA.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(storeA.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(3),
+                    BigDecimal.valueOf(3)
+            );
+
+            List<Review> result = reviewCustomRepository.findPaginationReviewsByMemberInMapBound(
+                    writer.getId(),
+                    null,
+                    mapCoordinateBoundDto,
+                    category.getCategoryType(),
+                    10
+            );
+
+            assertSoftly(softly -> {
+                softly.assertThat(result).containsExactly(reviewB, reviewA);
+                softly.assertThat(result).doesNotContain(reviewC);
+            });
         }
     }
 
