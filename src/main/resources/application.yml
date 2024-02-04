@@ -20,6 +20,7 @@ spring:
         default_batch_fetch_size: 50
         create_empty_composites:
           enabled: true
+    open-in-view: false
 
   servlet:
     multipart:
