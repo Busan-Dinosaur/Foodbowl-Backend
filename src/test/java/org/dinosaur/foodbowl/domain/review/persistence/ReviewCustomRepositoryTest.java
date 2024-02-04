@@ -622,6 +622,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
                     member.getId(),
                     review.getId() + 1,
                     mapCoordinateBoundDto,
+                    null,
                     10
             );
 
@@ -646,6 +647,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
                     member.getId(),
                     review.getId() - 1,
                     mapCoordinateBoundDto,
+                    null,
                     10
             );
 
@@ -670,6 +672,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
                     member.getId(),
                     null,
                     mapCoordinateBoundDto,
+                    null,
                     10
             );
 
@@ -693,6 +696,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
                     member.getId(),
                     null,
                     mapCoordinateBoundDto,
+                    null,
                     10
             );
 
@@ -717,6 +721,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
                     member.getId(),
                     null,
                     mapCoordinateBoundDto,
+                    null,
                     10
             );
 
@@ -742,6 +747,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
                     member.getId(),
                     null,
                     mapCoordinateBoundDto,
+                    null,
                     10
             );
 
@@ -749,7 +755,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
         }
 
         @Test
-        void 페이지_크기만큼_조회한다() {
+        void 카테고리_조건이_없으면_모든_결과를_페이지_크기만큼_조회한다() {
             Member member = memberTestPersister.builder().save();
             Member writer = memberTestPersister.builder().save();
             followTestPersister.builder().following(writer).follower(member).save();
@@ -768,10 +774,43 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
                     member.getId(),
                     null,
                     mapCoordinateBoundDto,
+                    null,
                     2
             );
 
             assertThat(result).containsExactly(reviewC, reviewB);
+        }
+
+        @Test
+        void 카테고리_필터링_조건이_있으면_필터링된_결과를_조회한다() {
+            Category category = categoryRepository.findById(3L);
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
+            followTestPersister.builder().following(writer).follower(member).save();
+            Store storeA = storeTestPersister.builder().category(category).save();
+            Store storeB = storeTestPersister.builder().address(storeA.getAddress()).save();
+            Review reviewA = reviewTestPersister.builder().store(storeB).member(writer).save();
+            Review reviewB = reviewTestPersister.builder().store(storeA).member(writer).save();
+            Review reviewC = reviewTestPersister.builder().store(storeA).member(writer).save();
+            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                    BigDecimal.valueOf(storeA.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(storeA.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(3),
+                    BigDecimal.valueOf(3)
+            );
+
+            List<Review> result = reviewCustomRepository.findPaginationReviewsByFollowingInMapBounds(
+                    member.getId(),
+                    null,
+                    mapCoordinateBoundDto,
+                    category.getCategoryType(),
+                    10
+            );
+
+            assertSoftly(softly -> {
+                softly.assertThat(result).containsExactly(reviewC, reviewB);
+                softly.assertThat(result).doesNotContain(reviewA);
+            });
         }
     }
 

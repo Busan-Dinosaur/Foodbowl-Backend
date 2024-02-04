@@ -90,6 +90,7 @@ public class ReviewCustomService {
                 followerId,
                 lastReviewId,
                 mapCoordinateBoundDto,
+                null,
                 pageSize
         );
     }

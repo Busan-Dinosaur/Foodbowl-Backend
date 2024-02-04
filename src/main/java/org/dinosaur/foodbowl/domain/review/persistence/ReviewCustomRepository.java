@@ -145,6 +145,7 @@ public class ReviewCustomRepository {
             Long followerId,
             Long lastReviewId,
             MapCoordinateBoundDto mapCoordinateBoundDto,
+            CategoryType categoryType,
             int pageSize
     ) {
         return jpaQueryFactory.selectDistinct(review)
@@ -158,7 +159,8 @@ public class ReviewCustomRepository {
                 )
                 .where(
                         ltLastReviewId(lastReviewId),
-                        containsPolygon(mapCoordinateBoundDto)
+                        containsPolygon(mapCoordinateBoundDto),
+                        containsCategoryFilter(categoryType)
                 )
                 .orderBy(review.id.desc())
                 .limit(pageSize)
