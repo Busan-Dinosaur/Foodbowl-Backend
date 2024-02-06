@@ -57,14 +57,14 @@ public class ReviewController implements ReviewControllerDocs {
     ) {
         MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(x, y, deltaX, deltaY);
         DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(deviceX, deviceY);
-        CategoryType categoryType = getCategoryType(category);
         ReviewPageResponse response = reviewService.getReviewsByMemberInMapBounds(
                 memberId,
                 lastReviewId,
                 mapCoordinateRequest,
                 deviceCoordinateRequest,
                 pageSize,
-                categoryType,
+                category.map(CategoryType::of)
+                        .orElse(null),
                 loginMember
         );
         return ResponseEntity.ok(response);
@@ -127,13 +127,13 @@ public class ReviewController implements ReviewControllerDocs {
     ) {
         MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(x, y, deltaX, deltaY);
         DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(deviceX, deviceY);
-        CategoryType categoryType = getCategoryType(category);
         ReviewPageResponse response = reviewService.getReviewsByFollowingInMapBounds(
                 lastReviewId,
                 mapCoordinateRequest,
                 deviceCoordinateRequest,
                 pageSize,
-                categoryType,
+                category.map(CategoryType::of)
+                        .orElse(null),
                 loginMember
         );
         return ResponseEntity.ok(response);
@@ -155,13 +155,13 @@ public class ReviewController implements ReviewControllerDocs {
     ) {
         MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(x, y, deltaX, deltaY);
         DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(deviceX, deviceY);
-        CategoryType categoryType = getCategoryType(category);
         ReviewPageResponse response = reviewService.getReviewsBySchoolInMapBounds(
                 schoolId,
                 lastReviewId,
                 mapCoordinateRequest,
                 deviceCoordinateRequest,
-                categoryType,
+                category.map(CategoryType::of)
+                        .orElse(null),
                 pageSize,
                 loginMember
         );
@@ -235,10 +235,5 @@ public class ReviewController implements ReviewControllerDocs {
     ) {
         reviewService.delete(reviewId, loginMember);
         return ResponseEntity.noContent().build();
-    }
-
-    private CategoryType getCategoryType(Optional<String> category) {
-        return category.map(CategoryType::of)
-                .orElse(null);
     }
 }
