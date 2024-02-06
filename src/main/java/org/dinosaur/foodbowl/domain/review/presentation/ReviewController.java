@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.review.application.ReviewService;
 import org.dinosaur.foodbowl.domain.review.dto.request.DeviceCoordinateRequest;
@@ -51,18 +52,19 @@ public class ReviewController implements ReviewControllerDocs {
             @RequestParam(name = "deviceX") BigDecimal deviceX,
             @RequestParam(name = "deviceY") BigDecimal deviceY,
             @RequestParam(name = "pageSize", defaultValue = "10") @Positive(message = "페이지 크기는 양수만 가능합니다.") int pageSize,
-            @RequestParam(name = "category", required = false) String category,
+            @RequestParam(name = "category") Optional<String> category,
             @Auth LoginMember loginMember
     ) {
         MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(x, y, deltaX, deltaY);
         DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(deviceX, deviceY);
+        CategoryType categoryType = getCategoryType(category);
         ReviewPageResponse response = reviewService.getReviewsByMemberInMapBounds(
                 memberId,
                 lastReviewId,
                 mapCoordinateRequest,
                 deviceCoordinateRequest,
                 pageSize,
-                CategoryType.of(category),
+                categoryType,
                 loginMember
         );
         return ResponseEntity.ok(response);
@@ -120,12 +122,12 @@ public class ReviewController implements ReviewControllerDocs {
             @RequestParam(name = "deviceX") BigDecimal deviceX,
             @RequestParam(name = "deviceY") BigDecimal deviceY,
             @RequestParam(name = "pageSize", defaultValue = "10") @Positive(message = "페이지 크기는 양수만 가능합니다.") int pageSize,
-            @RequestParam(name = "category", required = false) String category,
+            @RequestParam(name = "category") Optional<String> category,
             @Auth LoginMember loginMember
     ) {
         MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(x, y, deltaX, deltaY);
         DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(deviceX, deviceY);
-        CategoryType categoryType = CategoryType.of(category);
+        CategoryType categoryType = getCategoryType(category);
         ReviewPageResponse response = reviewService.getReviewsByFollowingInMapBounds(
                 lastReviewId,
                 mapCoordinateRequest,
@@ -148,12 +150,12 @@ public class ReviewController implements ReviewControllerDocs {
             @RequestParam(name = "deviceX") BigDecimal deviceX,
             @RequestParam(name = "deviceY") BigDecimal deviceY,
             @RequestParam(name = "pageSize", defaultValue = "10") @Positive(message = "페이지 크기는 양수만 가능합니다.") int pageSize,
-            @RequestParam(name = "category", required = false) String category,
+            @RequestParam(name = "category") Optional<String> category,
             @Auth LoginMember loginMember
     ) {
         MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(x, y, deltaX, deltaY);
         DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(deviceX, deviceY);
-        CategoryType categoryType = CategoryType.of(category);
+        CategoryType categoryType = getCategoryType(category);
         ReviewPageResponse response = reviewService.getReviewsBySchoolInMapBounds(
                 schoolId,
                 lastReviewId,
@@ -233,5 +235,10 @@ public class ReviewController implements ReviewControllerDocs {
     ) {
         reviewService.delete(reviewId, loginMember);
         return ResponseEntity.noContent().build();
+    }
+
+    private CategoryType getCategoryType(Optional<String> category) {
+        return category.map(CategoryType::of)
+                .orElse(null);
     }
 }

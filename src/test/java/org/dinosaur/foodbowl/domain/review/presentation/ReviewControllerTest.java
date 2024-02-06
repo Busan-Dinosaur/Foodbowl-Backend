@@ -377,6 +377,26 @@ class ReviewControllerTest extends PresentationTest {
             assertThat(result).usingRecursiveComparison().isEqualTo(response);
         }
 
+        @Test
+        void 일치하는_카테고리가_없으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/members")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("memberId", "1")
+                            .param("category", "이태리")
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CATEGORY-100"))
+                    .andExpect(jsonPath("$.message").value(containsString("일치하는 카테고리를 찾을 수 없습니다")));
+        }
+
         @ParameterizedTest
         @ValueSource(strings = {"-1", "0"})
         void 멤버_ID가_양수가_아니라면_400_응답을_반환한다(String memberId) throws Exception {
@@ -1095,6 +1115,25 @@ class ReviewControllerTest extends PresentationTest {
             assertThat(result).usingRecursiveComparison().isEqualTo(response);
         }
 
+        @Test
+        void 일치하는_카테고리가_없으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/following")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("category", "이태리")
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CATEGORY-100"))
+                    .andExpect(jsonPath("$.message").value(containsString("일치하는 카테고리를 찾을 수 없습니다")));
+        }
+
         @ParameterizedTest
         @ValueSource(strings = {"-1", "0"})
         void 마지막_리뷰ID가_양수가_아니라면_400_응답을_반환한다(String lastReviewId) throws Exception {
@@ -1378,6 +1417,26 @@ class ReviewControllerTest extends PresentationTest {
             String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
             ReviewPageResponse result = objectMapper.readValue(jsonResponse, ReviewPageResponse.class);
             assertThat(result).usingRecursiveComparison().isEqualTo(response);
+        }
+
+        @Test
+        void 일치하는_카테고리가_없으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/reviews/schools")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("schoolId", "1")
+                            .param("category", "이태리")
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12")
+                            .param("deviceX", "123.3636")
+                            .param("deviceY", "32.3636"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CATEGORY-100"))
+                    .andExpect(jsonPath("$.message").value(containsString("일치하는 카테고리를 찾을 수 없습니다")));
         }
 
         @ParameterizedTest

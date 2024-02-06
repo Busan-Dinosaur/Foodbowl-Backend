@@ -12,6 +12,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewCreateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.request.ReviewUpdateRequest;
 import org.dinosaur.foodbowl.domain.review.dto.response.ReviewFeedPageResponse;
@@ -226,7 +227,7 @@ public interface ReviewControllerDocs {
             int pageSize,
 
             @Parameter(description = "카테고리", example = "분식")
-            String category,
+            Optional<String> category,
 
             LoginMember loginMember
     );
@@ -480,7 +481,7 @@ public interface ReviewControllerDocs {
             int pageSize,
 
             @Parameter(description = "카테고리", example = "치킨")
-            String category,
+            Optional<String> category,
 
             LoginMember loginMember
     );
@@ -589,7 +590,7 @@ public interface ReviewControllerDocs {
             int pageSize,
 
             @Parameter(description = "카테고리", example = "카페")
-            String category,
+            Optional<String> category,
 
             LoginMember loginMember
     );
