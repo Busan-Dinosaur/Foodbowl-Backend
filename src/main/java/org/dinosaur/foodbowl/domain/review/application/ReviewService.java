@@ -32,6 +32,7 @@ import org.dinosaur.foodbowl.domain.store.application.StoreService;
 import org.dinosaur.foodbowl.domain.store.application.dto.StoreCreateDto;
 import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
+import org.dinosaur.foodbowl.domain.store.domain.vo.CategoryType;
 import org.dinosaur.foodbowl.domain.store.exception.SchoolExceptionType;
 import org.dinosaur.foodbowl.domain.store.persistence.SchoolRepository;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
@@ -122,6 +123,7 @@ public class ReviewService {
             MapCoordinateRequest mapCoordinateRequest,
             DeviceCoordinateRequest deviceCoordinateRequest,
             int pageSize,
+            CategoryType categoryType,
             LoginMember loginMember
     ) {
         Member member = memberRepository.findById(memberId)
@@ -134,6 +136,7 @@ public class ReviewService {
                 member.getId(),
                 lastReviewId,
                 mapCoordinateBoundDto,
+                categoryType,
                 pageSize
         );
         return convertToReviewPageResponse(viewer, reviews, deviceCoordinateRequest);
@@ -200,6 +203,7 @@ public class ReviewService {
             MapCoordinateRequest mapCoordinateRequest,
             DeviceCoordinateRequest deviceCoordinateRequest,
             int pageSize,
+            CategoryType categoryType,
             LoginMember loginMember
     ) {
         Member viewer = memberRepository.findById(loginMember.id())
@@ -210,6 +214,7 @@ public class ReviewService {
                 viewer.getId(),
                 lastReviewId,
                 mapCoordinateBoundDto,
+                categoryType,
                 pageSize
         );
         return convertToReviewPageResponse(viewer, reviews, deviceCoordinateRequest);
@@ -221,6 +226,7 @@ public class ReviewService {
             Long lastReviewId,
             MapCoordinateRequest mapCoordinateRequest,
             DeviceCoordinateRequest deviceCoordinateRequest,
+            CategoryType categoryType,
             int pageSize,
             LoginMember loginMember
     ) {
@@ -234,6 +240,7 @@ public class ReviewService {
                 school.getId(),
                 lastReviewId,
                 mapCoordinateBoundDto,
+                categoryType,
                 pageSize
         );
         return convertToReviewPageResponse(viewer, reviews, deviceCoordinateRequest);

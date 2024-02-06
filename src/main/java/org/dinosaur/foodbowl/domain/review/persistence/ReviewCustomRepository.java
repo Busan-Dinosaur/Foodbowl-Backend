@@ -22,6 +22,7 @@ import org.dinosaur.foodbowl.domain.review.domain.vo.ReviewFilter;
 import org.dinosaur.foodbowl.domain.review.persistence.dto.QStoreReviewCountDto;
 import org.dinosaur.foodbowl.domain.review.persistence.dto.StoreReviewCountDto;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
+import org.dinosaur.foodbowl.domain.store.domain.vo.CategoryType;
 import org.dinosaur.foodbowl.global.util.PointUtils;
 import org.springframework.stereotype.Repository;
 
@@ -66,6 +67,7 @@ public class ReviewCustomRepository {
             Long memberId,
             Long lastReviewId,
             MapCoordinateBoundDto mapCoordinateBoundDto,
+            CategoryType categoryType,
             int pageSize
     ) {
         return jpaQueryFactory.selectDistinct(review)
@@ -76,7 +78,8 @@ public class ReviewCustomRepository {
                 .where(
                         ltLastReviewId(lastReviewId),
                         member.id.eq(memberId),
-                        containsPolygon(mapCoordinateBoundDto)
+                        containsPolygon(mapCoordinateBoundDto),
+                        containsCategoryFilter(categoryType)
                 )
                 .orderBy(review.id.desc())
                 .limit(pageSize)
@@ -142,6 +145,7 @@ public class ReviewCustomRepository {
             Long followerId,
             Long lastReviewId,
             MapCoordinateBoundDto mapCoordinateBoundDto,
+            CategoryType categoryType,
             int pageSize
     ) {
         return jpaQueryFactory.selectDistinct(review)
@@ -155,7 +159,8 @@ public class ReviewCustomRepository {
                 )
                 .where(
                         ltLastReviewId(lastReviewId),
-                        containsPolygon(mapCoordinateBoundDto)
+                        containsPolygon(mapCoordinateBoundDto),
+                        containsCategoryFilter(categoryType)
                 )
                 .orderBy(review.id.desc())
                 .limit(pageSize)
@@ -166,6 +171,7 @@ public class ReviewCustomRepository {
             Long schoolId,
             Long lastReviewId,
             MapCoordinateBoundDto mapCoordinateBoundDto,
+            CategoryType categoryType,
             int pageSize
     ) {
         return jpaQueryFactory.selectDistinct(review)
@@ -179,7 +185,8 @@ public class ReviewCustomRepository {
                 )
                 .where(
                         ltLastReviewId(lastReviewId),
-                        containsPolygon(mapCoordinateBoundDto)
+                        containsPolygon(mapCoordinateBoundDto),
+                        containsCategoryFilter(categoryType)
                 )
                 .orderBy(review.id.desc())
                 .limit(pageSize)
@@ -224,5 +231,12 @@ public class ReviewCustomRepository {
                 mapCoordinateBoundDto.downLeftPoint().getY(),
                 mapCoordinateBoundDto.downLeftPoint().getX()
         );
+    }
+
+    private BooleanExpression containsCategoryFilter(CategoryType categoryType) {
+        if (categoryType == null) {
+            return null;
+        }
+        return review.store.category.categoryType.eq(categoryType);
     }
 }

@@ -27,6 +27,7 @@ import org.dinosaur.foodbowl.domain.review.persistence.ReviewRepository;
 import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
+import org.dinosaur.foodbowl.domain.store.domain.vo.CategoryType;
 import org.dinosaur.foodbowl.global.exception.BadRequestException;
 import org.dinosaur.foodbowl.global.exception.InvalidArgumentException;
 import org.dinosaur.foodbowl.global.exception.NotFoundException;
@@ -292,6 +293,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
+                    null,
                     new LoginMember(member.getId())
             ))
                     .isInstanceOf(NotFoundException.class)
@@ -319,6 +321,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
+                    null,
                     new LoginMember(-1L)
             ))
                     .isInstanceOf(NotFoundException.class)
@@ -350,6 +353,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
+                    null,
                     new LoginMember(member.getId())
             );
 
@@ -387,6 +391,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
+                    null,
                     new LoginMember(member.getId())
             );
 
@@ -436,6 +441,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
+                    null,
                     new LoginMember(member.getId())
             );
 
@@ -484,6 +490,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
+                    null,
                     new LoginMember(member.getId())
             );
 
@@ -521,6 +528,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
+                    null,
                     new LoginMember(member.getId())
             );
 
@@ -529,6 +537,55 @@ class ReviewServiceTest extends IntegrationTest {
                 softly.assertThat(response.page().firstId()).isNull();
                 softly.assertThat(response.page().lastId()).isNull();
                 softly.assertThat(response.page().size()).isZero();
+            });
+        }
+
+        @Test
+        void 카테고리_필터링을_적용해_결과를_반환한다() {
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder()
+                    .address(
+                            Address.of(
+                                    "부산광역시 금정구 부산대학로63번길 2",
+                                    PointUtils.generate(
+                                            BigDecimal.valueOf(129.084180374589),
+                                            BigDecimal.valueOf(35.23159315706788)
+                                    )
+                            )
+                    )
+                    .save();
+            Review review = reviewTestPersister.builder().member(writer).store(store).save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(129.0842730512684),
+                    BigDecimal.valueOf(35.23038627521815)
+            );
+
+            ReviewPageResponse response = reviewService.getReviewsByMemberInMapBounds(
+                    writer.getId(),
+                    null,
+                    mapCoordinateRequest,
+                    deviceCoordinateRequest,
+                    10,
+                    CategoryType.카페,
+                    new LoginMember(member.getId())
+            );
+
+            List<ReviewResponse> result = response.reviews();
+            assertSoftly(softly -> {
+                softly.assertThat(result).hasSize(1);
+                softly.assertThat(result.get(0).store().id()).isEqualTo(store.getId());
+                softly.assertThat(result.get(0).store().categoryName()).isEqualTo(store.getCategory().getName());
+                softly.assertThat(result.get(0).store().name()).isEqualTo(store.getStoreName());
+                softly.assertThat(result.get(0).store().addressName()).isEqualTo(store.getAddress().getAddressName());
+                softly.assertThat(Math.round(result.get(0).store().distance() / 10) * 10).isEqualTo(130);
+                softly.assertThat(result.get(0).store().isBookmarked()).isFalse();
             });
         }
     }
@@ -936,6 +993,45 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
+                    null,
+                    new LoginMember(member.getId())
+            );
+
+            List<ReviewResponse> result = response.reviews();
+            assertSoftly(softly -> {
+                softly.assertThat(result).hasSize(1);
+                softly.assertThat(result.get(0).writer().id()).isEqualTo(writer.getId());
+                softly.assertThat(result.get(0).writer().nickname()).isEqualTo(writer.getNickname());
+                softly.assertThat(result.get(0).writer().followerCount()).isEqualTo(2);
+            });
+        }
+
+        @Test
+        void 카테고리_필터링_조건을_적용해_조회한다() {
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
+            Member follower = memberTestPersister.builder().save();
+            followTestPersister.builder().following(writer).follower(member).save();
+            followTestPersister.builder().following(writer).follower(follower).save();
+            Store store = storeTestPersister.builder().save();
+            reviewTestPersister.builder().member(writer).store(store).save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            ReviewPageResponse response = reviewService.getReviewsByFollowingInMapBounds(
+                    null,
+                    mapCoordinateRequest,
+                    deviceCoordinateRequest,
+                    10,
+                    CategoryType.카페,
                     new LoginMember(member.getId())
             );
 
@@ -973,6 +1069,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
+                    null,
                     new LoginMember(member.getId())
             );
 
@@ -1022,6 +1119,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
+                    null,
                     new LoginMember(member.getId())
             );
 
@@ -1070,6 +1168,7 @@ class ReviewServiceTest extends IntegrationTest {
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
                     10,
+                    null,
                     new LoginMember(member.getId())
             );
 
@@ -1097,6 +1196,7 @@ class ReviewServiceTest extends IntegrationTest {
                     ),
                     new DeviceCoordinateRequest(BigDecimal.valueOf(1), BigDecimal.valueOf(1)),
                     10,
+                    null,
                     new LoginMember(-1L)
             ))
                     .isInstanceOf(NotFoundException.class)
@@ -1127,6 +1227,7 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
+                    null,
                     10,
                     new LoginMember(member.getId())
             ))
@@ -1155,6 +1256,7 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
+                    null,
                     10,
                     new LoginMember(-1L)
             ))
@@ -1188,6 +1290,7 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
+                    null,
                     10,
                     new LoginMember(member.getId())
             );
@@ -1226,6 +1329,7 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
+                    null,
                     10,
                     new LoginMember(member.getId())
             );
@@ -1276,6 +1380,7 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
+                    null,
                     10,
                     new LoginMember(member.getId())
             );
@@ -1325,6 +1430,7 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
+                    null,
                     10,
                     new LoginMember(member.getId())
             );
@@ -1339,6 +1445,48 @@ class ReviewServiceTest extends IntegrationTest {
                 softly.assertThat(Math.round(result.get(0).store().distance() / 10) * 10).isEqualTo(130);
                 softly.assertThat(result.get(0).store().isBookmarked()).isFalse();
             });
+        }
+
+        @Test
+        void 카테고리_필터링을_적용해_결과를_반환한다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder()
+                    .address(
+                            Address.of(
+                                    "부산광역시 금정구 부산대학로63번길 2",
+                                    PointUtils.generate(
+                                            BigDecimal.valueOf(129.084180374589),
+                                            BigDecimal.valueOf(35.23159315706788)
+                                    )
+                            )
+                    )
+                    .save();
+            School school = schoolTestPersister.builder().save();
+            storeSchoolTestPersister.builder().store(store).school(school).save();
+            Review review = reviewTestPersister.builder().store(store).save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(129.0842730512684),
+                    BigDecimal.valueOf(35.23038627521815)
+            );
+
+            ReviewPageResponse response = reviewService.getReviewsBySchoolInMapBounds(
+                    school.getId(),
+                    null,
+                    mapCoordinateRequest,
+                    deviceCoordinateRequest,
+                    CategoryType.분식,
+                    10,
+                    new LoginMember(member.getId())
+            );
+
+            List<ReviewResponse> result = response.reviews();
+            assertThat(result).isEmpty();
         }
     }
 

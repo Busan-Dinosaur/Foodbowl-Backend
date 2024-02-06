@@ -9,6 +9,7 @@ import org.dinosaur.foodbowl.domain.review.domain.vo.ReviewFilter;
 import org.dinosaur.foodbowl.domain.review.persistence.ReviewCustomRepository;
 import org.dinosaur.foodbowl.domain.review.persistence.dto.StoreReviewCountDto;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
+import org.dinosaur.foodbowl.domain.store.domain.vo.CategoryType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,12 +35,14 @@ public class ReviewCustomService {
             Long memberId,
             Long lastReviewId,
             MapCoordinateBoundDto mapCoordinateBoundDto,
+            CategoryType categoryType,
             int pageSize
     ) {
         return reviewCustomRepository.findPaginationReviewsByMemberInMapBound(
                 memberId,
                 lastReviewId,
                 mapCoordinateBoundDto,
+                categoryType,
                 pageSize
         );
     }
@@ -81,12 +84,14 @@ public class ReviewCustomService {
             Long followerId,
             Long lastReviewId,
             MapCoordinateBoundDto mapCoordinateBoundDto,
+            CategoryType categoryType,
             int pageSize
     ) {
         return reviewCustomRepository.findPaginationReviewsByFollowingInMapBounds(
                 followerId,
                 lastReviewId,
                 mapCoordinateBoundDto,
+                categoryType,
                 pageSize
         );
     }
@@ -96,12 +101,14 @@ public class ReviewCustomService {
             Long schoolId,
             Long lastReviewId,
             MapCoordinateBoundDto mapCoordinateBoundDto,
+            CategoryType categoryType,
             int pageSize
     ) {
         return reviewCustomRepository.findPaginationReviewsBySchoolInMapBounds(
                 schoolId,
                 lastReviewId,
                 mapCoordinateBoundDto,
+                categoryType,
                 pageSize
         );
     }
