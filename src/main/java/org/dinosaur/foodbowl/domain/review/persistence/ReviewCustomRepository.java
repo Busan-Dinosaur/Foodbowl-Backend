@@ -153,11 +153,12 @@ public class ReviewCustomRepository {
                 .innerJoin(review.store, store).fetchJoin()
                 .innerJoin(review.member, member).fetchJoin()
                 .innerJoin(store.category, category).fetchJoin()
-                .innerJoin(follow).on(
-                        review.member.id.eq(follow.following.id),
+                .leftJoin(follow).on(
                         follow.follower.id.eq(followerId)
                 )
                 .where(
+                        review.member.id.eq(followerId)
+                                .or(review.member.id.eq(follow.following.id)),
                         ltLastReviewId(lastReviewId),
                         containsPolygon(mapCoordinateBoundDto),
                         containsCategoryFilter(categoryType)

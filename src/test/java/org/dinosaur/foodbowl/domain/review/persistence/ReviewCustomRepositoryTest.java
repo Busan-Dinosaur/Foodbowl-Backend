@@ -311,7 +311,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
         }
 
         @Test
-        void 친구_필터링이_있으면_팔로워_리뷰만_조회한다() {
+        void 친구_필터링이_있으면_사용자_및_팔로워_리뷰만_조회한다() {
             Member loginMember = memberTestPersister.builder().save();
             Member gray = memberTestPersister.builder().save();
             Member dazzle = memberTestPersister.builder().save();
@@ -320,6 +320,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
             Review reviewA = reviewTestPersister.builder().member(gray).store(store).save();
             Review reviewB = reviewTestPersister.builder().member(gray).store(store).save();
             Review reviewC = reviewTestPersister.builder().member(dazzle).store(store).save();
+            Review reviewD = reviewTestPersister.builder().member(loginMember).store(store).save();
 
             List<Review> reviews = reviewCustomRepository.findPaginationReviewsByStore(
                     store.getId(),
@@ -330,7 +331,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
             );
 
             assertSoftly(softly -> {
-                softly.assertThat(reviews).containsExactly(reviewB, reviewA);
+                softly.assertThat(reviews).containsExactly(reviewD, reviewB, reviewA);
                 softly.assertThat(reviews).doesNotContain(reviewC);
             });
         }
@@ -680,7 +681,57 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
         }
 
         @Test
-        void 팔로잉_하고있지_않은_유저의_리뷰는_조회하지_않는다() {
+        void 사용자의_리뷰도_함께_조회한다() {
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
+            followTestPersister.builder().following(writer).follower(member).save();
+            Store store = storeTestPersister.builder().save();
+            Review review = reviewTestPersister.builder().store(store).member(writer).save();
+            Review reviewA = reviewTestPersister.builder().store(store).member(member).save();
+            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(3),
+                    BigDecimal.valueOf(3)
+            );
+
+            List<Review> result = reviewCustomRepository.findPaginationReviewsByFollowingInMapBounds(
+                    member.getId(),
+                    null,
+                    mapCoordinateBoundDto,
+                    null,
+                    10
+            );
+
+            assertThat(result).containsExactly(reviewA, review);
+        }
+
+        @Test
+        void 사용자의_팔로앙이_없는_경우에도_사용자의_리뷰는_조회된다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            Review reviewA = reviewTestPersister.builder().store(store).member(member).save();
+            Review reviewB = reviewTestPersister.builder().store(store).member(member).save();
+            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(3),
+                    BigDecimal.valueOf(3)
+            );
+
+            List<Review> result = reviewCustomRepository.findPaginationReviewsByFollowingInMapBounds(
+                    member.getId(),
+                    null,
+                    mapCoordinateBoundDto,
+                    null,
+                    10
+            );
+
+            assertThat(result).containsExactly(reviewB, reviewA);
+        }
+
+        @Test
+        void 사용자가_아닌_팔로잉_하고있지_않은_유저의_리뷰는_조회하지_않는다() {
             Member member = memberTestPersister.builder().save();
             Member writer = memberTestPersister.builder().save();
             Store store = storeTestPersister.builder().save();
