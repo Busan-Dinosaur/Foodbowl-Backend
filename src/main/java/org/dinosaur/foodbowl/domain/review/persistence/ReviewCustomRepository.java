@@ -97,7 +97,7 @@ public class ReviewCustomRepository {
                 .from(review)
                 .innerJoin(review.member, member).fetchJoin();
 
-        setReviewFilterIfExists(jpaQuery, memberId, reviewFilter);
+        setReviewFilterIfExists(jpaQuery, reviewFilter);
         return jpaQuery.where(
                         applyReviewFilterIfExists(memberId, reviewFilter),
                         review.store.id.eq(storeId),
@@ -108,12 +108,12 @@ public class ReviewCustomRepository {
                 .fetch();
     }
 
-    private void setReviewFilterIfExists(JPAQuery<Review> jpaQuery, Long memberId, ReviewFilter reviewFilter) {
+    private void setReviewFilterIfExists(JPAQuery<Review> jpaQuery, ReviewFilter reviewFilter) {
         if (reviewFilter == ReviewFilter.ALL) {
             return;
         }
         jpaQuery.leftJoin(follow).on(
-                follow.follower.id.eq(memberId)
+                review.member.id.eq(follow.following.id)
         );
     }
 
@@ -122,7 +122,7 @@ public class ReviewCustomRepository {
             return null;
         }
         return review.member.id.eq(memberId)
-                .or(review.member.id.eq(follow.following.id));
+                .or(memberFollowingEq(memberId));
     }
 
     public List<Review> findPaginationReviewsByBookmarkInMapBounds(
@@ -162,11 +162,11 @@ public class ReviewCustomRepository {
                 .innerJoin(review.member, member).fetchJoin()
                 .innerJoin(store.category, category).fetchJoin()
                 .leftJoin(follow).on(
-                        follow.follower.id.eq(followerId)
+                        review.member.id.eq(follow.following.id)
                 )
                 .where(
                         review.member.id.eq(followerId)
-                                .or(review.member.id.eq(follow.following.id)),
+                                .or(memberFollowingEq(followerId)),
                         ltLastReviewId(lastReviewId),
                         containsPolygon(mapCoordinateBoundDto),
                         containsCategoryFilter(categoryType)
@@ -174,6 +174,11 @@ public class ReviewCustomRepository {
                 .orderBy(review.id.desc())
                 .limit(pageSize)
                 .fetch();
+    }
+
+    private BooleanExpression memberFollowingEq(Long followerId) {
+        return follow.follower.id.eq(followerId)
+                .and(review.member.id.eq(follow.following.id));
     }
 
     public List<Review> findPaginationReviewsBySchoolInMapBounds(
