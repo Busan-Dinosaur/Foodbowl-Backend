@@ -99,6 +99,7 @@ public class ReviewCustomRepository {
 
         setReviewFilterIfExists(jpaQuery, memberId, reviewFilter);
         return jpaQuery.where(
+                        applyReviewFilterIfExists(memberId, reviewFilter),
                         review.store.id.eq(storeId),
                         ltLastReviewId(lastReviewId)
                 )
@@ -111,10 +112,17 @@ public class ReviewCustomRepository {
         if (reviewFilter == ReviewFilter.ALL) {
             return;
         }
-        jpaQuery.innerJoin(follow).on(
-                review.member.id.eq(follow.following.id),
+        jpaQuery.leftJoin(follow).on(
                 follow.follower.id.eq(memberId)
         );
+    }
+
+    private BooleanExpression applyReviewFilterIfExists(Long memberId, ReviewFilter reviewFilter) {
+        if (reviewFilter == ReviewFilter.ALL) {
+            return null;
+        }
+        return review.member.id.eq(memberId)
+                .or(review.member.id.eq(follow.following.id));
     }
 
     public List<Review> findPaginationReviewsByBookmarkInMapBounds(

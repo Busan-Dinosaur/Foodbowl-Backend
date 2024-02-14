@@ -337,6 +337,50 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
         }
 
         @Test
+        void 친구_필터링이_있을_때_팔로워가_없어도_사용자_리뷰는_조회된다() {
+            Member loginMember = memberTestPersister.builder().save();
+            Member dazzle = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            Review reviewA = reviewTestPersister.builder().member(dazzle).store(store).save();
+            Review reviewB = reviewTestPersister.builder().member(loginMember).store(store).save();
+            Review reviewC = reviewTestPersister.builder().member(loginMember).store(store).save();
+
+            List<Review> reviews = reviewCustomRepository.findPaginationReviewsByStore(
+                    store.getId(),
+                    ReviewFilter.FRIEND,
+                    loginMember.getId(),
+                    null,
+                    10
+            );
+
+            assertSoftly(softly -> {
+                softly.assertThat(reviews).containsExactly(reviewC, reviewB);
+                softly.assertThat(reviews).doesNotContain(reviewA);
+            });
+        }
+
+        @Test
+        void 친구_필터링이_있을_때_팔로워가_있지만_팔로워의_리뷰가_없어도_사용자_리뷰는_조회된다() {
+            Member loginMember = memberTestPersister.builder().save();
+            Member dazzle = memberTestPersister.builder().save();
+            followTestPersister.builder().follower(loginMember).following(dazzle).save();
+            Store store = storeTestPersister.builder().save();
+            Review reviewA = reviewTestPersister.builder().member(loginMember).store(store).save();
+            Review reviewB = reviewTestPersister.builder().member(loginMember).store(store).save();
+
+            List<Review> reviews = reviewCustomRepository.findPaginationReviewsByStore(
+                    store.getId(),
+                    ReviewFilter.FRIEND,
+                    loginMember.getId(),
+                    null,
+                    10
+            );
+
+
+            assertThat(reviews).containsExactly(reviewB, reviewA);
+        }
+
+        @Test
         void 전체_필터링이_있으면_모든_리뷰를_조회한다() {
             Member loginMember = memberTestPersister.builder().save();
             Member gray = memberTestPersister.builder().save();
