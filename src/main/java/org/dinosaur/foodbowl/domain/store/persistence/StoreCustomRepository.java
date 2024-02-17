@@ -93,11 +93,14 @@ public class StoreCustomRepository {
                 .innerJoin(store.category, category).fetchJoin()
                 .innerJoin(review).on(review.store.eq(store))
                 .innerJoin(member).on(review.member.eq(member))
-                .innerJoin(follow).on(
-                        review.member.id.eq(follow.following.id),
-                        follow.follower.id.eq(memberId)
+                .leftJoin(follow).on(
+                        review.member.id.eq(follow.following.id)
                 )
-                .where(containsPolygon(mapCoordinateBoundDto))
+                .where(
+                        review.member.id.eq(memberId)
+                                        .or(follow.follower.id.eq(memberId)),
+                        containsPolygon(mapCoordinateBoundDto)
+                )
                 .fetch();
     }
 

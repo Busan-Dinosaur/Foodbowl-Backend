@@ -97,8 +97,9 @@ public class ReviewCustomRepository {
                 .from(review)
                 .innerJoin(review.member, member).fetchJoin();
 
-        setReviewFilterIfExists(jpaQuery, memberId, reviewFilter);
+        setReviewFilterIfExists(jpaQuery, reviewFilter);
         return jpaQuery.where(
+                        applyReviewFilterIfExists(memberId, reviewFilter),
                         review.store.id.eq(storeId),
                         ltLastReviewId(lastReviewId)
                 )
@@ -107,14 +108,21 @@ public class ReviewCustomRepository {
                 .fetch();
     }
 
-    private void setReviewFilterIfExists(JPAQuery<Review> jpaQuery, Long memberId, ReviewFilter reviewFilter) {
+    private void setReviewFilterIfExists(JPAQuery<Review> jpaQuery, ReviewFilter reviewFilter) {
         if (reviewFilter == ReviewFilter.ALL) {
             return;
         }
-        jpaQuery.innerJoin(follow).on(
-                review.member.id.eq(follow.following.id),
-                follow.follower.id.eq(memberId)
+        jpaQuery.leftJoin(follow).on(
+                review.member.id.eq(follow.following.id)
         );
+    }
+
+    private BooleanExpression applyReviewFilterIfExists(Long memberId, ReviewFilter reviewFilter) {
+        if (reviewFilter == ReviewFilter.ALL) {
+            return null;
+        }
+        return review.member.id.eq(memberId)
+                .or(follow.follower.id.eq(memberId));
     }
 
     public List<Review> findPaginationReviewsByBookmarkInMapBounds(
@@ -153,11 +161,12 @@ public class ReviewCustomRepository {
                 .innerJoin(review.store, store).fetchJoin()
                 .innerJoin(review.member, member).fetchJoin()
                 .innerJoin(store.category, category).fetchJoin()
-                .innerJoin(follow).on(
-                        review.member.id.eq(follow.following.id),
-                        follow.follower.id.eq(followerId)
+                .leftJoin(follow).on(
+                        review.member.id.eq(follow.following.id)
                 )
                 .where(
+                        review.member.id.eq(followerId)
+                                .or(follow.follower.id.eq(followerId)),
                         ltLastReviewId(lastReviewId),
                         containsPolygon(mapCoordinateBoundDto),
                         containsCategoryFilter(categoryType)
