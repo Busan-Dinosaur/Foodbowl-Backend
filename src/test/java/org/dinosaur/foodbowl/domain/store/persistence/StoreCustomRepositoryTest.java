@@ -223,6 +223,66 @@ class StoreCustomRepositoryTest extends PersistenceTest {
         }
 
         @Test
+        void 팔로잉_유저의_리뷰가_작성된_가게를_조회할_때_사용자가_작성한_리뷰의_가게도_조회한다() {
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
+            followTestPersister.builder().following(writer).follower(member).save();
+            Store storeA = storeTestPersister.builder().save();
+            Store storeB = storeTestPersister.builder().address(storeA.getAddress()).save();
+            reviewTestPersister.builder().member(writer).store(storeA).save();
+            reviewTestPersister.builder().member(member).store(storeB).save();
+            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                    BigDecimal.valueOf(storeA.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(storeA.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            List<Store> result =
+                    storeCustomRepository.findStoresByFollowingInMapBounds(member.getId(), mapCoordinateBoundDto);
+
+            assertThat(result).containsExactly(storeA, storeB);
+        }
+
+        @Test
+        void 팔로잉_유저의_리뷰가_존재하지_않아도_사용자가_작성한_리뷰의_가게는_조회한다() {
+            Member member = memberTestPersister.builder().save();
+            Member writer = memberTestPersister.builder().save();
+            followTestPersister.builder().following(writer).follower(member).save();
+            Store store = storeTestPersister.builder().save();
+            reviewTestPersister.builder().member(member).store(store).save();
+            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            List<Store> result =
+                    storeCustomRepository.findStoresByFollowingInMapBounds(member.getId(), mapCoordinateBoundDto);
+
+            assertThat(result).containsExactly(store);
+        }
+
+        @Test
+        void 팔로잉_유저가_존재하지_않아도_사용자가_작성한_리뷰의_가게는_조회한다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            reviewTestPersister.builder().member(member).store(store).save();
+            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            List<Store> result =
+                    storeCustomRepository.findStoresByFollowingInMapBounds(member.getId(), mapCoordinateBoundDto);
+
+            assertThat(result).containsExactly(store);
+        }
+
+        @Test
         void 팔로잉_하는_유저가_작성한_리뷰가_동일한_가게인_경우_중복_조회_하지_않는다() {
             Member member = memberTestPersister.builder().save();
             Member writerA = memberTestPersister.builder().save();
