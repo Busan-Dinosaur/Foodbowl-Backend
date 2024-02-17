@@ -1,6 +1,7 @@
 package org.dinosaur.foodbowl.domain.member.persistence;
 
 import static org.dinosaur.foodbowl.domain.member.domain.QMember.member;
+import static org.dinosaur.foodbowl.domain.review.domain.QReview.review;
 
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.NumberExpression;
@@ -27,6 +28,17 @@ public class MemberCustomRepository {
                 .orderBy(nameSort.asc())
                 .limit(size)
                 .offset(0)
+                .fetch();
+    }
+
+    public List<Member> getMembersSortByReviewCounts(int page, int size) {
+        return jpaQueryFactory.select(member)
+                .from(review)
+                .innerJoin(review.member, member)
+                .groupBy(member)
+                .orderBy(review.count().desc())
+                .limit(size)
+                .offset((long) page * size)
                 .fetch();
     }
 }
