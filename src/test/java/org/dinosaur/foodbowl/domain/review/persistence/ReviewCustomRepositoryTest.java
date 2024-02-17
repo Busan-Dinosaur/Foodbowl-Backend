@@ -751,7 +751,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
         }
 
         @Test
-        void 사용자의_팔로앙이_없는_경우에도_사용자의_리뷰는_조회된다() {
+        void 사용자의_팔로잉이_없는_경우에도_사용자의_리뷰는_조회된다() {
             Member member = memberTestPersister.builder().save();
             Store store = storeTestPersister.builder().save();
             Review reviewA = reviewTestPersister.builder().store(store).member(member).save();
