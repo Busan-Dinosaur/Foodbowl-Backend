@@ -20,6 +20,7 @@ import org.dinosaur.foodbowl.domain.member.dto.response.NicknameExistResponse;
 import org.dinosaur.foodbowl.global.exception.response.ExceptionResponse;
 import org.dinosaur.foodbowl.global.presentation.LoginMember;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "회원", description = "회원 API")
@@ -125,6 +126,49 @@ public interface MemberControllerDocs {
             @Parameter(description = "닉네임", example = "coby5502")
             @NotBlank(message = "닉네임 파라미터 값이 존재하지 않습니다.")
             String nickname
+    );
+
+    @Operation(
+            summary = "리뷰 순 회원 목록 조회",
+            description = """
+                    리뷰가 많은 순으로 회원 목록을 페이지 조회합니다.
+                                        
+                    단, 리뷰를 작성하지 않은 회원은 조회되지 않습니다.
+                                        
+                    page, size 파라미터를 입력하지 않으면 기본으로 0, 20이 적용됩니다.
+                                        
+                    size는 1~20까지만 가능합니다.
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "리뷰 순 회원 목록 조회 성공"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = """
+                            1.조회페이지가 0보다 작은 경우
+                                                        
+                            2.조회 크기가 1보다 작은 경우
+                                                        
+                            3.조회 크기가 20보다 큰 경우
+                            """
+            )
+    })
+    ResponseEntity<MemberSearchResponses> getMembersSortByReviewCounts(
+            @Parameter(description = "조회 페이지", example = "0")
+            @RequestParam(defaultValue = "0")
+            @PositiveOrZero(message = "조회 페이지는 0이상만 가능합니다.")
+            int page,
+
+            @Parameter(description = "조회 크기", example = "20")
+            @RequestParam(defaultValue = "20")
+            @Positive(message = "조회 크기는 1이상만 가능합니다.")
+            @Max(value = 20, message = "최대 20개까지 조회가능합니다.")
+            int size,
+
+            LoginMember loginMember
     );
 
     @Operation(summary = "프로필 정보 수정", description = "닉네임, 한 줄 소개를 수정한다.")
