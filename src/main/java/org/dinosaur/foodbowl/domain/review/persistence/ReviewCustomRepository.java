@@ -122,7 +122,7 @@ public class ReviewCustomRepository {
             return null;
         }
         return review.member.id.eq(memberId)
-                .or(memberFollowingEq(memberId));
+                .or(follow.follower.id.eq(memberId));
     }
 
     public List<Review> findPaginationReviewsByBookmarkInMapBounds(
@@ -166,7 +166,7 @@ public class ReviewCustomRepository {
                 )
                 .where(
                         review.member.id.eq(followerId)
-                                .or(memberFollowingEq(followerId)),
+                                .or(follow.follower.id.eq(followerId)),
                         ltLastReviewId(lastReviewId),
                         containsPolygon(mapCoordinateBoundDto),
                         containsCategoryFilter(categoryType)
@@ -174,11 +174,6 @@ public class ReviewCustomRepository {
                 .orderBy(review.id.desc())
                 .limit(pageSize)
                 .fetch();
-    }
-
-    private BooleanExpression memberFollowingEq(Long followerId) {
-        return follow.follower.id.eq(followerId)
-                .and(review.member.id.eq(follow.following.id));
     }
 
     public List<Review> findPaginationReviewsBySchoolInMapBounds(

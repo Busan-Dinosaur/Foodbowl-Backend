@@ -98,15 +98,10 @@ public class StoreCustomRepository {
                 )
                 .where(
                         review.member.id.eq(memberId)
-                                        .or(memberFollowingEq(memberId)),
+                                        .or(follow.follower.id.eq(memberId)),
                         containsPolygon(mapCoordinateBoundDto)
                 )
                 .fetch();
-    }
-
-    private BooleanExpression memberFollowingEq(Long followerId) {
-        return follow.follower.id.eq(followerId)
-                .and(review.member.id.eq(follow.following.id));
     }
 
     public List<Store> findStoresBySchoolInMapBounds(Long schoolId, MapCoordinateBoundDto mapCoordinateBoundDto) {
