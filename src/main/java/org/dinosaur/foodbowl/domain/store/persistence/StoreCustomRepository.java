@@ -98,7 +98,7 @@ public class StoreCustomRepository {
                 )
                 .where(
                         review.member.id.eq(memberId)
-                                        .or(follow.follower.id.eq(memberId)),
+                                .or(follow.follower.id.eq(memberId)),
                         containsPolygon(mapCoordinateBoundDto)
                 )
                 .fetch();

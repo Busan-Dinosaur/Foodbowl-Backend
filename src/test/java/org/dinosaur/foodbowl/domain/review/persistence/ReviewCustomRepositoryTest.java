@@ -376,7 +376,6 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
                     10
             );
 
-
             assertThat(reviews).containsExactly(reviewB, reviewA);
         }
 
