@@ -319,8 +319,8 @@ class MemberControllerTest extends PresentationTest {
                     .andExpect(jsonPath("message").value(containsString("조회 페이지는 0이상만 가능합니다.")));
         }
 
-        @ValueSource(ints = {-1, -0})
         @ParameterizedTest
+        @ValueSource(ints = {-1, -0})
         void 페이지_크기가_1보다_작으면_400_응답을_반환한다(int size) throws Exception {
             mockingAuthMemberInResolver();
 
