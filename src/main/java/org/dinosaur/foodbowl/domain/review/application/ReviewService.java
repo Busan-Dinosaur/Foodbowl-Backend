@@ -117,6 +117,26 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
+    public ReviewPageResponse getReviewsInMapBounds(
+            Long lastReviewId,
+            MapCoordinateRequest mapCoordinateRequest,
+            DeviceCoordinateRequest deviceCoordinateRequest,
+            int pageSize,
+            LoginMember loginMember
+    ) {
+        Member viewer = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+
+        MapCoordinateBoundDto mapCoordinateBoundDto = convertToMapCoordinateBound(mapCoordinateRequest);
+        List<Review> reviews = reviewCustomService.getReviewsInMapBounds(
+                lastReviewId,
+                mapCoordinateBoundDto,
+                pageSize
+        );
+        return convertToReviewPageResponse(viewer, reviews, deviceCoordinateRequest);
+    }
+
+    @Transactional(readOnly = true)
     public ReviewPageResponse getReviewsByMemberInMapBounds(
             Long memberId,
             Long lastReviewId,

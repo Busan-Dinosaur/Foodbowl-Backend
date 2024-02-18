@@ -193,6 +193,193 @@ class ReviewServiceTest extends IntegrationTest {
     }
 
     @Nested
+    class 위도_경도에_해당하는_모든_리뷰_조회_시 {
+
+        @Test
+        void 영역에_해당하는_리뷰를_조회한다() {
+            Member memberA = memberTestPersister.builder().save();
+            Member memberB = memberTestPersister.builder().save();
+            Member viewer = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            Review reviewA = reviewTestPersister.builder().store(store).member(memberA).content("맛있어요").save();
+            Review reviewB = reviewTestPersister.builder().store(store).member(memberB).content("맛없어요").save();
+            Review reviewC = reviewTestPersister.builder().store(store).member(viewer).content("맛있어요").save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            ReviewPageResponse reviewPageResponse = reviewService.getReviewsInMapBounds(
+                    null,
+                    mapCoordinateRequest,
+                    deviceCoordinateRequest,
+                    10,
+                    new LoginMember(viewer.getId())
+            );
+
+            List<ReviewResponse> reviews = reviewPageResponse.reviews();
+            ReviewPageInfo reviewPageInfo = reviewPageResponse.page();
+            assertSoftly(softly -> {
+                softly.assertThat(reviews).hasSize(3);
+                softly.assertThat(reviews.get(0).review().id()).isEqualTo(reviewC.getId());
+                softly.assertThat(reviews.get(0).review().content()).isEqualTo(reviewC.getContent());
+                softly.assertThat(reviews.get(0).writer().id()).isEqualTo(viewer.getId());
+                softly.assertThat(reviews.get(0).store().id()).isEqualTo(store.getId());
+                softly.assertThat(reviews.get(1).review().id()).isEqualTo(reviewB.getId());
+                softly.assertThat(reviews.get(1).review().content()).isEqualTo(reviewB.getContent());
+                softly.assertThat(reviews.get(1).writer().id()).isEqualTo(memberB.getId());
+                softly.assertThat(reviews.get(1).store().id()).isEqualTo(store.getId());
+                softly.assertThat(reviews.get(2).review().id()).isEqualTo(reviewA.getId());
+                softly.assertThat(reviews.get(2).review().content()).isEqualTo(reviewA.getContent());
+                softly.assertThat(reviews.get(2).writer().id()).isEqualTo(memberA.getId());
+                softly.assertThat(reviews.get(2).store().id()).isEqualTo(store.getId());
+                softly.assertThat(reviewPageInfo.firstId()).isEqualTo(reviewC.getId());
+                softly.assertThat(reviewPageInfo.lastId()).isEqualTo(reviewA.getId());
+                softly.assertThat(reviewPageInfo.size()).isEqualTo(3);
+            });
+        }
+
+        @Test
+        void 영역에_해당하지_않는_리뷰는_조회하지_않는다() {
+            Member memberA = memberTestPersister.builder().save();
+            Member memberB = memberTestPersister.builder().save();
+            Member viewer = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            reviewTestPersister.builder().store(store).member(memberA).content("맛있어요").save();
+            reviewTestPersister.builder().store(store).member(memberB).content("맛없어요").save();
+            reviewTestPersister.builder().store(store).member(viewer).content("맛있어요").save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX() + 10),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY() + 10),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            ReviewPageResponse reviewPageResponse = reviewService.getReviewsInMapBounds(
+                    null,
+                    mapCoordinateRequest,
+                    deviceCoordinateRequest,
+                    10,
+                    new LoginMember(viewer.getId())
+            );
+
+            List<ReviewResponse> reviews = reviewPageResponse.reviews();
+            ReviewPageInfo reviewPageInfo = reviewPageResponse.page();
+            assertSoftly(softly -> {
+                softly.assertThat(reviews).isEmpty();
+                softly.assertThat(reviewPageInfo.size()).isEqualTo(0);
+            });
+        }
+
+        @Test
+        void 북마크한_가게는_북마크_여부가_TRUE_이다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            bookmarkTestPersister.builder().member(member).store(store).save();
+            Review reviewA = reviewTestPersister.builder().store(store).content("맛있어요").save();
+            Review reviewB = reviewTestPersister.builder().store(store).content("맛없어요").save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            ReviewPageResponse reviewPageResponse = reviewService.getReviewsInMapBounds(
+                    null,
+                    mapCoordinateRequest,
+                    deviceCoordinateRequest,
+                    10,
+                    new LoginMember(member.getId())
+            );
+
+            List<ReviewResponse> reviews = reviewPageResponse.reviews();
+            assertSoftly(softly -> {
+                softly.assertThat(reviews).hasSize(2);
+                softly.assertThat(reviews.get(0).review().id()).isEqualTo(reviewB.getId());
+                softly.assertThat(reviews.get(0).store().isBookmarked()).isTrue();
+                softly.assertThat(reviews.get(1).review().id()).isEqualTo(reviewA.getId());
+                softly.assertThat(reviews.get(1).store().isBookmarked()).isTrue();
+            });
+        }
+
+        @Test
+        void 북마크_하지_않은_가게는_북마크_여부가_FALSE_이다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            Review reviewA = reviewTestPersister.builder().store(store).content("맛있어요").save();
+            Review reviewB = reviewTestPersister.builder().store(store).content("맛없어요").save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            ReviewPageResponse reviewPageResponse = reviewService.getReviewsInMapBounds(
+                    null,
+                    mapCoordinateRequest,
+                    deviceCoordinateRequest,
+                    10,
+                    new LoginMember(member.getId())
+            );
+
+            List<ReviewResponse> reviews = reviewPageResponse.reviews();
+            assertSoftly(softly -> {
+                softly.assertThat(reviews).hasSize(2);
+                softly.assertThat(reviews.get(0).review().id()).isEqualTo(reviewB.getId());
+                softly.assertThat(reviews.get(0).store().isBookmarked()).isFalse();
+                softly.assertThat(reviews.get(1).review().id()).isEqualTo(reviewA.getId());
+                softly.assertThat(reviews.get(1).store().isBookmarked()).isFalse();
+            });
+        }
+
+        @Test
+        void 존재하지_않는_사용자이면_예외가_발생한다() {
+            Store store = storeTestPersister.builder().save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            assertThatThrownBy(() ->
+                    reviewService.getReviewsInMapBounds(
+                            null,
+                            mapCoordinateRequest,
+                            deviceCoordinateRequest,
+                            10,
+                            new LoginMember(-1L)
+                    ))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
+    }
+
+    @Nested
     class 리뷰_피드_조회_시 {
 
         @Test
