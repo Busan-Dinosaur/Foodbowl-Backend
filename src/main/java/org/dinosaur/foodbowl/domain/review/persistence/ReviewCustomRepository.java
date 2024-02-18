@@ -32,6 +32,25 @@ public class ReviewCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
+    public List<Review> findPaginationReviewsInMapBound (
+            Long lastReviewId,
+            MapCoordinateBoundDto mapCoordinateBoundDto,
+            int pageSize
+    ) {
+        return jpaQueryFactory.selectDistinct(review)
+                .from(review)
+                .innerJoin(review.store, store).fetchJoin()
+                .innerJoin(review.member, member).fetchJoin()
+                .innerJoin(store.category, category).fetchJoin()
+                .where(
+                        ltLastReviewId(lastReviewId),
+                        containsPolygon(mapCoordinateBoundDto)
+                )
+                .orderBy(review.id.desc())
+                .limit(pageSize)
+                .fetch();
+    }
+
     public List<Review> findPaginationReviewsHavingPhoto(Long lastReviewId, int pageSize) {
         return jpaQueryFactory.selectDistinct(review)
                 .from(review)
