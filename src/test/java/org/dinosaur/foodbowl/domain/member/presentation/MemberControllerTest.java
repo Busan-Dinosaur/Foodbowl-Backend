@@ -280,6 +280,76 @@ class MemberControllerTest extends PresentationTest {
     }
 
     @Nested
+    class 리뷰_많은_순으로_회원_목록_페이지_조회_시 {
+
+        private final String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);
+
+        @Test
+        void 회원_목록_조회에_성공하면_200_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            MemberSearchResponses response = new MemberSearchResponses(
+                    List.of(new MemberSearchResponse(1L, "gray", "https://image.com", 10, true, false))
+            );
+            given(memberService.getMembersSortByReviewCounts(anyInt(), anyInt(), any(LoginMember.class)))
+                    .willReturn(response);
+
+            MvcResult mvcResult = mockMvc.perform(get("/v1/members/by-reviews")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andReturn();
+            String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+            MemberSearchResponses result = objectMapper.readValue(jsonResponse, MemberSearchResponses.class);
+
+            assertThat(result).usingRecursiveComparison().isEqualTo(response);
+        }
+
+        @Test
+        void 페이지_번호가_0보다_작으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/members/by-reviews")
+                            .param("page", "-1")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("message").value(containsString("조회 페이지는 0이상만 가능합니다.")));
+        }
+
+        @ParameterizedTest
+        @ValueSource(ints = {-1, -0})
+        void 페이지_크기가_1보다_작으면_400_응답을_반환한다(int size) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/members/by-reviews")
+                            .param("size", String.valueOf(size))
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("message").value(containsString("조회 크기는 1이상만 가능합니다.")));
+        }
+
+        @Test
+        void 페이지_크기가_20보다_크면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/members/by-reviews")
+                            .param("size", "21")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .characterEncoding(StandardCharsets.UTF_8))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("message").value(containsString("최대 20개까지 조회가능합니다.")));
+        }
+    }
+
+    @Nested
     class 프로필_정보_수정_시 {
 
         private final String accessToken = jwtTokenProvider.createAccessToken(1L, RoleType.ROLE_회원);

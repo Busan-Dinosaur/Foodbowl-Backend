@@ -241,6 +241,113 @@ class MemberServiceTest extends IntegrationTest {
     }
 
     @Nested
+    class 리뷰_많은_순으로_회원_목록_페이지_조회_시 {
+
+        @Test
+        void 조회에_성공한다() {
+            Member loginMember = memberTestPersister.builder().save();
+            Member memberA = memberTestPersister.builder().save();
+            Member memberB = memberTestPersister.builder().save();
+            reviewTestPersister.builder().member(memberA).save();
+            reviewTestPersister.builder().member(memberB).save();
+            reviewTestPersister.builder().member(memberB).save();
+
+            MemberSearchResponses responses =
+                    memberService.getMembersSortByReviewCounts(0, 2, new LoginMember(loginMember.getId()));
+            List<MemberSearchResponse> memberSearchResponses = responses.memberSearchResponses();
+
+            assertSoftly(softly -> {
+                softly.assertThat(memberSearchResponses.get(0).memberId()).isEqualTo(memberB.getId());
+                softly.assertThat(memberSearchResponses.get(0).nickname()).isEqualTo(memberB.getNickname());
+                softly.assertThat(memberSearchResponses.get(0).profileImageUrl())
+                        .isEqualTo(memberB.getProfileImageUrl());
+                softly.assertThat(memberSearchResponses.get(0).followerCount()).isZero();
+                softly.assertThat(memberSearchResponses.get(0).isFollowing()).isFalse();
+                softly.assertThat(memberSearchResponses.get(0).isMe()).isFalse();
+                softly.assertThat(memberSearchResponses.get(1).memberId()).isEqualTo(memberA.getId());
+                softly.assertThat(memberSearchResponses.get(1).nickname()).isEqualTo(memberA.getNickname());
+                softly.assertThat(memberSearchResponses.get(1).profileImageUrl())
+                        .isEqualTo(memberA.getProfileImageUrl());
+                softly.assertThat(memberSearchResponses.get(1).followerCount()).isZero();
+                softly.assertThat(memberSearchResponses.get(1).isFollowing()).isFalse();
+                softly.assertThat(memberSearchResponses.get(1).isMe()).isFalse();
+            });
+        }
+
+        @Test
+        void 조회한_회원의_팔로워_수를_확인할_수_있다() {
+            Member loginMember = memberTestPersister.builder().save();
+            Member memberA = memberTestPersister.builder().save();
+            Member memberB = memberTestPersister.builder().save();
+            followTestPersister.builder().following(memberA).follower(memberB).save();
+            reviewTestPersister.builder().member(memberA).save();
+
+            MemberSearchResponses responses =
+                    memberService.getMembersSortByReviewCounts(0, 1, new LoginMember(loginMember.getId()));
+            List<MemberSearchResponse> memberSearchResponses = responses.memberSearchResponses();
+
+            assertSoftly(softly -> {
+                softly.assertThat(memberSearchResponses.get(0).memberId()).isEqualTo(memberA.getId());
+                softly.assertThat(memberSearchResponses.get(0).nickname()).isEqualTo(memberA.getNickname());
+                softly.assertThat(memberSearchResponses.get(0).profileImageUrl())
+                        .isEqualTo(memberA.getProfileImageUrl());
+                softly.assertThat(memberSearchResponses.get(0).followerCount()).isOne();
+                softly.assertThat(memberSearchResponses.get(0).isFollowing()).isFalse();
+                softly.assertThat(memberSearchResponses.get(0).isMe()).isFalse();
+            });
+        }
+
+        @Test
+        void 조회한_회원이_조회를_요청한_회원이_팔로잉_중인지_확인할_수_있다() {
+            Member loginMember = memberTestPersister.builder().save();
+            Member member = memberTestPersister.builder().save();
+            followTestPersister.builder().following(member).follower(loginMember).save();
+            reviewTestPersister.builder().member(member).save();
+
+            MemberSearchResponses responses =
+                    memberService.getMembersSortByReviewCounts(0, 1, new LoginMember(loginMember.getId()));
+            List<MemberSearchResponse> memberSearchResponses = responses.memberSearchResponses();
+
+            assertSoftly(softly -> {
+                softly.assertThat(memberSearchResponses.get(0).memberId()).isEqualTo(member.getId());
+                softly.assertThat(memberSearchResponses.get(0).nickname()).isEqualTo(member.getNickname());
+                softly.assertThat(memberSearchResponses.get(0).profileImageUrl())
+                        .isEqualTo(member.getProfileImageUrl());
+                softly.assertThat(memberSearchResponses.get(0).followerCount()).isOne();
+                softly.assertThat(memberSearchResponses.get(0).isFollowing()).isTrue();
+                softly.assertThat(memberSearchResponses.get(0).isMe()).isFalse();
+            });
+        }
+
+        @Test
+        void 조회한_회원_목록에_조회를_요청한_회원이_포함되어_있다면_isMe는_true_이다() {
+            Member loginMember = memberTestPersister.builder().save();
+            reviewTestPersister.builder().member(loginMember).save();
+
+            MemberSearchResponses responses =
+                    memberService.getMembersSortByReviewCounts(0, 1, new LoginMember(loginMember.getId()));
+            List<MemberSearchResponse> memberSearchResponses = responses.memberSearchResponses();
+
+            assertSoftly(softly -> {
+                softly.assertThat(memberSearchResponses.get(0).memberId()).isEqualTo(loginMember.getId());
+                softly.assertThat(memberSearchResponses.get(0).nickname()).isEqualTo(loginMember.getNickname());
+                softly.assertThat(memberSearchResponses.get(0).profileImageUrl())
+                        .isEqualTo(loginMember.getProfileImageUrl());
+                softly.assertThat(memberSearchResponses.get(0).followerCount()).isZero();
+                softly.assertThat(memberSearchResponses.get(0).isFollowing()).isFalse();
+                softly.assertThat(memberSearchResponses.get(0).isMe()).isTrue();
+            });
+        }
+
+        @Test
+        void 등록되지_않은_회원의_회원_목록_페이지_조회라면_예외를_던진다() {
+            assertThatThrownBy(() -> memberService.getMembersSortByReviewCounts(0, 1, new LoginMember(-1L)))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage("등록되지 않은 회원입니다.");
+        }
+    }
+
+    @Nested
     class 프로필_정보_수정_시 {
 
         @Test

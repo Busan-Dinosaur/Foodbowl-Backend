@@ -17,4 +17,9 @@ public class MemberCustomService {
     public List<Member> search(String name, int size) {
         return memberCustomRepository.search(name, size);
     }
+
+    @Transactional(readOnly = true)
+    public List<Member> getMembersSortByReviewCounts(int page, int size) {
+        return memberCustomRepository.getMembersSortByReviewCounts(page, size);
+    }
 }

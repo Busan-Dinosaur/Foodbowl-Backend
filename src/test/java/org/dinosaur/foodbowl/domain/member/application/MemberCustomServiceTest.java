@@ -1,5 +1,6 @@
 package org.dinosaur.foodbowl.domain.member.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
@@ -28,5 +29,22 @@ class MemberCustomServiceTest extends IntegrationTest {
             softly.assertThat(members).containsExactly(memberA, memberC, memberB);
             softly.assertThat(members).doesNotContain(memberD);
         });
+    }
+
+    @Test
+    void 리뷰_많은_순으로_회원_목록을_페이지_조회한다() {
+        Member memberA = memberTestPersister.builder().save();
+        Member memberB = memberTestPersister.builder().save();
+        Member memberC = memberTestPersister.builder().save();
+        reviewTestPersister.builder().member(memberA).save();
+        reviewTestPersister.builder().member(memberB).save();
+        reviewTestPersister.builder().member(memberB).save();
+        reviewTestPersister.builder().member(memberB).save();
+        reviewTestPersister.builder().member(memberC).save();
+        reviewTestPersister.builder().member(memberC).save();
+
+        List<Member> members = memberCustomService.getMembersSortByReviewCounts(0, 3);
+
+        assertThat(members).containsExactly(memberB, memberC, memberA);
     }
 }

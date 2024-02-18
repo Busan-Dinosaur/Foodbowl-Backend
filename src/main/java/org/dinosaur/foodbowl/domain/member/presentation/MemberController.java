@@ -70,6 +70,17 @@ public class MemberController implements MemberControllerDocs {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/by-reviews")
+    public ResponseEntity<MemberSearchResponses> getMembersSortByReviewCounts(
+            @RequestParam(defaultValue = "0") @PositiveOrZero(message = "조회 페이지는 0이상만 가능합니다.") int page,
+            @RequestParam(defaultValue = "20") @Positive(message = "조회 크기는 1이상만 가능합니다.")
+            @Max(value = 20, message = "최대 20개까지 조회가능합니다.") int size,
+            @Auth LoginMember loginMember
+    ) {
+        MemberSearchResponses response = memberService.getMembersSortByReviewCounts(page, size, loginMember);
+        return ResponseEntity.ok(response);
+    }
+
     @PatchMapping("/profile")
     public ResponseEntity<Void> updateProfile(
             @RequestBody @Valid UpdateProfileRequest updateProfileRequest,

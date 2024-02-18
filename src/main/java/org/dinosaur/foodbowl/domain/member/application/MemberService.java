@@ -106,6 +106,23 @@ public class MemberService {
         return new NicknameExistResponse(isExist);
     }
 
+    @Transactional(readOnly = true)
+    public MemberSearchResponses getMembersSortByReviewCounts(int page, int size, LoginMember loginMember) {
+        Member viewer = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+        List<Member> members = memberCustomService.getMembersSortByReviewCounts(page, size);
+
+        MemberToFollowerCountDto followerCountByMembers = followCustomService.getFollowerCountByMembers(members);
+        MemberToFollowingsDto followingsByMember = followCustomService.getFollowInMembers(members, viewer);
+
+        return MemberSearchResponses.of(
+                members,
+                viewer,
+                followerCountByMembers,
+                followingsByMember
+        );
+    }
+
     @Transactional
     public void updateProfile(UpdateProfileRequest updateProfileRequest, LoginMember loginMember) {
         Member member = memberRepository.findById(loginMember.id())
