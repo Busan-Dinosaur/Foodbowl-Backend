@@ -32,7 +32,7 @@ public class ReviewCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<Review> findPaginationReviewsInMapBound (
+    public List<Review> findPaginationReviewsInMapBound(
             Long lastReviewId,
             MapCoordinateBoundDto mapCoordinateBoundDto,
             int pageSize
