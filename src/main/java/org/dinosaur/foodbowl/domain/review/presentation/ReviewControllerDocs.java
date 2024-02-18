@@ -76,7 +76,7 @@ public interface ReviewControllerDocs {
     );
 
     @Operation(
-            summary = "범위 기반 리뷰 목록 페이징 조회",
+            summary = "위도, 경도 범위 기반 리뷰 목록 페이징 조회",
             description = """
                     지도 중심의 경도(x), 위도(y)와 경도 증가값(deltaX), 위도 증가값(deltaY)을 통해 사각형 범위를 생성하여
                                         
