@@ -35,7 +35,7 @@ public class MemberCustomRepository {
         return jpaQueryFactory.select(member)
                 .from(review)
                 .innerJoin(review.member, member)
-                .groupBy(member)
+                .groupBy(member.id)
                 .orderBy(review.count().desc())
                 .limit(size)
                 .offset((long) page * size)
