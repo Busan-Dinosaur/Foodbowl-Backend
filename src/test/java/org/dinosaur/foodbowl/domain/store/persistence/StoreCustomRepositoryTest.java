@@ -68,6 +68,48 @@ class StoreCustomRepositoryTest extends PersistenceTest {
     }
 
     @Nested
+    class 위도_경도와_폴리곤_영역에_해당하는_가게_목록_범위_조회_시 {
+
+        @Test
+        void 영역에_포함된_가게는_조회한다() {
+            Member member = memberTestPersister.builder().save();
+            Store storeA = storeTestPersister.builder().save();
+            Store storeB = storeTestPersister.builder().address(storeA.getAddress()).save();
+            reviewTestPersister.builder().member(member).store(storeA).save();
+            reviewTestPersister.builder().member(member).store(storeB).save();
+            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                    BigDecimal.valueOf(storeA.getAddress().getCoordinate().getX() + 0.5),
+                    BigDecimal.valueOf(storeA.getAddress().getCoordinate().getY() + 0.5),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            List<Store> result =
+                    storeCustomRepository.findStoresByInMapBounds(mapCoordinateBoundDto);
+
+            assertThat(result).containsExactly(storeA, storeB);
+        }
+
+        @Test
+        void 영역에_포함되지_않는_가게는_조회되지_않는다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            reviewTestPersister.builder().member(member).store(store).save();
+            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX() + 10),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY() + 10),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            List<Store> result =
+                    storeCustomRepository.findStoresByInMapBounds(mapCoordinateBoundDto);
+
+            assertThat(result).isEmpty();
+        }
+    }
+
+    @Nested
     class 멤버의_리뷰가_작성된_가게_목록_범위_조회_시 {
 
         @Test
