@@ -71,10 +71,41 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
             List<Review> result = reviewCustomRepository.findPaginationReviewsInMapBound(
                     null,
                     mapCoordinateBoundDto,
+                    null,
                     10
             );
 
             assertThat(result).containsExactly(reviewB, reviewA);
+        }
+
+        @Test
+        void 폴리곤_영역에_경도와_위도가_속한_카테고리_별_가게의_리뷰를_조회한다() {
+            Category categoryA = categoryRepository.findById(3L);
+            Category categoryB = categoryRepository.findById(4L);
+            Member writerA = memberTestPersister.builder().save();
+            Member writerB = memberTestPersister.builder().save();
+            Store storeA = storeTestPersister.builder().category(categoryA).save();
+            Store storeB = storeTestPersister.builder().category(categoryB).address(storeA.getAddress()).save();
+            Review reviewA = reviewTestPersister.builder().store(storeA).member(writerA).save();
+            Review reviewB = reviewTestPersister.builder().store(storeB).member(writerB).save();
+            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                    BigDecimal.valueOf(storeA.getAddress().getCoordinate().getX() + 0.9),
+                    BigDecimal.valueOf(storeA.getAddress().getCoordinate().getY() + 0.9),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            List<Review> result = reviewCustomRepository.findPaginationReviewsInMapBound(
+                    null,
+                    mapCoordinateBoundDto,
+                    categoryA.getCategoryType(),
+                    10
+            );
+
+            assertSoftly(sottly -> {
+                sottly.assertThat(result).containsExactly(reviewA);
+                sottly.assertThat(result).doesNotContain(reviewB);
+            });
         }
 
         @Test
@@ -92,6 +123,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
             List<Review> result = reviewCustomRepository.findPaginationReviewsInMapBound(
                     null,
                     mapCoordinateBoundDto,
+                    null,
                     10
             );
 
@@ -115,6 +147,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
             List<Review> result = reviewCustomRepository.findPaginationReviewsInMapBound(
                     reviewB.getId(),
                     mapCoordinateBoundDto,
+                    null,
                     10
             );
 
@@ -141,6 +174,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
             List<Review> result = reviewCustomRepository.findPaginationReviewsInMapBound(
                     reviewA.getId(),
                     mapCoordinateBoundDto,
+                    null,
                     10
             );
 
@@ -165,6 +199,7 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
             List<Review> result = reviewCustomRepository.findPaginationReviewsInMapBound(
                     null,
                     mapCoordinateBoundDto,
+                    null,
                     2
             );
 

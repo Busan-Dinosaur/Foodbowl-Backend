@@ -60,6 +60,7 @@ class ReviewCustomServiceTest extends IntegrationTest {
         List<Review> result = reviewCustomService.getReviewsInMapBounds(
                 null,
                 mapCoordinateBoundDto,
+                null,
                 10
         );
 

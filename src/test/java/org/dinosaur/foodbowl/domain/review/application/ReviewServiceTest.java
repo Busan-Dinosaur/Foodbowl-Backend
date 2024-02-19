@@ -219,6 +219,7 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
+                    null,
                     10,
                     new LoginMember(viewer.getId())
             );
@@ -241,6 +242,43 @@ class ReviewServiceTest extends IntegrationTest {
                 softly.assertThat(reviews.get(2).store().id()).isEqualTo(store.getId());
                 softly.assertThat(reviewPageInfo.firstId()).isEqualTo(reviewC.getId());
                 softly.assertThat(reviewPageInfo.lastId()).isEqualTo(reviewA.getId());
+                softly.assertThat(reviewPageInfo.size()).isEqualTo(3);
+            });
+        }
+
+        @Test
+        void 카테고리_필터링을_적용해_리뷰를_조회한다() {
+            Member memberA = memberTestPersister.builder().save();
+            Member memberB = memberTestPersister.builder().save();
+            Member viewer = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            reviewTestPersister.builder().store(store).member(memberA).content("맛있어요").save();
+            reviewTestPersister.builder().store(store).member(memberB).content("맛없어요").save();
+            reviewTestPersister.builder().store(store).member(viewer).content("맛있어요").save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX() + 0.1),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY() + 0.1),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+            DeviceCoordinateRequest deviceCoordinateRequest = new DeviceCoordinateRequest(
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            ReviewPageResponse reviewPageResponse = reviewService.getReviewsInMapBounds(
+                    null,
+                    mapCoordinateRequest,
+                    deviceCoordinateRequest,
+                    CategoryType.카페,
+                    10,
+                    new LoginMember(viewer.getId())
+            );
+
+            List<ReviewResponse> reviews = reviewPageResponse.reviews();
+            ReviewPageInfo reviewPageInfo = reviewPageResponse.page();
+            assertSoftly(softly -> {
+                softly.assertThat(reviews).hasSize(3);
                 softly.assertThat(reviewPageInfo.size()).isEqualTo(3);
             });
         }
@@ -269,6 +307,7 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
+                    null,
                     10,
                     new LoginMember(viewer.getId())
             );
@@ -303,6 +342,7 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
+                    null,
                     10,
                     new LoginMember(member.getId())
             );
@@ -338,6 +378,7 @@ class ReviewServiceTest extends IntegrationTest {
                     null,
                     mapCoordinateRequest,
                     deviceCoordinateRequest,
+                    null,
                     10,
                     new LoginMember(member.getId())
             );
@@ -371,6 +412,7 @@ class ReviewServiceTest extends IntegrationTest {
                             null,
                             mapCoordinateRequest,
                             deviceCoordinateRequest,
+                            null,
                             10,
                             new LoginMember(-1L)
                     ))
