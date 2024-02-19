@@ -85,6 +85,20 @@ public class StoreService {
     }
 
     @Transactional(readOnly = true)
+    public StoreMapBoundResponses getStoresInMapBounds(
+            MapCoordinateRequest mapCoordinateRequest,
+            LoginMember loginMember
+    ) {
+        Member viewer = memberRepository.findById(loginMember.id())
+                .orElseThrow(() -> new NotFoundException(MemberExceptionType.NOT_FOUND));
+
+        MapCoordinateBoundDto mapCoordinateBoundDto = convertToMapCoordinateBound(mapCoordinateRequest);
+        List<Store> stores = storeCustomService.getStoresInMapBounds(mapCoordinateBoundDto);
+
+        return convertToStoreMapBoundResponses(stores, viewer);
+    }
+
+    @Transactional(readOnly = true)
     public StoreMapBoundResponses getStoresByMemberInMapBounds(
             Long memberId,
             MapCoordinateRequest mapCoordinateRequest,

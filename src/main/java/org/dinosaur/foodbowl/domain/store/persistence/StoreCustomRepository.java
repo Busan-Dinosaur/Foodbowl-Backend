@@ -63,6 +63,17 @@ public class StoreCustomRepository {
         );
     }
 
+    public List<Store> findStoresByInMapBounds(MapCoordinateBoundDto mapCoordinateBoundDto) {
+        return jpaQueryFactory.selectDistinct(store)
+                .from(store)
+                .innerJoin(store.category, category).fetchJoin()
+                .innerJoin(review).on(
+                        review.store.eq(store)
+                )
+                .where(containsPolygon(mapCoordinateBoundDto))
+                .fetch();
+    }
+
     public List<Store> findStoresByMemberInMapBounds(Long memberId, MapCoordinateBoundDto mapCoordinateBoundDto) {
         return jpaQueryFactory.selectDistinct(store)
                 .from(store)

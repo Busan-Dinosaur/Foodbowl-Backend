@@ -19,6 +19,22 @@ class StoreCustomServiceTest extends IntegrationTest {
     private StoreCustomService storeCustomService;
 
     @Test
+    void 위도_경도와_폴리곤_영역에_해당하는_가게_목록을_조회한다() {
+        Store store = storeTestPersister.builder().save();
+        reviewTestPersister.builder().store(store).save();
+        MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                BigDecimal.valueOf(1),
+                BigDecimal.valueOf(1)
+        );
+
+        List<Store> stores = storeCustomService.getStoresInMapBounds(mapCoordinateBoundDto);
+
+        assertThat(stores).containsExactly(store);
+    }
+
+    @Test
     void 멤버가_작성한_리뷰가_존재하는_가게_목록을_범위를_통해_조회한다() {
         Member member = memberTestPersister.builder().save();
         Store store = storeTestPersister.builder().save();

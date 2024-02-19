@@ -217,6 +217,122 @@ class StoreControllerTest extends PresentationTest {
     }
 
     @Nested
+    class 위도_경도와_폴리곤_범위에_해당하는_가게_조회_시 {
+
+        private final String accessToken = jwtTokenProvider.createAccessToken(1L, ROLE_회원);
+
+        @Test
+        void 정상적인_요청이라면_200_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            StoreMapBoundResponses response = mockStoreMapBoundResponses();
+            given(storeService.getStoresInMapBounds(
+                    any(MapCoordinateRequest.class),
+                    any(LoginMember.class))
+            ).willReturn(response);
+
+            MvcResult mvcResult = mockMvc.perform(get("/v1/stores/bounds")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.1212")
+                            .param("deltaY", "3.1212"))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+            StoreMapBoundResponses result = objectMapper.readValue(jsonResponse, StoreMapBoundResponses.class);
+            assertThat(result).usingRecursiveComparison().isEqualTo(response);
+        }
+
+        @Test
+        void 경도가_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/stores/bounds")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void 위도가_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/stores/bounds")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("x", "123.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void 경도_증가값이_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/stores/bounds")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaY", "3.12"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void 위도_증가값이_존재하지_않으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/stores/bounds")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 경도_증가값이_0이상의_양수가_아니라면_400_응답을_반환한다(String deltaX) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/stores/bounds")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", deltaX)
+                            .param("deltaY", "3.12"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("경도 증가값은 0이상의 양수만 가능합니다.")));
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"-1", "0"})
+        void 위도_증가값이_0이상의_양수가_아니라면_400_응답을_반환한다(String deltaY) throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/stores/bounds")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", deltaY))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CLIENT-101"))
+                    .andExpect(jsonPath("$.message").value(containsString("위도 증가값은 0이상의 양수만 가능합니다.")));
+        }
+    }
+
+    @Nested
     class 멤버의_리뷰가_존재하는_가게_목록_조회_시 {
 
         private final String accessToken = jwtTokenProvider.createAccessToken(1L, ROLE_회원);

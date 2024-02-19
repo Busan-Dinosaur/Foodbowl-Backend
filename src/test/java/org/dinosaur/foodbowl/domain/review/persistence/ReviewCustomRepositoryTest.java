@@ -52,6 +52,130 @@ class ReviewCustomRepositoryTest extends PersistenceTest {
     }
 
     @Nested
+    class 폴리곤_범위_내_모든_리뷰_조회_시 {
+
+        @Test
+        void 폴리곤_영역에_경도와_위도가_속한_가게의_리뷰를_조회한다() {
+            Member writerA = memberTestPersister.builder().save();
+            Member writerB = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            Review reviewA = reviewTestPersister.builder().store(store).member(writerA).save();
+            Review reviewB = reviewTestPersister.builder().store(store).member(writerB).save();
+            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX() + 0.9),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY() + 0.9),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            List<Review> result = reviewCustomRepository.findPaginationReviewsInMapBound(
+                    null,
+                    mapCoordinateBoundDto,
+                    10
+            );
+
+            assertThat(result).containsExactly(reviewB, reviewA);
+        }
+
+        @Test
+        void 폴리곤_영역에_경도와_위도가_속하지_않는_가게의_리뷰는_조회하지_않는다() {
+            Member writer = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            reviewTestPersister.builder().store(store).member(writer).save();
+            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX() + 10),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY() + 10),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            List<Review> result = reviewCustomRepository.findPaginationReviewsInMapBound(
+                    null,
+                    mapCoordinateBoundDto,
+                    10
+            );
+
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        void 마지막_리뷰ID가_NULL이_아닐때_마지막_리뷰ID보다_작은_리뷰는_조회한다() {
+            Member writerA = memberTestPersister.builder().save();
+            Member writerB = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            Review reviewA = reviewTestPersister.builder().store(store).member(writerA).save();
+            Review reviewB = reviewTestPersister.builder().store(store).member(writerB).save();
+            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX() + 0.9),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY() + 0.9),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            List<Review> result = reviewCustomRepository.findPaginationReviewsInMapBound(
+                    reviewB.getId(),
+                    mapCoordinateBoundDto,
+                    10
+            );
+
+            assertSoftly(softly -> {
+                softly.assertThat(result).doesNotContain(reviewB);
+                softly.assertThat(result).containsExactly(reviewA);
+            });
+        }
+
+        @Test
+        void 마지막_리뷰ID가_NULL이_아닐때_마지막_리뷰ID보다_큰_리뷰는_조회하지_않는다() {
+            Member writerA = memberTestPersister.builder().save();
+            Member writerB = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            Review reviewA = reviewTestPersister.builder().store(store).member(writerA).save();
+            Review reviewB = reviewTestPersister.builder().store(store).member(writerB).save();
+            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX() + 0.9),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY() + 0.9),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            List<Review> result = reviewCustomRepository.findPaginationReviewsInMapBound(
+                    reviewA.getId(),
+                    mapCoordinateBoundDto,
+                    10
+            );
+
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        void 페이지_크기만큼_조회한다() {
+            Member writerA = memberTestPersister.builder().save();
+            Member writerB = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            Review reviewA = reviewTestPersister.builder().store(store).member(writerA).save();
+            Review reviewB = reviewTestPersister.builder().store(store).member(writerB).save();
+            Review reviewC = reviewTestPersister.builder().store(store).member(writerB).save();
+            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX() + 0.9),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY() + 0.9),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            List<Review> result = reviewCustomRepository.findPaginationReviewsInMapBound(
+                    null,
+                    mapCoordinateBoundDto,
+                    2
+            );
+
+            assertSoftly(sofly -> {
+                sofly.assertThat(result).doesNotContain(reviewA);
+                sofly.assertThat(result).containsExactly(reviewC, reviewB);
+            });
+        }
+    }
+
+    @Nested
     class 사진이_포함된_리뷰_조회_시 {
 
         @Test
