@@ -20,6 +20,7 @@ import java.util.List;
 import org.dinosaur.foodbowl.domain.auth.application.jwt.JwtTokenProvider;
 import org.dinosaur.foodbowl.domain.review.dto.request.MapCoordinateRequest;
 import org.dinosaur.foodbowl.domain.store.application.StoreService;
+import org.dinosaur.foodbowl.domain.store.domain.vo.CategoryType;
 import org.dinosaur.foodbowl.domain.store.dto.response.CategoriesResponse;
 import org.dinosaur.foodbowl.domain.store.dto.response.CategoryResponse;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreMapBoundResponse;
@@ -227,6 +228,7 @@ class StoreControllerTest extends PresentationTest {
             StoreMapBoundResponses response = mockStoreMapBoundResponses();
             given(storeService.getStoresInMapBounds(
                     any(MapCoordinateRequest.class),
+                    any(CategoryType.class),
                     any(LoginMember.class))
             ).willReturn(response);
 
@@ -234,6 +236,7 @@ class StoreControllerTest extends PresentationTest {
                             .header(AUTHORIZATION, BEARER + accessToken)
                             .param("x", "123.3636")
                             .param("y", "32.3636")
+                            .param("category", "한식")
                             .param("deltaX", "3.1212")
                             .param("deltaY", "3.1212"))
                     .andDo(print())
@@ -243,6 +246,49 @@ class StoreControllerTest extends PresentationTest {
             String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
             StoreMapBoundResponses result = objectMapper.readValue(jsonResponse, StoreMapBoundResponses.class);
             assertThat(result).usingRecursiveComparison().isEqualTo(response);
+        }
+
+        @Test
+        void 카테고리_필터링_조건_없이_200_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+            StoreMapBoundResponses response = mockStoreMapBoundResponses();
+            given(storeService.getStoresInMapBounds(
+                    any(MapCoordinateRequest.class),
+                    any(),
+                    any(LoginMember.class))
+            ).willReturn(response);
+
+            MvcResult mvcResult = mockMvc.perform(get("/v1/stores/bounds")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("category", "한식")
+                            .param("deltaX", "3.1212")
+                            .param("deltaY", "3.1212"))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            String jsonResponse = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+            StoreMapBoundResponses result = objectMapper.readValue(jsonResponse, StoreMapBoundResponses.class);
+            assertThat(result).usingRecursiveComparison().isEqualTo(response);
+        }
+
+        @Test
+        void 일치하는_카테고리가_없으면_400_응답을_반환한다() throws Exception {
+            mockingAuthMemberInResolver();
+
+            mockMvc.perform(get("/v1/stores/bounds")
+                            .header(AUTHORIZATION, BEARER + accessToken)
+                            .param("category", "이태리")
+                            .param("x", "123.3636")
+                            .param("y", "32.3636")
+                            .param("deltaX", "3.12")
+                            .param("deltaY", "3.12"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("errorCode").value("CATEGORY-100"))
+                    .andExpect(jsonPath("$.message").value(containsString("일치하는 카테고리를 찾을 수 없습니다")));
         }
 
         @Test

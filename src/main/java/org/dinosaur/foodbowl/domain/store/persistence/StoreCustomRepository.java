@@ -18,6 +18,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
+import org.dinosaur.foodbowl.domain.store.domain.vo.CategoryType;
 import org.dinosaur.foodbowl.domain.store.dto.response.QStoreSearchResponse;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchResponse;
 import org.dinosaur.foodbowl.global.util.PointUtils;
@@ -63,14 +64,17 @@ public class StoreCustomRepository {
         );
     }
 
-    public List<Store> findStoresByInMapBounds(MapCoordinateBoundDto mapCoordinateBoundDto) {
+    public List<Store> findStoresByInMapBounds(MapCoordinateBoundDto mapCoordinateBoundDto, CategoryType categoryType) {
         return jpaQueryFactory.selectDistinct(store)
                 .from(store)
                 .innerJoin(store.category, category).fetchJoin()
                 .innerJoin(review).on(
                         review.store.eq(store)
                 )
-                .where(containsPolygon(mapCoordinateBoundDto))
+                .where(
+                        containsPolygon(mapCoordinateBoundDto),
+                        containsCategoryFilter(categoryType)
+                )
                 .fetch();
     }
 
@@ -158,5 +162,12 @@ public class StoreCustomRepository {
                 mapCoordinateBoundDto.downLeftPoint().getY(),
                 mapCoordinateBoundDto.downLeftPoint().getX()
         );
+    }
+
+    private BooleanExpression containsCategoryFilter(CategoryType categoryType) {
+        if (categoryType == null) {
+            return null;
+        }
+        return store.category.categoryType.eq(categoryType);
     }
 }

@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import org.dinosaur.foodbowl.domain.member.domain.Member;
 import org.dinosaur.foodbowl.domain.review.application.dto.MapCoordinateBoundDto;
+import org.dinosaur.foodbowl.domain.store.domain.Category;
 import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
@@ -23,6 +24,9 @@ class StoreCustomRepositoryTest extends PersistenceTest {
 
     @Autowired
     private StoreCustomRepository storeCustomRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Test
     void 이름이_포함된_가게를_가까운_순으로_조회한다() {
@@ -85,9 +89,35 @@ class StoreCustomRepositoryTest extends PersistenceTest {
             );
 
             List<Store> result =
-                    storeCustomRepository.findStoresByInMapBounds(mapCoordinateBoundDto);
+                    storeCustomRepository.findStoresByInMapBounds(mapCoordinateBoundDto, null);
 
             assertThat(result).containsExactly(storeA, storeB);
+        }
+
+        @Test
+        void 영역에_포함되고_카테고리가_일치하는_가게는_조회한다() {
+            Category category = categoryRepository.findById(3L);
+            Member member = memberTestPersister.builder().save();
+            Store storeA = storeTestPersister.builder().category(category).save();
+            Store storeB = storeTestPersister.builder().address(storeA.getAddress()).save();
+            reviewTestPersister.builder().member(member).store(storeA).save();
+            reviewTestPersister.builder().member(member).store(storeB).save();
+            MapCoordinateBoundDto mapCoordinateBoundDto = MapCoordinateBoundDto.of(
+                    BigDecimal.valueOf(storeA.getAddress().getCoordinate().getX() + 0.5),
+                    BigDecimal.valueOf(storeA.getAddress().getCoordinate().getY() + 0.5),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            List<Store> result = storeCustomRepository.findStoresByInMapBounds(
+                    mapCoordinateBoundDto,
+                    storeA.getCategory().getCategoryType()
+            );
+
+            assertSoftly(softly -> {
+                softly.assertThat(result).containsExactly(storeA);
+                softly.assertThat(result).doesNotContain(storeB);
+            });
         }
 
         @Test
@@ -103,7 +133,7 @@ class StoreCustomRepositoryTest extends PersistenceTest {
             );
 
             List<Store> result =
-                    storeCustomRepository.findStoresByInMapBounds(mapCoordinateBoundDto);
+                    storeCustomRepository.findStoresByInMapBounds(mapCoordinateBoundDto, null);
 
             assertThat(result).isEmpty();
         }

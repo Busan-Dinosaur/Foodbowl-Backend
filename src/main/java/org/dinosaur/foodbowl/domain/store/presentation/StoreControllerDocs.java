@@ -12,6 +12,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
+import java.util.Optional;
 import org.dinosaur.foodbowl.domain.store.dto.response.CategoriesResponse;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreMapBoundResponses;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchResponses;
@@ -91,6 +92,16 @@ public interface StoreControllerDocs {
                     지도 중심의 경도(x), 위도(y)와 경도 증가값(deltaX), 위도 증가값(deltaY)을 통해 사각형 범위를 생성하여
                                         
                     해당 범위에 속한 리뷰가 존재하는 가게 목록을 조회하는 기능입니다.
+                    
+                    카테고리를 이용해 필터링 조건을 추가할 수 있습니다.
+                                        
+                    모든 카테고리를 조회하는 경우 파라미터 조건을 추가하지 않으면 됩니다.
+                                        
+                    요청 예시: /v1/reviews/bounds?filter=한식
+                                        
+                    가능한 카테고리 필터는 다음과 같습니다. 이외의 카테고리를 요청에 보낼 시 400 응답을 반환합니다.
+                                        
+                    카페, 술집, 한식, 양식, 일식, 중식, 치킨, 분식, 해산물, 샐러드, 기타
                     """
     )
     @ApiResponses({
@@ -135,6 +146,9 @@ public interface StoreControllerDocs {
             @Parameter(description = "지도 위도 증가값", example = "3.1212")
             @Positive(message = "위도 증가값은 0이상의 양수만 가능합니다.")
             BigDecimal deltaY,
+
+            @Parameter(description = "카테고리", example = "분식")
+            Optional<String> category,
 
             LoginMember loginMember
     );
