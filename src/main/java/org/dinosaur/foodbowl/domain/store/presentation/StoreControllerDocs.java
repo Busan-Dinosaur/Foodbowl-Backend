@@ -92,12 +92,14 @@ public interface StoreControllerDocs {
                     지도 중심의 경도(x), 위도(y)와 경도 증가값(deltaX), 위도 증가값(deltaY)을 통해 사각형 범위를 생성하여
                                         
                     해당 범위에 속한 리뷰가 존재하는 가게 목록을 조회하는 기능입니다.
-                    
+                                        
                     카테고리를 이용해 필터링 조건을 추가할 수 있습니다.
                                         
                     모든 카테고리를 조회하는 경우 파라미터 조건을 추가하지 않으면 됩니다.
                                         
-                    요청 예시: /v1/stores/bounds?category=한식
+                    모든 카테고리 예시: /v1/stores/bounds
+                                        
+                    카테고리 필터링 요청 예시: /v1/stores/bounds?category=한식
                                         
                     가능한 카테고리 필터는 다음과 같습니다. 이외의 카테고리를 요청에 보낼 시 400 응답을 반환합니다.
                                         
