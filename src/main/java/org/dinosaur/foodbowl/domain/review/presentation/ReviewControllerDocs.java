@@ -86,7 +86,7 @@ public interface ReviewControllerDocs {
                                         
                     모든 카테고리를 조회하는 경우 파라미터 조건을 추가하지 않으면 됩니다.
                                         
-                    요청 예시: /v1/reviews/members?bounds=한식
+                    요청 예시: /v1/reviews/bounds?category=한식
                                         
                     가능한 카테고리 필터는 다음과 같습니다. 이외의 카테고리를 요청에 보낼 시 400 응답을 반환합니다.
                                         
@@ -235,7 +235,7 @@ public interface ReviewControllerDocs {
                                         
                     모든 카테고리를 조회하는 경우 파라미터 조건을 추가하지 않으면 됩니다.
                                         
-                    요청 예시: /v1/reviews/members?filter=한식
+                    요청 예시: /v1/reviews/members?category=한식
                                         
                     가능한 카테고리 필터는 다음과 같습니다. 이외의 카테고리를 요청에 보낼 시 400 응답을 반환합니다.
                                         
@@ -497,7 +497,7 @@ public interface ReviewControllerDocs {
                                         
                     모든 카테고리를 조회하는 경우 파라미터 조건을 추가하지 않으면 됩니다.
                                         
-                    요청 예시: /v1/reviews/following?filter=한식
+                    요청 예시: /v1/reviews/following?category=한식
                                         
                     가능한 카테고리 필터는 다음과 같습니다. 이외의 카테고리를 요청에 보낼 시 400 응답을 반환합니다.
                                         
@@ -593,7 +593,7 @@ public interface ReviewControllerDocs {
                                         
                     모든 카테고리를 조회하는 경우 파라미터 조건을 추가하지 않으면 됩니다.
                                         
-                    요청 예시: /v1/reviews/schools?filter=한식
+                    요청 예시: /v1/reviews/schools?category=한식
                                         
                     가능한 카테고리 필터는 다음과 같습니다. 이외의 카테고리를 요청에 보낼 시 400 응답을 반환합니다.
                                         
