@@ -97,7 +97,7 @@ public interface StoreControllerDocs {
                                         
                     모든 카테고리를 조회하는 경우 파라미터 조건을 추가하지 않으면 됩니다.
                                         
-                    요청 예시: /v1/reviews/bounds?filter=한식
+                    요청 예시: /v1/stores/bounds?filter=한식
                                         
                     가능한 카테고리 필터는 다음과 같습니다. 이외의 카테고리를 요청에 보낼 시 400 응답을 반환합니다.
                                         
