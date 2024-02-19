@@ -13,6 +13,7 @@ import org.dinosaur.foodbowl.domain.store.domain.School;
 import org.dinosaur.foodbowl.domain.store.domain.Store;
 import org.dinosaur.foodbowl.domain.store.domain.StoreSchool;
 import org.dinosaur.foodbowl.domain.store.domain.vo.Address;
+import org.dinosaur.foodbowl.domain.store.domain.vo.CategoryType;
 import org.dinosaur.foodbowl.domain.store.domain.vo.SchoolName;
 import org.dinosaur.foodbowl.domain.store.dto.response.CategoriesResponse;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreMapBoundResponse;
@@ -169,6 +170,7 @@ class StoreServiceTest extends IntegrationTest {
 
             StoreMapBoundResponses response = storeService.getStoresInMapBounds(
                     mapCoordinateRequest,
+                    null,
                     new LoginMember(member.getId())
             );
 
@@ -211,6 +213,7 @@ class StoreServiceTest extends IntegrationTest {
 
             StoreMapBoundResponses response = storeService.getStoresInMapBounds(
                     mapCoordinateRequest,
+                    null,
                     new LoginMember(member.getId())
             );
 
@@ -219,6 +222,50 @@ class StoreServiceTest extends IntegrationTest {
                 softly.assertThat(result).hasSize(1);
                 softly.assertThat(result.get(0).isBookmarked()).isTrue();
             });
+        }
+
+        @Test
+        void 카테고리_필터링_조건을_적용해_조회한다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            reviewTestPersister.builder().member(member).store(store).save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            StoreMapBoundResponses response = storeService.getStoresInMapBounds(
+                    mapCoordinateRequest,
+                    CategoryType.카페,
+                    new LoginMember(member.getId())
+            );
+
+            List<StoreMapBoundResponse> result = response.stores();
+            assertThat(result).hasSize(1);
+        }
+
+        @Test
+        void 카테고리_필터링_조건과_일치하지_않으면_조회되지_않는다() {
+            Member member = memberTestPersister.builder().save();
+            Store store = storeTestPersister.builder().save();
+            reviewTestPersister.builder().member(member).store(store).save();
+            MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getX()),
+                    BigDecimal.valueOf(store.getAddress().getCoordinate().getY()),
+                    BigDecimal.valueOf(1),
+                    BigDecimal.valueOf(1)
+            );
+
+            StoreMapBoundResponses response = storeService.getStoresInMapBounds(
+                    mapCoordinateRequest,
+                    CategoryType.술집,
+                    new LoginMember(member.getId())
+            );
+
+            List<StoreMapBoundResponse> result = response.stores();
+            assertThat(result).isEmpty();
         }
 
         @Test
@@ -234,6 +281,7 @@ class StoreServiceTest extends IntegrationTest {
 
             StoreMapBoundResponses response = storeService.getStoresInMapBounds(
                     mapCoordinateRequest,
+                    null,
                     new LoginMember(member.getId())
             );
 
@@ -254,6 +302,7 @@ class StoreServiceTest extends IntegrationTest {
             assertThatThrownBy(() ->
                     storeService.getStoresInMapBounds(
                             mapCoordinateRequest,
+                            null,
                             new LoginMember(-1L)
                     ))
                     .isInstanceOf(NotFoundException.class)

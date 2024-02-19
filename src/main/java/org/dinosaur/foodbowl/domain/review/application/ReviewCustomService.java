@@ -34,9 +34,15 @@ public class ReviewCustomService {
     public List<Review> getReviewsInMapBounds(
             Long lastReviewId,
             MapCoordinateBoundDto mapCoordinateBoundDto,
+            CategoryType categoryType,
             int pageSize
     ) {
-        return reviewCustomRepository.findPaginationReviewsInMapBound(lastReviewId, mapCoordinateBoundDto, pageSize);
+        return reviewCustomRepository.findPaginationReviewsInMapBound(
+                lastReviewId,
+                mapCoordinateBoundDto,
+                categoryType,
+                pageSize
+        );
     }
 
     @Transactional(readOnly = true)

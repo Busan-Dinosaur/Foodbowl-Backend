@@ -5,9 +5,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.dinosaur.foodbowl.domain.review.dto.request.MapCoordinateRequest;
 import org.dinosaur.foodbowl.domain.store.application.StoreService;
+import org.dinosaur.foodbowl.domain.store.domain.vo.CategoryType;
 import org.dinosaur.foodbowl.domain.store.dto.response.CategoriesResponse;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreMapBoundResponses;
 import org.dinosaur.foodbowl.domain.store.dto.response.StoreSearchResponses;
@@ -52,11 +54,16 @@ public class StoreController implements StoreControllerDocs {
             @RequestParam(name = "y") BigDecimal y,
             @RequestParam(name = "deltaX") @Positive(message = "경도 증가값은 0이상의 양수만 가능합니다.") BigDecimal deltaX,
             @RequestParam(name = "deltaY") @Positive(message = "위도 증가값은 0이상의 양수만 가능합니다.") BigDecimal deltaY,
+            @RequestParam(name = "category") Optional<String> category,
             @Auth LoginMember loginMember
     ) {
         MapCoordinateRequest mapCoordinateRequest = new MapCoordinateRequest(x, y, deltaX, deltaY);
-        StoreMapBoundResponses storeMapBoundResponses =
-                storeService.getStoresInMapBounds(mapCoordinateRequest, loginMember);
+        StoreMapBoundResponses storeMapBoundResponses = storeService.getStoresInMapBounds(
+                mapCoordinateRequest,
+                category.map(CategoryType::of)
+                        .orElse(null),
+                loginMember
+        );
         return ResponseEntity.ok(storeMapBoundResponses);
     }
 

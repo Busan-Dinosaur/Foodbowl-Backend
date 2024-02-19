@@ -121,6 +121,7 @@ public class ReviewService {
             Long lastReviewId,
             MapCoordinateRequest mapCoordinateRequest,
             DeviceCoordinateRequest deviceCoordinateRequest,
+            CategoryType categoryType,
             int pageSize,
             LoginMember loginMember
     ) {
@@ -131,6 +132,7 @@ public class ReviewService {
         List<Review> reviews = reviewCustomService.getReviewsInMapBounds(
                 lastReviewId,
                 mapCoordinateBoundDto,
+                categoryType,
                 pageSize
         );
         return convertToReviewPageResponse(viewer, reviews, deviceCoordinateRequest);

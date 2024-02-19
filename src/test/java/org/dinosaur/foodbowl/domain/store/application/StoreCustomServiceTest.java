@@ -29,7 +29,7 @@ class StoreCustomServiceTest extends IntegrationTest {
                 BigDecimal.valueOf(1)
         );
 
-        List<Store> stores = storeCustomService.getStoresInMapBounds(mapCoordinateBoundDto);
+        List<Store> stores = storeCustomService.getStoresInMapBounds(mapCoordinateBoundDto, null);
 
         assertThat(stores).containsExactly(store);
     }

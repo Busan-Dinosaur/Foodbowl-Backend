@@ -82,6 +82,18 @@ public interface ReviewControllerDocs {
                                         
                     해당 범위에 속한 가게에 작성된 리뷰 목록을 조회하는 기능입니다.
                                         
+                    카테고리를 이용해 필터링 조건을 추가할 수 있습니다.
+                                        
+                    모든 카테고리를 조회하는 경우 파라미터 조건을 추가하지 않으면 됩니다.
+                                        
+                    모든 카테고리 예시: /v1/reviews/bounds
+                                        
+                    카테고리 필터링 요청 예시: /v1/reviews/bounds?category=한식
+                                        
+                    가능한 카테고리 필터는 다음과 같습니다. 이외의 카테고리를 요청에 보낼 시 400 응답을 반환합니다.
+                                        
+                    카페, 술집, 한식, 양식, 일식, 중식, 치킨, 분식, 해산물, 샐러드, 기타
+                                        
                     디바이스 경도(deviceX), 디바이스 위도(deviceY)를 통해 디바이스와 가게 사이의 거리를 계산합니다.
                                         
                     조회 성능을 높이기 위해 NO OFFSET 페이징으로 구현하였기에 페이지 번호 대신 마지막 리뷰 ID를 요청값으로 받습니다.
@@ -155,6 +167,9 @@ public interface ReviewControllerDocs {
             @Positive(message = "페이지 크기는 양수만 가능합니다.")
             int pageSize,
 
+            @Parameter(description = "카테고리", example = "분식")
+            Optional<String> category,
+
             LoginMember loginMember
     );
 
@@ -222,7 +237,9 @@ public interface ReviewControllerDocs {
                                         
                     모든 카테고리를 조회하는 경우 파라미터 조건을 추가하지 않으면 됩니다.
                                         
-                    요청 예시: /v1/reviews/members?filter=한식
+                    모든 카테고리 예시: /v1/reviews/members
+                                        
+                    카테고리 필터링 요청 예시: /v1/reviews/members?category=한식
                                         
                     가능한 카테고리 필터는 다음과 같습니다. 이외의 카테고리를 요청에 보낼 시 400 응답을 반환합니다.
                                         
@@ -484,7 +501,9 @@ public interface ReviewControllerDocs {
                                         
                     모든 카테고리를 조회하는 경우 파라미터 조건을 추가하지 않으면 됩니다.
                                         
-                    요청 예시: /v1/reviews/following?filter=한식
+                    모든 카테고리 예시: /v1/reviews/following
+                                        
+                    카테고리 필터링 요청 예시: /v1/reviews/following?category=한식
                                         
                     가능한 카테고리 필터는 다음과 같습니다. 이외의 카테고리를 요청에 보낼 시 400 응답을 반환합니다.
                                         
@@ -580,7 +599,9 @@ public interface ReviewControllerDocs {
                                         
                     모든 카테고리를 조회하는 경우 파라미터 조건을 추가하지 않으면 됩니다.
                                         
-                    요청 예시: /v1/reviews/schools?filter=한식
+                    모든 카테고리 예시: /v1/reviews/schools
+                                        
+                    카테고리 필터링 요청 예시: /v1/reviews/schools?category=한식
                                         
                     가능한 카테고리 필터는 다음과 같습니다. 이외의 카테고리를 요청에 보낼 시 400 응답을 반환합니다.
                                         
